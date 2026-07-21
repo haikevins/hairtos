@@ -1,1 +1,7 @@
-Implementation pending after Phase 0.
+set pagination off
+set confirm off
+target extended-remote localhost:3333
+monitor reset halt
+load
+break main
+continue

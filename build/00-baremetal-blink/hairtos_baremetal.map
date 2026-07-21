@@ -1,0 +1,724 @@
+
+Discarded input sections
+
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .text          0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .data          0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .bss           0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .comment       0x00000000       0x27 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .text          0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .data          0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .bss           0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .text.stm32f1_clock_get_pclk1_hz
+                0x00000000       0x20 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0xac0 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000       0x22 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x190 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x34e build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x193 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .comment       0x00000000       0x27 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .text          0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .data          0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .bss           0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0xac0 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000       0x22 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x190 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x34e build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x193 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .comment       0x00000000       0x27 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .text          0x00000000        0x0 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .data          0x00000000        0x0 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .bss           0x00000000        0x0 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .text.board_led_on
+                0x00000000        0xe build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .text.board_panic
+                0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0xac0 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000       0x22 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x34e build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x190 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x193 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .comment       0x00000000       0x27 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .text          0x00000000        0x0 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .data          0x00000000        0x0 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .bss           0x00000000        0x0 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0xac0 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000       0x22 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x34e build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x190 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x193 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .comment       0x00000000       0x27 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text          0x00000000        0x0 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .data          0x00000000        0x0 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .bss           0x00000000        0x0 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.hr_gpio_read
+                0x00000000       0x20 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0xac0 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .comment       0x00000000       0x27 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .text          0x00000000        0x0 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .data          0x00000000        0x0 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .bss           0x00000000        0x0 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .text.hr_uart_try_read_char
+                0x00000000       0x24 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0xac0 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .comment       0x00000000       0x27 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text          0x00000000        0x0 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .data          0x00000000        0x0 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .bss           0x00000000        0x0 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0xac0 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .comment       0x00000000       0x27 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .group         0x00000000        0xc build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .group         0x00000000        0xc build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .text          0x00000000        0x0 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .data          0x00000000        0x0 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .bss           0x00000000        0x0 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .debug_macro   0x00000000      0xac0 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .debug_macro   0x00000000       0x22 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .debug_macro   0x00000000      0x34e build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .comment       0x00000000       0x27 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .text          0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+ .data          0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+ .bss           0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+ .note.GNU-stack
+                0x00000000        0x0 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x08000000         0x00010000         xr
+RAM              0x20000000         0x00005000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+LOAD build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+LOAD build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+LOAD build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+LOAD build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+LOAD build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+LOAD build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+LOAD build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+LOAD build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+LOAD build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+LOAD /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a
+                0x00000000                        _Min_Heap_Size = 0x0
+                0x00000400                        _Min_Stack_Size = 0x400
+                0x20005000                        _estack = (ORIGIN (RAM) + LENGTH (RAM))
+                0x20004c00                        _sstack = (_estack - _Min_Stack_Size)
+
+.isr_vector     0x08000000       0xec
+                0x08000000                        . = ALIGN (0x4)
+ *(.isr_vector)
+ .isr_vector    0x08000000       0xec build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+                0x08000000                g_pfnVectors
+                0x080000ec                        . = ALIGN (0x4)
+
+.text           0x080000ec      0x6cc
+                0x080000ec                        . = ALIGN (0x4)
+ *(.text)
+ *(.text*)
+ .text.system_reset_clock_tree
+                0x080000ec       0x44 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .text.SystemCoreClockUpdate
+                0x08000130       0x10 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+                0x08000130                SystemCoreClockUpdate
+ .text.SystemInit
+                0x08000140       0x20 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+                0x08000140                SystemInit
+ .text.wait_for_mask
+                0x08000160       0x1e build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ *fill*         0x0800017e        0x2 
+ .text.decode_ahb_prescaler
+                0x08000180       0x10 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .text.decode_apb_prescaler
+                0x08000190       0x10 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .text.stm32f1_clock_configure_hse_pll_72mhz
+                0x080001a0       0x78 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+                0x080001a0                stm32f1_clock_configure_hse_pll_72mhz
+ .text.stm32f1_clock_get_hclk_hz
+                0x08000218       0x40 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+                0x08000218                stm32f1_clock_get_hclk_hz
+ .text.stm32f1_clock_get_pclk2_hz
+                0x08000258       0x20 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+                0x08000258                stm32f1_clock_get_pclk2_hz
+ .text.fault_stop
+                0x08000278        0x6 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .text.HardFault_Handler
+                0x0800027e        0x6 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+                0x0800027e                HardFault_Handler
+ .text.MemManage_Handler
+                0x08000284        0x6 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+                0x08000284                MemManage_Handler
+ .text.BusFault_Handler
+                0x0800028a        0x6 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+                0x0800028a                BusFault_Handler
+ .text.UsageFault_Handler
+                0x08000290        0x6 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+                0x08000290                UsageFault_Handler
+ .text.board_led_off
+                0x08000296        0xe build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                0x08000296                board_led_off
+ .text.board_led_toggle
+                0x080002a4        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                0x080002a4                board_led_toggle
+ .text.board_uart_write_char
+                0x080002b0        0x8 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                0x080002b0                board_uart_write_char
+ .text.board_uart_write_string
+                0x080002b8        0x8 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                0x080002b8                board_uart_write_string
+ .text.board_uart_write_u32
+                0x080002c0       0x5c build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                0x080002c0                board_uart_write_u32
+ .text.board_uart_write_line
+                0x0800031c       0x14 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                0x0800031c                board_uart_write_line
+ .text.board_print_boot_banner
+                0x08000330       0x5c build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .text.board_init
+                0x0800038c       0x38 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                0x0800038c                board_init
+ .text.board_millis
+                0x080003c4        0x8 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                0x080003c4                board_millis
+ .text.board_delay_ms
+                0x080003cc        0x8 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                0x080003cc                board_delay_ms
+ .text.board_get_core_clock_hz
+                0x080003d4        0xc build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+                0x080003d4                board_get_core_clock_hz
+ .text.board_clock_is_72mhz
+                0x080003e0       0x18 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+                0x080003e0                board_clock_is_72mhz
+ .text.gpio_from_port
+                0x080003f8       0x28 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.gpio_configure_nibble
+                0x08000420       0x30 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.hr_gpio_enable_port_clock
+                0x08000450       0x34 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x08000450                hr_gpio_enable_port_clock
+ .text.hr_gpio_config_output_push_pull
+                0x08000484       0x14 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x08000484                hr_gpio_config_output_push_pull
+ .text.hr_gpio_config_alternate_push_pull
+                0x08000498       0x16 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x08000498                hr_gpio_config_alternate_push_pull
+ .text.hr_gpio_config_input_floating
+                0x080004ae       0x12 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x080004ae                hr_gpio_config_input_floating
+ .text.hr_gpio_write
+                0x080004c0       0x22 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x080004c0                hr_gpio_write
+ .text.hr_gpio_toggle
+                0x080004e2       0x28 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x080004e2                hr_gpio_toggle
+ *fill*         0x0800050a        0x2 
+ .text.hr_uart_init
+                0x0800050c       0x54 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+                0x0800050c                hr_uart_init
+ .text.hr_uart_write_char
+                0x08000560       0x14 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+                0x08000560                hr_uart_write_char
+ .text.hr_uart_write_string
+                0x08000574       0x16 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+                0x08000574                hr_uart_write_string
+ *fill*         0x0800058a        0x2 
+ .text.hr_hw_timer_init_1khz
+                0x0800058c       0x34 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+                0x0800058c                hr_hw_timer_init_1khz
+ .text.hr_hw_timer_millis
+                0x080005c0        0xc build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+                0x080005c0                hr_hw_timer_millis
+ .text.hr_hw_timer_delay_ms
+                0x080005cc       0x18 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+                0x080005cc                hr_hw_timer_delay_ms
+ .text.SysTick_Handler
+                0x080005e4       0x10 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+                0x080005e4                SysTick_Handler
+ .text.main     0x080005f4       0x58 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+                0x080005f4                main
+ .text.Reset_Handler
+                0x0800064c       0x44 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+                0x0800064c                Reset_Handler
+ .text.Default_Handler
+                0x08000690        0x4 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+                0x08000690                EXTI2_IRQHandler
+                0x08000690                DebugMon_Handler
+                0x08000690                TIM1_CC_IRQHandler
+                0x08000690                PVD_IRQHandler
+                0x08000690                PendSV_Handler
+                0x08000690                NMI_Handler
+                0x08000690                EXTI3_IRQHandler
+                0x08000690                EXTI0_IRQHandler
+                0x08000690                I2C2_EV_IRQHandler
+                0x08000690                ADC1_2_IRQHandler
+                0x08000690                SPI1_IRQHandler
+                0x08000690                TAMPER_IRQHandler
+                0x08000690                DMA1_Channel4_IRQHandler
+                0x08000690                USART3_IRQHandler
+                0x08000690                RTC_IRQHandler
+                0x08000690                DMA1_Channel7_IRQHandler
+                0x08000690                CAN1_RX1_IRQHandler
+                0x08000690                TIM4_IRQHandler
+                0x08000690                I2C1_EV_IRQHandler
+                0x08000690                DMA1_Channel6_IRQHandler
+                0x08000690                TIM3_IRQHandler
+                0x08000690                RCC_IRQHandler
+                0x08000690                TIM1_TRG_COM_IRQHandler
+                0x08000690                DMA1_Channel1_IRQHandler
+                0x08000690                EXTI15_10_IRQHandler
+                0x08000690                EXTI9_5_IRQHandler
+                0x08000690                SPI2_IRQHandler
+                0x08000690                SVC_Handler
+                0x08000690                DMA1_Channel5_IRQHandler
+                0x08000690                EXTI4_IRQHandler
+                0x08000690                USB_LP_CAN1_RX0_IRQHandler
+                0x08000690                USB_HP_CAN1_TX_IRQHandler
+                0x08000690                DMA1_Channel3_IRQHandler
+                0x08000690                TIM1_UP_IRQHandler
+                0x08000690                WWDG_IRQHandler
+                0x08000690                TIM2_IRQHandler
+                0x08000690                TIM1_BRK_IRQHandler
+                0x08000690                EXTI1_IRQHandler
+                0x08000690                RTCAlarm_IRQHandler
+                0x08000690                USART2_IRQHandler
+                0x08000690                I2C2_ER_IRQHandler
+                0x08000690                DMA1_Channel2_IRQHandler
+                0x08000690                CAN1_SCE_IRQHandler
+                0x08000690                FLASH_IRQHandler
+                0x08000690                USART1_IRQHandler
+                0x08000690                I2C1_ER_IRQHandler
+                0x08000690                USBWakeUp_IRQHandler
+ *(.rodata)
+ *(.rodata*)
+ .rodata.divisors.0
+                0x08000694        0x8 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .rodata.divisors.1
+                0x0800069c       0x20 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .rodata.board_uart_write_line.str1.4
+                0x080006bc       0xfc build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                                  0x3 (size before relaxing)
+ .rodata.board_print_boot_banner.str1.4
+                0x080007b8       0xa4 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .rodata.main.str1.4
+                0x080007b8       0x59 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ *(.init)
+ *(.fini)
+                0x0800085c                        . = ALIGN (0x4)
+                0x080007b8                        _etext = .
+
+.glue_7         0x080007b8        0x0
+ .glue_7        0x080007b8        0x0 linker stubs
+
+.glue_7t        0x080007b8        0x0
+ .glue_7t       0x080007b8        0x0 linker stubs
+
+.vfp11_veneer   0x080007b8        0x0
+ .vfp11_veneer  0x080007b8        0x0 linker stubs
+
+.v4_bx          0x080007b8        0x0
+ .v4_bx         0x080007b8        0x0 linker stubs
+
+.iplt           0x080007b8        0x0
+ .iplt          0x080007b8        0x0 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+
+.rel.dyn        0x080007b8        0x0
+ .rel.iplt      0x080007b8        0x0 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+
+.ARM.exidx      0x080007b8        0x0
+                0x080007b8                        __exidx_start = .
+ *(.ARM.exidx*)
+                0x080007b8                        __exidx_end = .
+                0x080007b8                        _sidata = LOADADDR (.data)
+
+.data           0x20000000        0x4 load address 0x080007b8
+                0x20000000                        . = ALIGN (0x4)
+                0x20000000                        _sdata = .
+ *(.data)
+ *(.data*)
+ .data.SystemCoreClock
+                0x20000000        0x4 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+                0x20000000                SystemCoreClock
+                0x20000004                        . = ALIGN (0x4)
+                0x20000004                        _edata = .
+
+.igot.plt       0x20000004        0x0 load address 0x080007bc
+ .igot.plt      0x20000004        0x0 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+
+.bss            0x20000004        0x4 load address 0x080007bc
+                0x20000004                        . = ALIGN (0x4)
+                0x20000004                        _sbss = .
+                0x20000004                        __bss_start__ = .
+ *(.bss)
+ *(.bss*)
+ .bss.g_millisecond_tick
+                0x20000004        0x4 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ *(COMMON)
+                0x20000008                        . = ALIGN (0x4)
+                0x20000008                        _ebss = .
+                0x20000008                        __bss_end__ = .
+
+.heap           0x20000008        0x0 load address 0x080007bc
+                0x20000008                        . = ALIGN (0x8)
+                0x20000008                        __end__ = .
+                0x20000008                        end = __end__
+                0x20000008                        . = (. + _Min_Heap_Size)
+                0x20000008                        __heap_end__ = .
+
+/DISCARD/
+ *(.comment)
+ *(.note*)
+                0x00000001                        ASSERT ((__heap_end__ <= _sstack), RAM overflow: data/heap collides with reserved main stack)
+OUTPUT(build/00-baremetal-blink/hairtos_baremetal.elf elf32-littlearm)
+LOAD linker stubs
+
+.ARM.attributes
+                0x00000000       0x2b
+ .ARM.attributes
+                0x00000000       0x2d build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .ARM.attributes
+                0x0000002d       0x2d build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .ARM.attributes
+                0x0000005a       0x2d build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .ARM.attributes
+                0x00000087       0x2d build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .ARM.attributes
+                0x000000b4       0x2d build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .ARM.attributes
+                0x000000e1       0x2d build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .ARM.attributes
+                0x0000010e       0x2d build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .ARM.attributes
+                0x0000013b       0x2d build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .ARM.attributes
+                0x00000168       0x2d build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .ARM.attributes
+                0x00000195       0x21 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+
+.debug_info     0x00000000     0x1dd8
+ .debug_info    0x00000000      0x2df build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_info    0x000002df      0x476 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_info    0x00000755      0x13b build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_info    0x00000890      0x5c4 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_info    0x00000e54       0xc1 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_info    0x00000f15      0x572 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_info    0x00001487      0x304 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_info    0x0000178b      0x19c build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_info    0x00001927      0x1ce build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .debug_info    0x00001af5      0x2e3 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+
+.debug_abbrev   0x00000000      0xa62
+ .debug_abbrev  0x00000000      0x10b build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_abbrev  0x0000010b      0x191 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_abbrev  0x0000029c       0x96 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_abbrev  0x00000332      0x1a0 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_abbrev  0x000004d2       0x6a build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_abbrev  0x0000053c      0x183 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_abbrev  0x000006bf      0x156 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_abbrev  0x00000815      0x13f build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_abbrev  0x00000954       0xe8 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .debug_abbrev  0x00000a3c       0x26 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+
+.debug_aranges  0x00000000      0x278
+ .debug_aranges
+                0x00000000       0x30 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_aranges
+                0x00000030       0x50 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_aranges
+                0x00000080       0x40 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_aranges
+                0x000000c0       0x78 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_aranges
+                0x00000138       0x28 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_aranges
+                0x00000160       0x60 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_aranges
+                0x000001c0       0x38 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_aranges
+                0x000001f8       0x38 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_aranges
+                0x00000230       0x20 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .debug_aranges
+                0x00000250       0x28 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+
+.debug_rnglists
+                0x00000000      0x1a8
+ .debug_rnglists
+                0x00000000       0x1f build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_rnglists
+                0x0000001f       0x37 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_rnglists
+                0x00000056       0x2b build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_rnglists
+                0x00000081       0x55 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_rnglists
+                0x000000d6       0x19 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_rnglists
+                0x000000ef       0x43 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_rnglists
+                0x00000132       0x25 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_rnglists
+                0x00000157       0x25 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_rnglists
+                0x0000017c       0x13 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .debug_rnglists
+                0x0000018f       0x19 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+
+.debug_macro    0x00000000     0x140d
+ .debug_macro   0x00000000       0x3b build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x0000003b      0xac0 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000afb       0x22 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000b1d      0x190 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000cad      0x34e build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000ffb      0x193 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x0000118e       0x41 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x000011cf       0x3b build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x0000120a       0x78 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00001282       0x2e build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_macro   0x000012b0       0x45 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x000012f5       0x4b build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00001340       0x5b build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x0000139b       0x45 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x000013e0       0x2d build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+
+.debug_line     0x00000000     0x1133
+ .debug_line    0x00000000      0x15a build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_line    0x0000015a      0x26c build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_line    0x000003c6      0x135 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_line    0x000004fb      0x32a build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_line    0x00000825      0x110 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_line    0x00000935      0x2ec build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_line    0x00000c21      0x202 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_line    0x00000e23      0x1af build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_line    0x00000fd2       0xee build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .debug_line    0x000010c0       0x73 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+
+.debug_str      0x00000000     0x5023
+ .debug_str     0x00000000     0x5023 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+                               0x4688 (size before relaxing)
+ .debug_str     0x00005023     0x46fb build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_str     0x00005023     0x45ba build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_str     0x00005023     0x4948 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_str     0x00005023     0x45a0 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_str     0x00005023     0x4759 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_str     0x00005023     0x472c build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_str     0x00005023     0x4628 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_str     0x00005023     0x39e0 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+ .debug_str     0x00005023      0x44d build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+
+.debug_frame    0x00000000      0x4ac
+ .debug_frame   0x00000000       0x50 build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+ .debug_frame   0x00000050       0xb4 build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_frame   0x00000104       0x80 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+ .debug_frame   0x00000184      0x138 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_frame   0x000002bc       0x30 build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+ .debug_frame   0x000002ec       0xdc build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_frame   0x000003c8       0x6c build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_frame   0x00000434       0x50 build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_frame   0x00000484       0x28 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+
+.debug_loclists
+                0x00000000      0x640
+ .debug_loclists
+                0x00000000      0x15a build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+ .debug_loclists
+                0x0000015a       0xc7 build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+ .debug_loclists
+                0x00000221      0x2f7 build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_loclists
+                0x00000518       0xc8 build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_loclists
+                0x000005e0       0x3f build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_loclists
+                0x0000061f       0x21 build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+
+.debug_line_str
+                0x00000000       0x4b
+ .debug_line_str
+                0x00000000       0x4b build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+
+Cross Reference Table
+
+Symbol                                            File
+ADC1_2_IRQHandler                                 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+BusFault_Handler                                  build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+CAN1_RX1_IRQHandler                               build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+CAN1_SCE_IRQHandler                               build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel1_IRQHandler                          build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel2_IRQHandler                          build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel3_IRQHandler                          build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel4_IRQHandler                          build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel5_IRQHandler                          build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel6_IRQHandler                          build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel7_IRQHandler                          build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+DebugMon_Handler                                  build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+EXTI0_IRQHandler                                  build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+EXTI15_10_IRQHandler                              build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+EXTI1_IRQHandler                                  build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+EXTI2_IRQHandler                                  build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+EXTI3_IRQHandler                                  build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+EXTI4_IRQHandler                                  build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+EXTI9_5_IRQHandler                                build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+FLASH_IRQHandler                                  build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+HardFault_Handler                                 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+I2C1_ER_IRQHandler                                build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+I2C1_EV_IRQHandler                                build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+I2C2_ER_IRQHandler                                build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+I2C2_EV_IRQHandler                                build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+MemManage_Handler                                 build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+NMI_Handler                                       build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+PVD_IRQHandler                                    build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+PendSV_Handler                                    build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+RCC_IRQHandler                                    build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+RTCAlarm_IRQHandler                               build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+RTC_IRQHandler                                    build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+Reset_Handler                                     build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+SPI1_IRQHandler                                   build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+SPI2_IRQHandler                                   build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+SVC_Handler                                       build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+SysTick_Handler                                   build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+SystemCoreClock                                   build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                                                  build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+SystemCoreClockUpdate                             build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+SystemInit                                        build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+                                                  build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+TAMPER_IRQHandler                                 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+TIM1_BRK_IRQHandler                               build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+TIM1_CC_IRQHandler                                build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+TIM1_TRG_COM_IRQHandler                           build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+TIM1_UP_IRQHandler                                build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+TIM2_IRQHandler                                   build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+TIM3_IRQHandler                                   build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+TIM4_IRQHandler                                   build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+USART1_IRQHandler                                 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+USART2_IRQHandler                                 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+USART3_IRQHandler                                 build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+USBWakeUp_IRQHandler                              build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+USB_HP_CAN1_TX_IRQHandler                         build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+USB_LP_CAN1_RX0_IRQHandler                        build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+UsageFault_Handler                                build/00-baremetal-blink/soc/stm32f1/stm32f1_irq.o
+WWDG_IRQHandler                                   build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+_ebss                                             build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+_edata                                            build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+_estack                                           build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+_sbss                                             build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+_sdata                                            build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+_sidata                                           build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+board_clock_is_72mhz                              build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+board_delay_ms                                    build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                                                  build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+board_get_core_clock_hz                           build/00-baremetal-blink/boards/bluepill_f103c8/board_clock.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+board_init                                        build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                                                  build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+board_led_off                                     build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+board_led_on                                      build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+board_led_toggle                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                                                  build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+board_millis                                      build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                                                  build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+board_panic                                       build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+board_uart_write_char                             build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+board_uart_write_line                             build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                                                  build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+board_uart_write_string                           build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                                                  build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+board_uart_write_u32                              build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+                                                  build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+g_pfnVectors                                      build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+                                                  build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+hr_gpio_config_alternate_push_pull                build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+hr_gpio_config_input_floating                     build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+hr_gpio_config_output_push_pull                   build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+hr_gpio_enable_port_clock                         build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+hr_gpio_read                                      build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+hr_gpio_toggle                                    build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+hr_gpio_write                                     build/00-baremetal-blink/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+hr_hw_timer_delay_ms                              build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+hr_hw_timer_init_1khz                             build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+hr_hw_timer_millis                                build/00-baremetal-blink/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+hr_uart_init                                      build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+hr_uart_try_read_char                             build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+hr_uart_write_char                                build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+hr_uart_write_string                              build/00-baremetal-blink/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o
+main                                              build/00-baremetal-blink/examples/00-baremetal-blink/main.o
+                                                  build/00-baremetal-blink/soc/stm32f1/startup_stm32f103.o
+stm32f1_clock_configure_hse_pll_72mhz             build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+                                                  build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+stm32f1_clock_get_hclk_hz                         build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+                                                  build/00-baremetal-blink/soc/stm32f1/system_stm32f1.o
+stm32f1_clock_get_pclk1_hz                        build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+stm32f1_clock_get_pclk2_hz                        build/00-baremetal-blink/soc/stm32f1/stm32f1_clock.o
+                                                  build/00-baremetal-blink/boards/bluepill_f103c8/board.o

@@ -1,1 +1,5 @@
-Implementation pending after Phase 0.
+#!/usr/bin/env sh
+set -eu
+
+make clean
+make "$@"

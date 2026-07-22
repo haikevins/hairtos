@@ -70,7 +70,7 @@ LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
                     -Wl,--cref -T$(LINKER_SCRIPT)
 
 .PHONY: all elf bin hex size flash erase debug-server gdb disasm \
-        phase0-check phase1-check tree clean help
+        phase0-check phase1-check roadmap-check tree clean help
 
 all: elf bin hex size
 
@@ -125,6 +125,9 @@ phase0-check:
 phase1-check:
 	python3 tools/scripts/phase1_check.py
 
+roadmap-check:
+	python3 tools/scripts/roadmap_check.py
+
 tree:
 	@find . -path './.git' -prune -o -path './build' -prune -o -print | sort
 
@@ -140,7 +143,8 @@ help:
 	@echo "  make debug-server            Start OpenOCD"
 	@echo "  make gdb                     Connect GDB to localhost:3333"
 	@echo "  make disasm                  Generate source/interleaved listing"
-	@echo "  make phase1-check            Validate Phase 1 files"
+	@echo "  make phase1-check            Validate and build Phase 1 files"
+	@echo "  make roadmap-check           Validate future roadmap specifications"
 	@echo "  make clean                   Remove build output"
 
 -include $(DEPS)

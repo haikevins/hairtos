@@ -18,6 +18,10 @@ required = [
     "drivers/timer/src/hr_hw_timer_stm32f1.c",
     "examples/00-baremetal-blink/main.c",
     "tools/openocd/bluepill_stlink.cfg",
+    "docs/roadmap.md",
+    "docs/task-suspend-resume.md",
+    "docs/memory-allocator-lab.md",
+    "docs/benchmark-plan.md",
 ]
 
 missing = [item for item in required if not (ROOT / item).is_file()]

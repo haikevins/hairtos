@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Updated — Roadmap refinement while remaining at Phase 1
+
+- Added the official Phase 0–16 implementation roadmap.
+- Added explicit Task Suspend/Resume planning.
+- Added an isolated first-fit Memory Allocator Lab.
+- Added a Kernel Benchmark plan using DWT, GPIO, and deferred UART reporting.
+- Added requirements-coverage documentation and future placeholder directories.
+- Kept the current implementation status at Phase 1; no scheduler or later-phase
+  kernel feature was implemented.
+
 ### Added — Phase 1
 
 - Buildable STM32F103C8T6 bare-metal target.

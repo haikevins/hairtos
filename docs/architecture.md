@@ -64,3 +64,14 @@ Lower layers must never include or call higher layers.
 
 SMP, POSIX compatibility, dynamic task deletion, a general-purpose heap, MPU
 user mode, networking, file systems, loadable modules, and tickless idle.
+
+## Roadmap refinements after Phase 1
+
+The official roadmap explicitly includes:
+
+- task suspend/resume as a distinct administrative state;
+- an isolated first-fit memory allocator lab;
+- a kernel benchmark phase using DWT and GPIO instrumentation.
+
+These additions do not change the Phase 1 implementation status. See
+`roadmap.md`.

@@ -4,7 +4,7 @@ HairRTOS is an educational fixed-priority RTOS for ARM Cortex-M. The first
 target is the STM32F103C8T6 Blue Pill. HairEvent is an optional Event-Driven
 framework above the kernel.
 
-## Current status: Phase 9 complete
+## Current status: Phase 10 complete
 
 Implemented phases:
 
@@ -20,12 +20,14 @@ Implemented phases:
 - **Phase 8:** strict higher-priority preemption and tick-driven round-robin
   among equal-priority tasks;
 - **Phase 9:** statically allocated FIFO queues, blocking send/receive, finite
-  timeout, wait forever, direct handoff, and ISR-safe non-blocking variants.
+  timeout, wait forever, direct handoff, and ISR-safe non-blocking variants;
+- **Phase 10:** binary/counting semaphores, ISR semaphore give, mutex ownership,
+  direct handoff, and priority inheritance across multiple held mutexes.
 
-Phase 9 adds task-to-task and ISR-to-task message transfer. Queue wait lists are
-priority ordered and FIFO among equal priorities. A sender or receiver blocks
-without busy-waiting and is returned to READY by the matching operation or by a
-timeout.
+Phase 10 adds synchronization without hiding ownership. Semaphore waiters are
+priority ordered and FIFO among equals. Mutex owners inherit the highest urgency
+required by every mutex they hold, and their effective priority is recalculated
+when a waiter wakes, times out, or ownership changes.
 
 ## Roadmap
 
@@ -41,7 +43,7 @@ timeout.
 | 7 | SysTick and delay | ✅ Complete |
 | 8 | Preemption and round-robin | ✅ Complete |
 | 9 | Queue and blocking | ✅ Complete |
-| 10 | Semaphore and mutex | ⬜ Not started |
+| 10 | Semaphore and mutex | ✅ Complete |
 | 11 | Suspend/resume | ⬜ Not started |
 | 12 | Software timer | ⬜ Not started |
 | 13 | HairEvent framework | ⬜ Not started |
@@ -51,19 +53,20 @@ timeout.
 
 Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
 
-## Phase 9 components
+## Phase 10 components
 
-- opaque statically allocated `hr_queue_t` control block;
-- caller-provided ring-buffer storage with fixed item size and capacity;
-- FIFO enqueue/dequeue with wrap-around indices;
-- non-blocking `HR_NO_WAIT`, finite timeout, and `HR_WAIT_FOREVER`;
-- priority-ordered blocked sender and receiver wait lists;
-- direct sender-to-receiver handoff when a receiver is already blocked;
-- atomic refill of a freed queue slot from the highest-priority blocked sender;
-- timeout removal from both the object wait list and global timeout list;
-- `hr_queue_send_from_isr()` and `hr_queue_receive_from_isr()` with a
-  higher-priority-task-woken result;
-- Phase 9 STM32 producer/consumer example and host sanitizer coverage.
+- opaque statically allocated `hr_semaphore_t` and `hr_mutex_t` objects;
+- binary and counting semaphore creation;
+- non-blocking, finite-timeout, and wait-forever semaphore take;
+- task-context give and ISR-safe `hr_semaphore_give_from_isr()`;
+- non-recursive mutex with owner validation and optional recursive creation;
+- direct mutex ownership transfer to the highest-priority waiter;
+- per-task intrusive list of held mutexes;
+- effective-priority recalculation across multiple held mutexes;
+- chained inheritance when a boosted owner is blocked on another mutex;
+- timeout cleanup that removes a waiter's inheritance contribution;
+- Phase 10 ISR semaphore and priority-inversion STM32 examples;
+- host sanitizer and target build/disassembly validation.
 
 ## Examples: host versus target
 
@@ -87,6 +90,8 @@ make EXAMPLE=06-priority-scheduler flash
 make EXAMPLE=07-task-delay-timeout flash
 make EXAMPLE=08-preemption-round-robin flash
 make EXAMPLE=09-queue-blocking-ipc flash
+make EXAMPLE=10-01-semaphore-from-isr flash
+make EXAMPLE=10-02-mutex-priority-inheritance flash
 ```
 
 The `EXAMPLE` value must be passed in the same command used for `flash`.
@@ -106,6 +111,7 @@ make phase6-check
 make phase7-check
 make phase8-check
 make phase9-check
+make phase10-check
 ```
 
 Read:
@@ -119,6 +125,7 @@ Read:
 - `docs/phase7-systick-delay.md`
 - `docs/phase8-preemption-round-robin.md`
 - `docs/phase9-queue-blocking-ipc.md`
+- `docs/phase10-semaphore-mutex.md`
 - `examples/README.md`
 
-The next implementation phase is **Phase 10 — Semaphore and mutex**.
+The next implementation phase is **Phase 11 — Suspend/resume**.

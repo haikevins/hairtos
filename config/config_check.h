@@ -19,6 +19,14 @@
 #error "HR_CFG_QUEUE_STORAGE_BYTES is too small"
 #endif
 
+#if (HR_CFG_SEMAPHORE_STORAGE_BYTES < 64U)
+#error "HR_CFG_SEMAPHORE_STORAGE_BYTES is too small"
+#endif
+
+#if (HR_CFG_MUTEX_STORAGE_BYTES < 96U)
+#error "HR_CFG_MUTEX_STORAGE_BYTES is too small"
+#endif
+
 #if (HR_CFG_MIN_TASK_STACK_WORDS < 18U)
 #error "HR_CFG_MIN_TASK_STACK_WORDS is too small for Cortex-M3"
 #endif

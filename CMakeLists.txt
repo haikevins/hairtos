@@ -15,6 +15,8 @@ set(HAIRTOS_TARGET_EXAMPLES
     07-task-delay-timeout
     08-preemption-round-robin
     09-queue-blocking-ipc
+    10-01-semaphore-from-isr
+    10-02-mutex-priority-inheritance
 )
 
 list(FIND HAIRTOS_TARGET_EXAMPLES "${HAIRTOS_EXAMPLE}" HAIRTOS_EXAMPLE_INDEX)
@@ -32,7 +34,9 @@ if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack" OR
    HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler" OR
    HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
    HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin" OR
-   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc")
+   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc" OR
+   HAIRTOS_EXAMPLE STREQUAL "10-01-semaphore-from-isr" OR
+   HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance")
     list(APPEND HAIRTOS_KERNEL_SOURCES
         kernel/src/hr_list.c
         kernel/src/hr_scheduler.c
@@ -49,7 +53,9 @@ if(HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
    HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler" OR
    HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
    HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin" OR
-   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc")
+   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc" OR
+   HAIRTOS_EXAMPLE STREQUAL "10-01-semaphore-from-isr" OR
+   HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance")
     list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_kernel.c)
     list(APPEND HAIRTOS_PORT_ASM arch/arm/cortex-m3/hr_portasm.S)
 endif()
@@ -58,10 +64,20 @@ if(HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc")
     list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_queue.c)
 endif()
 
+if(HAIRTOS_EXAMPLE STREQUAL "10-01-semaphore-from-isr")
+    list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_semaphore.c)
+endif()
+
+if(HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance")
+    list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_mutex.c)
+endif()
+
 set(HAIRTOS_TICK_SOURCE drivers/timer/src/hr_systick_baremetal_irq.c)
 if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
    HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin" OR
-   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc")
+   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc" OR
+   HAIRTOS_EXAMPLE STREQUAL "10-01-semaphore-from-isr" OR
+   HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance")
     set(HAIRTOS_TICK_SOURCE kernel/src/hr_time.c)
 endif()
 

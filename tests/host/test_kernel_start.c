@@ -2,8 +2,12 @@
 #include "hairtos/hr_task.h"
 #include "hairtos/hr_time.h"
 #include "hairtos/hr_queue.h"
+#include "hairtos/hr_semaphore.h"
+#include "hairtos/hr_mutex.h"
 #include "hr_kernel_internal.h"
 #include "hr_queue_internal.h"
+#include "hr_semaphore_internal.h"
+#include "hr_mutex_internal.h"
 #include "hr_task_internal.h"
 #include "test_support.h"
 
@@ -314,6 +318,212 @@ static void test_kernel_preemption_round_robin_and_delay_race(void)
         }
 
         TEST_ASSERT_TRUE(hr_queue_validate_internal(&queue));
+    }
+
+    /* Phase 10.1: a binary semaphore given from ISR wakes equal-priority
+     * waiters in FIFO order and reports higher-priority readiness. */
+    {
+        static hr_semaphore_t semaphore;
+        hr_semaphore_control_block_t *semaphore_control_block;
+        hr_task_control_block_t *high_a_control_block;
+        hr_task_control_block_t *high_b_control_block;
+        bool higher_priority_task_woken = false;
+
+        TEST_ASSERT_EQ_UINT(HR_OK,
+                            hr_semaphore_create_binary(&semaphore, false));
+        semaphore_control_block = hr_semaphore_control_block(&semaphore);
+        high_a_control_block = hr_task_control_block(&high_a);
+        high_b_control_block = hr_task_control_block(&high_b);
+
+        /* Current is Low while both high tasks are READY after the queue ISR. */
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_b, hr_task_current());
+        TEST_ASSERT_EQ_UINT(
+            HR_OK,
+            hr_kernel_block_current_on_wait_list_ex(
+                &semaphore_control_block->waiters,
+                semaphore_control_block,
+                HR_TASK_WAIT_SEMAPHORE_TAKE,
+                NULL,
+                HR_WAIT_FOREVER,
+                NULL));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_a, hr_task_current());
+        TEST_ASSERT_EQ_UINT(
+            HR_OK,
+            hr_kernel_block_current_on_wait_list_ex(
+                &semaphore_control_block->waiters,
+                semaphore_control_block,
+                HR_TASK_WAIT_SEMAPHORE_TAKE,
+                NULL,
+                HR_WAIT_FOREVER,
+                NULL));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&low_task, hr_task_current());
+        TEST_ASSERT_EQ_UINT(2U,
+                            hr_semaphore_get_waiting_tasks(&semaphore));
+
+        g_mock_inside_isr = true;
+        TEST_ASSERT_EQ_UINT(
+            HR_OK,
+            hr_semaphore_give_from_isr(&semaphore,
+                                       &higher_priority_task_woken));
+        TEST_ASSERT_TRUE(higher_priority_task_woken);
+        TEST_ASSERT_EQ_UINT(HR_OK, high_b_control_block->wait_result);
+        TEST_ASSERT_EQ_UINT(HR_ERROR_INTERNAL,
+                            high_a_control_block->wait_result);
+
+        higher_priority_task_woken = false;
+        TEST_ASSERT_EQ_UINT(
+            HR_OK,
+            hr_semaphore_give_from_isr(&semaphore,
+                                       &higher_priority_task_woken));
+        TEST_ASSERT_TRUE(higher_priority_task_woken);
+        g_mock_inside_isr = false;
+
+        TEST_ASSERT_EQ_UINT(HR_OK, high_a_control_block->wait_result);
+        TEST_ASSERT_EQ_UINT(0U,
+                            hr_semaphore_get_waiting_tasks(&semaphore));
+        TEST_ASSERT_EQ_UINT(0U, hr_semaphore_get_count(&semaphore));
+        TEST_ASSERT_TRUE(hr_semaphore_validate_internal(&semaphore));
+    }
+
+    /* Phase 10.2: inheritance remains active while any held mutex still has a
+     * higher-priority waiter. Ownership is handed directly to each waiter. */
+    {
+        static hr_mutex_t mutex_a;
+        static hr_mutex_t mutex_b;
+        hr_mutex_control_block_t *mutex_a_control_block;
+        hr_mutex_control_block_t *mutex_b_control_block;
+        hr_task_control_block_t *low_control_block;
+        hr_task_control_block_t *high_a_control_block;
+        hr_task_control_block_t *high_b_control_block;
+
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_mutex_create(&mutex_a));
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_mutex_create(&mutex_b));
+        mutex_a_control_block = hr_mutex_control_block(&mutex_a);
+        mutex_b_control_block = hr_mutex_control_block(&mutex_b);
+        low_control_block = hr_task_control_block(&low_task);
+        high_a_control_block = hr_task_control_block(&high_a);
+        high_b_control_block = hr_task_control_block(&high_b);
+
+        TEST_ASSERT_EQ_PTR(&low_task, hr_task_current());
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_mutex_lock(&mutex_a, HR_NO_WAIT));
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_mutex_lock(&mutex_b, HR_NO_WAIT));
+        TEST_ASSERT_EQ_UINT(2U, low_control_block->owned_mutex_count);
+
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_b, hr_task_current());
+        TEST_ASSERT_EQ_UINT(
+            HR_OK,
+            hr_kernel_block_current_on_wait_list_ex(
+                &mutex_a_control_block->waiters,
+                mutex_a_control_block,
+                HR_TASK_WAIT_MUTEX_LOCK,
+                NULL,
+                HR_WAIT_FOREVER,
+                hr_mutex_wait_cleanup));
+        TEST_ASSERT_EQ_UINT(
+            HR_OK,
+            hr_mutex_recompute_owner_priority(mutex_a_control_block));
+        TEST_ASSERT_EQ_UINT(1U,
+                            hr_task_get_effective_priority(&low_task));
+
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_a, hr_task_current());
+        TEST_ASSERT_EQ_UINT(
+            HR_OK,
+            hr_kernel_block_current_on_wait_list_ex(
+                &mutex_b_control_block->waiters,
+                mutex_b_control_block,
+                HR_TASK_WAIT_MUTEX_LOCK,
+                NULL,
+                HR_WAIT_FOREVER,
+                hr_mutex_wait_cleanup));
+        TEST_ASSERT_EQ_UINT(
+            HR_OK,
+            hr_mutex_recompute_owner_priority(mutex_b_control_block));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&low_task, hr_task_current());
+        TEST_ASSERT_EQ_UINT(1U,
+                            hr_task_get_effective_priority(&low_task));
+
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_mutex_unlock(&mutex_a));
+        TEST_ASSERT_EQ_PTR(&high_b, hr_mutex_get_owner(&mutex_a));
+        TEST_ASSERT_EQ_UINT(HR_OK, high_b_control_block->wait_result);
+        TEST_ASSERT_EQ_UINT(1U, low_control_block->owned_mutex_count);
+        TEST_ASSERT_EQ_UINT(1U,
+                            hr_task_get_effective_priority(&low_task));
+
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_mutex_unlock(&mutex_b));
+        TEST_ASSERT_EQ_PTR(&high_a, hr_mutex_get_owner(&mutex_b));
+        TEST_ASSERT_EQ_UINT(HR_OK, high_a_control_block->wait_result);
+        TEST_ASSERT_EQ_UINT(0U, low_control_block->owned_mutex_count);
+        TEST_ASSERT_EQ_UINT(5U,
+                            hr_task_get_effective_priority(&low_task));
+
+        TEST_ASSERT_TRUE(hr_mutex_validate_internal(&mutex_a));
+        TEST_ASSERT_TRUE(hr_mutex_validate_internal(&mutex_b));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_b, hr_task_current());
+
+        /* Release both handed-off mutexes and block both high tasks briefly so
+         * Low can own a fresh mutex for the timeout-restoration scenario. */
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_mutex_unlock(&mutex_a));
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_task_delay(1U));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_a, hr_task_current());
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_mutex_unlock(&mutex_b));
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_task_delay(1U));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&low_task, hr_task_current());
+
+        {
+            static hr_mutex_t timeout_mutex;
+            hr_mutex_control_block_t *timeout_control_block;
+
+            TEST_ASSERT_EQ_UINT(HR_OK, hr_mutex_create(&timeout_mutex));
+            timeout_control_block = hr_mutex_control_block(&timeout_mutex);
+            TEST_ASSERT_EQ_UINT(HR_OK,
+                                hr_mutex_lock(&timeout_mutex, HR_NO_WAIT));
+
+            /* Wake High A/B, then let High B wait for this mutex for two ticks. */
+            hr_kernel_tick_from_isr();
+            hr_kernel_select_next_from_pendsv();
+            TEST_ASSERT_EQ_PTR(&high_b, hr_task_current());
+            TEST_ASSERT_EQ_UINT(
+                HR_OK,
+                hr_kernel_block_current_on_wait_list_ex(
+                    &timeout_control_block->waiters,
+                    timeout_control_block,
+                    HR_TASK_WAIT_MUTEX_LOCK,
+                    NULL,
+                    2U,
+                    hr_mutex_wait_cleanup));
+            TEST_ASSERT_EQ_UINT(
+                HR_OK,
+                hr_mutex_recompute_owner_priority(timeout_control_block));
+            TEST_ASSERT_EQ_UINT(1U,
+                                hr_task_get_effective_priority(&low_task));
+
+            hr_kernel_select_next_from_pendsv();
+            TEST_ASSERT_EQ_PTR(&high_a, hr_task_current());
+            TEST_ASSERT_EQ_UINT(HR_OK, hr_task_delay(10U));
+            hr_kernel_select_next_from_pendsv();
+            TEST_ASSERT_EQ_PTR(&low_task, hr_task_current());
+
+            hr_kernel_tick_from_isr();
+            TEST_ASSERT_EQ_UINT(1U,
+                                hr_task_get_effective_priority(&low_task));
+            hr_kernel_tick_from_isr();
+            TEST_ASSERT_EQ_UINT(HR_ERROR_TIMEOUT,
+                                high_b_control_block->wait_result);
+            TEST_ASSERT_EQ_UINT(0U,
+                                hr_mutex_get_waiting_tasks(&timeout_mutex));
+            TEST_ASSERT_EQ_UINT(5U,
+                                hr_task_get_effective_priority(&low_task));
+            TEST_ASSERT_TRUE(hr_mutex_validate_internal(&timeout_mutex));
+        }
     }
 }
 

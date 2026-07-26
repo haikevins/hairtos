@@ -23,8 +23,18 @@ typedef union hr_queue
     max_align_t alignment;
     unsigned char storage[HR_CFG_QUEUE_STORAGE_BYTES];
 } hr_queue_t;
-typedef struct hr_semaphore hr_semaphore_t;
-typedef struct hr_mutex hr_mutex_t;
+
+typedef union hr_semaphore
+{
+    max_align_t alignment;
+    unsigned char storage[HR_CFG_SEMAPHORE_STORAGE_BYTES];
+} hr_semaphore_t;
+
+typedef union hr_mutex
+{
+    max_align_t alignment;
+    unsigned char storage[HR_CFG_MUTEX_STORAGE_BYTES];
+} hr_mutex_t;
 typedef struct hr_timer hr_timer_t;
 typedef struct hr_event_flags hr_event_flags_t;
 

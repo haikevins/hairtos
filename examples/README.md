@@ -24,8 +24,8 @@ Phase 0 has no runtime example because it contains specifications only.
 | `07-task-delay-timeout` | 7 | Target | ✅ Implemented | `make EXAMPLE=07-task-delay-timeout flash` |
 | `08-preemption-round-robin` | 8 | Target | ✅ Implemented | `make EXAMPLE=08-preemption-round-robin flash` |
 | `09-queue-blocking-ipc` | 9 | Target | ✅ Implemented | `make EXAMPLE=09-queue-blocking-ipc flash` |
-| `10-01-semaphore-from-isr` | 10 | Target | ⬜ Placeholder | Not runnable yet |
-| `10-02-mutex-priority-inheritance` | 10 | Target | ⬜ Placeholder | Not runnable yet |
+| `10-01-semaphore-from-isr` | 10 | Target | ✅ Implemented | `make EXAMPLE=10-01-semaphore-from-isr flash` |
+| `10-02-mutex-priority-inheritance` | 10 | Target | ✅ Implemented | `make EXAMPLE=10-02-mutex-priority-inheritance flash` |
 | `11-task-suspend-resume` | 11 | Target | ⬜ Placeholder | Not runnable yet |
 | `12-software-timer` | 12 | Target | ⬜ Placeholder | Not runnable yet |
 | `13-01-event-post` | 13 | Target | ⬜ Placeholder | Not runnable yet |
@@ -74,6 +74,8 @@ make EXAMPLE=06-priority-scheduler flash
 make EXAMPLE=07-task-delay-timeout flash
 make EXAMPLE=08-preemption-round-robin flash
 make EXAMPLE=09-queue-blocking-ipc flash
+make EXAMPLE=10-01-semaphore-from-isr flash
+make EXAMPLE=10-02-mutex-priority-inheritance flash
 ```
 
 A previous build command does not make a later standalone `make flash` remember
@@ -94,6 +96,8 @@ Target:
   07-task-delay-timeout
   08-preemption-round-robin
   09-queue-blocking-ipc
+  10-01-semaphore-from-isr
+  10-02-mutex-priority-inheritance
 ```
 
-All examples from Phase 10 onward are roadmap placeholders.
+All examples from Phase 11 onward are roadmap placeholders.

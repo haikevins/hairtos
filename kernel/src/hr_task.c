@@ -126,8 +126,11 @@ hr_status_t hr_task_create_static(hr_task_t *task,
     control_block->waiting_object = NULL;
     control_block->blocked_wait_list = NULL;
     control_block->wait_buffer = NULL;
+    control_block->wait_cleanup = NULL;
     control_block->wait_result = HR_OK;
     control_block->wait_kind = HR_TASK_WAIT_NONE;
+    hr_list_init(&control_block->owned_mutexes);
+    control_block->owned_mutex_count = 0U;
     control_block->stack_words = stack_words;
     control_block->critical_nesting = 0U;
     control_block->runtime_counter = 0U;

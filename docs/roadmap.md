@@ -277,6 +277,8 @@ higher-priority waiter became READY.
 
 ## Phase 10 — Semaphore, mutex, and priority inheritance
 
+**Status: Complete.**
+
 ### Goals
 
 Add synchronization primitives without hiding ownership rules.

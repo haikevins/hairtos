@@ -12,6 +12,8 @@ void run_task_tests(void);
 void run_kernel_start_tests(void);
 void run_scheduler_policy_tests(void);
 void run_queue_tests(void);
+void run_semaphore_tests(void);
+void run_mutex_tests(void);
 
 int main(void)
 {
@@ -22,6 +24,8 @@ int main(void)
     run_port_stack_tests();
     run_task_tests();
     run_queue_tests();
+    run_semaphore_tests();
+    run_mutex_tests();
     run_kernel_start_tests();
     run_scheduler_policy_tests();
 

@@ -12,7 +12,7 @@
 | Kernel SysTick, delay, periodic delay, timeout wake | 7 | Implemented |
 | General preemption and tick round-robin | 8 | Implemented |
 | Queue and blocking IPC | 9 | Implemented |
-| Semaphore, mutex, priority inheritance | 10 | Not started |
+| Semaphore, mutex, priority inheritance | 10 | Implemented |
 | Task suspend/resume | 11 | Not started |
 | Software timers | 12 | Not started |
 | HairEvent Active Objects and state machines | 13 | Not started |
@@ -23,6 +23,7 @@
 | MPU isolation | Future major version | Deferred |
 | SMP/multi-core | Out of v1.x scope | Deferred |
 
-Phase 9 reuses the deferred PendSV mechanism for queue wake-up and timeout.
-Blocked senders and receivers are ordered by effective priority and FIFO within
-the same priority. Queue ISR operations remain non-blocking.
+Phase 10 reuses the generic object wait/timeout path for semaphores and mutexes.
+Semaphore waiters are priority/FIFO ordered. Mutex ownership is explicit, and
+effective priority is recalculated from all held mutexes so restoration remains
+correct when a task owns more than one contended mutex.

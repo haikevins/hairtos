@@ -16,10 +16,16 @@ typedef enum
     HR_TASK_WAIT_NONE = 0,
     HR_TASK_WAIT_DELAY,
     HR_TASK_WAIT_QUEUE_SEND,
-    HR_TASK_WAIT_QUEUE_RECEIVE
+    HR_TASK_WAIT_QUEUE_RECEIVE,
+    HR_TASK_WAIT_SEMAPHORE_TAKE,
+    HR_TASK_WAIT_MUTEX_LOCK
 } hr_task_wait_kind_t;
 
-typedef struct
+struct hr_task_control_block;
+typedef void (*hr_task_wait_cleanup_t)(struct hr_task_control_block *task,
+                                       hr_status_t result);
+
+typedef struct hr_task_control_block
 {
     hr_stack_t *stack_pointer;
     hr_stack_t *stack_low;
@@ -45,8 +51,12 @@ typedef struct
     void *waiting_object;
     hr_wait_list_t *blocked_wait_list;
     void *wait_buffer;
+    hr_task_wait_cleanup_t wait_cleanup;
     hr_status_t wait_result;
     hr_task_wait_kind_t wait_kind;
+
+    hr_list_t owned_mutexes;
+    size_t owned_mutex_count;
     size_t stack_words;
     uint32_t critical_nesting;
     uint32_t runtime_counter;

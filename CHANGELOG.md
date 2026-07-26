@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added — Phase 10: Semaphore, mutex, and priority inheritance
+
+- Added opaque binary/counting semaphores with blocking take and ISR-safe give.
+- Added mutex ownership validation, direct waiter ownership handoff, and timeout.
+- Added base/effective priority tracking across all mutexes held by a task.
+- Added chained priority inheritance and timeout-driven inheritance restoration.
+- Added EXTI software-interrupt semaphore and priority-inversion target examples.
+- Added Phase 10 host tests, documentation, build integration, and validation.
+
 ### Added — Phase 9: Queue and blocking IPC
 
 - Added opaque statically allocated fixed-size FIFO queues.

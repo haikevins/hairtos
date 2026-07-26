@@ -16,6 +16,13 @@ hr_status_t hr_kernel_block_current_on_wait_list(hr_wait_list_t *wait_list,
                                                  hr_task_wait_kind_t wait_kind,
                                                  void *buffer,
                                                  hr_tick_t timeout);
+hr_status_t hr_kernel_block_current_on_wait_list_ex(
+    hr_wait_list_t *wait_list,
+    void *object,
+    hr_task_wait_kind_t wait_kind,
+    void *buffer,
+    hr_tick_t timeout,
+    hr_task_wait_cleanup_t cleanup);
 hr_status_t hr_kernel_unblock_waiter(hr_wait_node_t *wait_node,
                                      hr_status_t result,
                                      bool *higher_priority_task_woken);
@@ -23,5 +30,9 @@ void hr_kernel_request_yield(void);
 void hr_kernel_tick_from_isr(void);
 void hr_kernel_select_next_from_pendsv(void);
 hr_task_t *hr_kernel_current_task_internal(void);
+hr_status_t hr_kernel_set_task_effective_priority(
+    hr_task_control_block_t *control_block,
+    hr_priority_t priority);
+bool hr_kernel_current_should_preempt(void);
 
 #endif /* HR_KERNEL_INTERNAL_H */

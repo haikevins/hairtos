@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added — Phase 15: Kernel benchmark
+
+- Added Cortex-M3 DWT_CYCCNT cycle measurements and PB0 GPIO timing markers.
+- Added fixed-capacity statistics with min, max, mean, p50, p95, overhead subtraction, and wrap-safe elapsed cycles.
+- Added SVC startup, critical-section, scheduler, queue, semaphore, mutex, timer-command, PendSV round-trip, queue wake/preempt, HairEvent dispatch, and timer-jitter metrics.
+- Deferred USART1 reporting until collection completes and reported build conditions, Flash/RAM use, and stack high-water marks.
+- Added 59/59 host sanitizer coverage, Make/CMake integration, target symbol/disassembly checks, and Phase 15 documentation.
+- Kept benchmark sources out of normal HairRTOS target builds.
+
 ### Added — Phase 14: Memory allocator lab
 
 - Added an isolated fixed-block pool with aligned caller-provided storage.

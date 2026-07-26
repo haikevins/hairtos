@@ -35,7 +35,7 @@ Phase 0 has no runtime example because it contains specifications only.
 | `13-05-publish-subscribe` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-05-publish-subscribe flash` |
 | `13-06-event-driven-demo` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-06-event-driven-demo flash` |
 | `14-memory-allocator-lab` | 14 | Host + Target | ✅ Implemented | `make phase14-lab`; target: `make EXAMPLE=14-memory-allocator-lab flash` |
-| `15-kernel-benchmark` | 15 | Target | ⬜ Placeholder | Not runnable yet |
+| `15-kernel-benchmark` | 15 | Target | ✅ Implemented | `make EXAMPLE=15-kernel-benchmark flash` |
 | `16-diagnostics-stress-stabilization` | 16 | Host + Target | ⬜ Placeholder | Not runnable yet |
 
 ## Host commands
@@ -75,6 +75,18 @@ The native lab prints heap/pool statistics. The target example uses separate
 static arenas and reports first-fit, coalescing, and fragmentation results over
 USART1. The allocator is not used by the kernel.
 
+## Phase 15 benchmark sequence
+
+```bash
+make EXAMPLE=15-kernel-benchmark
+make EXAMPLE=15-kernel-benchmark flash
+make phase15-check
+```
+
+The Phase 15 image runs only on the STM32 target because SVC, PendSV, PSP,
+DWT_CYCCNT, and exception preemption cannot be represented by a native host
+program. Generic statistics logic remains covered by `make host-tests`.
+
 ## Current runnable set
 
 ```text
@@ -102,6 +114,7 @@ Target:
   13-05-publish-subscribe
   13-06-event-driven-demo
   14-memory-allocator-lab
+  15-kernel-benchmark
 ```
 
-Phase 15 onward remains roadmap placeholder content.
+Phase 16 remains roadmap placeholder content.

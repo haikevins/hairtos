@@ -17,6 +17,7 @@ void run_mutex_tests(void);
 void run_timer_tests(void);
 void run_hairevent_tests(void);
 void run_memory_allocator_lab_tests(void);
+void run_benchmark_tests(void);
 
 int main(void)
 {
@@ -28,6 +29,7 @@ int main(void)
     run_task_tests();
     run_hairevent_tests();
     run_memory_allocator_lab_tests();
+    run_benchmark_tests();
     run_queue_tests();
     run_semaphore_tests();
     run_mutex_tests();

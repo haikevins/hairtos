@@ -16,8 +16,8 @@
 | 12 | `12-software-timer` | STM32 target | Complete |
 | 13 | `13-01-event-post` through `13-06-event-driven-demo` | STM32 target | Complete |
 | 14 | `14-memory-allocator-lab` | Host + target | Complete |
-| 15 | `15-kernel-benchmark` | STM32 target | Placeholder |
+| 15 | `15-kernel-benchmark` | STM32 target | Complete |
 | 16 | `16-diagnostics-stress-stabilization` | Host + target | Placeholder |
 
-The Phase 2 host example is not flashable. Use `make phase2-example`. Run the Phase 14 native lab with `make phase14-lab`; its separate STM32 example is flashable.
+The Phase 2 host example is not flashable. Use `make phase2-example`. Run the Phase 14 native lab with `make phase14-lab`; its separate STM32 example is flashable. Phase 15 is target-only and runs with `make EXAMPLE=15-kernel-benchmark flash`.
 Implemented target examples must be selected in the same invocation as flash.

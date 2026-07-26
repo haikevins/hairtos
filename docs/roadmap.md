@@ -9,7 +9,7 @@ validation satisfy its Definition of Done.
 Current completed phase:
 
 ```text
-Phase 13 — HairEvent framework
+Phase 15 — Kernel benchmarks
 ```
 
 ## Phase 0 — Specification and principles
@@ -422,34 +422,42 @@ caller-provided static arenas.
 
 ## Phase 15 — Kernel benchmarks
 
+**Status: Complete in source/build validation. Physical timing values remain a target-hardware activity.**
+
 ### Goals
 
-Measure behavior only after correctness and stress stability are established.
+Measure implemented behavior only after correctness checks pass, and keep all
+benchmark instrumentation out of normal kernel hot paths.
 
-### Metrics
+### Delivered metrics
 
 - SVC first-task startup latency;
-- PendSV context-switch latency;
-- scheduler decision time;
-- SysTick-to-task wake-up latency;
-- queue send-to-receive latency;
-- event post-to-dispatch latency;
-- software-timer jitter;
-- maximum critical-section duration;
-- stack high-water mark;
-- code size and static RAM use.
+- DWT read-pair measurement overhead;
+- critical-section enter/exit cost;
+- scheduler decision time at priority 0 and priority 6;
+- queue, semaphore, mutex, and timer-command paths;
+- two-switch PendSV yield round trip;
+- higher-priority queue wake/preempt round trip;
+- HairEvent post/dispatch round trip;
+- periodic software-timer interval and absolute jitter;
+- Flash, static RAM, and task stack high-water marks.
 
 ### Measurement methods
 
-- DWT cycle counter on Cortex-M3;
-- GPIO pulse and logic analyzer;
-- buffered UART output after measurement;
-- repeated samples with min, max, mean, and selected percentiles.
+- DWT_CYCCNT on Cortex-M3;
+- PB0 active-high pulse for logic-analyzer validation;
+- fixed-capacity static sample arrays;
+- deferred UART output after sample collection;
+- minimum, maximum, mean, p50, and p95 reporting.
 
 ### Definition of Done
 
-Measurement overhead and conditions are documented, and benchmark code is not
-part of the normal kernel hot path.
+- generic statistics and cycle-wrap helpers pass host sanitizer tests;
+- Phase 15 target builds through Make and CMake/Clang;
+- expected benchmark, SVC, PendSV, SysTick, queue, timer, and HairEvent symbols exist;
+- normal examples do not link benchmark sources;
+- measurement conditions and limitations are documented;
+- physical measurements are not fabricated in the archive.
 
 ---
 

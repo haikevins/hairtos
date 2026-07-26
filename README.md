@@ -4,7 +4,7 @@ HairRTOS is an educational fixed-priority RTOS for ARM Cortex-M. The first
 target is the STM32F103C8T6 Blue Pill. HairEvent is the optional static-first
 Event-Driven framework implemented above the kernel.
 
-## Current status: Phase 14 complete
+## Current status: Phase 15 complete
 
 Implemented phases:
 
@@ -23,12 +23,8 @@ Implemented phases:
 - **Phase 12:** static one-shot/periodic software timers with task-context callbacks;
 - **Phase 13:** HairEvent event pools, Active Objects, flat state machines, time events,
   and publish/subscribe;
-- **Phase 14:** isolated fixed-block pool and first-fit heap allocator laboratory.
-
-HairEvent keeps state handlers run-to-completion. ISRs and software-timer
-callbacks only post events. Each Active Object owns a HairRTOS task, event queue,
-state machine, stack, and private context; its handler executes later in that
-Active Object task context.
+- **Phase 14:** isolated fixed-block pool and first-fit heap allocator laboratory;
+- **Phase 15:** DWT/GPIO kernel benchmark with deferred UART reporting.
 
 ## Roadmap
 
@@ -49,30 +45,33 @@ Active Object task context.
 | 12 | Software timer | ✅ Complete |
 | 13 | HairEvent framework | ✅ Complete |
 | 14 | Memory allocator lab | ✅ Complete |
-| 15 | Kernel benchmark | ⬜ Not started |
+| 15 | Kernel benchmark | ✅ Complete |
 | 16 | Diagnostics and stabilization | ⬜ Not started |
 
 Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
 
-## Phase 14 components
+## Phase 15 benchmark
 
-- isolated `labs/memory-allocator/` implementation with no kernel dependency;
-- fixed-block pool with aligned blocks and explicit capacity;
-- first-fit variable-size heap with aligned headers and payloads;
-- block splitting and bidirectional adjacent-block coalescing;
-- invalid-pointer, middle-pointer, double-free, exhaustion, and corruption checks;
-- internal/external fragmentation and usage statistics;
-- deterministic randomized host testing under ASan/UBSan;
-- standalone native demo and STM32 UART demonstration.
+The dedicated target image measures:
 
-The allocator remains an educational lab. HairRTOS and HairEvent continue to use
-caller-provided static storage.
+- SVC startup;
+- DWT read overhead and critical-section cost;
+- fixed-priority scheduler short/long scan positions;
+- queue, semaphore, mutex, and software-timer command paths;
+- two-switch PendSV yield round trip;
+- queue wake/preempt and HairEvent post/dispatch round trips;
+- periodic software-timer interval and absolute jitter;
+- linked Flash/static RAM and task stack high-water marks.
+
+Samples are stored in static RAM. UART output starts only after collection, and
+PB0 provides an external active-high timing marker. No benchmark code is linked
+into normal examples.
 
 ## Examples: host versus target
 
 See `examples/README.md` for the complete matrix.
 
-Run the host demos and tests:
+Host demos and tests:
 
 ```bash
 make phase2-example
@@ -80,11 +79,11 @@ make phase14-lab
 make host-tests
 ```
 
-Build or flash the Phase 14 target example:
+Build or flash the Phase 15 benchmark:
 
 ```bash
-make EXAMPLE=14-memory-allocator-lab
-make EXAMPLE=14-memory-allocator-lab flash
+make EXAMPLE=15-kernel-benchmark
+make EXAMPLE=15-kernel-benchmark flash
 ```
 
 The `EXAMPLE` value must be passed in the same invocation used for `flash`.
@@ -96,15 +95,15 @@ make phase0-check
 make roadmap-check
 make example-layout-check
 make host-tests
-make phase14-check
+make phase15-check
 ```
 
 Read:
 
 - `docs/roadmap.md`
-- `docs/memory-allocator-lab.md`
-- `docs/phase14-memory-allocator-lab.md`
-- `labs/memory-allocator/README.md`
+- `docs/kernel-benchmark.md`
+- `docs/phase15-kernel-benchmark.md`
+- `benchmarks/kernel/README.md`
 - `examples/README.md`
 
-The next implementation phase is **Phase 15 — Kernel benchmark**.
+The next implementation phase is **Phase 16 — Diagnostics and stabilization**.

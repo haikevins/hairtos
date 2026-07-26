@@ -8,27 +8,24 @@
             "cppStandard": "c++17",
             "includePath": [
                 "${workspaceFolder}/config",
-
                 "${workspaceFolder}/soc/stm32f1/include",
                 "${workspaceFolder}/boards/bluepill_f103c8/include",
-
                 "${workspaceFolder}/drivers/gpio/include",
                 "${workspaceFolder}/drivers/uart/include",
                 "${workspaceFolder}/drivers/timer/include",
-
                 "${workspaceFolder}/kernel/include",
                 "${workspaceFolder}/kernel/internal",
-
                 "${workspaceFolder}/arch/arm/cortex-m3/include",
-
                 "${workspaceFolder}/hairevent/include",
                 "${workspaceFolder}/hairevent/internal",
-
-                "${workspaceFolder}/labs/memory-allocator/include"
+                "${workspaceFolder}/labs/memory-allocator/include",
+                "${workspaceFolder}/benchmarks/kernel/include"
             ],
             "defines": [
                 "HR_CFG_ENABLE_SOFTWARE_TIMER=1",
-                "HR_CFG_TIMER_TASK_PRIORITY=1"
+                "HR_CFG_TIMER_TASK_PRIORITY=1",
+                "HR_CFG_PREEMPTION=1",
+                "HR_CFG_TIME_SLICING=0"
             ]
         }
     ],

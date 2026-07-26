@@ -26,6 +26,7 @@ set(HAIRTOS_TARGET_EXAMPLES
     13-05-publish-subscribe
     13-06-event-driven-demo
     14-memory-allocator-lab
+    15-kernel-benchmark
 )
 
 list(FIND HAIRTOS_TARGET_EXAMPLES "${HAIRTOS_EXAMPLE}" HAIRTOS_EXAMPLE_INDEX)
@@ -48,7 +49,8 @@ if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack" OR
    HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance" OR
    HAIRTOS_EXAMPLE STREQUAL "11-task-suspend-resume" OR
    HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
-   HAIRTOS_EXAMPLE MATCHES "^13-")
+   HAIRTOS_EXAMPLE MATCHES "^13-" OR
+   HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark")
     list(APPEND HAIRTOS_KERNEL_SOURCES
         kernel/src/hr_list.c
         kernel/src/hr_scheduler.c
@@ -70,7 +72,8 @@ if(HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
    HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance" OR
    HAIRTOS_EXAMPLE STREQUAL "11-task-suspend-resume" OR
    HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
-   HAIRTOS_EXAMPLE MATCHES "^13-")
+   HAIRTOS_EXAMPLE MATCHES "^13-" OR
+   HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark")
     list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_kernel.c)
     list(APPEND HAIRTOS_PORT_ASM arch/arm/cortex-m3/hr_portasm.S)
 endif()
@@ -108,6 +111,22 @@ if(HAIRTOS_EXAMPLE MATCHES "^13-")
     )
 endif()
 
+if(HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark")
+    list(APPEND HAIRTOS_KERNEL_SOURCES
+        kernel/src/hr_context.c
+        kernel/src/hr_queue.c
+        kernel/src/hr_semaphore.c
+        kernel/src/hr_mutex.c
+        kernel/src/hr_timer.c
+        hairevent/src/he_event.c
+        hairevent/src/he_state_machine.c
+        hairevent/src/he_active.c
+        benchmarks/kernel/src/hr_benchmark_stats.c
+        benchmarks/kernel/src/hr_benchmark_dwt.c
+        benchmarks/kernel/src/hr_benchmark_gpio.c
+    )
+endif()
+
 set(HAIRTOS_LAB_SOURCES "")
 if(HAIRTOS_EXAMPLE STREQUAL "14-memory-allocator-lab")
     list(APPEND HAIRTOS_LAB_SOURCES
@@ -124,7 +143,8 @@ if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
    HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance" OR
    HAIRTOS_EXAMPLE STREQUAL "11-task-suspend-resume" OR
    HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
-   HAIRTOS_EXAMPLE MATCHES "^13-")
+   HAIRTOS_EXAMPLE MATCHES "^13-" OR
+   HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark")
     set(HAIRTOS_TICK_SOURCE kernel/src/hr_time.c)
 endif()
 
@@ -152,7 +172,14 @@ if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout")
     )
 endif()
 
-if(HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR HAIRTOS_EXAMPLE MATCHES "^13-")
+if(HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark")
+    target_compile_definitions(hairtos_baremetal PRIVATE
+        HR_CFG_PREEMPTION=1
+        HR_CFG_TIME_SLICING=0
+        HR_CFG_ENABLE_SOFTWARE_TIMER=1
+        HR_CFG_TIMER_TASK_PRIORITY=1
+    )
+elseif(HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR HAIRTOS_EXAMPLE MATCHES "^13-")
     target_compile_definitions(hairtos_baremetal PRIVATE
         HR_CFG_ENABLE_SOFTWARE_TIMER=1
         HR_CFG_TIMER_TASK_PRIORITY=1
@@ -176,6 +203,7 @@ target_include_directories(hairtos_baremetal PRIVATE
     hairevent/include
     hairevent/internal
     labs/memory-allocator/include
+    benchmarks/kernel/include
 )
 
 target_compile_options(hairtos_baremetal PRIVATE

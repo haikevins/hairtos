@@ -1,89 +1,36 @@
-# Kernel Benchmark Plan
+# Kernel benchmark specification and implementation
 
-## Principle
+Phase 15 implements the original benchmark plan as a dedicated target image.
+Correctness tests remain separate from performance measurements.
 
-Correctness comes before speed. Benchmarks begin in Phase 15 after context
-switching, scheduling, blocking IPC, timers, and Event-Driven dispatch pass
-functional and stress tests.
+## Implemented metrics
 
-## Metrics
-
-### Startup
-
-- SVC entry to first task instruction.
-
-### Context switch
-
-- PendSV entry to next task instruction;
-- same-priority switch;
-- different-priority switch.
-
-### Scheduling
-
-- ready-set decision time with different numbers of priorities and ready tasks.
-
-### Wake-up latency
-
-- SysTick interrupt to delayed task execution;
-- ISR semaphore give to woken task execution;
-- queue send to receiver execution.
-
-### Event framework
-
-- event post to Active Object dispatch;
-- static event versus pooled dynamic event.
-
-### Timers
-
-- requested expiration versus callback start;
-- periodic timer jitter.
-
-### Critical sections
-
-- maximum observed critical-section duration;
-- number of nested entries.
-
-### Resources
-
-- Flash size;
-- static RAM;
-- stack high-water mark;
-- queue and event-pool high-water marks.
+- SVC first-task startup;
+- DWT read-pair measurement overhead;
+- critical enter/exit;
+- fixed-priority scheduler selection at short and long scan positions;
+- queue send/receive;
+- semaphore take/give;
+- uncontended mutex lock/unlock;
+- software timer start/stop;
+- PendSV yield round trip with two context switches;
+- queue wake/preempt round trip;
+- HairEvent post-to-dispatch round trip;
+- periodic timer interval and absolute jitter;
+- Flash, static RAM, and task stack high-water marks.
 
 ## Measurement tools
 
-### DWT_CYCCNT
+- DWT_CYCCNT for cycle-level timestamps;
+- PB0 active-high pulses for external timing validation;
+- deferred USART1 reporting after collection.
 
-Preferred for cycle-level measurements on Cortex-M3.
+## Reporting contract
 
-### GPIO pulse
+Every firmware report identifies CPU clock, compiler, optimization,
+configuration, sample count, measurement overhead, minimum, maximum, mean, p50,
+and p95. Results are not portable guarantees and must be collected again after
+changing compiler flags or kernel configuration.
 
-Toggle a dedicated pin around the measured region and capture it with a logic
-analyzer. This is useful for validating DWT measurements and interrupt latency.
-
-### UART reporting
-
-Store samples in RAM and print only after the run. Printing inside the measured
-region is forbidden.
-
-## Reporting
-
-Each benchmark record must state:
-
-- CPU and clock;
-- compiler and version;
-- optimization level;
-- enabled kernel configuration;
-- interrupt load;
-- sample count;
-- measurement overhead;
-- minimum, maximum, mean, and selected percentiles.
-
-## Anti-goals
-
-Benchmark code must not:
-
-- change scheduler policy;
-- disable safety checks in the normal build without disclosure;
-- include UART output in measured intervals;
-- claim hard real-time guarantees from average latency alone.
+See `docs/kernel-benchmark.md` for the exact measurement boundaries and
+interpretation rules.

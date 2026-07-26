@@ -5,7 +5,20 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
-set(HAIRTOS_EXAMPLE "00-baremetal-blink" CACHE STRING "Example directory name")
+set(HAIRTOS_EXAMPLE "01-baremetal-foundation" CACHE STRING "Example directory name")
+
+set(HAIRTOS_PHASE3_SOURCES "")
+if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack")
+    list(APPEND HAIRTOS_PHASE3_SOURCES
+        kernel/src/hr_list.c
+        kernel/src/hr_scheduler.c
+        kernel/src/hr_wait.c
+        kernel/src/hr_timeout.c
+        kernel/src/hr_task.c
+        arch/arm/cortex-m3/hr_port.c
+        arch/arm/cortex-m3/hr_port_stack.c
+    )
+endif()
 
 add_executable(hairtos_baremetal
     soc/stm32f1/startup_stm32f103.S
@@ -18,6 +31,7 @@ add_executable(hairtos_baremetal
     drivers/uart/src/hr_uart_stm32f1.c
     drivers/timer/src/hr_hw_timer_stm32f1.c
     examples/${HAIRTOS_EXAMPLE}/main.c
+    ${HAIRTOS_PHASE3_SOURCES}
 )
 
 target_include_directories(hairtos_baremetal PRIVATE
@@ -27,6 +41,9 @@ target_include_directories(hairtos_baremetal PRIVATE
     drivers/gpio/include
     drivers/uart/include
     drivers/timer/include
+    kernel/include
+    kernel/internal
+    arch/arm/cortex-m3/include
 )
 
 target_compile_options(hairtos_baremetal PRIVATE

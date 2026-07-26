@@ -8,7 +8,7 @@ self-developed RTOS project.
 | Startup, vector table, linker, memory sections | 1 | Implemented |
 | Clock, GPIO, UART, hardware time base | 1 | Implemented |
 | Intrusive kernel lists | 2 | Specification only |
-| TCB and independent stacks | 3 | Specification only |
+| TCB and independent stacks | 3 | Implemented |
 | SVC first-task startup | 4 | Specification only |
 | PendSV context switching | 5 | Specification only |
 | Priority scheduling | 6 | Specification only |
@@ -30,6 +30,6 @@ self-developed RTOS project.
 
 ## Important interpretation
 
-Phase 1 proves only the hardware and build foundation. Placeholder headers,
+Phase 3 proves static TCB construction and the initial Cortex-M3 stack frame, but no task is started yet. Placeholder headers,
 source files, examples, labs, and benchmark directories do not mean those RTOS
 features have been implemented.

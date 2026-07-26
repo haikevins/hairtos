@@ -19,6 +19,9 @@
 #define HR_CFG_STACK_FILL_BYTE           0xA5U
 #define HR_CFG_STACK_GUARD_VALUE         0xDEADBEEFU
 #define HR_CFG_IDLE_STACK_WORDS          128U
+#define HR_CFG_TASK_STORAGE_BYTES        320U
+#define HR_CFG_MIN_TASK_STACK_WORDS      32U
+#define HR_CFG_TASK_MAGIC                0x48525453UL
 #define HR_CFG_USE_FPU                   0
 #define HR_CFG_USE_MPU                   0
 #define HR_CFG_SINGLE_CORE               1

@@ -16,7 +16,7 @@ required = [
     "drivers/gpio/src/hr_gpio_stm32f1.c",
     "drivers/uart/src/hr_uart_stm32f1.c",
     "drivers/timer/src/hr_hw_timer_stm32f1.c",
-    "examples/00-baremetal-blink/main.c",
+    "examples/01-baremetal-foundation/main.c",
     "tools/openocd/bluepill_stlink.cfg",
     "docs/roadmap.md",
     "docs/task-suspend-resume.md",

@@ -23,6 +23,7 @@ required = [
     "tests/host/test_wait_list.c",
     "tests/host/test_timeout.c",
     "docs/phase2-kernel-data-structures.md",
+    "examples/02-kernel-data-structures-host/main.c",
 ]
 
 missing = [item for item in required if not (ROOT / item).is_file()]
@@ -48,6 +49,7 @@ for source in [ROOT / "kernel/src/hr_list.c",
 host_cc = "clang" if shutil.which("clang") else "cc"
 subprocess.run(["make", "clean"], cwd=ROOT, check=True)
 subprocess.run(["make", f"HOST_CC={host_cc}", "host-tests"], cwd=ROOT, check=True)
+subprocess.run(["make", f"HOST_CC={host_cc}", "phase2-example"], cwd=ROOT, check=True)
 
 if shutil.which("clang") and shutil.which("ld.lld") and shutil.which("llvm-objcopy"):
     subprocess.run(["make", "TOOLCHAIN=clang", "all"], cwd=ROOT, check=True)

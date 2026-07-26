@@ -8,6 +8,14 @@
 #if (HR_CFG_PRIORITY_COUNT == 0U) || (HR_CFG_PRIORITY_COUNT > 32U)
 #error "HR_CFG_PRIORITY_COUNT must be in range 1..32"
 #endif
+#if (HR_CFG_TASK_STORAGE_BYTES < 128U)
+#error "HR_CFG_TASK_STORAGE_BYTES is too small"
+#endif
+
+#if (HR_CFG_MIN_TASK_STACK_WORDS < 18U)
+#error "HR_CFG_MIN_TASK_STACK_WORDS is too small for Cortex-M3"
+#endif
+
 #if (HR_CFG_SINGLE_CORE != 1)
 #error "Phase 0 specifies a single-core kernel"
 #endif

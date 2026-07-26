@@ -58,6 +58,7 @@ before Phase 3 defines the TCB.
 
 ```bash
 make host-tests
+make phase2-example
 make phase2-check
 ```
 

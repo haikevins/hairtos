@@ -1,0 +1,12 @@
+HairRTOS Phase 3 validation
+
+- Phase 0 specification check: PASS
+- Roadmap check: PASS
+- Phase 2 regression tests: PASS
+- Phase 3 host tests with Clang + ASan + UBSan: 22/22 PASS
+- Phase 3 host tests with GCC + ASan + UBSan: 22/22 PASS
+- Phase 1 Cortex-M3 regression build with Clang/LLD: PASS
+- Phase 3 Cortex-M3 target build with Clang/LLD: PASS
+- Phase 1 image: text=2352, data=4, bss=4 bytes
+- Phase 3 example: text=2924, data=4, bss=712 bytes
+- Physical STM32F103 flash/run validation: not performed in this environment

@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+### Documentation
+
+- Added the complete Phase 0-16 roadmap status table to the root README.
+- Added `examples/README.md` with explicit Host, Target, and Host + Target classification.
+- Documented the correct build/flash commands and the Phase 2 host-only restriction.
+
+
+### Fixed — Roadmap-aligned example layout
+
+- Renamed all example directories to match official Phase 1–16 numbering.
+- Split the two Phase 10 examples and six Phase 13 examples with sub-numbers.
+- Added the Phase 2 host demonstration and Phase 16 placeholder.
+- Removed stale Phase 0–2 manifest snapshots that referenced legacy paths.
+- Added `make example-layout-check` to prevent duplicate or legacy numbering.
+
+
+### Added — Phase 3 TCB and initial task stack
+
+- Added opaque aligned static task storage and an internal TCB.
+- Added Cortex-M3 raw initial stack-frame construction.
+- Added task stack fill, guard, and high-watermark diagnostics.
+- Added host tests and the `03-static-task-stack` target example.
+- Added `make phase3-check`.
+
+
 ### Added — Phase 2 kernel data structures
 
 - Circular intrusive doubly linked list with membership validation.

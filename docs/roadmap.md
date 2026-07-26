@@ -70,6 +70,8 @@ user-side activity.
 
 ## Phase 2 — Intrusive lists and kernel data structures
 
+**Status: Complete.**
+
 ### Status
 
 Complete.
@@ -105,6 +107,8 @@ errors and sanitizers enabled.
 ---
 
 ## Phase 3 — TCB and initial task stack
+
+**Status: Complete.**
 
 ### Goals
 

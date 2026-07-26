@@ -7,6 +7,8 @@ void run_list_tests(void);
 void run_ready_set_tests(void);
 void run_wait_list_tests(void);
 void run_timeout_tests(void);
+void run_port_stack_tests(void);
+void run_task_tests(void);
 
 int main(void)
 {
@@ -14,8 +16,10 @@ int main(void)
     run_ready_set_tests();
     run_wait_list_tests();
     run_timeout_tests();
+    run_port_stack_tests();
+    run_task_tests();
 
-    printf("\nHairRTOS Phase 2 host tests: %u run, %u failed\n",
+    printf("\nHairRTOS completed host tests: %u run, %u failed\n",
            g_test_count,
            g_test_failures);
 

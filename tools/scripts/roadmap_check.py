@@ -11,6 +11,7 @@ required = [
     "docs/task-suspend-resume.md",
     "docs/memory-allocator-lab.md",
     "docs/benchmark-plan.md",
+    "docs/example-index.md",
     "labs/memory-allocator/README.md",
     "benchmarks/kernel/README.md",
 ]
@@ -37,10 +38,15 @@ if missing_phases:
     sys.exit(1)
 
 readme = (ROOT / "README.md").read_text(encoding="utf-8")
-if "Current status: Phase 2 complete" not in readme:
+if "Current status: Phase 3 complete" not in readme:
     print("README no longer identifies Phase 2 as the current completed phase")
     sys.exit(1)
 
+subprocess_required = ROOT / "tools/scripts/example_layout_check.py"
+if not subprocess_required.is_file():
+    print("missing example layout checker")
+    sys.exit(1)
+
 print("HairRTOS roadmap check: PASS")
-print("Current implementation phase: Phase 2")
+print("Current implementation phase: Phase 3")
 print("Future roadmap additions: suspend/resume, allocator lab, benchmarks")

@@ -1,9 +1,132 @@
-# Publish/Subscribe
+# `13-05-publish-subscribe` — Publish–Subscribe and Dynamic Event Ownership
 
-A publisher allocates one dynamic telemetry event and broadcasts it to two
-subscribers. haievent retains one reference per successful subscriber and
-returns the block to the pool only after both Active Objects finish dispatch.
+> **Môi trường:** Target — STM32F103C8T6  
+> **Vị trí mã nguồn:** `examples/13-05-publish-subscribe/main.c`  
+> **Mục đích:** Publisher cấp phát một telemetry event từ fixed-block pool và multicast tới logger/display subscribers.
+
+## 1. Mục tiêu học tập
+
+- Khởi tạo event pool không dùng malloc.
+- Đăng ký nhiều subscriber theo signal.
+- Publish cùng một event tới nhiều AO.
+- Theo dõi reference count và trả block về pool sau subscriber cuối.
+
+## 2. Kiến thức trọng tâm
+
+- Dynamic event có header `he_event_t` và payload mở rộng.
+- Publisher chuyển ownership cho bus.
+- Bus retain một reference cho mỗi delivery thành công.
+- Mỗi AO release event sau dispatch.
+
+## 3. Thành phần và cấu hình
+
+### Thành phần chính
+
+| Thành phần | Cấu hình | Vai trò |
+| --- | --- | --- |
+| Phần cứng | STM32F103C8T6 Blue Pill | Chạy firmware target. |
+| Nạp/debug | ST-Link V2 qua SWD | Dùng OpenOCD để flash, verify và reset. |
+| UART | USART1, PA9 TX / PA10 RX, 115200 8-N-1 | Theo dõi log và trạng thái PASS/FAIL. |
+| LED | PC13, active-low | Hiển thị heartbeat hoặc trạng thái quan sát. |
+| Event pool | 6 blocks × 64 bytes | Cấp `telemetry_event_t`. |
+| Pub/sub bus | 64 signals × tối đa 2 subscriber | Routing theo signal. |
+| `logger-AO` | Priority 2, stack 224, queue 4 | Subscriber thứ nhất. |
+| `display-AO` | Priority 3, stack 224, queue 4 | Subscriber thứ hai. |
+| `publisher` | Priority 4, stack 224 | Publish mỗi 500 ticks. |
+
+### Tham số quan trọng
+
+| Tham số | Giá trị |
+| --- | --- |
+| Signal | `SIGNAL_TELEMETRY` |
+| Subscribers | 2 |
+| Publish timeout | `HR_WAIT_FOREVER` |
+
+## 4. Luồng thực thi
+
+1. Publisher xin block từ pool và ghi sequence.
+2. Bus tra subscriber list của signal.
+3. Event được retain và post tới logger/display.
+4. Publisher in delivered=2.
+5. Mỗi AO đọc payload, tăng count và dispatch hoàn tất.
+6. Sau reference cuối, block quay về pool; chu kỳ lặp sau 500 ticks.
+
+## 5. API và mã nguồn liên quan
+
+### Header được dùng
+
+- `haievent/haievent.h`
+
+### API trọng tâm
+
+- `he_event_pool_init()`
+- `he_event_new()`
+- `he_pubsub_init()`
+- `he_pubsub_subscribe()`
+- `he_pubsub_publish()`
+
+### Module được đưa vào build
+
+- `queue`
+- `timer`
+- `haievent`
+
+## 6. Build, run và kiểm tra
+
+Chạy các lệnh từ thư mục gốc chứa `Makefile`:
+
+| Thao tác | Lệnh |
+| --- | --- |
+| Build | `make EXAMPLE=13-05-publish-subscribe build` |
+| Flash và chạy | `make EXAMPLE=13-05-publish-subscribe run` |
+| Kiểm tra | `make EXAMPLE=13-05-publish-subscribe check` |
+| Xóa build riêng | `make EXAMPLE=13-05-publish-subscribe clean` |
+
+Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make EXAMPLE=13-05-publish-subscribe run
+make TOOLCHAIN=clang EXAMPLE=13-05-publish-subscribe build
 ```
+
+## 7. Kết quả mong đợi
+
+Output dưới đây là mẫu. Các giá trị tick, counter, địa chỉ hoặc thống kê có thể thay đổi theo thời điểm chạy và toolchain.
+
+```text
+hairtos publish/subscribe
+publisher: delivered=2 sequence=1
+logger: telemetry sequence=1 count=1
+display: telemetry sequence=1 count=1
+publisher: delivered=2 sequence=2
+```
+
+## 8. Tiêu chí PASS và xử lý lỗi
+
+### Tiêu chí PASS
+
+- Mỗi publish delivered=2.
+- Cả logger và display nhận cùng sequence.
+- Pool không cạn sau nhiều chu kỳ.
+
+### Lỗi thường gặp
+
+- Pool cạn: reference leak hoặc event không release.
+- Delivered < 2: subscribe table/queue post lỗi.
+- Subscriber payload sai: cast/size dynamic event không đúng.
+
+Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
+
+```bash
+make EXAMPLE=13-05-publish-subscribe clean
+make EXAMPLE=13-05-publish-subscribe build
+```
+
+## 9. Giới hạn của example
+
+- Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
+- UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
+- Không minh họa unsubscribe hoặc partial delivery do queue full.
+
+## 10. Liên hệ với lộ trình
+
+Bài tiếp theo: [`13-06-event-driven-demo`](../13-06-event-driven-demo/README.md). Bài tiếp theo tích hợp state machine, time event, dynamic event và pub/sub.

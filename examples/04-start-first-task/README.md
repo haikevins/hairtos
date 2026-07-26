@@ -1,29 +1,97 @@
-# Start First Task Using SVC
+# `04-start-first-task` — Start the First Task with SVC
 
-This target example proves the first real task launch on STM32F103 Cortex-M3.
+> **Môi trường:** Target — STM32F103C8T6  
+> **Vị trí mã nguồn:** `examples/04-start-first-task/main.c`  
+> **Mục đích:** Chuyển từ `main()` chạy bằng MSP sang task đầu tiên chạy ở Thread mode bằng PSP thông qua SVC.
 
-## What it demonstrates
+## 1. Mục tiêu học tập
 
-- `hr_kernel_init()` creates and readies the internal idle task;
-- an application creates and registers one static task;
-- the ready set chooses the application task over idle by priority;
-- `hr_kernel_start()` invokes SVC;
-- `SVC_Handler` restores R4–R11 and the hardware exception frame;
-- Thread mode changes from MSP to PSP;
-- R0 carries the task argument;
-- the task entry runs and `main()` is abandoned.
+- Khởi tạo kernel và idle task.
+- Đăng ký một application task vào ready set.
+- Khởi chạy scheduler bằng `hr_kernel_start()`.
+- Xác nhận argument được restore qua R0 và Thread mode dùng PSP.
 
-This example does **not** implement PendSV switching. The first task remains the only
-application task that can execute.
+## 2. Kiến thức trọng tâm
 
-## Build and flash
+- SVC là exception chuyển quyền từ startup code sang kernel port.
+- MSP dùng cho exception/handler; PSP dùng cho task Thread mode.
+- Exception return `0xFFFFFFFD` khôi phục hardware frame từ PSP.
+- `main()` không được quay lại sau khi kernel start thành công.
+
+## 3. Thành phần và cấu hình
+
+### Thành phần chính
+
+| Thành phần | Cấu hình | Vai trò |
+| --- | --- | --- |
+| Phần cứng | STM32F103C8T6 Blue Pill | Chạy firmware target. |
+| Nạp/debug | ST-Link V2 qua SWD | Dùng OpenOCD để flash, verify và reset. |
+| UART | USART1, PA9 TX / PA10 RX, 115200 8-N-1 | Theo dõi log và trạng thái PASS/FAIL. |
+| LED | PC13, active-low | Hiển thị heartbeat hoặc trạng thái quan sát. |
+| Task `first-task` | Priority 2, stack 128 words | Task application đầu tiên. |
+| Idle task | Priority thấp nhất, tạo nội bộ | Fallback khi không có task application READY. |
+| Argument | Magic `0x50483421` | Kiểm tra R0 được restore đúng. |
+
+### Tham số quan trọng
+
+| Tham số | Giá trị |
+| --- | --- |
+| Context switch nhiều task | Chưa có |
+| Start mechanism | SVC |
+| Thread stack | PSP |
+
+## 4. Luồng thực thi
+
+1. `hr_kernel_init()` tạo scheduler và idle task.
+2. Tạo `first-task`, sau đó `hr_task_start()` đưa task vào READY.
+3. `hr_kernel_start()` chọn task ưu tiên cao nhất và gọi port start.
+4. SVC handler restore R4–R11, nạp PSP và exception-return.
+5. `first_task()` xác nhận current task, PSP và argument.
+6. Task in heartbeat vô hạn; `main()` không tiếp tục.
+
+## 5. API và mã nguồn liên quan
+
+### Header được dùng
+
+- `hairtos/hr_kernel.h`
+- `hairtos/hr_task.h`
+- `hr_port.h`
+
+### API trọng tâm
+
+- `hr_kernel_init()`
+- `hr_task_create_static()`
+- `hr_task_start()`
+- `hr_kernel_start()`
+- `hr_task_current()`
+- `hr_task_get_name()`
+
+### Module được đưa vào build
+
+- `task_kernel`
+- `kernel_runtime`
+- `baremetal_tick`
+
+## 6. Build, run và kiểm tra
+
+Chạy các lệnh từ thư mục gốc chứa `Makefile`:
+
+| Thao tác | Lệnh |
+| --- | --- |
+| Build | `make EXAMPLE=04-start-first-task build` |
+| Flash và chạy | `make EXAMPLE=04-start-first-task run` |
+| Kiểm tra | `make EXAMPLE=04-start-first-task check` |
+| Xóa build riêng | `make EXAMPLE=04-start-first-task clean` |
+
+Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make EXAMPLE=04-start-first-task build
-make EXAMPLE=04-start-first-task run
+make TOOLCHAIN=clang EXAMPLE=04-start-first-task build
 ```
 
-## Expected UART output
+## 7. Kết quả mong đợi
+
+Output dưới đây là mẫu. Các giá trị tick, counter, địa chỉ hoặc thống kê có thể thay đổi theo thời điểm chạy và toolchain.
 
 ```text
 hairtos first-task startup
@@ -36,3 +104,34 @@ Task argument: valid
 First-task startup: PASS
 first-task heartbeat=1
 ```
+
+## 8. Tiêu chí PASS và xử lý lỗi
+
+### Tiêu chí PASS
+
+- Có dòng `First-task startup: PASS`.
+- `Current task` đúng là `first-task`.
+- Không xuất hiện dòng `ERROR: hr_kernel_start returned`.
+
+### Lỗi thường gặp
+
+- PSP không active: kiểm tra CONTROL.SPSEL, SVC handler và EXC_RETURN.
+- Argument sai: kiểm tra layout initial frame và offset R0.
+- `hr_kernel_start()` quay lại: lỗi startup hoặc SVC path.
+
+Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
+
+```bash
+make EXAMPLE=04-start-first-task clean
+make EXAMPLE=04-start-first-task build
+```
+
+## 9. Giới hạn của example
+
+- Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
+- UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
+- Chỉ một application task; chưa save context hiện tại để chuyển sang task khác.
+
+## 10. Liên hệ với lộ trình
+
+Bài tiếp theo: [`05-cooperative-context-switch`](../05-cooperative-context-switch/README.md). Bài tiếp theo bổ sung PendSV để chuyển qua lại giữa hai task.

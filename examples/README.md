@@ -1,68 +1,86 @@
-# hairtos examples
+# Examples của hairtos
 
-Numbered examples follow the development roadmap. They remain educational snapshots. The numbered `16-diagnostics-stress-stabilization` example is the current integrated diagnostics and stress image.
+Thư mục `examples/` chứa các bài thực hành theo thứ tự phát triển từ nền tảng bare-metal đến diagnostics/stress tích hợp. Mỗi thư mục có một `main.c` độc lập và một README dùng chung bố cục 10 mục:
 
-## Unified command layout
+1. Mục tiêu học tập.
+2. Kiến thức trọng tâm.
+3. Thành phần và cấu hình.
+4. Luồng thực thi.
+5. API và mã nguồn liên quan.
+6. Build, run và kiểm tra.
+7. Kết quả mong đợi.
+8. Tiêu chí PASS và xử lý lỗi.
+9. Giới hạn của example.
+10. Liên hệ với lộ trình.
 
-Every selected example uses the same actions:
+## Quy ước môi trường
 
-```bash
-make EXAMPLE=<name> build
-make EXAMPLE=<name> run
-make EXAMPLE=<name> check
-make EXAMPLE=<name> clean
-```
+- **Host:** chạy executable native trên máy phát triển; không flash STM32.
+- **Target:** cross-build và chạy trên STM32F103C8T6 Blue Pill.
+- **Host + Target:** phải chọn `ENVIRONMENT=host` hoặc `ENVIRONMENT=target` khi muốn rõ biến thể.
+- `run` trên host chạy binary; `run` trên target build, flash, verify và reset qua OpenOCD.
 
-- For a **host** example, `run` executes the native binary.
-- For a **target** example, `run` builds, flashes, verifies, and resets the STM32.
-- `ENVIRONMENT=auto` is the default.
-- `14-memory-allocator-lab` and `16-diagnostics-stress-stabilization` support both environments, so specify `ENVIRONMENT=host` for their native variants.
-
-## Example matrix
-
-| Folder | Phase | Environment | Purpose | Run command |
-|---|---:|---|---|---|
-| `01-baremetal-foundation` | 1 | Target | Bare-metal clock, GPIO, UART, and temporary SysTick | `make EXAMPLE=01-baremetal-foundation run` |
-| `02-kernel-data-structures-host` | 2 | Host | Intrusive lists, ready set, and wait-list ordering | `make EXAMPLE=02-kernel-data-structures-host run` |
-| `03-static-task-stack` | 3 | Target | TCB and Cortex-M3 initial task stack | `make EXAMPLE=03-static-task-stack run` |
-| `04-start-first-task` | 4 | Target | Start the first task through SVC | `make EXAMPLE=04-start-first-task run` |
-| `05-cooperative-context-switch` | 5 | Target | PendSV cooperative switching | `make EXAMPLE=05-cooperative-context-switch run` |
-| `06-priority-scheduler` | 6 | Target | Fixed-priority scheduler and equal-priority FIFO | `make EXAMPLE=06-priority-scheduler run` |
-| `07-task-delay-timeout` | 7 | Target | Kernel SysTick, delay, and timeout wake-up | `make EXAMPLE=07-task-delay-timeout run` |
-| `08-preemption-round-robin` | 8 | Target | Preemption and round-robin | `make EXAMPLE=08-preemption-round-robin run` |
-| `09-queue-blocking-ipc` | 9 | Target | Blocking queue and timeout | `make EXAMPLE=09-queue-blocking-ipc run` |
-| `10-01-semaphore-from-isr` | 10 | Target | Semaphore give from ISR | `make EXAMPLE=10-01-semaphore-from-isr run` |
-| `10-02-mutex-priority-inheritance` | 10 | Target | Mutex ownership and priority inheritance | `make EXAMPLE=10-02-mutex-priority-inheritance run` |
-| `11-task-suspend-resume` | 11 | Target | Suspend and resume | `make EXAMPLE=11-task-suspend-resume run` |
-| `12-software-timer` | 12 | Target | Software timer service | `make EXAMPLE=12-software-timer run` |
-| `13-01-event-post` | 13 | Target | Post haievent from ISR | `make EXAMPLE=13-01-event-post run` |
-| `13-02-active-object` | 13 | Target | Active Object dispatch | `make EXAMPLE=13-02-active-object run` |
-| `13-03-flat-state-machine` | 13 | Target | Flat state machine | `make EXAMPLE=13-03-flat-state-machine run` |
-| `13-04-time-event` | 13 | Target | haievent time event | `make EXAMPLE=13-04-time-event run` |
-| `13-05-publish-subscribe` | 13 | Target | Publish/subscribe ownership | `make EXAMPLE=13-05-publish-subscribe run` |
-| `13-06-event-driven-demo` | 13 | Target | Integrated haievent demo | `make EXAMPLE=13-06-event-driven-demo run` |
-| `14-memory-allocator-lab` | 14 | Host + Target | Fixed-block pool and first-fit heap lab | Host: `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run`<br>Target: `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run` |
-| `15-kernel-benchmark` | 15 | Target | DWT/GPIO kernel benchmark | `make EXAMPLE=15-kernel-benchmark run` |
-| `16-diagnostics-stress-stabilization` | 16 | Host + Target | Integrated kernel diagnostics and deterministic scheduler stress | Host: `make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run`<br>Target: `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization run` |
-
-## Common commands
+## Lệnh chung
 
 ```bash
 make help
 make list-examples
+make EXAMPLE=<name> build
+make EXAMPLE=<name> run
+make EXAMPLE=<name> check
+make EXAMPLE=<name> clean
 make host-tests
 make clean-all
 ```
 
-Examples:
+Với example hỗ trợ hai môi trường:
 
 ```bash
-make EXAMPLE=02-kernel-data-structures-host run
-make EXAMPLE=08-preemption-round-robin build
-make EXAMPLE=08-preemption-round-robin run
-make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
+make ENVIRONMENT=host   EXAMPLE=14-memory-allocator-lab run
 make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run
-make EXAMPLE=16-diagnostics-stress-stabilization run
 ```
 
-`check` runs the complete host sanitizer suite and builds the selected host or target example. A successful target build does not prove runtime behavior on physical hardware.
+## Phần cứng chung cho target
+
+| Thành phần | Kết nối / cấu hình |
+|---|---|
+| Board | STM32F103C8T6 Blue Pill |
+| Debugger | ST-Link V2: SWDIO, SWCLK, GND, 3.3 V reference |
+| UART log | USART1 PA9 TX → USB-UART RX, PA10 RX ← USB-UART TX, GND chung |
+| Terminal | 115200 baud, 8 data bits, no parity, 1 stop bit |
+| LED | PC13, active-low |
+
+## Danh sách example
+
+| Example | Môi trường | Nội dung | Lệnh chạy chính |
+| --- | --- | --- | --- |
+| [`01-baremetal-foundation`](01-baremetal-foundation/README.md) | Target | Bare-metal Foundation | `make EXAMPLE=01-baremetal-foundation run` |
+| [`02-kernel-data-structures-host`](02-kernel-data-structures-host/README.md) | Host | Kernel Data Structures — Host Demo | `make EXAMPLE=02-kernel-data-structures-host run` |
+| [`03-static-task-stack`](03-static-task-stack/README.md) | Target | Static TCB and Initial Task Stack | `make EXAMPLE=03-static-task-stack run` |
+| [`04-start-first-task`](04-start-first-task/README.md) | Target | Start the First Task with SVC | `make EXAMPLE=04-start-first-task run` |
+| [`05-cooperative-context-switch`](05-cooperative-context-switch/README.md) | Target | Cooperative Context Switch | `make EXAMPLE=05-cooperative-context-switch run` |
+| [`06-priority-scheduler`](06-priority-scheduler/README.md) | Target | Fixed-Priority Scheduler | `make EXAMPLE=06-priority-scheduler run` |
+| [`07-task-delay-timeout`](07-task-delay-timeout/README.md) | Target | SysTick, Task Delay and Timeout | `make EXAMPLE=07-task-delay-timeout run` |
+| [`08-preemption-round-robin`](08-preemption-round-robin/README.md) | Target | Preemption and Round-Robin | `make EXAMPLE=08-preemption-round-robin run` |
+| [`09-queue-blocking-ipc`](09-queue-blocking-ipc/README.md) | Target | Queue and Blocking IPC | `make EXAMPLE=09-queue-blocking-ipc run` |
+| [`10-01-semaphore-from-isr`](10-01-semaphore-from-isr/README.md) | Target | Semaphore Give from ISR | `make EXAMPLE=10-01-semaphore-from-isr run` |
+| [`10-02-mutex-priority-inheritance`](10-02-mutex-priority-inheritance/README.md) | Target | Mutex and Priority Inheritance | `make EXAMPLE=10-02-mutex-priority-inheritance run` |
+| [`11-task-suspend-resume`](11-task-suspend-resume/README.md) | Target | Task Suspend and Resume | `make EXAMPLE=11-task-suspend-resume run` |
+| [`12-software-timer`](12-software-timer/README.md) | Target | Software Timer Service | `make EXAMPLE=12-software-timer run` |
+| [`13-01-event-post`](13-01-event-post/README.md) | Target | haievent Post from ISR | `make EXAMPLE=13-01-event-post run` |
+| [`13-02-active-object`](13-02-active-object/README.md) | Target | Active Object Ping–Pong | `make EXAMPLE=13-02-active-object run` |
+| [`13-03-flat-state-machine`](13-03-flat-state-machine/README.md) | Target | Flat State Machine | `make EXAMPLE=13-03-flat-state-machine run` |
+| [`13-04-time-event`](13-04-time-event/README.md) | Target | haievent Time Event | `make EXAMPLE=13-04-time-event run` |
+| [`13-05-publish-subscribe`](13-05-publish-subscribe/README.md) | Target | Publish–Subscribe and Dynamic Event Ownership | `make EXAMPLE=13-05-publish-subscribe run` |
+| [`13-06-event-driven-demo`](13-06-event-driven-demo/README.md) | Target | Integrated haievent Demo | `make EXAMPLE=13-06-event-driven-demo run` |
+| [`14-memory-allocator-lab`](14-memory-allocator-lab/README.md) | Host + Target | Memory Allocator Lab | `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run` |
+| [`15-kernel-benchmark`](15-kernel-benchmark/README.md) | Target | Kernel Benchmark | `make EXAMPLE=15-kernel-benchmark run` |
+| [`16-diagnostics-stress-stabilization`](16-diagnostics-stress-stabilization/README.md) | Host + Target | Diagnostics and Stress Stabilization | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization run` |
+
+## Cách đọc kết quả
+
+- Một target **build PASS** chưa chứng minh runtime trên board PASS.
+- Dòng `PASS` trong UART là checkpoint do chính example kiểm tra các invariant chính.
+- Giá trị tick/counter có thể khác đôi chút; thứ tự sự kiện và quan hệ priority mới là tiêu chí quan trọng.
+- Khi có `board_panic()`, giữ lại UART log, map file và fault record trước khi thay đổi code.
+- Host tests với ASan/UBSan bổ sung kiểm tra memory/invariant nhưng không thay thế test timing trên Cortex-M3.

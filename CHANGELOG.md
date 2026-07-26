@@ -4,6 +4,15 @@ All notable changes to `hairtos` are documented in this file.
 
 The format follows Keep a Changelog and the project uses Semantic Versioning.
 
+## [Unreleased]
+
+### Changed
+
+- Rewrote every `examples/*/README.md` in Vietnamese with one consistent
+  ten-section structure covering goals, configuration, execution flow, APIs,
+  build commands, expected output, PASS criteria, troubleshooting and scope.
+- Rebuilt `examples/README.md` as the central host/target example index.
+
 ## [1.0.0-rc1] - 2026-07-27
 
 ### Added

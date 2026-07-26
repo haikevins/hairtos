@@ -1,56 +1,78 @@
 {
     "configurations": [
         {
-            "name": "hairtos STM32F103",
+            "name": "hairtos - All Sources",
             "compilerPath": "/usr/bin/arm-none-eabi-gcc",
-            "intelliSenseMode": "gcc-arm",
+            "compilerArgs": [
+                "-mcpu=cortex-m3",
+                "-mthumb"
+            ],
+            "intelliSenseMode": "linux-gcc-arm",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "compileCommands": "${workspaceFolder}/compile_commands.json",
             "includePath": [
                 "${workspaceFolder}/config",
                 "${workspaceFolder}/kernel/include",
+                "${workspaceFolder}/kernel/internal",
+                "${workspaceFolder}/kernel/src",
                 "${workspaceFolder}/haievent/include",
+                "${workspaceFolder}/haievent/internal",
+                "${workspaceFolder}/haievent/src",
                 "${workspaceFolder}/drivers/include",
+                "${workspaceFolder}/drivers/common",
+                "${workspaceFolder}/drivers/stm32f1",
                 "${workspaceFolder}/arch/arm/cortex-m3/include",
+                "${workspaceFolder}/arch/arm/cortex-m3",
                 "${workspaceFolder}/soc/stm32f1/include",
+                "${workspaceFolder}/soc/stm32f1",
                 "${workspaceFolder}/boards/bluepill_f103c8/include",
+                "${workspaceFolder}/boards/bluepill_f103c8",
                 "${workspaceFolder}/labs/memory-allocator/include",
-                "${workspaceFolder}/benchmarks/kernel/include"
+                "${workspaceFolder}/labs/memory-allocator/src",
+                "${workspaceFolder}/labs/memory-allocator/tests",
+                "${workspaceFolder}/benchmarks/kernel/include",
+                "${workspaceFolder}/benchmarks/kernel/src",
+                "${workspaceFolder}/tests/host",
+                "${workspaceFolder}/tests/mocks",
+                "${workspaceFolder}/tests/stress",
+                "${workspaceFolder}/tests/portability",
+                "${workspaceFolder}/examples"
             ],
             "defines": [
-                "STM32F103xB"
+                "STM32F103xB",
+                "HR_CFG_PREEMPTION=1",
+                "HR_CFG_TIME_SLICING=1",
+                "HR_CFG_ENABLE_SOFTWARE_TIMER=1",
+                "HR_CFG_TIMER_TASK_PRIORITY=1",
+                "HR_CFG_ENABLE_DIAGNOSTICS=1",
+                "HR_CFG_ENABLE_RUNTIME_STATS=1"
             ],
             "browse": {
                 "path": [
                     "${workspaceFolder}/config",
-                    "${workspaceFolder}/kernel/include",
-                    "${workspaceFolder}/kernel/internal",
-                    "${workspaceFolder}/kernel/src",
-                    "${workspaceFolder}/haievent/include",
-                    "${workspaceFolder}/haievent/internal",
-                    "${workspaceFolder}/haievent/src",
-                    "${workspaceFolder}/drivers/include",
-                    "${workspaceFolder}/drivers/common",
-                    "${workspaceFolder}/drivers/stm32f1",
-                    "${workspaceFolder}/arch/arm/cortex-m3/include",
-                    "${workspaceFolder}/arch/arm/cortex-m3",
-                    "${workspaceFolder}/soc/stm32f1/include",
-                    "${workspaceFolder}/soc/stm32f1",
-                    "${workspaceFolder}/boards/bluepill_f103c8/include",
-                    "${workspaceFolder}/boards/bluepill_f103c8",
-                    "${workspaceFolder}/examples",
-                    "${workspaceFolder}/tests",
+                    "${workspaceFolder}/kernel",
+                    "${workspaceFolder}/haievent",
+                    "${workspaceFolder}/drivers",
+                    "${workspaceFolder}/arch",
+                    "${workspaceFolder}/soc",
+                    "${workspaceFolder}/boards",
                     "${workspaceFolder}/labs",
-                    "${workspaceFolder}/benchmarks"
+                    "${workspaceFolder}/benchmarks",
+                    "${workspaceFolder}/tests",
+                    "${workspaceFolder}/examples"
                 ],
-                "limitSymbolsToIncludedHeaders": true
+                "limitSymbolsToIncludedHeaders": false,
+                "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db"
             }
         },
         {
-            "name": "hairtos Host",
-            "compilerPath": "/usr/bin/gcc",
-            "intelliSenseMode": "linux-gcc-x64",
+            "name": "hairtos - Active CMake Build",
+            "compilerPath": "/usr/bin/arm-none-eabi-gcc",
+            "compilerArgs": [
+                "-mcpu=cortex-m3",
+                "-mthumb"
+            ],
+            "intelliSenseMode": "linux-gcc-arm",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "compileCommands": "${workspaceFolder}/compile_commands.json",
@@ -64,24 +86,30 @@
                 "${workspaceFolder}/arch/arm/cortex-m3/include",
                 "${workspaceFolder}/soc/stm32f1/include",
                 "${workspaceFolder}/boards/bluepill_f103c8/include",
+                "${workspaceFolder}/labs/memory-allocator/include",
+                "${workspaceFolder}/benchmarks/kernel/include",
                 "${workspaceFolder}/tests/host",
                 "${workspaceFolder}/tests/mocks",
-                "${workspaceFolder}/tests/stress",
-                "${workspaceFolder}/labs/memory-allocator/include",
-                "${workspaceFolder}/benchmarks/kernel/include"
+                "${workspaceFolder}/tests/stress"
             ],
             "defines": [
-                "HAIRTOS_HOST_TEST=1"
+                "STM32F103xB"
             ],
             "browse": {
                 "path": [
                     "${workspaceFolder}/kernel",
                     "${workspaceFolder}/haievent",
-                    "${workspaceFolder}/tests",
+                    "${workspaceFolder}/drivers",
+                    "${workspaceFolder}/arch",
+                    "${workspaceFolder}/soc",
+                    "${workspaceFolder}/boards",
                     "${workspaceFolder}/labs",
-                    "${workspaceFolder}/benchmarks"
+                    "${workspaceFolder}/benchmarks",
+                    "${workspaceFolder}/tests",
+                    "${workspaceFolder}/examples"
                 ],
-                "limitSymbolsToIncludedHeaders": false
+                "limitSymbolsToIncludedHeaders": false,
+                "databaseFilename": "${workspaceFolder}/.vscode/browse-active.vc.db"
             }
         }
     ],

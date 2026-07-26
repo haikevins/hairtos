@@ -1,0 +1,54 @@
+{
+    "files.associations": {
+        "*.h": "c",
+        "*.inc": "c",
+        "*.def": "c"
+    },
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.intelliSenseCachePath": "${workspaceFolder}/.vscode/ipch",
+    "C_Cpp.default.compilerPath": "/usr/bin/arm-none-eabi-gcc",
+    "C_Cpp.default.compilerArgs": [
+        "-mcpu=cortex-m3",
+        "-mthumb"
+    ],
+    "C_Cpp.default.intelliSenseMode": "linux-gcc-arm",
+    "C_Cpp.default.cStandard": "c11",
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/config",
+        "${workspaceFolder}/kernel/include",
+        "${workspaceFolder}/kernel/internal",
+        "${workspaceFolder}/kernel/src",
+        "${workspaceFolder}/haievent/include",
+        "${workspaceFolder}/haievent/internal",
+        "${workspaceFolder}/haievent/src",
+        "${workspaceFolder}/drivers/include",
+        "${workspaceFolder}/drivers/common",
+        "${workspaceFolder}/drivers/stm32f1",
+        "${workspaceFolder}/arch/arm/cortex-m3/include",
+        "${workspaceFolder}/arch/arm/cortex-m3",
+        "${workspaceFolder}/soc/stm32f1/include",
+        "${workspaceFolder}/soc/stm32f1",
+        "${workspaceFolder}/boards/bluepill_f103c8/include",
+        "${workspaceFolder}/boards/bluepill_f103c8",
+        "${workspaceFolder}/labs/memory-allocator/include",
+        "${workspaceFolder}/labs/memory-allocator/src",
+        "${workspaceFolder}/benchmarks/kernel/include",
+        "${workspaceFolder}/benchmarks/kernel/src",
+        "${workspaceFolder}/tests/host",
+        "${workspaceFolder}/tests/mocks",
+        "${workspaceFolder}/tests/stress",
+        "${workspaceFolder}/tests/portability",
+        "${workspaceFolder}/examples"
+    ],
+    "C_Cpp.default.defines": [
+        "STM32F103xB",
+        "HR_CFG_PREEMPTION=1",
+        "HR_CFG_TIME_SLICING=1",
+        "HR_CFG_ENABLE_SOFTWARE_TIMER=1",
+        "HR_CFG_TIMER_TASK_PRIORITY=1",
+        "HR_CFG_ENABLE_DIAGNOSTICS=1",
+        "HR_CFG_ENABLE_RUNTIME_STATS=1"
+    ]
+}

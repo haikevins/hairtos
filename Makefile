@@ -50,9 +50,25 @@ HOST_TEST_CONFIGURE = cmake -S . -B $(HOST_TEST_DIR) -G Ninja \
     -DHAIRTOS_EXAMPLE=16-diagnostics-stress-stabilization \
     -DHAIRTOS_BUILD_TESTS=ON
 
+INTELLISENSE_DIR := $(BUILD_ROOT)/intellisense/$(RESOLVED_ENVIRONMENT)/$(EXAMPLE)
+
+ifeq ($(RESOLVED_ENVIRONMENT),host)
+INTELLISENSE_CONFIGURE = cmake -S . -B $(INTELLISENSE_DIR) -G Ninja \
+    -DHAIRTOS_ENVIRONMENT=host \
+    -DHAIRTOS_EXAMPLE=$(EXAMPLE) \
+    -DHAIRTOS_BUILD_TESTS=OFF \
+    -DHAIRTOS_EXTRA_C_FLAGS="$(EXTRA_DEFINES)"
+else
+INTELLISENSE_CONFIGURE = cmake -S . -B $(INTELLISENSE_DIR) -G Ninja \
+    -DCMAKE_TOOLCHAIN_FILE=$(TOOLCHAIN_FILE) \
+    -DHAIRTOS_ENVIRONMENT=target \
+    -DHAIRTOS_EXAMPLE=$(EXAMPLE) \
+    -DHAIRTOS_EXTRA_C_FLAGS="$(EXTRA_DEFINES)"
+endif
+
 .PHONY: all build run check clean clean-all help list-examples tree \
         target-build target-run host-build host-run host-tests \
-        size flash erase debug-server gdb disasm
+        size flash erase debug-server gdb disasm intellisense
 
 all: build
 
@@ -91,6 +107,12 @@ host-tests:
 	@$(HOST_TEST_CONFIGURE)
 	@cmake --build $(HOST_TEST_DIR) --target hairtos_tests
 	@ctest --test-dir $(HOST_TEST_DIR) --output-on-failure
+
+intellisense:
+	@$(INTELLISENSE_CONFIGURE)
+	@ln -sfn $(abspath $(INTELLISENSE_DIR))/compile_commands.json compile_commands.json
+	@echo "IntelliSense database: compile_commands.json"
+	@echo "VS Code configuration: hairtos - Active CMake Build"
 
 size:
 	@$(TARGET_CONFIGURE)
@@ -137,4 +159,5 @@ help:
 	@echo "  make EXAMPLE=<name> run   [ENVIRONMENT=host|target]"
 	@echo "  make EXAMPLE=<name> check [ENVIRONMENT=host|target]"
 	@echo "  make EXAMPLE=<name> clean [ENVIRONMENT=host|target]"
+	@echo "  make EXAMPLE=<name> intellisense [ENVIRONMENT=host|target]"
 	@echo "  make host-tests | list-examples | clean-all"

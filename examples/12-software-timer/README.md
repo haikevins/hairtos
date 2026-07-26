@@ -1,24 +1,137 @@
-# Software Timer
+# `12-software-timer` — Software Timer Service
 
-**Environment:** STM32F103C8T6 target
+> **Môi trường:** Target — STM32F103C8T6  
+> **Vị trí mã nguồn:** `examples/12-software-timer/main.c`  
+> **Mục đích:** One-shot và periodic software timer được quản lý bằng kernel tick; callback chạy trong timer-service task context.
 
-This example demonstrates:
+## 1. Mục tiêu học tập
 
-- one-shot and auto-reload software timers;
-- a dedicated timer-service task;
-- callback execution in task context instead of SysTick ISR context;
-- timer reset, stop, and period change;
-- callback wake-up through a kernel semaphore;
-- deadline ordering driven by the 1 kHz kernel tick.
+- Tạo timer tĩnh.
+- Start, reset, change period và stop timer.
+- Phân biệt timer expiration trong SysTick với callback execution trong task.
+- Kiểm tra one-shot chỉ callback một lần và periodic tự rearm.
 
-Build:
+## 2. Kiến thức trọng tâm
+
+- Ordered timer deadline list.
+- Pending callback list và timer-service semaphore.
+- Callback không chạy trong ISR.
+- Periodic rearm từ deadline để hạn chế drift.
+
+## 3. Thành phần và cấu hình
+
+### Thành phần chính
+
+| Thành phần | Cấu hình | Vai trò |
+| --- | --- | --- |
+| Phần cứng | STM32F103C8T6 Blue Pill | Chạy firmware target. |
+| Nạp/debug | ST-Link V2 qua SWD | Dùng OpenOCD để flash, verify và reset. |
+| UART | USART1, PA9 TX / PA10 RX, 115200 8-N-1 | Theo dõi log và trạng thái PASS/FAIL. |
+| LED | PC13, active-low | Hiển thị heartbeat hoặc trạng thái quan sát. |
+| `timer-control` | Priority 3, stack 224 words | Điều khiển start/reset/stop. |
+| `periodic` | 250 ticks → 500 ticks, auto reload | Toggle LED và đếm callback. |
+| `one-shot` | 1000 ticks, one shot | Được reset tại tick 400 nên deadline thành 1400. |
+| Timer service | Priority 1 theo build config | Chạy callback trong task context. |
+
+### Tham số quan trọng
+
+| Tham số | Giá trị |
+| --- | --- |
+| Software timer | Bật |
+| Periodic initial | 250 ticks |
+| One-shot | 1000 ticks |
+| One-shot argument | 120012 |
+
+## 4. Luồng thực thi
+
+1. Control task start cả hai timer.
+2. Periodic callback chạy ở các deadline 250, 500, 750, 1000.
+3. Control reset one-shot ở tick 400, deadline mới khoảng 1400.
+4. Callback periodic lần 4 đổi period thành 500 ticks.
+5. Sau thời gian quan sát, control xác nhận callback count.
+6. Stop periodic và in PASS.
+
+## 5. API và mã nguồn liên quan
+
+### Header được dùng
+
+- `hairtos/hr_timer.h`
+- `hairtos/hr_time.h`
+
+### API trọng tâm
+
+- `hr_timer_create_static()`
+- `hr_timer_start()`
+- `hr_timer_reset()`
+- `hr_timer_change_period()`
+- `hr_timer_stop()`
+
+### Module được đưa vào build
+
+- `task_kernel`
+- `kernel_runtime`
+- `kernel_time`
+- `semaphore`
+- `timer`
+
+## 6. Build, run và kiểm tra
+
+Chạy các lệnh từ thư mục gốc chứa `Makefile`:
+
+| Thao tác | Lệnh |
+| --- | --- |
+| Build | `make EXAMPLE=12-software-timer build` |
+| Flash và chạy | `make EXAMPLE=12-software-timer run` |
+| Kiểm tra | `make EXAMPLE=12-software-timer check` |
+| Xóa build riêng | `make EXAMPLE=12-software-timer clean` |
+
+Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
+make TOOLCHAIN=clang EXAMPLE=12-software-timer build
+```
+
+## 7. Kết quả mong đợi
+
+Output dưới đây là mẫu. Các giá trị tick, counter, địa chỉ hoặc thống kê có thể thay đổi theo thời điểm chạy và toolchain.
+
+```text
+hairtos software timer
+control: start periodic 250-tick and one-shot 1000-tick timers
+timer-service: periodic callback=1 tick=250
+control: reset one-shot; deadline moves 1000 -> 1400 ticks
+timer-service: change periodic period 250 -> 500 ticks
+timer-service: one-shot callback tick=1400 argument=120012
+Software timer service: PASS
+```
+
+## 8. Tiêu chí PASS và xử lý lỗi
+
+### Tiêu chí PASS
+
+- One-shot callback đúng một lần.
+- Periodic callback ít nhất sáu lần và period đổi sau callback 4.
+- Callback chạy khi current context là timer-service task, không phải SysTick.
+
+### Lỗi thường gặp
+
+- Callback không chạy: kiểm tra timer tick, pending list và service semaphore.
+- One-shot chạy hai lần: auto_reload/state sai.
+- Reset không dời deadline: kiểm tra remove/reinsert timer node.
+
+Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
+
+```bash
+make EXAMPLE=12-software-timer clean
 make EXAMPLE=12-software-timer build
 ```
 
-Flash:
+## 9. Giới hạn của example
 
-```bash
-make EXAMPLE=12-software-timer run
-```
+- Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
+- UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
+- Không có timer command API từ ISR trong example.
+
+## 10. Liên hệ với lộ trình
+
+Bài tiếp theo: [`13-01-event-post`](../13-01-event-post/README.md). Nhóm bài tiếp theo xây haievent trên queue, task và software timer.

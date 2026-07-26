@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added — Phase 12: Software timer service
+
+- Added opaque static one-shot and auto-reload software timers.
+- Added ordered timer deadlines, pending-expiration accounting, and FIFO ordering.
+- Added lazy static timer-service task initialization and semaphore wake-up.
+- Added start, stop, reset, and period-change task-context APIs.
+- Kept callbacks outside SysTick and outside kernel critical sections.
+- Added Phase 12 host tests, STM32 example, documentation, and validation.
+
 ### Added — Phase 11: Task suspend and resume
 
 - Added `hr_task_suspend()` and `hr_task_resume()`.

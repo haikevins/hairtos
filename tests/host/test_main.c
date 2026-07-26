@@ -14,6 +14,7 @@ void run_scheduler_policy_tests(void);
 void run_queue_tests(void);
 void run_semaphore_tests(void);
 void run_mutex_tests(void);
+void run_timer_tests(void);
 
 int main(void)
 {
@@ -27,6 +28,7 @@ int main(void)
     run_semaphore_tests();
     run_mutex_tests();
     run_kernel_start_tests();
+    run_timer_tests();
     run_scheduler_policy_tests();
 
     printf("\nHairRTOS completed host tests: %u run, %u failed\n",

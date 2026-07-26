@@ -1,83 +1,36 @@
 {
   "project": "HairRTOS",
-  "completed_phase": "Phase 11 — Suspend/resume",
+  "completed_phase": "Phase 12 — Software timer service",
   "target": "STM32F103C8T6 Blue Pill / ARM Cortex-M3",
-  "phase11_features": [
-    "suspend READY task",
-    "self-suspend RUNNING task",
-    "suspend BLOCKED task while preserving wait and timeout state",
-    "deferred readiness when a suspended wait completes",
-    "resume-triggered strict higher-priority preemption",
-    "idle-task, duplicate-state, and ISR-context protection"
-  ],
-  "implemented_examples": [
-    {
-      "name": "01-baremetal-foundation",
-      "environment": "target"
-    },
-    {
-      "name": "02-kernel-data-structures-host",
-      "environment": "host"
-    },
-    {
-      "name": "03-static-task-stack",
-      "environment": "target"
-    },
-    {
-      "name": "04-start-first-task",
-      "environment": "target"
-    },
-    {
-      "name": "05-cooperative-context-switch",
-      "environment": "target"
-    },
-    {
-      "name": "06-priority-scheduler",
-      "environment": "target"
-    },
-    {
-      "name": "07-task-delay-timeout",
-      "environment": "target"
-    },
-    {
-      "name": "08-preemption-round-robin",
-      "environment": "target"
-    },
-    {
-      "name": "09-queue-blocking-ipc",
-      "environment": "target"
-    },
-    {
-      "name": "10-01-semaphore-from-isr",
-      "environment": "target"
-    },
-    {
-      "name": "10-02-mutex-priority-inheritance",
-      "environment": "target"
-    },
-    {
-      "name": "11-task-suspend-resume",
-      "environment": "target"
-    }
+  "phase12_features": [
+    "opaque static one-shot and auto-reload timers",
+    "ordered expiration tracking with tick-wrap support",
+    "lazy static timer-service task",
+    "binary semaphore wake-up from SysTick",
+    "pending-expiration counting and equal-deadline FIFO",
+    "start, stop, reset, and period change",
+    "callbacks in task context outside critical sections"
   ],
   "validation": {
-    "host_tests": "39/39 PASS with Clang and GCC ASan/UBSan",
-    "target_regression": "Phase 1-10 PASS",
-    "phase11_target": "PASS with Clang/LLD and CMake/Ninja",
+    "host_clang": "41/41 PASS with ASan/UBSan",
+    "host_gcc": "41/41 PASS with ASan/UBSan",
+    "target_clang_lld": "Phase 1-12 PASS",
+    "cmake_ninja_clang_lld": "PASS",
+    "gnu_arm_target": "not run; compiler unavailable",
     "physical_hardware": "not performed",
     "image_size_bytes": {
-      "text": 9112,
-      "data": 4,
-      "bss": 5024
+      "text": 10488,
+      "data": 8,
+      "bss": 3984
     }
   },
-  "file_count": 246,
+  "file_count": 250,
   "files": [
     "CHANGELOG.md",
     "CMakeLists.txt",
     "LICENSE",
     "Makefile",
-    "PHASE11_VALIDATION.txt",
+    "PHASE12_VALIDATION.txt",
     "README.md",
     "adapters/button_event/hr_button_event.c",
     "adapters/button_event/hr_button_event.h",
@@ -127,6 +80,7 @@
     "docs/phase1-validation.md",
     "docs/phase10-semaphore-mutex.md",
     "docs/phase11-suspend-resume.md",
+    "docs/phase12-software-timer.md",
     "docs/phase2-kernel-data-structures.md",
     "docs/phase3-tcb-initial-stack.md",
     "docs/phase4-start-first-task-svc.md",
@@ -139,6 +93,7 @@
     "docs/requirements-coverage.md",
     "docs/roadmap.md",
     "docs/scheduler.md",
+    "docs/software-timer.md",
     "docs/state-machine.md",
     "docs/synchronization.md",
     "docs/task-model.md",
@@ -236,6 +191,7 @@
     "kernel/internal/hr_semaphore_internal.h",
     "kernel/internal/hr_task_internal.h",
     "kernel/internal/hr_timeout_internal.h",
+    "kernel/internal/hr_timer_internal.h",
     "kernel/internal/hr_wait_internal.h",
     "kernel/src/hr_diagnostics.c",
     "kernel/src/hr_event_flags.c",
@@ -281,6 +237,7 @@
     "tests/host/test_support.h",
     "tests/host/test_task.c",
     "tests/host/test_timeout.c",
+    "tests/host/test_timer.c",
     "tests/host/test_wait_list.c",
     "tests/mocks/mock_clock.c",
     "tests/mocks/mock_port.c",
@@ -299,12 +256,12 @@
     "tools/gdb/hairtos.gdb",
     "tools/gdb/pretty_printers.py",
     "tools/openocd/bluepill_stlink.cfg",
-    "tools/scripts/__pycache__/phase10_check.cpython-313.pyc",
     "tools/scripts/build_all.sh",
     "tools/scripts/example_layout_check.py",
     "tools/scripts/phase0_check.py",
     "tools/scripts/phase10_check.py",
     "tools/scripts/phase11_check.py",
+    "tools/scripts/phase12_check.py",
     "tools/scripts/phase1_check.py",
     "tools/scripts/phase2_check.py",
     "tools/scripts/phase3_check.py",
@@ -318,6 +275,6 @@
     "tools/scripts/run_format_check.sh",
     "tools/scripts/run_host_tests.sh",
     "tools/scripts/size_report.sh",
-    "PHASE11_MANIFEST.json"
+    "PHASE12_MANIFEST.json"
   ]
 }

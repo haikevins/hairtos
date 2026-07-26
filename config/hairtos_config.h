@@ -18,7 +18,9 @@
 #define HR_CFG_ENABLE_QUEUE              1
 #define HR_CFG_ENABLE_SEMAPHORE          1
 #define HR_CFG_ENABLE_MUTEX              1
+#ifndef HR_CFG_ENABLE_SOFTWARE_TIMER
 #define HR_CFG_ENABLE_SOFTWARE_TIMER     1
+#endif
 #define HR_CFG_ENABLE_EVENT_FLAGS        0
 #define HR_CFG_ENABLE_ASSERT             1
 #define HR_CFG_ENABLE_STACK_CHECK        1
@@ -26,13 +28,19 @@
 #define HR_CFG_STACK_FILL_BYTE           0xA5U
 #define HR_CFG_STACK_GUARD_VALUE         0xDEADBEEFU
 #define HR_CFG_IDLE_STACK_WORDS          128U
+#ifndef HR_CFG_TIMER_TASK_PRIORITY
+#define HR_CFG_TIMER_TASK_PRIORITY       (HR_CFG_IDLE_PRIORITY - 1U)
+#endif
+#define HR_CFG_TIMER_TASK_STACK_WORDS    160U
 #define HR_CFG_TASK_STORAGE_BYTES        384U
 #define HR_CFG_QUEUE_STORAGE_BYTES       192U
 #define HR_CFG_SEMAPHORE_STORAGE_BYTES   96U
 #define HR_CFG_MUTEX_STORAGE_BYTES       160U
+#define HR_CFG_TIMER_STORAGE_BYTES       160U
 #define HR_CFG_QUEUE_MAGIC               0x48525155UL
 #define HR_CFG_SEMAPHORE_MAGIC           0x48525345UL
 #define HR_CFG_MUTEX_MAGIC               0x48524D58UL
+#define HR_CFG_TIMER_MAGIC               0x4852544DUL
 #define HR_CFG_MIN_TASK_STACK_WORDS      32U
 #define HR_CFG_TASK_MAGIC                0x48525453UL
 #define HR_CFG_USE_FPU                   0

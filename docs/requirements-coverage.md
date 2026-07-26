@@ -13,8 +13,8 @@
 | General preemption and tick round-robin | 8 | Implemented |
 | Queue and blocking IPC | 9 | Implemented |
 | Semaphore, mutex, priority inheritance | 10 | Implemented |
-| Task suspend/resume | 11 | Not started |
-| Software timers | 12 | Not started |
+| Task suspend/resume | 11 | Implemented |
+| Software timers | 12 | Implemented |
 | HairEvent Active Objects and state machines | 13 | Not started |
 | First-fit allocator lab | 14 | Not started |
 | Kernel latency benchmarks | 15 | Not started |
@@ -28,4 +28,6 @@ Semaphore waiters are priority/FIFO ordered. Mutex ownership is explicit, and
 effective priority is recalculated from all held mutexes so restoration remains
 correct when a task owns more than one contended mutex.
 
-Phase 11 adds administrative suspension while preserving ready/wait/timeout invariants.
+Phase 11 adds administrative suspension while preserving ready/wait/timeout
+invariants. Phase 12 adds static one-shot and periodic timers whose callbacks run
+in a dedicated service task rather than SysTick context.

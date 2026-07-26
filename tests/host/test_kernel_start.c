@@ -9,6 +9,7 @@
 #include "hr_semaphore_internal.h"
 #include "hr_mutex_internal.h"
 #include "hr_task_internal.h"
+#include "hr_timer_internal.h"
 #include "test_support.h"
 
 extern unsigned int g_mock_context_switch_requests;
@@ -38,6 +39,8 @@ static void test_kernel_preemption_round_robin_and_delay_race(void)
 
     TEST_ASSERT_EQ_UINT(HR_OK, hr_kernel_init());
     TEST_ASSERT_EQ_UINT(1U, hr_kernel_get_task_count());
+    TEST_ASSERT_EQ_UINT(HR_OK, hr_timer_system_ensure_initialized());
+    TEST_ASSERT_EQ_UINT(2U, hr_kernel_get_task_count());
 
     TEST_ASSERT_EQ_UINT(HR_OK,
                         hr_task_create_static(&low_task,
@@ -79,7 +82,7 @@ static void test_kernel_preemption_round_robin_and_delay_race(void)
     TEST_ASSERT_EQ_UINT(HR_OK, hr_task_start(&low_task));
     TEST_ASSERT_EQ_UINT(HR_OK, hr_task_start(&high_a));
     TEST_ASSERT_EQ_UINT(HR_OK, hr_task_start(&high_b));
-    TEST_ASSERT_EQ_UINT(4U, hr_kernel_get_task_count());
+    TEST_ASSERT_EQ_UINT(5U, hr_kernel_get_task_count());
 
     TEST_ASSERT_EQ_UINT(HR_OK, hr_kernel_prepare_start());
     TEST_ASSERT_EQ_PTR(&high_a, hr_task_current());

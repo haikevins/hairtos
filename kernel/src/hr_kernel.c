@@ -10,6 +10,9 @@
 #include "hr_scheduler_internal.h"
 #include "hr_task_internal.h"
 #include "hr_timeout_internal.h"
+#if (HR_CFG_ENABLE_SOFTWARE_TIMER == 1)
+#include "hr_timer_internal.h"
+#endif
 
 #define HR_SWITCH_REASON_NONE        UINT32_C(0)
 #define HR_SWITCH_REASON_YIELD       (UINT32_C(1) << 0U)
@@ -76,6 +79,9 @@ hr_status_t hr_kernel_init(void)
     g_task_count = 0U;
     g_kernel_tick = 0U;
     g_switch_reasons = HR_SWITCH_REASON_NONE;
+#if (HR_CFG_ENABLE_SOFTWARE_TIMER == 1)
+    hr_timer_system_reset();
+#endif
     g_kernel_state = HR_KERNEL_STATE_INITIALIZED;
 
     status = hr_task_create_static(&g_idle_task,
@@ -818,6 +824,9 @@ void hr_kernel_tick_from_isr(void)
     hr_list_node_t *node;
     hr_task_control_block_t *current_control_block;
     bool switch_required = false;
+#if (HR_CFG_ENABLE_SOFTWARE_TIMER == 1)
+    bool timer_switch_required = false;
+#endif
 
     if (g_kernel_state != HR_KERNEL_STATE_RUNNING)
     {
@@ -901,6 +910,11 @@ void hr_kernel_tick_from_isr(void)
 
         node = hr_list_pop_front(&expired_nodes);
     }
+
+#if (HR_CFG_ENABLE_SOFTWARE_TIMER == 1)
+    hr_timer_tick_from_isr(g_kernel_tick, &timer_switch_required);
+    switch_required = timer_switch_required;
+#endif
 
     if ((g_current_task == NULL) || !hr_task_is_valid(g_current_task))
     {

@@ -9,7 +9,7 @@ validation satisfy its Definition of Done.
 Current completed phase:
 
 ```text
-Phase 8 — Preemption and round-robin
+Phase 12 — Software timer service
 ```
 
 ## Phase 0 — Specification and principles
@@ -300,6 +300,8 @@ A priority-inversion scenario is reproduced and then corrected by inheritance.
 
 ## Phase 11 — Task suspend/resume
 
+**Status: Complete.**
+
 ### Goals
 
 Add an explicit administrative state separate from waiting on an object.
@@ -328,6 +330,8 @@ Suspend/resume works for READY, RUNNING, and BLOCKED tasks according to
 
 ## Phase 12 — Software timer service
 
+**Status: Complete.**
+
 ### Goals
 
 Provide one-shot and periodic timers without executing application callbacks in
@@ -337,14 +341,15 @@ SysTick context.
 
 - timer object;
 - ordered expiration structure;
-- timer command queue;
+- pending-expiration list and timer-service wake semaphore;
+- serialized task-context timer control operations;
 - timer service task;
 - start, stop, reset, and period-change operations.
 
 ### Definition of Done
 
-Callback jitter is measured and callbacks never execute while kernel structures
-are locked.
+Callbacks never execute in SysTick context or while kernel structures are locked.
+Callback jitter measurement remains part of physical target validation.
 
 ---
 

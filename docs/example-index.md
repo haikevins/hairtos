@@ -12,8 +12,8 @@
 | 8 | `08-preemption-round-robin` | STM32 target | Complete |
 | 9 | `09-queue-blocking-ipc` | STM32 target | Complete |
 | 10 | `10-01-semaphore-from-isr`, `10-02-mutex-priority-inheritance` | STM32 target | Complete |
-| 11 | `11-task-suspend-resume` | STM32 target | Implemented |
-| 12 | `12-software-timer` | STM32 target | Placeholder |
+| 11 | `11-task-suspend-resume` | STM32 target | Complete |
+| 12 | `12-software-timer` | STM32 target | Complete |
 | 13 | `13-*` | STM32 target | Placeholder |
 | 14 | `14-memory-allocator-lab` | Host + target | Placeholder |
 | 15 | `15-kernel-benchmark` | STM32 target | Placeholder |

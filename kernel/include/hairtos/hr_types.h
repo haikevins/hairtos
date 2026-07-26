@@ -35,7 +35,11 @@ typedef union hr_mutex
     max_align_t alignment;
     unsigned char storage[HR_CFG_MUTEX_STORAGE_BYTES];
 } hr_mutex_t;
-typedef struct hr_timer hr_timer_t;
+typedef union hr_timer
+{
+    max_align_t alignment;
+    unsigned char storage[HR_CFG_TIMER_STORAGE_BYTES];
+} hr_timer_t;
 typedef struct hr_event_flags hr_event_flags_t;
 
 typedef void (*hr_task_entry_t)(void *argument);

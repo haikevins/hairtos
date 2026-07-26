@@ -4,7 +4,7 @@ HairRTOS is an educational fixed-priority RTOS for ARM Cortex-M. The first
 target is the STM32F103C8T6 Blue Pill. HairEvent is an optional Event-Driven
 framework above the kernel.
 
-## Current status: Phase 11 complete
+## Current status: Phase 12 complete
 
 Implemented phases:
 
@@ -19,11 +19,12 @@ Implemented phases:
 - **Phase 8:** strict higher-priority preemption and tick-driven round-robin;
 - **Phase 9:** static FIFO queues with blocking, timeout, direct handoff, and ISR API;
 - **Phase 10:** semaphores, mutex ownership, and priority inheritance;
-- **Phase 11:** administrative suspend/resume for READY, RUNNING, and BLOCKED tasks.
+- **Phase 11:** administrative suspend/resume for READY, RUNNING, and BLOCKED tasks;
+- **Phase 12:** static one-shot/periodic software timers with task-context callbacks.
 
-Phase 11 keeps suspension separate from object waiting. A suspended task never
-enters the ready queue because a timeout or synchronization event completed; an
-explicit `hr_task_resume()` is required.
+Phase 12 keeps SysTick bounded: the interrupt only advances deadlines and wakes
+the dedicated timer-service task. Application callbacks run later in task
+context, outside kernel critical sections.
 
 ## Roadmap
 
@@ -41,7 +42,7 @@ explicit `hr_task_resume()` is required.
 | 9 | Queue and blocking | ✅ Complete |
 | 10 | Semaphore and mutex | ✅ Complete |
 | 11 | Suspend/resume | ✅ Complete |
-| 12 | Software timer | ⬜ Not started |
+| 12 | Software timer | ✅ Complete |
 | 13 | HairEvent framework | ⬜ Not started |
 | 14 | Memory allocator lab | ⬜ Not started |
 | 15 | Kernel benchmark | ⬜ Not started |
@@ -49,15 +50,14 @@ explicit `hr_task_resume()` is required.
 
 Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
 
-## Phase 11 components
+## Phase 12 components
 
-- `hr_task_suspend()` and `hr_task_resume()` task-context APIs;
-- self-suspend of the currently running task through PendSV;
-- removal and reinsertion of READY tasks from the priority ready queues;
-- preservation of BLOCKED task wait-list and timeout state;
-- deferred readiness when a suspended wait completes;
-- immediate preemption after resuming a strictly higher-priority task;
-- idle-task, duplicate-state, and ISR-context protection;
+- opaque statically allocated one-shot and auto-reload timer objects;
+- ordered expiration tracking with 32-bit tick-wrap support;
+- dedicated timer-service task and binary wake semaphore;
+- pending-expiration counting without duplicate intrusive-list insertion;
+- start, stop, reset, and period-change task-context APIs;
+- callback execution outside SysTick and outside kernel critical sections;
 - STM32 target example and host sanitizer validation.
 
 ## Examples: host versus target
@@ -71,11 +71,11 @@ make phase2-example
 make host-tests
 ```
 
-Build or flash the Phase 11 target example:
+Build or flash the Phase 12 target example:
 
 ```bash
-make EXAMPLE=11-task-suspend-resume
-make EXAMPLE=11-task-suspend-resume flash
+make EXAMPLE=12-software-timer
+make EXAMPLE=12-software-timer flash
 ```
 
 The `EXAMPLE` value must be passed in the same invocation used for `flash`.
@@ -87,15 +87,15 @@ make phase0-check
 make roadmap-check
 make example-layout-check
 make host-tests
-make phase11-check
+make phase12-check
 ```
 
 Read:
 
 - `docs/roadmap.md`
 - `docs/task-model.md`
-- `docs/task-suspend-resume.md`
-- `docs/phase11-suspend-resume.md`
+- `docs/software-timer.md`
+- `docs/phase12-software-timer.md`
 - `examples/README.md`
 
-The next implementation phase is **Phase 12 — Software timer**.
+The next implementation phase is **Phase 13 — HairEvent framework**.

@@ -9,6 +9,8 @@ required = [
     "docs/roadmap.md",
     "docs/requirements-coverage.md",
     "docs/task-suspend-resume.md",
+    "docs/software-timer.md",
+    "docs/phase12-software-timer.md",
     "docs/memory-allocator-lab.md",
     "docs/benchmark-plan.md",
     "docs/example-index.md",
@@ -27,6 +29,7 @@ required_phases = [
     "Phase 1 — Bare-metal foundation",
     "Phase 2 — Intrusive lists and kernel data structures",
     "Phase 11 — Task suspend/resume",
+    "Phase 12 — Software timer service",
     "Phase 14 — Memory allocator lab",
     "Phase 15 — Kernel benchmarks",
     "Phase 16 — Diagnostics, stress, and stabilization",
@@ -38,8 +41,8 @@ if missing_phases:
     sys.exit(1)
 
 readme = (ROOT / "README.md").read_text(encoding="utf-8")
-if "Current status: Phase 11 complete" not in readme:
-    print("README no longer identifies Phase 11 as the current completed phase")
+if "Current status: Phase 12 complete" not in readme:
+    print("README no longer identifies Phase 12 as the current completed phase")
     sys.exit(1)
 
 subprocess_required = ROOT / "tools/scripts/example_layout_check.py"
@@ -48,5 +51,5 @@ if not subprocess_required.is_file():
     sys.exit(1)
 
 print("HairRTOS roadmap check: PASS")
-print("Current implementation phase: Phase 11")
-print("Future roadmap additions: software timers, allocator lab, benchmarks")
+print("Current implementation phase: Phase 12")
+print("Future roadmap additions: HairEvent, allocator lab, benchmarks")

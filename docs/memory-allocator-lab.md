@@ -2,66 +2,59 @@
 
 ## Position in the project
 
-This is an educational lab under `labs/memory-allocator/`. It is not required by
-the static-first HairRTOS v1.0 kernel and must not become a hidden dependency of
-task, queue, timer, or synchronization code.
+The completed Phase 14 implementation lives under `labs/memory-allocator/`. It
+is not required by the static-first HairRTOS kernel and is not linked into tasks,
+queues, synchronization objects, timers, or HairEvent unless the dedicated lab
+is built.
 
-## Learning objectives
-
-Implement and measure:
-
-- aligned allocation;
-- first-fit search;
-- block headers;
-- splitting a larger free block;
-- coalescing adjacent free blocks;
-- internal and external fragmentation;
-- invalid-free detection;
-- double-free detection;
-- out-of-memory behavior;
-- usage and fragmentation statistics.
-
-## Proposed block model
+## Public lab headers
 
 ```text
-[header | payload][header | payload][header | payload]
+labs/memory-allocator/include/hr_heap_lab.h
+labs/memory-allocator/include/hr_pool_lab.h
 ```
 
-A header may contain:
-
-- payload size;
-- free/allocated state;
-- previous and next physical-block metadata;
-- optional debug magic value.
-
-## API concept
+## First-fit heap API
 
 ```c
-void hr_heap_lab_init(void *memory, size_t size);
-void *hr_heap_lab_alloc(size_t size);
-hr_status_t hr_heap_lab_free(void *pointer);
-void hr_heap_lab_get_stats(hr_heap_lab_stats_t *stats);
+hr_heap_lab_status_t hr_heap_lab_init(
+    hr_heap_lab_t *heap,
+    void *memory,
+    size_t memory_bytes
+);
+
+void *hr_heap_lab_alloc(hr_heap_lab_t *heap, size_t requested_bytes);
+hr_heap_lab_status_t hr_heap_lab_free(hr_heap_lab_t *heap, void *pointer);
+hr_heap_lab_status_t hr_heap_lab_get_stats(
+    const hr_heap_lab_t *heap,
+    hr_heap_lab_stats_t *stats
+);
+bool hr_heap_lab_validate(const hr_heap_lab_t *heap);
 ```
 
-These names are provisional and intentionally separate from public kernel APIs.
+## Fixed-block pool API
 
-## Required host tests
+```c
+hr_heap_lab_status_t hr_pool_lab_init(
+    hr_pool_lab_t *pool,
+    void *memory,
+    size_t memory_bytes,
+    size_t block_bytes,
+    size_t block_count
+);
 
-- minimum allocation;
-- alignment for multiple requested sizes;
-- exact-fit allocation;
-- split remaining block;
-- forward and backward coalescing;
-- allocation after coalescing;
-- exhaustion;
-- invalid pointer;
-- pointer into the middle of a block;
-- double free;
-- randomized allocate/free sequences;
-- fragmentation statistics.
+void *hr_pool_lab_alloc(hr_pool_lab_t *pool);
+hr_heap_lab_status_t hr_pool_lab_free(hr_pool_lab_t *pool, void *pointer);
+```
 
-## Target demonstration
+## Commands
 
-An optional target example can use a statically reserved heap region and print
-statistics through UART. Allocation must not occur from PendSV, SysTick, or a
-critical kernel path.
+```bash
+make phase14-lab
+make host-tests
+make EXAMPLE=14-memory-allocator-lab
+make phase14-check
+```
+
+See `phase14-memory-allocator-lab.md` for design, fragmentation metrics, error
+handling, and architectural boundaries.

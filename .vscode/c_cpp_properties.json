@@ -6,22 +6,29 @@
             "intelliSenseMode": "gcc-arm",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "defines": [
-                "HR_CFG_ENABLE_SOFTWARE_TIMER=1",
-                "HR_CFG_TIMER_TASK_PRIORITY=1"
-            ],
             "includePath": [
                 "${workspaceFolder}/config",
+
                 "${workspaceFolder}/soc/stm32f1/include",
                 "${workspaceFolder}/boards/bluepill_f103c8/include",
+
                 "${workspaceFolder}/drivers/gpio/include",
                 "${workspaceFolder}/drivers/uart/include",
                 "${workspaceFolder}/drivers/timer/include",
+
                 "${workspaceFolder}/kernel/include",
                 "${workspaceFolder}/kernel/internal",
+
                 "${workspaceFolder}/arch/arm/cortex-m3/include",
+
                 "${workspaceFolder}/hairevent/include",
-                "${workspaceFolder}/hairevent/internal"
+                "${workspaceFolder}/hairevent/internal",
+
+                "${workspaceFolder}/labs/memory-allocator/include"
+            ],
+            "defines": [
+                "HR_CFG_ENABLE_SOFTWARE_TIMER=1",
+                "HR_CFG_TIMER_TASK_PRIORITY=1"
             ]
         }
     ],

@@ -34,20 +34,21 @@ Phase 0 has no runtime example because it contains specifications only.
 | `13-04-time-event` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-04-time-event flash` |
 | `13-05-publish-subscribe` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-05-publish-subscribe flash` |
 | `13-06-event-driven-demo` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-06-event-driven-demo flash` |
-| `14-memory-allocator-lab` | 14 | Host + Target | ⬜ Placeholder | Not runnable yet |
+| `14-memory-allocator-lab` | 14 | Host + Target | ✅ Implemented | `make phase14-lab`; target: `make EXAMPLE=14-memory-allocator-lab flash` |
 | `15-kernel-benchmark` | 15 | Target | ⬜ Placeholder | Not runnable yet |
 | `16-diagnostics-stress-stabilization` | 16 | Host + Target | ⬜ Placeholder | Not runnable yet |
 
 ## Host commands
 
-Run the only standalone host example with:
+Run the standalone host examples/labs with:
 
 ```bash
 make phase2-example
+make phase14-lab
 ```
 
-Run all completed host-side unit tests, including HairEvent event-pool,
-state-machine, Active Object queue, and publish/subscribe ownership tests:
+Run all completed host-side unit tests, including HairEvent and allocator
+validation tests:
 
 ```bash
 make host-tests
@@ -62,34 +63,24 @@ make EXAMPLE=02-kernel-data-structures-host flash
 The Makefile rejects that command because the host example is not freestanding
 STM32 firmware.
 
-## Phase 13 target sequence
+## Phase 14 allocator sequence
 
 ```bash
-make EXAMPLE=13-01-event-post flash
-make EXAMPLE=13-02-active-object flash
-make EXAMPLE=13-03-flat-state-machine flash
-make EXAMPLE=13-04-time-event flash
-make EXAMPLE=13-05-publish-subscribe flash
-make EXAMPLE=13-06-event-driven-demo flash
+make phase14-lab
+make EXAMPLE=14-memory-allocator-lab flash
+make phase14-check
 ```
 
-The lessons build in this order:
-
-1. ISR-safe event post;
-2. Active Object ownership and private state;
-3. flat run-to-completion state transitions;
-4. software-timer-backed time events;
-5. reference-counted publish/subscribe;
-6. integrated controller/observer event-driven application.
-
-Always pass the target example name in the same invocation used for flashing. A
-previous build does not make a later standalone `make flash` remember it.
+The native lab prints heap/pool statistics. The target example uses separate
+static arenas and reports first-fit, coalescing, and fragmentation results over
+USART1. The allocator is not used by the kernel.
 
 ## Current runnable set
 
 ```text
 Host:
   02-kernel-data-structures-host
+  Phase 14 native allocator lab (`make phase14-lab`)
 
 Target:
   01-baremetal-foundation
@@ -110,6 +101,7 @@ Target:
   13-04-time-event
   13-05-publish-subscribe
   13-06-event-driven-demo
+  14-memory-allocator-lab
 ```
 
-Phase 14 onward remains roadmap placeholder content.
+Phase 15 onward remains roadmap placeholder content.

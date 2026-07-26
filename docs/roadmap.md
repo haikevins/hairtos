@@ -393,21 +393,30 @@ publish/subscribe examples validate the remaining framework layers.
 Study dynamic-memory mechanisms without making the production kernel depend on
 them.
 
-### Deliverables
+### Deliverables — Complete
 
-- first-fit allocator;
-- aligned block headers;
+- fixed-block pool with aligned constant-size blocks;
+- first-fit variable-size allocator;
+- aligned block headers and payloads;
 - block splitting;
-- adjacent-block coalescing;
-- free-list validation;
-- invalid-free and double-free detection;
-- fragmentation and usage statistics;
-- host tests and an optional target demonstration.
+- forward and backward adjacent-block coalescing;
+- structural validation;
+- invalid-pointer, middle-pointer, and double-free detection;
+- exhaustion counters and deterministic randomized host tests;
+- internal/external fragmentation and usage statistics;
+- native host demo and STM32 UART target demonstration.
 
 ### Boundary
 
 The v1.0 kernel stays static-first. The allocator lab is optional and isolated
-under `labs/memory-allocator/`.
+under `labs/memory-allocator/`. It has no scheduler, ISR, queue, timer, or
+HairEvent dependency and contains no internal synchronization.
+
+### Definition of Done
+
+Clang and GCC sanitizer tests validate split/coalesce invariants and error
+handling. `14-memory-allocator-lab` builds as Cortex-M3 firmware using only
+caller-provided static arenas.
 
 ---
 

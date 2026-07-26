@@ -4,7 +4,7 @@ HairRTOS is an educational fixed-priority RTOS for ARM Cortex-M. The first
 target is the STM32F103C8T6 Blue Pill. HairEvent is the optional static-first
 Event-Driven framework implemented above the kernel.
 
-## Current status: Phase 13 complete
+## Current status: Phase 14 complete
 
 Implemented phases:
 
@@ -22,7 +22,8 @@ Implemented phases:
 - **Phase 11:** administrative suspend/resume for READY, RUNNING, and BLOCKED tasks;
 - **Phase 12:** static one-shot/periodic software timers with task-context callbacks;
 - **Phase 13:** HairEvent event pools, Active Objects, flat state machines, time events,
-  and publish/subscribe.
+  and publish/subscribe;
+- **Phase 14:** isolated fixed-block pool and first-fit heap allocator laboratory.
 
 HairEvent keeps state handlers run-to-completion. ISRs and software-timer
 callbacks only post events. Each Active Object owns a HairRTOS task, event queue,
@@ -47,48 +48,43 @@ Active Object task context.
 | 11 | Suspend/resume | ✅ Complete |
 | 12 | Software timer | ✅ Complete |
 | 13 | HairEvent framework | ✅ Complete |
-| 14 | Memory allocator lab | ⬜ Not started |
+| 14 | Memory allocator lab | ✅ Complete |
 | 15 | Kernel benchmark | ⬜ Not started |
 | 16 | Diagnostics and stabilization | ⬜ Not started |
 
 Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
 
-## Phase 13 components
+## Phase 14 components
 
-- immutable static events and fixed-block dynamic event pools;
-- reference-counted ownership for direct post and multicast delivery;
-- task-context and ISR-safe Active Object posting;
-- one task, one queue, one flat state machine, and private context per Active Object;
-- `ENTRY`, `EXIT`, and `INIT` reserved signals;
-- run-to-completion flat transitions;
-- software-timer-backed time events that post rather than dispatch directly;
-- fixed-capacity publish/subscribe tables;
-- six STM32 examples from isolated event posting through an integrated demo;
-- host tests under Clang/GCC with ASan and UBSan.
+- isolated `labs/memory-allocator/` implementation with no kernel dependency;
+- fixed-block pool with aligned blocks and explicit capacity;
+- first-fit variable-size heap with aligned headers and payloads;
+- block splitting and bidirectional adjacent-block coalescing;
+- invalid-pointer, middle-pointer, double-free, exhaustion, and corruption checks;
+- internal/external fragmentation and usage statistics;
+- deterministic randomized host testing under ASan/UBSan;
+- standalone native demo and STM32 UART demonstration.
 
-Hierarchical state machines are intentionally not part of Phase 13. The current
-framework establishes and tests flat-state semantics first; HSM parent bubbling
-and least-common-ancestor transitions remain a later extension.
+The allocator remains an educational lab. HairRTOS and HairEvent continue to use
+caller-provided static storage.
 
 ## Examples: host versus target
 
 See `examples/README.md` for the complete matrix.
 
-Run the host demo and tests:
+Run the host demos and tests:
 
 ```bash
 make phase2-example
+make phase14-lab
 make host-tests
 ```
 
-Build or flash a Phase 13 target example:
+Build or flash the Phase 14 target example:
 
 ```bash
-make EXAMPLE=13-01-event-post
-make EXAMPLE=13-01-event-post flash
-
-make EXAMPLE=13-06-event-driven-demo
-make EXAMPLE=13-06-event-driven-demo flash
+make EXAMPLE=14-memory-allocator-lab
+make EXAMPLE=14-memory-allocator-lab flash
 ```
 
 The `EXAMPLE` value must be passed in the same invocation used for `flash`.
@@ -100,16 +96,15 @@ make phase0-check
 make roadmap-check
 make example-layout-check
 make host-tests
-make phase13-check
+make phase14-check
 ```
 
 Read:
 
 - `docs/roadmap.md`
-- `docs/event-framework.md`
-- `docs/active-object.md`
-- `docs/state-machine.md`
-- `docs/phase13-hairevent-framework.md`
+- `docs/memory-allocator-lab.md`
+- `docs/phase14-memory-allocator-lab.md`
+- `labs/memory-allocator/README.md`
 - `examples/README.md`
 
-The next implementation phase is **Phase 14 — Memory allocator lab**.
+The next implementation phase is **Phase 15 — Kernel benchmark**.

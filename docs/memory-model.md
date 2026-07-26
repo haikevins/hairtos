@@ -14,9 +14,10 @@ ownership must remain explicit.
 
 ## Memory allocator lab
 
-Phase 14 adds an isolated first-fit allocator lab covering:
+Phase 14 implements an isolated fixed-block pool and first-fit heap lab covering:
 
-- alignment;
+- fixed-block capacity and alignment;
+- variable-size alignment;
 - block splitting;
 - adjacent-block coalescing;
 - invalid and double free;

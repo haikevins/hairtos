@@ -3,7 +3,7 @@ EXAMPLE          ?= 01-baremetal-foundation
 BUILD_DIR        ?= build/$(EXAMPLE)
 TARGET           := $(BUILD_DIR)/$(PROJECT)
 
-TARGET_EXAMPLES  := 01-baremetal-foundation 03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo
+TARGET_EXAMPLES  := 01-baremetal-foundation 03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 14-memory-allocator-lab
 HOST_EXAMPLES    := 02-kernel-data-structures-host
 FIRMWARE_GOALS   := all elf bin hex size flash gdb disasm
 REQUESTED_FW     := $(filter $(FIRMWARE_GOALS),$(MAKECMDGOALS))
@@ -37,7 +37,8 @@ INCLUDES         := -Iconfig \
                     -Idrivers/timer/include \
                     -Ikernel/include -Ikernel/internal \
                     -Iarch/arm/cortex-m3/include \
-                    -Ihairevent/include -Ihairevent/internal
+                    -Ihairevent/include -Ihairevent/internal \
+                    -Ilabs/memory-allocator/include
 
 LINKER_SCRIPT    := boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld
 OPENOCD_CFG      := tools/openocd/bluepill_stlink.cfg
@@ -109,6 +110,11 @@ C_SOURCES        += kernel/src/hr_context.c \
                     hairevent/src/he_pubsub.c
 endif
 
+ifeq ($(EXAMPLE),14-memory-allocator-lab)
+C_SOURCES        += labs/memory-allocator/src/hr_heap_lab.c \
+                    labs/memory-allocator/src/hr_pool_lab.c
+endif
+
 C_OBJECTS        := $(addprefix $(BUILD_DIR)/,$(C_SOURCES:.c=.o))
 ASM_OBJECTS      := $(addprefix $(BUILD_DIR)/,$(ASM_SOURCES:.S=.o))
 OBJECTS          := $(C_OBJECTS) $(ASM_OBJECTS)
@@ -151,11 +157,13 @@ HOST_CC          ?= cc
 HOST_BUILD_DIR   ?= build/host
 HOST_TEST        := $(HOST_BUILD_DIR)/completed_phase_tests
 PHASE2_EXAMPLE   := $(HOST_BUILD_DIR)/02-kernel-data-structures-host
+PHASE14_LAB      := $(HOST_BUILD_DIR)/14-memory-allocator-lab
 HOST_FLAGS       := -std=c11 -O0 -g3 -Wall -Wextra -Werror -Wshadow -Wundef \
                     -Wconversion -Wsign-conversion -pedantic \
                     -fsanitize=address,undefined -fno-omit-frame-pointer
 HOST_INCLUDES    := -Iconfig -Ikernel/include -Ikernel/internal -Itests/host \
-                    -Iarch/arm/cortex-m3/include -Ihairevent/include -Ihairevent/internal
+                    -Iarch/arm/cortex-m3/include -Ihairevent/include -Ihairevent/internal \
+                    -Ilabs/memory-allocator/include
 HOST_SOURCES     := kernel/src/hr_list.c \
                     kernel/src/hr_scheduler.c \
                     kernel/src/hr_wait.c \
@@ -173,6 +181,8 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     hairevent/src/he_active.c \
                     hairevent/src/he_time_event.c \
                     hairevent/src/he_pubsub.c \
+                    labs/memory-allocator/src/hr_heap_lab.c \
+                    labs/memory-allocator/src/hr_pool_lab.c \
                     arch/arm/cortex-m3/hr_port_stack.c \
                     tests/mocks/mock_port.c \
                     tests/host/test_main.c \
@@ -188,7 +198,8 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     tests/host/test_semaphore.c \
                     tests/host/test_mutex.c \
                     tests/host/test_timer.c \
-                    tests/host/test_hairevent.c
+                    tests/host/test_hairevent.c \
+                    labs/memory-allocator/tests/test_heap_lab.c
 
 LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
                     -Wl,--gc-sections -Wl,-Map=$(TARGET).map \
@@ -196,7 +207,7 @@ LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
 
 .PHONY: all elf bin hex size flash erase debug-server gdb disasm \
         phase0-check phase1-check roadmap-check example-layout-check \
-        phase2-check phase3-check phase4-check phase5-check phase6-check phase7-check phase8-check phase9-check phase10-check phase11-check phase12-check phase13-check host-tests phase2-example \
+        phase2-check phase3-check phase4-check phase5-check phase6-check phase7-check phase8-check phase9-check phase10-check phase11-check phase12-check phase13-check phase14-check host-tests phase2-example phase14-lab \
         tree clean help
 
 all: elf bin hex size
@@ -243,6 +254,18 @@ $(PHASE2_EXAMPLE): kernel/src/hr_list.c kernel/src/hr_scheduler.c kernel/src/hr_
 
 phase2-example: $(PHASE2_EXAMPLE)
 	$(PHASE2_EXAMPLE)
+
+$(PHASE14_LAB): labs/memory-allocator/src/hr_heap_lab.c \
+        labs/memory-allocator/src/hr_pool_lab.c \
+        labs/memory-allocator/demo.c
+	@mkdir -p $(HOST_BUILD_DIR)
+	$(HOST_CC) $(HOST_FLAGS) -Ilabs/memory-allocator/include \
+		labs/memory-allocator/src/hr_heap_lab.c \
+		labs/memory-allocator/src/hr_pool_lab.c \
+		labs/memory-allocator/demo.c -o $@
+
+phase14-lab: $(PHASE14_LAB)
+	$(PHASE14_LAB)
 
 flash: $(TARGET).elf
 	$(OPENOCD) -f $(OPENOCD_CFG) \
@@ -310,6 +333,9 @@ phase12-check:
 phase13-check:
 	python3 tools/scripts/phase13_check.py
 
+phase14-check:
+	python3 tools/scripts/phase14_check.py
+
 tree:
 	@find . -path './.git' -prune -o -path './build' -prune -o -print | sort
 
@@ -317,7 +343,7 @@ clean:
 	rm -rf build out
 
 help:
-	@echo "HairRTOS Phase 13 commands"
+	@echo "HairRTOS Phase 14 commands"
 	@echo "  make EXAMPLE=01-baremetal-foundation       Build Phase 1 target"
 	@echo "  make phase2-example                         Run Phase 2 host demo"
 	@echo "  make EXAMPLE=03-static-task-stack           Build Phase 3 target"
@@ -347,8 +373,11 @@ help:
 	@echo "  make EXAMPLE=13-04-time-event                Build Phase 13 time-event target"
 	@echo "  make EXAMPLE=13-05-publish-subscribe         Build Phase 13 pub/sub target"
 	@echo "  make EXAMPLE=13-06-event-driven-demo         Build Phase 13 integration target"
-	@echo "  make host-tests                              Run Phase 2–13 host tests"
-	@echo "  make phase13-check                           Validate completed phases"
+	@echo "  make EXAMPLE=14-memory-allocator-lab          Build Phase 14 target"
+	@echo "  make EXAMPLE=14-memory-allocator-lab flash    Flash Phase 14 target"
+	@echo "  make phase14-lab                              Run Phase 14 native allocator demo"
+	@echo "  make host-tests                              Run Phase 2–14 host tests"
+	@echo "  make phase14-check                           Validate completed phases"
 	@echo "  make roadmap-check                           Validate roadmap status"
 	@echo "  make example-layout-check                    Validate example matrix"
 	@echo "  make clean                                   Remove build output"

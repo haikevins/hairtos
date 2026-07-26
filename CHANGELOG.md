@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added — Phase 14: Memory allocator lab
+
+- Added an isolated fixed-block pool with aligned caller-provided storage.
+- Added a first-fit heap with aligned payloads, splitting, and bidirectional coalescing.
+- Added invalid-pointer, middle-pointer, double-free, exhaustion, and structural checks.
+- Added internal/external fragmentation and allocator usage statistics.
+- Added deterministic randomized ASan/UBSan tests, a native demo, and an STM32 UART example.
+- Kept HairRTOS and HairEvent static-first with no allocator dependency.
+
 ### Added — Phase 13: HairEvent framework
 
 - Added immutable static events and fixed-block dynamic event pools.

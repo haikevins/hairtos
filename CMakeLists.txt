@@ -25,6 +25,7 @@ set(HAIRTOS_TARGET_EXAMPLES
     13-04-time-event
     13-05-publish-subscribe
     13-06-event-driven-demo
+    14-memory-allocator-lab
 )
 
 list(FIND HAIRTOS_TARGET_EXAMPLES "${HAIRTOS_EXAMPLE}" HAIRTOS_EXAMPLE_INDEX)
@@ -107,6 +108,14 @@ if(HAIRTOS_EXAMPLE MATCHES "^13-")
     )
 endif()
 
+set(HAIRTOS_LAB_SOURCES "")
+if(HAIRTOS_EXAMPLE STREQUAL "14-memory-allocator-lab")
+    list(APPEND HAIRTOS_LAB_SOURCES
+        labs/memory-allocator/src/hr_heap_lab.c
+        labs/memory-allocator/src/hr_pool_lab.c
+    )
+endif()
+
 set(HAIRTOS_TICK_SOURCE drivers/timer/src/hr_systick_baremetal_irq.c)
 if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
    HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin" OR
@@ -132,6 +141,7 @@ add_executable(hairtos_baremetal
     ${HAIRTOS_TICK_SOURCE}
     examples/${HAIRTOS_EXAMPLE}/main.c
     ${HAIRTOS_KERNEL_SOURCES}
+    ${HAIRTOS_LAB_SOURCES}
     ${HAIRTOS_PORT_ASM}
 )
 
@@ -165,6 +175,7 @@ target_include_directories(hairtos_baremetal PRIVATE
     arch/arm/cortex-m3/include
     hairevent/include
     hairevent/internal
+    labs/memory-allocator/include
 )
 
 target_compile_options(hairtos_baremetal PRIVATE

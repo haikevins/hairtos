@@ -1,0 +1,17 @@
+HairRTOS Phase 14 validation
+
+- Phase 0 specification check: PASS
+- Roadmap status check: PASS
+- Canonical example layout check: PASS
+- Clang host tests with ASan + UBSan: 55/55 PASS
+- GCC host tests with ASan + UBSan: 55/55 PASS
+- Native fixed-block/first-fit allocator demo: PASS with Clang and GCC
+- Target regression builds Phase 1 through Phase 13: PASS
+- Phase 14 STM32 target build with Clang/LLD: PASS
+- Phase 14 CMake + Ninja + Clang/LLD build: PASS
+- Allocator target symbol/disassembly checks: PASS
+- No malloc/calloc/realloc dependency in allocator sources: PASS
+- Phase 14 image: text=5108, data=4, bss=2564 bytes
+- Physical STM32F103 flash/run validation: not performed in this environment
+- Current completed phase: Phase 14
+- Next phase: Phase 15 — Kernel benchmark

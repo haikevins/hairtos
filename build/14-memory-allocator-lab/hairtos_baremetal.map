@@ -1,0 +1,876 @@
+
+Discarded input sections
+
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .comment       0x00000000       0x27 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .text.stm32f1_clock_get_pclk1_hz
+                0x00000000       0x20 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0xac6 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000       0x22 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x190 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x34e build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x193 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .comment       0x00000000       0x27 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0xac6 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000       0x22 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x190 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x34e build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x193 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .comment       0x00000000       0x27 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .text.board_millis
+                0x00000000        0x8 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0xac6 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000       0x22 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x34e build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x190 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x193 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .comment       0x00000000       0x27 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0xac6 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000       0x22 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x34e build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x190 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x193 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .comment       0x00000000       0x27 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.hr_gpio_read
+                0x00000000       0x20 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0xac6 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .comment       0x00000000       0x27 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .text.hr_uart_try_read_char
+                0x00000000       0x24 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0xac6 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .comment       0x00000000       0x27 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text.hr_hw_timer_millis
+                0x00000000        0xc build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text.hr_hw_timer_tick_isr
+                0x00000000       0x10 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0xac6 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .comment       0x00000000       0x27 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_macro   0x00000000      0xac6 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_macro   0x00000000       0x22 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_macro   0x00000000      0x34e build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_macro   0x00000000      0x190 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .comment       0x00000000       0x27 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_macro   0x00000000      0xac6 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_macro   0x00000000       0x22 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_macro   0x00000000      0x190 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_macro   0x00000000      0x34e build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .comment       0x00000000       0x27 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .group         0x00000000        0xc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .debug_macro   0x00000000      0xac6 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .debug_macro   0x00000000       0x22 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .debug_macro   0x00000000      0x190 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .debug_macro   0x00000000      0x34e build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .debug_macro   0x00000000       0x22 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .comment       0x00000000       0x27 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .text          0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+ .data          0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+ .bss           0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+ .note.GNU-stack
+                0x00000000        0x0 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x08000000         0x00010000         xr
+RAM              0x20000000         0x00005000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+LOAD build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+LOAD build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+LOAD build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+LOAD build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+LOAD build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+LOAD build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+LOAD build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+LOAD build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+LOAD build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+LOAD build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+LOAD build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+LOAD /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a
+                0x00000000                        _Min_Heap_Size = 0x0
+                0x00000400                        _Min_Stack_Size = 0x400
+                0x20005000                        _estack = (ORIGIN (RAM) + LENGTH (RAM))
+                0x20004c00                        _sstack = (_estack - _Min_Stack_Size)
+
+.isr_vector     0x08000000       0xec
+                0x08000000                        . = ALIGN (0x4)
+ *(.isr_vector)
+ .isr_vector    0x08000000       0xec build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+                0x08000000                g_pfnVectors
+                0x080000ec                        . = ALIGN (0x4)
+
+.text           0x080000ec     0x1124
+                0x080000ec                        . = ALIGN (0x4)
+ *(.text)
+ *(.text*)
+ .text.system_reset_clock_tree
+                0x080000ec       0x44 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .text.SystemCoreClockUpdate
+                0x08000130       0x10 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+                0x08000130                SystemCoreClockUpdate
+ .text.SystemInit
+                0x08000140       0x20 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+                0x08000140                SystemInit
+ .text.wait_for_mask
+                0x08000160       0x1e build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ *fill*         0x0800017e        0x2 
+ .text.decode_ahb_prescaler
+                0x08000180       0x10 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .text.decode_apb_prescaler
+                0x08000190       0x10 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .text.stm32f1_clock_configure_hse_pll_72mhz
+                0x080001a0       0x78 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+                0x080001a0                stm32f1_clock_configure_hse_pll_72mhz
+ .text.stm32f1_clock_get_hclk_hz
+                0x08000218       0x40 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+                0x08000218                stm32f1_clock_get_hclk_hz
+ .text.stm32f1_clock_get_pclk2_hz
+                0x08000258       0x20 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+                0x08000258                stm32f1_clock_get_pclk2_hz
+ .text.fault_stop
+                0x08000278        0x6 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .text.HardFault_Handler
+                0x0800027e        0x6 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+                0x0800027e                HardFault_Handler
+ .text.MemManage_Handler
+                0x08000284        0x6 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+                0x08000284                MemManage_Handler
+ .text.BusFault_Handler
+                0x0800028a        0x6 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+                0x0800028a                BusFault_Handler
+ .text.UsageFault_Handler
+                0x08000290        0x6 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+                0x08000290                UsageFault_Handler
+ .text.board_led_on
+                0x08000296        0xe build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                0x08000296                board_led_on
+ .text.board_led_off
+                0x080002a4        0xe build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                0x080002a4                board_led_off
+ .text.board_led_toggle
+                0x080002b2        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                0x080002b2                board_led_toggle
+ .text.board_uart_write_char
+                0x080002be        0x8 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                0x080002be                board_uart_write_char
+ .text.board_uart_write_string
+                0x080002c6        0x8 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                0x080002c6                board_uart_write_string
+ *fill*         0x080002ce        0x2 
+ .text.board_uart_write_u32
+                0x080002d0       0x5c build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                0x080002d0                board_uart_write_u32
+ .text.board_uart_write_line
+                0x0800032c       0x14 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                0x0800032c                board_uart_write_line
+ .text.board_print_boot_banner
+                0x08000340       0x5c build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .text.board_init
+                0x0800039c       0x38 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                0x0800039c                board_init
+ .text.board_delay_ms
+                0x080003d4        0x8 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                0x080003d4                board_delay_ms
+ .text.board_panic
+                0x080003dc        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                0x080003dc                board_panic
+ .text.board_get_core_clock_hz
+                0x080003e8        0xc build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+                0x080003e8                board_get_core_clock_hz
+ .text.board_clock_is_72mhz
+                0x080003f4       0x18 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+                0x080003f4                board_clock_is_72mhz
+ .text.gpio_from_port
+                0x0800040c       0x28 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.gpio_configure_nibble
+                0x08000434       0x30 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.hr_gpio_enable_port_clock
+                0x08000464       0x34 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x08000464                hr_gpio_enable_port_clock
+ .text.hr_gpio_config_output_push_pull
+                0x08000498       0x14 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x08000498                hr_gpio_config_output_push_pull
+ .text.hr_gpio_config_alternate_push_pull
+                0x080004ac       0x16 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x080004ac                hr_gpio_config_alternate_push_pull
+ .text.hr_gpio_config_input_floating
+                0x080004c2       0x12 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x080004c2                hr_gpio_config_input_floating
+ .text.hr_gpio_write
+                0x080004d4       0x22 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x080004d4                hr_gpio_write
+ .text.hr_gpio_toggle
+                0x080004f6       0x28 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x080004f6                hr_gpio_toggle
+ *fill*         0x0800051e        0x2 
+ .text.hr_uart_init
+                0x08000520       0x54 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+                0x08000520                hr_uart_init
+ .text.hr_uart_write_char
+                0x08000574       0x14 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+                0x08000574                hr_uart_write_char
+ .text.hr_uart_write_string
+                0x08000588       0x16 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+                0x08000588                hr_uart_write_string
+ *fill*         0x0800059e        0x2 
+ .text.hr_hw_timer_init_1khz
+                0x080005a0       0x34 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+                0x080005a0                hr_hw_timer_init_1khz
+ .text.hr_hw_timer_delay_ms
+                0x080005d4       0x18 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+                0x080005d4                hr_hw_timer_delay_ms
+ .text.print_heap_stats
+                0x080005ec       0x94 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .text.main     0x08000680      0x1cc build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+                0x08000680                main
+ .text.size_add_overflows
+                0x0800084c        0xc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .text.align_up_size
+                0x08000858       0x36 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .text.align_up_address
+                0x0800088e        0xa build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .text.block_payload
+                0x08000898        0x6 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ *fill*         0x0800089e        0x2 
+ .text.heap_is_initialized
+                0x080008a0       0x34 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .text.merge_with_next
+                0x080008d4       0x2e build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .text.hr_heap_lab_alignment
+                0x08000902        0x4 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+                0x08000902                hr_heap_lab_alignment
+ *fill*         0x08000906        0x2 
+ .text.hr_heap_lab_init
+                0x08000908       0xb0 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+                0x08000908                hr_heap_lab_init
+ .text.hr_heap_lab_alloc
+                0x080009b8       0xb4 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+                0x080009b8                hr_heap_lab_alloc
+ .text.hr_heap_lab_free
+                0x08000a6c       0x66 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+                0x08000a6c                hr_heap_lab_free
+ *fill*         0x08000ad2        0x2 
+ .text.hr_heap_lab_validate
+                0x08000ad4       0xec build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+                0x08000ad4                hr_heap_lab_validate
+ .text.hr_heap_lab_get_stats
+                0x08000bc0       0xa8 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+                0x08000bc0                hr_heap_lab_get_stats
+ .text.align_up_size
+                0x08000c68       0x1c build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .text.align_up_address
+                0x08000c84        0xa build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ *fill*         0x08000c8e        0x2 
+ .text.pool_is_initialized
+                0x08000c90       0x2c build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .text.pointer_is_block
+                0x08000cbc       0x2a build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .text.pointer_is_free
+                0x08000ce6       0x24 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ *fill*         0x08000d0a        0x2 
+ .text.hr_pool_lab_init
+                0x08000d0c       0xe8 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+                0x08000d0c                hr_pool_lab_init
+ .text.hr_pool_lab_alloc
+                0x08000df4       0x32 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+                0x08000df4                hr_pool_lab_alloc
+ .text.hr_pool_lab_free
+                0x08000e26       0x46 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+                0x08000e26                hr_pool_lab_free
+ .text.hr_pool_lab_validate
+                0x08000e6c       0x56 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+                0x08000e6c                hr_pool_lab_validate
+ .text.hr_pool_lab_get_stats
+                0x08000ec2       0x50 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+                0x08000ec2                hr_pool_lab_get_stats
+ *fill*         0x08000f12        0x2 
+ .text.Reset_Handler
+                0x08000f14       0x44 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+                0x08000f14                Reset_Handler
+ .text.Default_Handler
+                0x08000f58        0x4 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+                0x08000f58                EXTI2_IRQHandler
+                0x08000f58                DebugMon_Handler
+                0x08000f58                TIM1_CC_IRQHandler
+                0x08000f58                SysTick_Handler
+                0x08000f58                PVD_IRQHandler
+                0x08000f58                PendSV_Handler
+                0x08000f58                NMI_Handler
+                0x08000f58                EXTI3_IRQHandler
+                0x08000f58                EXTI0_IRQHandler
+                0x08000f58                I2C2_EV_IRQHandler
+                0x08000f58                ADC1_2_IRQHandler
+                0x08000f58                SPI1_IRQHandler
+                0x08000f58                TAMPER_IRQHandler
+                0x08000f58                DMA1_Channel4_IRQHandler
+                0x08000f58                USART3_IRQHandler
+                0x08000f58                RTC_IRQHandler
+                0x08000f58                DMA1_Channel7_IRQHandler
+                0x08000f58                CAN1_RX1_IRQHandler
+                0x08000f58                TIM4_IRQHandler
+                0x08000f58                I2C1_EV_IRQHandler
+                0x08000f58                DMA1_Channel6_IRQHandler
+                0x08000f58                TIM3_IRQHandler
+                0x08000f58                RCC_IRQHandler
+                0x08000f58                TIM1_TRG_COM_IRQHandler
+                0x08000f58                DMA1_Channel1_IRQHandler
+                0x08000f58                EXTI15_10_IRQHandler
+                0x08000f58                EXTI9_5_IRQHandler
+                0x08000f58                SPI2_IRQHandler
+                0x08000f58                SVC_Handler
+                0x08000f58                DMA1_Channel5_IRQHandler
+                0x08000f58                EXTI4_IRQHandler
+                0x08000f58                USB_LP_CAN1_RX0_IRQHandler
+                0x08000f58                USB_HP_CAN1_TX_IRQHandler
+                0x08000f58                DMA1_Channel3_IRQHandler
+                0x08000f58                TIM1_UP_IRQHandler
+                0x08000f58                WWDG_IRQHandler
+                0x08000f58                TIM2_IRQHandler
+                0x08000f58                TIM1_BRK_IRQHandler
+                0x08000f58                EXTI1_IRQHandler
+                0x08000f58                RTCAlarm_IRQHandler
+                0x08000f58                USART2_IRQHandler
+                0x08000f58                I2C2_ER_IRQHandler
+                0x08000f58                DMA1_Channel2_IRQHandler
+                0x08000f58                CAN1_SCE_IRQHandler
+                0x08000f58                FLASH_IRQHandler
+                0x08000f58                USART1_IRQHandler
+                0x08000f58                I2C1_ER_IRQHandler
+                0x08000f58                USBWakeUp_IRQHandler
+ *(.rodata)
+ *(.rodata*)
+ .rodata.divisors.0
+                0x08000f5c        0x8 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .rodata.divisors.1
+                0x08000f64       0x20 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .rodata.board_uart_write_line.str1.4
+                0x08000f84      0x28c build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                                  0x3 (size before relaxing)
+ .rodata.board_print_boot_banner.str1.4
+                0x08001210       0xa8 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .rodata.print_heap_stats.str1.4
+                0x08001210       0x61 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .rodata.main.str1.4
+                0x08001210      0x184 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ *(.init)
+ *(.fini)
+                0x08001394                        . = ALIGN (0x4)
+                0x08001210                        _etext = .
+
+.glue_7         0x08001210        0x0
+ .glue_7        0x08001210        0x0 linker stubs
+
+.glue_7t        0x08001210        0x0
+ .glue_7t       0x08001210        0x0 linker stubs
+
+.vfp11_veneer   0x08001210        0x0
+ .vfp11_veneer  0x08001210        0x0 linker stubs
+
+.v4_bx          0x08001210        0x0
+ .v4_bx         0x08001210        0x0 linker stubs
+
+.iplt           0x08001210        0x0
+ .iplt          0x08001210        0x0 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+
+.rel.dyn        0x08001210        0x0
+ .rel.iplt      0x08001210        0x0 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+
+.ARM.exidx      0x08001210        0x0
+                0x08001210                        __exidx_start = .
+ *(.ARM.exidx*)
+                0x08001210                        __exidx_end = .
+                0x08001210                        _sidata = LOADADDR (.data)
+
+.data           0x20000000        0x4 load address 0x08001210
+                0x20000000                        . = ALIGN (0x4)
+                0x20000000                        _sdata = .
+ *(.data)
+ *(.data*)
+ .data.SystemCoreClock
+                0x20000000        0x4 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+                0x20000000                SystemCoreClock
+                0x20000004                        . = ALIGN (0x4)
+                0x20000004                        _edata = .
+
+.igot.plt       0x20000004        0x0 load address 0x08001214
+ .igot.plt      0x20000004        0x0 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+
+.bss            0x20000004      0xa04 load address 0x08001214
+                0x20000004                        . = ALIGN (0x4)
+                0x20000004                        _sbss = .
+                0x20000004                        __bss_start__ = .
+ *(.bss)
+ *(.bss*)
+ .bss.g_millisecond_tick
+                0x20000004        0x4 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .bss.g_pool_arena
+                0x20000008      0x200 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .bss.g_heap_arena
+                0x20000208      0x800 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ *(COMMON)
+                0x20000a08                        . = ALIGN (0x4)
+                0x20000a08                        _ebss = .
+                0x20000a08                        __bss_end__ = .
+
+.heap           0x20000a08        0x0 load address 0x08001214
+                0x20000a08                        . = ALIGN (0x8)
+                0x20000a08                        __end__ = .
+                0x20000a08                        end = __end__
+                0x20000a08                        . = (. + _Min_Heap_Size)
+                0x20000a08                        __heap_end__ = .
+
+/DISCARD/
+ *(.comment)
+ *(.note*)
+                0x00000001                        ASSERT ((__heap_end__ <= _sstack), RAM overflow: data/heap collides with reserved main stack)
+OUTPUT(build/14-memory-allocator-lab/hairtos_baremetal.elf elf32-littlearm)
+LOAD linker stubs
+
+.ARM.attributes
+                0x00000000       0x2b
+ .ARM.attributes
+                0x00000000       0x2d build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .ARM.attributes
+                0x0000002d       0x2d build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .ARM.attributes
+                0x0000005a       0x2d build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .ARM.attributes
+                0x00000087       0x2d build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .ARM.attributes
+                0x000000b4       0x2d build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .ARM.attributes
+                0x000000e1       0x2d build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .ARM.attributes
+                0x0000010e       0x2d build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .ARM.attributes
+                0x0000013b       0x2d build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .ARM.attributes
+                0x00000168       0x2d build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .ARM.attributes
+                0x00000195       0x2d build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .ARM.attributes
+                0x000001c2       0x2d build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .ARM.attributes
+                0x000001ef       0x21 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+
+.debug_info     0x00000000     0x379b
+ .debug_info    0x00000000      0x2df build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_info    0x000002df      0x476 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_info    0x00000755      0x13b build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_info    0x00000890      0x5c4 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_info    0x00000e54       0xc1 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_info    0x00000f15      0x572 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_info    0x00001487      0x304 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_info    0x0000178b      0x19c build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_info    0x00001927      0xb40 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_info    0x00002467      0x8e7 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_info    0x00002d4e      0x76a build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .debug_info    0x000034b8      0x2e3 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+
+.debug_abbrev   0x00000000      0xe90
+ .debug_abbrev  0x00000000      0x10b build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_abbrev  0x0000010b      0x191 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_abbrev  0x0000029c       0x96 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_abbrev  0x00000332      0x1a0 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_abbrev  0x000004d2       0x6a build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_abbrev  0x0000053c      0x183 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_abbrev  0x000006bf      0x156 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_abbrev  0x00000815      0x13f build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_abbrev  0x00000954      0x18d build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_abbrev  0x00000ae1      0x20e build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_abbrev  0x00000cef      0x17b build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .debug_abbrev  0x00000e6a       0x26 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+
+.debug_aranges  0x00000000      0x360
+ .debug_aranges
+                0x00000000       0x30 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_aranges
+                0x00000030       0x50 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_aranges
+                0x00000080       0x40 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_aranges
+                0x000000c0       0x78 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_aranges
+                0x00000138       0x28 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_aranges
+                0x00000160       0x60 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_aranges
+                0x000001c0       0x38 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_aranges
+                0x000001f8       0x38 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_aranges
+                0x00000230       0x28 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_aranges
+                0x00000258       0x78 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_aranges
+                0x000002d0       0x68 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .debug_aranges
+                0x00000338       0x28 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+
+.debug_rnglists
+                0x00000000      0x270
+ .debug_rnglists
+                0x00000000       0x1f build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_rnglists
+                0x0000001f       0x37 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_rnglists
+                0x00000056       0x2b build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_rnglists
+                0x00000081       0x55 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_rnglists
+                0x000000d6       0x19 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_rnglists
+                0x000000ef       0x43 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_rnglists
+                0x00000132       0x25 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_rnglists
+                0x00000157       0x25 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_rnglists
+                0x0000017c       0x1b build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_rnglists
+                0x00000197       0x76 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_rnglists
+                0x0000020d       0x4a build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .debug_rnglists
+                0x00000257       0x19 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+
+.debug_macro    0x00000000     0x1504
+ .debug_macro   0x00000000       0x3b build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x0000003b      0xac6 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000b01       0x22 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000b23      0x190 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000cb3      0x34e build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00001001      0x193 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00001194       0x41 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x000011d5       0x3b build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00001210       0x78 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00001288       0x2e build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_macro   0x000012b6       0x45 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x000012fb       0x4b build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00001346       0x5b build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x000013a1       0x45 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x000013e6       0x5e build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_macro   0x00001444       0x4b build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_macro   0x0000148f       0x22 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_macro   0x000014b1       0x53 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+
+.debug_line     0x00000000     0x220a
+ .debug_line    0x00000000      0x15a build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_line    0x0000015a      0x26c build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_line    0x000003c6      0x135 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_line    0x000004fb      0x32a build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_line    0x00000825      0x110 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_line    0x00000935      0x2ec build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_line    0x00000c21      0x202 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_line    0x00000e23      0x1af build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_line    0x00000fd2      0x25f build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_line    0x00001231      0x8f0 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_line    0x00001b21      0x676 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .debug_line    0x00002197       0x73 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+
+.debug_str      0x00000000     0x5760
+ .debug_str     0x00000000     0x5760 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+                               0x46a7 (size before relaxing)
+ .debug_str     0x00005760     0x471a build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_str     0x00005760     0x45d9 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_str     0x00005760     0x4967 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_str     0x00005760     0x45bf build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_str     0x00005760     0x4778 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_str     0x00005760     0x474b build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_str     0x00005760     0x464c build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_str     0x00005760     0x420d build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_str     0x00005760     0x419f build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_str     0x00005760     0x40f1 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+ .debug_str     0x00005760      0x44d build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+
+.debug_frame    0x00000000      0x73c
+ .debug_frame   0x00000000       0x50 build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+ .debug_frame   0x00000050       0xb4 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_frame   0x00000104       0x80 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+ .debug_frame   0x00000184      0x138 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_frame   0x000002bc       0x30 build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+ .debug_frame   0x000002ec       0xdc build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_frame   0x000003c8       0x6c build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_frame   0x00000434       0x50 build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_frame   0x00000484       0x50 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_frame   0x000004d4      0x16c build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_frame   0x00000640       0xfc build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+
+.debug_loclists
+                0x00000000     0x1460
+ .debug_loclists
+                0x00000000      0x15a build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+ .debug_loclists
+                0x0000015a       0xc7 build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+ .debug_loclists
+                0x00000221      0x2f7 build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_loclists
+                0x00000518       0xc8 build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_loclists
+                0x000005e0       0x3f build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_loclists
+                0x0000061f       0xc8 build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+ .debug_loclists
+                0x000006e7      0x673 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+ .debug_loclists
+                0x00000d5a      0x706 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+
+.debug_line_str
+                0x00000000       0x4b
+ .debug_line_str
+                0x00000000       0x4b build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+
+Cross Reference Table
+
+Symbol                                            File
+ADC1_2_IRQHandler                                 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+BusFault_Handler                                  build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+CAN1_RX1_IRQHandler                               build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+CAN1_SCE_IRQHandler                               build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel1_IRQHandler                          build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel2_IRQHandler                          build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel3_IRQHandler                          build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel4_IRQHandler                          build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel5_IRQHandler                          build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel6_IRQHandler                          build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel7_IRQHandler                          build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+DebugMon_Handler                                  build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+EXTI0_IRQHandler                                  build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+EXTI15_10_IRQHandler                              build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+EXTI1_IRQHandler                                  build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+EXTI2_IRQHandler                                  build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+EXTI3_IRQHandler                                  build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+EXTI4_IRQHandler                                  build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+EXTI9_5_IRQHandler                                build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+FLASH_IRQHandler                                  build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+HardFault_Handler                                 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+I2C1_ER_IRQHandler                                build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+I2C1_EV_IRQHandler                                build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+I2C2_ER_IRQHandler                                build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+I2C2_EV_IRQHandler                                build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+MemManage_Handler                                 build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+NMI_Handler                                       build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+PVD_IRQHandler                                    build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+PendSV_Handler                                    build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+RCC_IRQHandler                                    build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+RTCAlarm_IRQHandler                               build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+RTC_IRQHandler                                    build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+Reset_Handler                                     build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+SPI1_IRQHandler                                   build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+SPI2_IRQHandler                                   build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+SVC_Handler                                       build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+SysTick_Handler                                   build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+SystemCoreClock                                   build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                                                  build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+SystemCoreClockUpdate                             build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+SystemInit                                        build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+                                                  build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+TAMPER_IRQHandler                                 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+TIM1_BRK_IRQHandler                               build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+TIM1_CC_IRQHandler                                build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+TIM1_TRG_COM_IRQHandler                           build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+TIM1_UP_IRQHandler                                build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+TIM2_IRQHandler                                   build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+TIM3_IRQHandler                                   build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+TIM4_IRQHandler                                   build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+USART1_IRQHandler                                 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+USART2_IRQHandler                                 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+USART3_IRQHandler                                 build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+USBWakeUp_IRQHandler                              build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+USB_HP_CAN1_TX_IRQHandler                         build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+USB_LP_CAN1_RX0_IRQHandler                        build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+UsageFault_Handler                                build/14-memory-allocator-lab/soc/stm32f1/stm32f1_irq.o
+WWDG_IRQHandler                                   build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+_ebss                                             build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+_edata                                            build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+_estack                                           build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+_sbss                                             build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+_sdata                                            build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+_sidata                                           build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+board_clock_is_72mhz                              build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+board_delay_ms                                    build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+board_get_core_clock_hz                           build/14-memory-allocator-lab/boards/bluepill_f103c8/board_clock.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+board_init                                        build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+board_led_off                                     build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+board_led_on                                      build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+board_led_toggle                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+board_millis                                      build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+board_panic                                       build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+board_uart_write_char                             build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+board_uart_write_line                             build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+board_uart_write_string                           build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+board_uart_write_u32                              build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+g_pfnVectors                                      build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+                                                  build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+hr_gpio_config_alternate_push_pull                build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+hr_gpio_config_input_floating                     build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+hr_gpio_config_output_push_pull                   build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+hr_gpio_enable_port_clock                         build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+hr_gpio_read                                      build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+hr_gpio_toggle                                    build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+hr_gpio_write                                     build/14-memory-allocator-lab/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+hr_heap_lab_alignment                             build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+hr_heap_lab_alloc                                 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+hr_heap_lab_free                                  build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+hr_heap_lab_get_stats                             build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+hr_heap_lab_init                                  build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+hr_heap_lab_validate                              build/14-memory-allocator-lab/labs/memory-allocator/src/hr_heap_lab.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+hr_hw_timer_delay_ms                              build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+hr_hw_timer_init_1khz                             build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+hr_hw_timer_millis                                build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+hr_hw_timer_tick_isr                              build/14-memory-allocator-lab/drivers/timer/src/hr_hw_timer_stm32f1.o
+hr_pool_lab_alloc                                 build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+hr_pool_lab_free                                  build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+hr_pool_lab_get_stats                             build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+hr_pool_lab_init                                  build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+hr_pool_lab_validate                              build/14-memory-allocator-lab/labs/memory-allocator/src/hr_pool_lab.o
+                                                  build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+hr_uart_init                                      build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+hr_uart_try_read_char                             build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+hr_uart_write_char                                build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+hr_uart_write_string                              build/14-memory-allocator-lab/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o
+main                                              build/14-memory-allocator-lab/examples/14-memory-allocator-lab/main.o
+                                                  build/14-memory-allocator-lab/soc/stm32f1/startup_stm32f103.o
+stm32f1_clock_configure_hse_pll_72mhz             build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+                                                  build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+stm32f1_clock_get_hclk_hz                         build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+                                                  build/14-memory-allocator-lab/soc/stm32f1/system_stm32f1.o
+stm32f1_clock_get_pclk1_hz                        build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+stm32f1_clock_get_pclk2_hz                        build/14-memory-allocator-lab/soc/stm32f1/stm32f1_clock.o
+                                                  build/14-memory-allocator-lab/boards/bluepill_f103c8/board.o

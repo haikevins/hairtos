@@ -1,41 +1,34 @@
-# Changelog
+# Nhật ký thay đổi
 
-All notable changes to `hairtos` are documented in this file.
+Tất cả những thay đổi đáng chú ý của `hairtos` đều được ghi lại trong tài liệu này.
 
-The format follows Keep a Changelog and the project uses Semantic Versioning.
+Tài liệu được trình bày theo định dạng Keep a Changelog và project sử dụng Semantic Versioning.
 
-## [Unreleased]
+## [Chưa phát hành]
 
-### Changed
+### Thay đổi
 
-- Rewrote the root, VS Code, driver, kernel benchmark and memory allocator README files in Vietnamese with complete, role-specific structures while leaving the existing `examples/` and `docs/` documentation unchanged.
-- Rewrote every `examples/*/README.md` in Vietnamese with one consistent
-  ten-section structure covering goals, configuration, execution flow, APIs,
-  build commands, expected output, PASS criteria, troubleshooting and scope.
-- Rebuilt `examples/README.md` as the central host/target example index.
+- Viết lại các file README tại thư mục gốc, cấu hình VS Code, driver, kernel benchmark và memory allocator bằng tiếng Việt với bố cục đầy đủ, phù hợp với vai trò của từng thành phần; giữ nguyên nội dung tài liệu hiện có trong `examples/` và `docs/`.
+- Viết lại toàn bộ `examples/*/README.md` bằng tiếng Việt theo một bố cục thống nhất gồm mười phần, trình bày mục tiêu, cấu hình, luồng thực thi, API, lệnh build, kết quả mong đợi, tiêu chí PASS, xử lý lỗi và phạm vi của từng example.
+- Xây dựng lại `examples/README.md` thành tài liệu chỉ mục trung tâm, phân loại rõ các example chạy trên host và target.
 
 ## [1.0.0-rc1] - 2026-07-27
 
-### Added
+### Bổ sung
 
-- Static-first Cortex-M3 kernel with task, scheduler, timeout, queue, semaphore,
-  mutex, software timer, diagnostics and retained fault records.
-- `haievent` event framework with Active Objects, flat state machines, time
-  events and publish/subscribe.
-- Host sanitizer tests, deterministic scheduler stress, allocator lab and DWT
-  benchmark examples.
-- Root `VERSION` file and this changelog.
+- Kernel Cortex-M3 theo định hướng static-first, hỗ trợ task, scheduler, timeout, queue, semaphore, mutex, software timer, diagnostics và lưu fault record qua reset.
+- Framework sự kiện `haievent` hỗ trợ Active Object, flat state machine, time event và publish/subscribe.
+- Bộ kiểm thử host với sanitizer, scheduler stress xác định, memory allocator lab và các example benchmark sử dụng DWT.
+- File `VERSION` tại thư mục gốc và tài liệu nhật ký thay đổi này.
 
-### Changed
+### Thay đổi
 
-- Made CMake the single source of truth for example/module/source selection.
-- Reduced the root Makefile to a consistent command-line wrapper around CMake.
-- Restricted `kernel/internal` and `haievent/internal` include paths to kernel,
-  framework, tests and the two examples that intentionally inspect internals.
-- Reorganized drivers into public interfaces, common code and SoC-specific
-  implementations so a second SoC can be added without mixing implementations.
+- Sử dụng CMake làm nguồn cấu hình duy nhất cho việc lựa chọn example, module và source.
+- Rút gọn Makefile gốc thành lớp giao diện dòng lệnh thống nhất bao quanh CMake.
+- Giới hạn đường dẫn include `kernel/internal` và `haievent/internal` chỉ dành cho kernel, framework, tests và hai example chủ đích truy cập thành phần nội bộ.
+- Tổ chức lại driver thành public interface, common code và implementation riêng theo SoC, giúp bổ sung SoC thứ hai mà không trộn lẫn các implementation.
 
-### Removed
+### Loại bỏ
 
-- Duplicate benchmark placeholder under `tests/benchmark/`.
-- Obsolete repository-hygiene and package-release documentation.
+- Thư mục benchmark placeholder trùng lặp tại `tests/benchmark/`.
+- Các tài liệu lỗi thời liên quan đến repository hygiene và đóng gói release.

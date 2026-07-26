@@ -1,0 +1,2371 @@
+
+Discarded input sections
+
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .text          0x00000000        0x0 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .data          0x00000000        0x0 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .bss           0x00000000        0x0 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .comment       0x00000000       0x27 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .text          0x00000000        0x0 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .data          0x00000000        0x0 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .bss           0x00000000        0x0 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .text.stm32f1_clock_get_pclk1_hz
+                0x00000000       0x20 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x193 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .comment       0x00000000       0x27 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .text          0x00000000        0x0 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .data          0x00000000        0x0 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .bss           0x00000000        0x0 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x193 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .comment       0x00000000       0x27 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .text          0x00000000        0x0 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .data          0x00000000        0x0 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .bss           0x00000000        0x0 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .text.board_millis
+                0x00000000        0x8 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .text.board_delay_ms
+                0x00000000        0x8 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x193 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .comment       0x00000000       0x27 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .text          0x00000000        0x0 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .data          0x00000000        0x0 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .bss           0x00000000        0x0 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x193 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .comment       0x00000000       0x27 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text          0x00000000        0x0 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .data          0x00000000        0x0 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .bss           0x00000000        0x0 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.hr_gpio_read
+                0x00000000       0x20 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .comment       0x00000000       0x27 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .text          0x00000000        0x0 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .data          0x00000000        0x0 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .bss           0x00000000        0x0 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .text.hr_uart_try_read_char
+                0x00000000       0x24 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .comment       0x00000000       0x27 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text          0x00000000        0x0 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .data          0x00000000        0x0 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .bss           0x00000000        0x0 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text.hr_hw_timer_millis
+                0x00000000        0xc build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text.hr_hw_timer_delay_ms
+                0x00000000       0x18 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text.hr_hw_timer_tick_isr
+                0x00000000       0x10 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .comment       0x00000000       0x27 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/13-01-event-post/examples/13-01-event-post/main.o
+ .group         0x00000000        0xc build/13-01-event-post/examples/13-01-event-post/main.o
+ .group         0x00000000        0xc build/13-01-event-post/examples/13-01-event-post/main.o
+ .group         0x00000000        0xc build/13-01-event-post/examples/13-01-event-post/main.o
+ .group         0x00000000        0xc build/13-01-event-post/examples/13-01-event-post/main.o
+ .group         0x00000000        0xc build/13-01-event-post/examples/13-01-event-post/main.o
+ .group         0x00000000        0xc build/13-01-event-post/examples/13-01-event-post/main.o
+ .text          0x00000000        0x0 build/13-01-event-post/examples/13-01-event-post/main.o
+ .data          0x00000000        0x0 build/13-01-event-post/examples/13-01-event-post/main.o
+ .bss           0x00000000        0x0 build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_macro   0x00000000      0x193 build/13-01-event-post/examples/13-01-event-post/main.o
+ .comment       0x00000000       0x27 build/13-01-event-post/examples/13-01-event-post/main.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_list.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_list.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_list.o
+ .text          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_list.o
+ .data          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_list.o
+ .bss           0x00000000        0x0 build/13-01-event-post/kernel/src/hr_list.o
+ .text.hr_list_back
+                0x00000000       0x10 build/13-01-event-post/kernel/src/hr_list.o
+ .text.hr_list_previous
+                0x00000000       0x24 build/13-01-event-post/kernel/src/hr_list.o
+ .text.hr_list_push_front
+                0x00000000       0x14 build/13-01-event-post/kernel/src/hr_list.o
+ .text.hr_list_pop_back
+                0x00000000       0x18 build/13-01-event-post/kernel/src/hr_list.o
+ .text.hr_list_validate
+                0x00000000       0x82 build/13-01-event-post/kernel/src/hr_list.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/kernel/src/hr_list.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/kernel/src/hr_list.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/kernel/src/hr_list.o
+ .comment       0x00000000       0x27 build/13-01-event-post/kernel/src/hr_list.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_scheduler.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_scheduler.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_scheduler.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_scheduler.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_scheduler.o
+ .text          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .data          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .bss           0x00000000        0x0 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .text.hr_ready_set_is_empty
+                0x00000000       0x14 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .text.hr_ready_set_size
+                0x00000000        0xc build/13-01-event-post/kernel/src/hr_scheduler.o
+ .text.hr_ready_set_bitmap
+                0x00000000        0xc build/13-01-event-post/kernel/src/hr_scheduler.o
+ .text.hr_ready_set_validate
+                0x00000000       0x68 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .text.hr_scheduler_ready_count
+                0x00000000        0xe build/13-01-event-post/kernel/src/hr_scheduler.o
+ .text.hr_scheduler_ready_bitmap
+                0x00000000        0xe build/13-01-event-post/kernel/src/hr_scheduler.o
+ .text.hr_scheduler_validate
+                0x00000000       0x16 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .comment       0x00000000       0x27 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_wait.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_wait.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_wait.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_wait.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_wait.o
+ .text          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_wait.o
+ .data          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_wait.o
+ .bss           0x00000000        0x0 build/13-01-event-post/kernel/src/hr_wait.o
+ .text.hr_wait_list_size
+                0x00000000        0xe build/13-01-event-post/kernel/src/hr_wait.o
+ .text.hr_wait_list_pop
+                0x00000000        0xa build/13-01-event-post/kernel/src/hr_wait.o
+ .text.hr_wait_list_validate
+                0x00000000       0x40 build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/kernel/src/hr_wait.o
+ .comment       0x00000000       0x27 build/13-01-event-post/kernel/src/hr_wait.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_timeout.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_timeout.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_timeout.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_timeout.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_timeout.o
+ .text          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_timeout.o
+ .data          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_timeout.o
+ .bss           0x00000000        0x0 build/13-01-event-post/kernel/src/hr_timeout.o
+ .text.hr_timeout_order_is_valid
+                0x00000000       0x2e build/13-01-event-post/kernel/src/hr_timeout.o
+ .text.hr_timeout_list_is_empty
+                0x00000000       0x12 build/13-01-event-post/kernel/src/hr_timeout.o
+ .text.hr_timeout_list_size
+                0x00000000        0xa build/13-01-event-post/kernel/src/hr_timeout.o
+ .text.hr_timeout_list_last_tick
+                0x00000000        0xa build/13-01-event-post/kernel/src/hr_timeout.o
+ .text.hr_timeout_list_validate
+                0x00000000       0x68 build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/kernel/src/hr_timeout.o
+ .comment       0x00000000       0x27 build/13-01-event-post/kernel/src/hr_timeout.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_task.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_task.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_task.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_task.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_task.o
+ .text          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_task.o
+ .data          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_task.o
+ .bss           0x00000000        0x0 build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_get_name
+                0x00000000       0x1a build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_get_state
+                0x00000000       0x1a build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_get_base_priority
+                0x00000000       0x1a build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_get_effective_priority
+                0x00000000       0x1a build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_get_stack_words
+                0x00000000       0x1c build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_get_stack_high_watermark
+                0x00000000       0x3c build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_stack_guard_is_valid
+                0x00000000       0x34 build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_delay_until
+                0x00000000       0x62 build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_suspend
+                0x00000000       0x5e build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_resume
+                0x00000000       0x5e build/13-01-event-post/kernel/src/hr_task.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/kernel/src/hr_task.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/kernel/src/hr_task.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/kernel/src/hr_task.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/kernel/src/hr_task.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/kernel/src/hr_task.o
+ .comment       0x00000000       0x27 build/13-01-event-post/kernel/src/hr_task.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .text          0x00000000        0x0 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .data          0x00000000        0x0 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .bss           0x00000000        0x0 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .text.hr_port_thread_uses_psp
+                0x00000000        0xa build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .comment       0x00000000       0x27 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .text          0x00000000        0x0 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .data          0x00000000        0x0 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .bss           0x00000000        0x0 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000       0x82 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .comment       0x00000000       0x27 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_kernel.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_kernel.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_kernel.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_kernel.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_kernel.o
+ .text          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_kernel.o
+ .data          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_kernel.o
+ .bss           0x00000000        0x0 build/13-01-event-post/kernel/src/hr_kernel.o
+ .text.hr_kernel_suspend_task
+                0x00000000      0x114 build/13-01-event-post/kernel/src/hr_kernel.o
+ .text.hr_kernel_resume_task
+                0x00000000       0xdc build/13-01-event-post/kernel/src/hr_kernel.o
+ .text.hr_kernel_get_state
+                0x00000000        0xc build/13-01-event-post/kernel/src/hr_kernel.o
+ .text.hr_kernel_get_task_count
+                0x00000000        0xc build/13-01-event-post/kernel/src/hr_kernel.o
+ .text.hr_kernel_set_task_effective_priority
+                0x00000000       0xc4 build/13-01-event-post/kernel/src/hr_kernel.o
+ .text.hr_kernel_current_should_preempt
+                0x00000000       0x4c build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/kernel/src/hr_kernel.o
+ .comment       0x00000000       0x27 build/13-01-event-post/kernel/src/hr_kernel.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_time.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_time.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_time.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_time.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_time.o
+ .text          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_time.o
+ .data          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_time.o
+ .bss           0x00000000        0x0 build/13-01-event-post/kernel/src/hr_time.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/kernel/src/hr_time.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/kernel/src/hr_time.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/kernel/src/hr_time.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/kernel/src/hr_time.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/kernel/src/hr_time.o
+ .comment       0x00000000       0x27 build/13-01-event-post/kernel/src/hr_time.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_context.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_context.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_context.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_context.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_context.o
+ .text          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_context.o
+ .data          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_context.o
+ .bss           0x00000000        0x0 build/13-01-event-post/kernel/src/hr_context.o
+ .text.hr_is_inside_isr
+                0x00000000        0x8 build/13-01-event-post/kernel/src/hr_context.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/kernel/src/hr_context.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/kernel/src/hr_context.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/kernel/src/hr_context.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/kernel/src/hr_context.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/kernel/src/hr_context.o
+ .comment       0x00000000       0x27 build/13-01-event-post/kernel/src/hr_context.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_queue.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_queue.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_queue.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_queue.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_queue.o
+ .text          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_queue.o
+ .data          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_queue.o
+ .bss           0x00000000        0x0 build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_validate_internal
+                0x00000000       0x36 build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_get_count
+                0x00000000       0x1a build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_get_capacity
+                0x00000000       0x1a build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_get_waiting_senders
+                0x00000000       0x20 build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_get_waiting_receivers
+                0x00000000       0x20 build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_send
+                0x00000000       0x98 build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_receive_from_isr
+                0x00000000       0x76 build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/kernel/src/hr_queue.o
+ .comment       0x00000000       0x27 build/13-01-event-post/kernel/src/hr_queue.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_semaphore.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_semaphore.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_semaphore.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_semaphore.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_semaphore.o
+ .text          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .data          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .bss           0x00000000        0x0 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .text.hr_semaphore_zero_control_block
+                0x00000000       0x10 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .text.hr_semaphore_validate_internal
+                0x00000000       0x28 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .text.hr_semaphore_create_counting
+                0x00000000       0x4c build/13-01-event-post/kernel/src/hr_semaphore.o
+ .text.hr_semaphore_create_binary
+                0x00000000       0x12 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .text.hr_semaphore_get_count
+                0x00000000       0x1a build/13-01-event-post/kernel/src/hr_semaphore.o
+ .text.hr_semaphore_get_max_count
+                0x00000000       0x1a build/13-01-event-post/kernel/src/hr_semaphore.o
+ .text.hr_semaphore_get_waiting_tasks
+                0x00000000       0x20 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .text.hr_semaphore_take
+                0x00000000       0x96 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .text.hr_semaphore_give
+                0x00000000       0x52 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/kernel/src/hr_semaphore.o
+ .comment       0x00000000       0x27 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_timer.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_timer.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_timer.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_timer.o
+ .group         0x00000000        0xc build/13-01-event-post/kernel/src/hr_timer.o
+ .text          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_timer.o
+ .data          0x00000000        0x0 build/13-01-event-post/kernel/src/hr_timer.o
+ .bss           0x00000000        0x0 build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_zero_control_block
+                0x00000000       0x10 build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_clear_pending_locked
+                0x00000000       0x1e build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_validate_internal
+                0x00000000       0x48 build/13-01-event-post/kernel/src/hr_timer.o
+ .rodata.hr_timer_system_ensure_initialized.str1.4
+                0x00000000        0xe build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_system_ensure_initialized
+                0x00000000       0x8c build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_create_static
+                0x00000000       0xa4 build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_is_active
+                0x00000000       0x24 build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_get_name
+                0x00000000       0x1a build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_get_period
+                0x00000000       0x1a build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_get_pending_count
+                0x00000000       0x1a build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_start
+                0x00000000       0x48 build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_stop
+                0x00000000       0x58 build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_reset
+                0x00000000       0x5c build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_change_period
+                0x00000000       0x70 build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_process_one_pending
+                0x00000000       0x8c build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_service_entry
+                0x00000000       0x24 build/13-01-event-post/kernel/src/hr_timer.o
+ .bss.g_timer_service_stack
+                0x00000000      0x280 build/13-01-event-post/kernel/src/hr_timer.o
+ .bss.g_timer_service_task
+                0x00000000      0x180 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/kernel/src/hr_timer.o
+ .comment       0x00000000       0x27 build/13-01-event-post/kernel/src/hr_timer.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_event.o
+ .text          0x00000000        0x0 build/13-01-event-post/hairevent/src/he_event.o
+ .data          0x00000000        0x0 build/13-01-event-post/hairevent/src/he_event.o
+ .bss           0x00000000        0x0 build/13-01-event-post/hairevent/src/he_event.o
+ .text.he_event_pool_init
+                0x00000000       0x9c build/13-01-event-post/hairevent/src/he_event.o
+ .text.he_event_pool_get_free_count
+                0x00000000       0x1a build/13-01-event-post/hairevent/src/he_event.o
+ .text.he_event_pool_get_block_count
+                0x00000000       0x1a build/13-01-event-post/hairevent/src/he_event.o
+ .text.he_event_new
+                0x00000000       0x74 build/13-01-event-post/hairevent/src/he_event.o
+ .text.he_event_get_reference_count
+                0x00000000       0x12 build/13-01-event-post/hairevent/src/he_event.o
+ .text.he_event_retain
+                0x00000000       0x3c build/13-01-event-post/hairevent/src/he_event.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/hairevent/src/he_event.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/hairevent/src/he_event.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/hairevent/src/he_event.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/hairevent/src/he_event.o
+ .debug_macro   0x00000000       0x88 build/13-01-event-post/hairevent/src/he_event.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/hairevent/src/he_event.o
+ .comment       0x00000000       0x27 build/13-01-event-post/hairevent/src/he_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_state_machine.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_state_machine.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_state_machine.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_state_machine.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_state_machine.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_state_machine.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_state_machine.o
+ .text          0x00000000        0x0 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .data          0x00000000        0x0 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .bss           0x00000000        0x0 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .text.he_state_machine_current
+                0x00000000       0x1a build/13-01-event-post/hairevent/src/he_state_machine.o
+ .text.he_state_machine_context
+                0x00000000       0x1a build/13-01-event-post/hairevent/src/he_state_machine.o
+ .text.he_state_machine_context_const
+                0x00000000       0x1a build/13-01-event-post/hairevent/src/he_state_machine.o
+ .text.he_state_transition
+                0x00000000       0x24 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_macro   0x00000000       0x88 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_macro   0x00000000       0x10 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .comment       0x00000000       0x27 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_active.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_active.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_active.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_active.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_active.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_active.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_active.o
+ .text          0x00000000        0x0 build/13-01-event-post/hairevent/src/he_active.o
+ .data          0x00000000        0x0 build/13-01-event-post/hairevent/src/he_active.o
+ .bss           0x00000000        0x0 build/13-01-event-post/hairevent/src/he_active.o
+ .text.he_active_post
+                0x00000000       0x34 build/13-01-event-post/hairevent/src/he_active.o
+ .text.he_active_post_shared
+                0x00000000       0x2e build/13-01-event-post/hairevent/src/he_active.o
+ .text.he_active_get_name
+                0x00000000       0x1c build/13-01-event-post/hairevent/src/he_active.o
+ .text.he_active_get_pending_count
+                0x00000000       0x20 build/13-01-event-post/hairevent/src/he_active.o
+ .text.he_active_get_task
+                0x00000000       0x1a build/13-01-event-post/hairevent/src/he_active.o
+ .text.he_active_get_state_machine
+                0x00000000       0x1c build/13-01-event-post/hairevent/src/he_active.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/hairevent/src/he_active.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/hairevent/src/he_active.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/hairevent/src/he_active.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/hairevent/src/he_active.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/hairevent/src/he_active.o
+ .debug_macro   0x00000000       0x88 build/13-01-event-post/hairevent/src/he_active.o
+ .debug_macro   0x00000000       0x10 build/13-01-event-post/hairevent/src/he_active.o
+ .comment       0x00000000       0x27 build/13-01-event-post/hairevent/src/he_active.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_time_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_time_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_time_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_time_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_time_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_time_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_time_event.o
+ .text          0x00000000        0x0 build/13-01-event-post/hairevent/src/he_time_event.o
+ .data          0x00000000        0x0 build/13-01-event-post/hairevent/src/he_time_event.o
+ .bss           0x00000000        0x0 build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_zero_bytes
+                0x00000000       0x10 build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_time_event_control_block
+                0x00000000        0x6 build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_time_event_control_block_const
+                0x00000000        0x6 build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_time_event_is_valid
+                0x00000000       0x58 build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_time_event_callback
+                0x00000000       0x38 build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_time_event_create_static
+                0x00000000       0x8c build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_time_event_arm
+                0x00000000       0x1e build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_time_event_disarm
+                0x00000000       0x1e build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_time_event_rearm
+                0x00000000       0x1e build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_time_event_change_period
+                0x00000000       0x22 build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_time_event_is_armed
+                0x00000000       0x26 build/13-01-event-post/hairevent/src/he_time_event.o
+ .text.he_time_event_get_dropped_count
+                0x00000000       0x1c build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_info    0x00000000      0xaa9 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_abbrev  0x00000000      0x249 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_loclists
+                0x00000000      0x2a9 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_aranges
+                0x00000000       0x78 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_rnglists
+                0x00000000       0x56 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_macro   0x00000000       0xed build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_macro   0x00000000       0x88 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_macro   0x00000000       0x10 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_line    0x00000000      0x520 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_str     0x00000000     0x498b build/13-01-event-post/hairevent/src/he_time_event.o
+ .comment       0x00000000       0x27 build/13-01-event-post/hairevent/src/he_time_event.o
+ .debug_frame   0x00000000      0x150 build/13-01-event-post/hairevent/src/he_time_event.o
+ .ARM.attributes
+                0x00000000       0x2d build/13-01-event-post/hairevent/src/he_time_event.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_pubsub.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_pubsub.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_pubsub.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_pubsub.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_pubsub.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_pubsub.o
+ .group         0x00000000        0xc build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text          0x00000000        0x0 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .data          0x00000000        0x0 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .bss           0x00000000        0x0 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text.he_zero_bytes
+                0x00000000       0x10 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text.he_pubsub_signal_slots
+                0x00000000        0xe build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text.he_pubsub_signal_slots_const
+                0x00000000        0xe build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text.he_pubsub_control_block
+                0x00000000        0x6 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text.he_pubsub_control_block_const
+                0x00000000        0x6 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text.he_pubsub_is_valid
+                0x00000000       0x44 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text.he_pubsub_init
+                0x00000000       0x6c build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text.he_pubsub_subscribe
+                0x00000000       0x86 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text.he_pubsub_unsubscribe
+                0x00000000       0x88 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text.he_pubsub_get_subscriber_count
+                0x00000000       0x46 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text.he_pubsub_publish
+                0x00000000       0xe2 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_info    0x00000000      0xb4d build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_abbrev  0x00000000      0x28f build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_loclists
+                0x00000000      0x629 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_aranges
+                0x00000000       0x70 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_rnglists
+                0x00000000       0x6a build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_macro   0x00000000       0xf7 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_macro   0x00000000      0xacc build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_macro   0x00000000      0x190 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_macro   0x00000000       0x22 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_macro   0x00000000      0x34e build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_macro   0x00000000       0xe2 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_macro   0x00000000       0x88 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_macro   0x00000000       0x10 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_line    0x00000000      0x793 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_str     0x00000000     0x4994 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .comment       0x00000000       0x27 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .debug_frame   0x00000000      0x138 build/13-01-event-post/hairevent/src/he_pubsub.o
+ .ARM.attributes
+                0x00000000       0x2d build/13-01-event-post/hairevent/src/he_pubsub.o
+ .text          0x00000000        0x0 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+ .data          0x00000000        0x0 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+ .bss           0x00000000        0x0 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+ .note.GNU-stack
+                0x00000000        0x0 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+ .data          0x00000000        0x0 build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+ .bss           0x00000000        0x0 build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+ .note.GNU-stack
+                0x00000000        0x0 build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x08000000         0x00010000         xr
+RAM              0x20000000         0x00005000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+LOAD build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+LOAD build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+LOAD build/13-01-event-post/boards/bluepill_f103c8/board.o
+LOAD build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+LOAD build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+LOAD build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+LOAD build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+LOAD build/13-01-event-post/examples/13-01-event-post/main.o
+LOAD build/13-01-event-post/kernel/src/hr_list.o
+LOAD build/13-01-event-post/kernel/src/hr_scheduler.o
+LOAD build/13-01-event-post/kernel/src/hr_wait.o
+LOAD build/13-01-event-post/kernel/src/hr_timeout.o
+LOAD build/13-01-event-post/kernel/src/hr_task.o
+LOAD build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+LOAD build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+LOAD build/13-01-event-post/kernel/src/hr_kernel.o
+LOAD build/13-01-event-post/kernel/src/hr_time.o
+LOAD build/13-01-event-post/kernel/src/hr_context.o
+LOAD build/13-01-event-post/kernel/src/hr_queue.o
+LOAD build/13-01-event-post/kernel/src/hr_semaphore.o
+LOAD build/13-01-event-post/kernel/src/hr_timer.o
+LOAD build/13-01-event-post/hairevent/src/he_event.o
+LOAD build/13-01-event-post/hairevent/src/he_state_machine.o
+LOAD build/13-01-event-post/hairevent/src/he_active.o
+LOAD build/13-01-event-post/hairevent/src/he_time_event.o
+LOAD build/13-01-event-post/hairevent/src/he_pubsub.o
+LOAD build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+LOAD build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+LOAD /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a
+                0x00000000                        _Min_Heap_Size = 0x0
+                0x00000400                        _Min_Stack_Size = 0x400
+                0x20005000                        _estack = (ORIGIN (RAM) + LENGTH (RAM))
+                0x20004c00                        _sstack = (_estack - _Min_Stack_Size)
+
+.isr_vector     0x08000000       0xec
+                0x08000000                        . = ALIGN (0x4)
+ *(.isr_vector)
+ .isr_vector    0x08000000       0xec build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+                0x08000000                g_pfnVectors
+                0x080000ec                        . = ALIGN (0x4)
+
+.text           0x080000ec     0x27a4
+                0x080000ec                        . = ALIGN (0x4)
+ *(.text)
+ .text          0x080000ec       0x74 build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+                0x080000ec                hr_port_start_first_task
+                0x08000102                SVC_Handler
+                0x08000126                PendSV_Handler
+ *(.text*)
+ .text.system_reset_clock_tree
+                0x08000160       0x44 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .text.SystemCoreClockUpdate
+                0x080001a4       0x10 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+                0x080001a4                SystemCoreClockUpdate
+ .text.SystemInit
+                0x080001b4       0x20 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+                0x080001b4                SystemInit
+ .text.wait_for_mask
+                0x080001d4       0x1e build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ *fill*         0x080001f2        0x2 
+ .text.decode_ahb_prescaler
+                0x080001f4       0x10 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .text.decode_apb_prescaler
+                0x08000204       0x10 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .text.stm32f1_clock_configure_hse_pll_72mhz
+                0x08000214       0x78 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+                0x08000214                stm32f1_clock_configure_hse_pll_72mhz
+ .text.stm32f1_clock_get_hclk_hz
+                0x0800028c       0x40 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+                0x0800028c                stm32f1_clock_get_hclk_hz
+ .text.stm32f1_clock_get_pclk2_hz
+                0x080002cc       0x20 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+                0x080002cc                stm32f1_clock_get_pclk2_hz
+ .text.fault_stop
+                0x080002ec        0x6 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .text.HardFault_Handler
+                0x080002f2        0x6 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+                0x080002f2                HardFault_Handler
+ .text.MemManage_Handler
+                0x080002f8        0x6 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+                0x080002f8                MemManage_Handler
+ .text.BusFault_Handler
+                0x080002fe        0x6 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+                0x080002fe                BusFault_Handler
+ .text.UsageFault_Handler
+                0x08000304        0x6 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+                0x08000304                UsageFault_Handler
+ .text.board_led_on
+                0x0800030a        0xe build/13-01-event-post/boards/bluepill_f103c8/board.o
+                0x0800030a                board_led_on
+ .text.board_led_off
+                0x08000318        0xe build/13-01-event-post/boards/bluepill_f103c8/board.o
+                0x08000318                board_led_off
+ .text.board_led_toggle
+                0x08000326        0xc build/13-01-event-post/boards/bluepill_f103c8/board.o
+                0x08000326                board_led_toggle
+ .text.board_uart_write_char
+                0x08000332        0x8 build/13-01-event-post/boards/bluepill_f103c8/board.o
+                0x08000332                board_uart_write_char
+ .text.board_uart_write_string
+                0x0800033a        0x8 build/13-01-event-post/boards/bluepill_f103c8/board.o
+                0x0800033a                board_uart_write_string
+ *fill*         0x08000342        0x2 
+ .text.board_uart_write_u32
+                0x08000344       0x5c build/13-01-event-post/boards/bluepill_f103c8/board.o
+                0x08000344                board_uart_write_u32
+ .text.board_uart_write_line
+                0x080003a0       0x14 build/13-01-event-post/boards/bluepill_f103c8/board.o
+                0x080003a0                board_uart_write_line
+ .text.board_print_boot_banner
+                0x080003b4       0x5c build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .text.board_init
+                0x08000410       0x38 build/13-01-event-post/boards/bluepill_f103c8/board.o
+                0x08000410                board_init
+ .text.board_panic
+                0x08000448        0xc build/13-01-event-post/boards/bluepill_f103c8/board.o
+                0x08000448                board_panic
+ .text.board_get_core_clock_hz
+                0x08000454        0xc build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+                0x08000454                board_get_core_clock_hz
+ .text.board_clock_is_72mhz
+                0x08000460       0x18 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+                0x08000460                board_clock_is_72mhz
+ .text.gpio_from_port
+                0x08000478       0x28 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.gpio_configure_nibble
+                0x080004a0       0x30 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.hr_gpio_enable_port_clock
+                0x080004d0       0x34 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x080004d0                hr_gpio_enable_port_clock
+ .text.hr_gpio_config_output_push_pull
+                0x08000504       0x14 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x08000504                hr_gpio_config_output_push_pull
+ .text.hr_gpio_config_alternate_push_pull
+                0x08000518       0x16 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x08000518                hr_gpio_config_alternate_push_pull
+ .text.hr_gpio_config_input_floating
+                0x0800052e       0x12 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x0800052e                hr_gpio_config_input_floating
+ .text.hr_gpio_write
+                0x08000540       0x22 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x08000540                hr_gpio_write
+ .text.hr_gpio_toggle
+                0x08000562       0x28 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x08000562                hr_gpio_toggle
+ *fill*         0x0800058a        0x2 
+ .text.hr_uart_init
+                0x0800058c       0x54 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+                0x0800058c                hr_uart_init
+ .text.hr_uart_write_char
+                0x080005e0       0x14 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+                0x080005e0                hr_uart_write_char
+ .text.hr_uart_write_string
+                0x080005f4       0x16 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+                0x080005f4                hr_uart_write_string
+ *fill*         0x0800060a        0x2 
+ .text.hr_hw_timer_init_1khz
+                0x0800060c       0x34 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+                0x0800060c                hr_hw_timer_init_1khz
+ .text.configure_software_irq
+                0x08000640       0x24 build/13-01-event-post/examples/13-01-event-post/main.o
+ .text.trigger_task
+                0x08000664       0x18 build/13-01-event-post/examples/13-01-event-post/main.o
+ .text.receiver_state
+                0x0800067c       0x68 build/13-01-event-post/examples/13-01-event-post/main.o
+ .text.EXTI0_IRQHandler
+                0x080006e4       0x5c build/13-01-event-post/examples/13-01-event-post/main.o
+                0x080006e4                EXTI0_IRQHandler
+ .text.main     0x08000740       0xbc build/13-01-event-post/examples/13-01-event-post/main.o
+                0x08000740                main
+ .text.hr_list_insert_between
+                0x080007fc       0x38 build/13-01-event-post/kernel/src/hr_list.o
+ .text.hr_list_init
+                0x08000834       0x12 build/13-01-event-post/kernel/src/hr_list.o
+                0x08000834                hr_list_init
+ .text.hr_list_node_init
+                0x08000846        0xe build/13-01-event-post/kernel/src/hr_list.o
+                0x08000846                hr_list_node_init
+ .text.hr_list_is_empty
+                0x08000854       0x12 build/13-01-event-post/kernel/src/hr_list.o
+                0x08000854                hr_list_is_empty
+ .text.hr_list_size
+                0x08000866        0xa build/13-01-event-post/kernel/src/hr_list.o
+                0x08000866                hr_list_size
+ .text.hr_list_node_is_linked
+                0x08000870       0x12 build/13-01-event-post/kernel/src/hr_list.o
+                0x08000870                hr_list_node_is_linked
+ .text.hr_list_node_owner
+                0x08000882        0x8 build/13-01-event-post/kernel/src/hr_list.o
+                0x08000882                hr_list_node_owner
+ .text.hr_list_front
+                0x0800088a       0x10 build/13-01-event-post/kernel/src/hr_list.o
+                0x0800088a                hr_list_front
+ .text.hr_list_next
+                0x0800089a       0x24 build/13-01-event-post/kernel/src/hr_list.o
+                0x0800089a                hr_list_next
+ .text.hr_list_push_back
+                0x080008be       0x14 build/13-01-event-post/kernel/src/hr_list.o
+                0x080008be                hr_list_push_back
+ .text.hr_list_insert_before
+                0x080008d2       0x24 build/13-01-event-post/kernel/src/hr_list.o
+                0x080008d2                hr_list_insert_before
+ .text.hr_list_remove
+                0x080008f6       0x3a build/13-01-event-post/kernel/src/hr_list.o
+                0x080008f6                hr_list_remove
+ .text.hr_list_pop_front
+                0x08000930       0x18 build/13-01-event-post/kernel/src/hr_list.o
+                0x08000930                hr_list_pop_front
+ .text.hr_priority_is_valid
+                0x08000948        0xa build/13-01-event-post/kernel/src/hr_scheduler.o
+ .text.hr_priority_mask
+                0x08000952        0x8 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .text.hr_ready_set_highest_priority
+                0x0800095a       0x24 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .text.hr_ready_node_init
+                0x0800097e       0x12 build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x0800097e                hr_ready_node_init
+ .text.hr_ready_set_init
+                0x08000990       0x2a build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x08000990                hr_ready_set_init
+ .text.hr_ready_set_insert
+                0x080009ba       0x52 build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x080009ba                hr_ready_set_insert
+ .text.hr_ready_set_remove
+                0x08000a0c       0x68 build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x08000a0c                hr_ready_set_remove
+ .text.hr_ready_set_peek_highest
+                0x08000a74       0x2e build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x08000a74                hr_ready_set_peek_highest
+ .text.hr_ready_set_rotate_highest
+                0x08000aa2       0x50 build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x08000aa2                hr_ready_set_rotate_highest
+ .text.hr_scheduler_init
+                0x08000af2        0xc build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x08000af2                hr_scheduler_init
+ .text.hr_scheduler_add_ready
+                0x08000afe        0xe build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x08000afe                hr_scheduler_add_ready
+ .text.hr_scheduler_remove_ready
+                0x08000b0c        0xe build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x08000b0c                hr_scheduler_remove_ready
+ .text.hr_scheduler_select_highest
+                0x08000b1a        0xa build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x08000b1a                hr_scheduler_select_highest
+ .text.hr_scheduler_yield_current
+                0x08000b24       0x26 build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x08000b24                hr_scheduler_yield_current
+ .text.hr_scheduler_should_preempt
+                0x08000b4a       0x38 build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x08000b4a                hr_scheduler_should_preempt
+ .text.hr_scheduler_has_equal_priority_peer
+                0x08000b82       0x3e build/13-01-event-post/kernel/src/hr_scheduler.o
+                0x08000b82                hr_scheduler_has_equal_priority_peer
+ .text.hr_wait_node_init
+                0x08000bc0       0x12 build/13-01-event-post/kernel/src/hr_wait.o
+                0x08000bc0                hr_wait_node_init
+ .text.hr_wait_list_init
+                0x08000bd2        0xc build/13-01-event-post/kernel/src/hr_wait.o
+                0x08000bd2                hr_wait_list_init
+ .text.hr_wait_list_is_empty
+                0x08000bde       0x14 build/13-01-event-post/kernel/src/hr_wait.o
+                0x08000bde                hr_wait_list_is_empty
+ .text.hr_wait_list_insert
+                0x08000bf2       0x4e build/13-01-event-post/kernel/src/hr_wait.o
+                0x08000bf2                hr_wait_list_insert
+ .text.hr_wait_list_remove
+                0x08000c40       0x20 build/13-01-event-post/kernel/src/hr_wait.o
+                0x08000c40                hr_wait_list_remove
+ .text.hr_wait_list_peek
+                0x08000c60        0xa build/13-01-event-post/kernel/src/hr_wait.o
+                0x08000c60                hr_wait_list_peek
+ .text.hr_timeout_insert_sorted
+                0x08000c6a       0x34 build/13-01-event-post/kernel/src/hr_timeout.o
+ .text.hr_timeout_node_init
+                0x08000c9e       0x12 build/13-01-event-post/kernel/src/hr_timeout.o
+                0x08000c9e                hr_timeout_node_init
+ .text.hr_timeout_list_init
+                0x08000cb0       0x24 build/13-01-event-post/kernel/src/hr_timeout.o
+                0x08000cb0                hr_timeout_list_init
+ .text.hr_timeout_list_insert
+                0x08000cd4       0x4c build/13-01-event-post/kernel/src/hr_timeout.o
+                0x08000cd4                hr_timeout_list_insert
+ .text.hr_timeout_list_remove
+                0x08000d20       0x32 build/13-01-event-post/kernel/src/hr_timeout.o
+                0x08000d20                hr_timeout_list_remove
+ .text.hr_timeout_list_advance
+                0x08000d52       0x7a build/13-01-event-post/kernel/src/hr_timeout.o
+                0x08000d52                hr_timeout_list_advance
+ .text.hr_task_zero_control_block
+                0x08000dcc       0x10 build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_fill_stack
+                0x08000ddc       0x1c build/13-01-event-post/kernel/src/hr_task.o
+ .text.hr_task_exit_error
+                0x08000df8        0x2 build/13-01-event-post/kernel/src/hr_task.o
+                0x08000df8                hr_task_exit_error
+ .text.hr_task_control_block
+                0x08000dfa        0x6 build/13-01-event-post/kernel/src/hr_task.o
+                0x08000dfa                hr_task_control_block
+ .text.hr_task_control_block_const
+                0x08000e00        0x6 build/13-01-event-post/kernel/src/hr_task.o
+                0x08000e00                hr_task_control_block_const
+ *fill*         0x08000e06        0x2 
+ .text.hr_task_is_valid
+                0x08000e08       0x24 build/13-01-event-post/kernel/src/hr_task.o
+                0x08000e08                hr_task_is_valid
+ .text.hr_task_transition_state
+                0x08000e2c       0x28 build/13-01-event-post/kernel/src/hr_task.o
+                0x08000e2c                hr_task_transition_state
+ .text.hr_task_create_static
+                0x08000e54      0x120 build/13-01-event-post/kernel/src/hr_task.o
+                0x08000e54                hr_task_create_static
+ .text.hr_task_start
+                0x08000f74       0x16 build/13-01-event-post/kernel/src/hr_task.o
+                0x08000f74                hr_task_start
+ .text.hr_task_yield
+                0x08000f8a       0x18 build/13-01-event-post/kernel/src/hr_task.o
+                0x08000f8a                hr_task_yield
+ .text.hr_task_delay
+                0x08000fa2       0x44 build/13-01-event-post/kernel/src/hr_task.o
+                0x08000fa2                hr_task_delay
+ .text.hr_task_current
+                0x08000fe6        0x8 build/13-01-event-post/kernel/src/hr_task.o
+                0x08000fe6                hr_task_current
+ .text.hr_port_initialize_stack
+                0x08000fee       0x16 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                0x08000fee                hr_port_initialize_stack
+ .text.hr_port_configure_kernel_exceptions
+                0x08001004       0x34 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                0x08001004                hr_port_configure_kernel_exceptions
+ .text.hr_port_request_context_switch
+                0x08001038       0x16 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                0x08001038                hr_port_request_context_switch
+ .text.hr_port_wait_for_interrupt
+                0x0800104e        0x4 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                0x0800104e                hr_port_wait_for_interrupt
+ .text.hr_port_enter_critical
+                0x08001052       0x10 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                0x08001052                hr_port_enter_critical
+ .text.hr_port_exit_critical
+                0x08001062        0xe build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                0x08001062                hr_port_exit_critical
+ .text.hr_port_is_inside_isr
+                0x08001070        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                0x08001070                hr_port_is_inside_isr
+ .text.hr_port_yield_from_isr
+                0x0800107c        0xc build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                0x0800107c                hr_port_yield_from_isr
+ .text.hr_port_align_down
+                0x08001088        0x6 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .text.hr_port_initialize_stack_raw
+                0x0800108e       0xb6 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+                0x0800108e                hr_port_initialize_stack_raw
+ .text.hr_kernel_panic
+                0x08001144        0xc build/13-01-event-post/kernel/src/hr_kernel.o
+ .text.hr_kernel_mark_switch_reason
+                0x08001150       0x10 build/13-01-event-post/kernel/src/hr_kernel.o
+ .text.hr_kernel_reload_time_slice
+                0x08001160        0x8 build/13-01-event-post/kernel/src/hr_kernel.o
+ .text.hr_idle_task
+                0x08001168        0x8 build/13-01-event-post/kernel/src/hr_kernel.o
+ .text.hr_kernel_make_task_ready
+                0x08001170      0x124 build/13-01-event-post/kernel/src/hr_kernel.o
+ .text.hr_kernel_init
+                0x08001294       0xb0 build/13-01-event-post/kernel/src/hr_kernel.o
+                0x08001294                hr_kernel_init
+ .text.hr_kernel_register_task
+                0x08001344       0xcc build/13-01-event-post/kernel/src/hr_kernel.o
+                0x08001344                hr_kernel_register_task
+ .text.hr_kernel_prepare_start
+                0x08001410       0x78 build/13-01-event-post/kernel/src/hr_kernel.o
+                0x08001410                hr_kernel_prepare_start
+ .text.hr_kernel_request_yield
+                0x08001488       0x4c build/13-01-event-post/kernel/src/hr_kernel.o
+                0x08001488                hr_kernel_request_yield
+ .text.hr_kernel_delay_current
+                0x080014d4       0xe4 build/13-01-event-post/kernel/src/hr_kernel.o
+                0x080014d4                hr_kernel_delay_current
+ .text.hr_kernel_block_current_on_wait_list_ex
+                0x080015b8      0x18c build/13-01-event-post/kernel/src/hr_kernel.o
+                0x080015b8                hr_kernel_block_current_on_wait_list_ex
+ .text.hr_kernel_block_current_on_wait_list
+                0x08001744       0x14 build/13-01-event-post/kernel/src/hr_kernel.o
+                0x08001744                hr_kernel_block_current_on_wait_list
+ .text.hr_kernel_unblock_waiter
+                0x08001758       0x2c build/13-01-event-post/kernel/src/hr_kernel.o
+                0x08001758                hr_kernel_unblock_waiter
+ .text.hr_kernel_select_next_from_pendsv
+                0x08001784      0x12c build/13-01-event-post/kernel/src/hr_kernel.o
+                0x08001784                hr_kernel_select_next_from_pendsv
+ .text.hr_kernel_tick_from_isr
+                0x080018b0      0x174 build/13-01-event-post/kernel/src/hr_kernel.o
+                0x080018b0                hr_kernel_tick_from_isr
+ .text.hr_kernel_start
+                0x08001a24       0x1a build/13-01-event-post/kernel/src/hr_kernel.o
+                0x08001a24                hr_kernel_start
+ *fill*         0x08001a3e        0x2 
+ .text.hr_kernel_is_running
+                0x08001a40       0x14 build/13-01-event-post/kernel/src/hr_kernel.o
+                0x08001a40                hr_kernel_is_running
+ .text.hr_kernel_get_tick
+                0x08001a54        0xc build/13-01-event-post/kernel/src/hr_kernel.o
+                0x08001a54                hr_kernel_get_tick
+ .text.hr_kernel_current_task_internal
+                0x08001a60        0xc build/13-01-event-post/kernel/src/hr_kernel.o
+                0x08001a60                hr_kernel_current_task_internal
+ .text.hr_time_now
+                0x08001a6c        0x8 build/13-01-event-post/kernel/src/hr_time.o
+                0x08001a6c                hr_time_now
+ .text.SysTick_Handler
+                0x08001a74        0x8 build/13-01-event-post/kernel/src/hr_time.o
+                0x08001a74                SysTick_Handler
+ .text.hr_critical_enter
+                0x08001a7c        0x8 build/13-01-event-post/kernel/src/hr_context.o
+                0x08001a7c                hr_critical_enter
+ .text.hr_critical_exit
+                0x08001a84        0x8 build/13-01-event-post/kernel/src/hr_context.o
+                0x08001a84                hr_critical_exit
+ .text.hr_yield_from_isr
+                0x08001a8c        0x8 build/13-01-event-post/kernel/src/hr_context.o
+                0x08001a8c                hr_yield_from_isr
+ .text.hr_queue_zero_control_block
+                0x08001a94       0x10 build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_copy
+                0x08001aa4       0x14 build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_slot
+                0x08001ab8        0xa build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_multiply_fits
+                0x08001ac2       0x1c build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_waiter_task
+                0x08001ade       0x1e build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_wake_receiver
+                0x08001afc       0x52 build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_send_locked
+                0x08001b4e       0x90 build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_fill_from_waiting_sender
+                0x08001bde       0x7a build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_receive_locked
+                0x08001c58       0xc6 build/13-01-event-post/kernel/src/hr_queue.o
+ .text.hr_queue_control_block
+                0x08001d1e        0x6 build/13-01-event-post/kernel/src/hr_queue.o
+                0x08001d1e                hr_queue_control_block
+ .text.hr_queue_control_block_const
+                0x08001d24        0x6 build/13-01-event-post/kernel/src/hr_queue.o
+                0x08001d24                hr_queue_control_block_const
+ *fill*         0x08001d2a        0x2 
+ .text.hr_queue_is_valid
+                0x08001d2c       0x58 build/13-01-event-post/kernel/src/hr_queue.o
+                0x08001d2c                hr_queue_is_valid
+ .text.hr_queue_create_static
+                0x08001d84       0x6c build/13-01-event-post/kernel/src/hr_queue.o
+                0x08001d84                hr_queue_create_static
+ .text.hr_queue_receive
+                0x08001df0       0x98 build/13-01-event-post/kernel/src/hr_queue.o
+                0x08001df0                hr_queue_receive
+ .text.hr_queue_send_from_isr
+                0x08001e88       0x76 build/13-01-event-post/kernel/src/hr_queue.o
+                0x08001e88                hr_queue_send_from_isr
+ .text.hr_semaphore_give_locked
+                0x08001efe       0x34 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .text.hr_semaphore_control_block
+                0x08001f32        0x6 build/13-01-event-post/kernel/src/hr_semaphore.o
+                0x08001f32                hr_semaphore_control_block
+ .text.hr_semaphore_control_block_const
+                0x08001f38        0x6 build/13-01-event-post/kernel/src/hr_semaphore.o
+                0x08001f38                hr_semaphore_control_block_const
+ *fill*         0x08001f3e        0x2 
+ .text.hr_semaphore_is_valid
+                0x08001f40       0x34 build/13-01-event-post/kernel/src/hr_semaphore.o
+                0x08001f40                hr_semaphore_is_valid
+ .text.hr_semaphore_give_from_isr
+                0x08001f74       0x52 build/13-01-event-post/kernel/src/hr_semaphore.o
+                0x08001f74                hr_semaphore_give_from_isr
+ *fill*         0x08001fc6        0x2 
+ .text.hr_timer_arm_locked
+                0x08001fc8       0x1c build/13-01-event-post/kernel/src/hr_timer.o
+ .text.hr_timer_control_block
+                0x08001fe4        0x6 build/13-01-event-post/kernel/src/hr_timer.o
+                0x08001fe4                hr_timer_control_block
+ .text.hr_timer_control_block_const
+                0x08001fea        0x6 build/13-01-event-post/kernel/src/hr_timer.o
+                0x08001fea                hr_timer_control_block_const
+ .text.hr_timer_is_valid
+                0x08001ff0       0x44 build/13-01-event-post/kernel/src/hr_timer.o
+                0x08001ff0                hr_timer_is_valid
+ .text.hr_timer_system_reset
+                0x08002034        0xc build/13-01-event-post/kernel/src/hr_timer.o
+                0x08002034                hr_timer_system_reset
+ .text.hr_timer_tick_from_isr
+                0x08002040       0xd0 build/13-01-event-post/kernel/src/hr_timer.o
+                0x08002040                hr_timer_tick_from_isr
+ .text.he_zero_bytes
+                0x08002110       0x10 build/13-01-event-post/hairevent/src/he_event.o
+ .text.he_event_pool_control_block
+                0x08002120        0x6 build/13-01-event-post/hairevent/src/he_event.o
+                0x08002120                he_event_pool_control_block
+ .text.he_event_pool_control_block_const
+                0x08002126        0x6 build/13-01-event-post/hairevent/src/he_event.o
+                0x08002126                he_event_pool_control_block_const
+ .text.he_event_pool_is_valid
+                0x0800212c       0x44 build/13-01-event-post/hairevent/src/he_event.o
+                0x0800212c                he_event_pool_is_valid
+ .text.he_event_init_static
+                0x08002170       0x44 build/13-01-event-post/hairevent/src/he_event.o
+                0x08002170                he_event_init_static
+ .text.he_event_is_valid
+                0x080021b4       0x6c build/13-01-event-post/hairevent/src/he_event.o
+                0x080021b4                he_event_is_valid
+ .text.he_event_is_dynamic
+                0x08002220       0x1c build/13-01-event-post/hairevent/src/he_event.o
+                0x08002220                he_event_is_dynamic
+ .text.he_event_release
+                0x0800223c       0x64 build/13-01-event-post/hairevent/src/he_event.o
+                0x0800223c                he_event_release
+ .text.he_zero_bytes
+                0x080022a0       0x10 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .text.he_state_machine_control_block
+                0x080022b0        0x6 build/13-01-event-post/hairevent/src/he_state_machine.o
+                0x080022b0                he_state_machine_control_block
+ .text.he_dispatch_reserved
+                0x080022b6       0x36 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .text.he_apply_transition
+                0x080022ec       0x84 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .text.he_state_machine_control_block_const
+                0x08002370        0x6 build/13-01-event-post/hairevent/src/he_state_machine.o
+                0x08002370                he_state_machine_control_block_const
+ *fill*         0x08002376        0x2 
+ .text.he_state_machine_is_valid
+                0x08002378       0x28 build/13-01-event-post/hairevent/src/he_state_machine.o
+                0x08002378                he_state_machine_is_valid
+ .text.he_state_machine_init
+                0x080023a0       0x40 build/13-01-event-post/hairevent/src/he_state_machine.o
+                0x080023a0                he_state_machine_init
+ .text.he_state_machine_is_started
+                0x080023e0       0x22 build/13-01-event-post/hairevent/src/he_state_machine.o
+                0x080023e0                he_state_machine_is_started
+ .text.he_state_machine_start
+                0x08002402       0x78 build/13-01-event-post/hairevent/src/he_state_machine.o
+                0x08002402                he_state_machine_start
+ .text.he_state_machine_dispatch
+                0x0800247a       0x54 build/13-01-event-post/hairevent/src/he_state_machine.o
+                0x0800247a                he_state_machine_dispatch
+ .text.he_zero_bytes
+                0x080024ce       0x10 build/13-01-event-post/hairevent/src/he_active.o
+ .text.he_active_control_block
+                0x080024de        0x6 build/13-01-event-post/hairevent/src/he_active.o
+                0x080024de                he_active_control_block
+ .text.he_active_control_block_const
+                0x080024e4        0x6 build/13-01-event-post/hairevent/src/he_active.o
+                0x080024e4                he_active_control_block_const
+ *fill*         0x080024ea        0x2 
+ .text.he_active_is_valid
+                0x080024ec       0x54 build/13-01-event-post/hairevent/src/he_active.o
+                0x080024ec                he_active_is_valid
+ .text.he_active_task_entry
+                0x08002540       0x64 build/13-01-event-post/hairevent/src/he_active.o
+ .text.he_active_create_static
+                0x080025a4       0xc8 build/13-01-event-post/hairevent/src/he_active.o
+                0x080025a4                he_active_create_static
+ .text.he_active_post_from_isr
+                0x0800266c       0x34 build/13-01-event-post/hairevent/src/he_active.o
+                0x0800266c                he_active_post_from_isr
+ .text.Reset_Handler
+                0x080026a0       0x44 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+                0x080026a0                Reset_Handler
+ .text.Default_Handler
+                0x080026e4        0x4 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+                0x080026e4                EXTI2_IRQHandler
+                0x080026e4                DebugMon_Handler
+                0x080026e4                TIM1_CC_IRQHandler
+                0x080026e4                PVD_IRQHandler
+                0x080026e4                NMI_Handler
+                0x080026e4                EXTI3_IRQHandler
+                0x080026e4                I2C2_EV_IRQHandler
+                0x080026e4                ADC1_2_IRQHandler
+                0x080026e4                SPI1_IRQHandler
+                0x080026e4                TAMPER_IRQHandler
+                0x080026e4                DMA1_Channel4_IRQHandler
+                0x080026e4                USART3_IRQHandler
+                0x080026e4                RTC_IRQHandler
+                0x080026e4                DMA1_Channel7_IRQHandler
+                0x080026e4                CAN1_RX1_IRQHandler
+                0x080026e4                TIM4_IRQHandler
+                0x080026e4                I2C1_EV_IRQHandler
+                0x080026e4                DMA1_Channel6_IRQHandler
+                0x080026e4                TIM3_IRQHandler
+                0x080026e4                RCC_IRQHandler
+                0x080026e4                TIM1_TRG_COM_IRQHandler
+                0x080026e4                DMA1_Channel1_IRQHandler
+                0x080026e4                EXTI15_10_IRQHandler
+                0x080026e4                EXTI9_5_IRQHandler
+                0x080026e4                SPI2_IRQHandler
+                0x080026e4                DMA1_Channel5_IRQHandler
+                0x080026e4                EXTI4_IRQHandler
+                0x080026e4                USB_LP_CAN1_RX0_IRQHandler
+                0x080026e4                USB_HP_CAN1_TX_IRQHandler
+                0x080026e4                DMA1_Channel3_IRQHandler
+                0x080026e4                TIM1_UP_IRQHandler
+                0x080026e4                WWDG_IRQHandler
+                0x080026e4                TIM2_IRQHandler
+                0x080026e4                TIM1_BRK_IRQHandler
+                0x080026e4                EXTI1_IRQHandler
+                0x080026e4                RTCAlarm_IRQHandler
+                0x080026e4                USART2_IRQHandler
+                0x080026e4                I2C2_ER_IRQHandler
+                0x080026e4                DMA1_Channel2_IRQHandler
+                0x080026e4                CAN1_SCE_IRQHandler
+                0x080026e4                FLASH_IRQHandler
+                0x080026e4                USART1_IRQHandler
+                0x080026e4                I2C1_ER_IRQHandler
+                0x080026e4                USBWakeUp_IRQHandler
+ *(.rodata)
+ *(.rodata*)
+ .rodata.divisors.0
+                0x080026e8        0x8 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .rodata.divisors.1
+                0x080026f0       0x20 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .rodata.board_uart_write_line.str1.4
+                0x08002710      0x17d build/13-01-event-post/boards/bluepill_f103c8/board.o
+                                  0x3 (size before relaxing)
+ .rodata.board_print_boot_banner.str1.4
+                0x0800288d       0xa8 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .rodata.receiver_state.str1.4
+                0x0800288d       0x4d build/13-01-event-post/examples/13-01-event-post/main.o
+ .rodata.main.str1.4
+                0x0800288d       0x84 build/13-01-event-post/examples/13-01-event-post/main.o
+ .rodata.hr_kernel_init.str1.4
+                0x0800288d        0x5 build/13-01-event-post/kernel/src/hr_kernel.o
+ *(.init)
+ *(.fini)
+                0x08002938                        . = ALIGN (0x4)
+ *fill*         0x0800288d        0x3 
+                0x08002890                        _etext = .
+
+.glue_7         0x08002890        0x0
+ .glue_7        0x08002890        0x0 linker stubs
+
+.glue_7t        0x08002890        0x0
+ .glue_7t       0x08002890        0x0 linker stubs
+
+.vfp11_veneer   0x08002890        0x0
+ .vfp11_veneer  0x08002890        0x0 linker stubs
+
+.v4_bx          0x08002890        0x0
+ .v4_bx         0x08002890        0x0 linker stubs
+
+.iplt           0x08002890        0x0
+ .iplt          0x08002890        0x0 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+
+.rel.dyn        0x08002890        0x0
+ .rel.iplt      0x08002890        0x0 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+
+.ARM.exidx      0x08002890        0x0
+                0x08002890                        __exidx_start = .
+ *(.ARM.exidx*)
+                0x08002890                        __exidx_end = .
+                0x08002890                        _sidata = LOADADDR (.data)
+
+.data           0x20000000        0x4 load address 0x08002890
+                0x20000000                        . = ALIGN (0x4)
+                0x20000000                        _sdata = .
+ *(.data)
+ *(.data*)
+ .data.SystemCoreClock
+                0x20000000        0x4 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+                0x20000000                SystemCoreClock
+                0x20000004                        . = ALIGN (0x4)
+                0x20000004                        _edata = .
+
+.igot.plt       0x20000004        0x0 load address 0x08002894
+ .igot.plt      0x20000004        0x0 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+
+.bss            0x20000008     0x10f0 load address 0x08002894
+                0x20000008                        . = ALIGN (0x4)
+                0x20000008                        _sbss = .
+                0x20000008                        __bss_start__ = .
+ *(.bss)
+ *(.bss*)
+ .bss.g_millisecond_tick
+                0x20000008        0x4 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .bss.g_post_status
+                0x2000000c        0x1 build/13-01-event-post/examples/13-01-event-post/main.o
+ *fill*         0x2000000d        0x3 
+ .bss.g_irq_count
+                0x20000010        0x4 build/13-01-event-post/examples/13-01-event-post/main.o
+ .bss.g_irq_event
+                0x20000014       0x10 build/13-01-event-post/examples/13-01-event-post/main.o
+ .bss.g_trigger_stack
+                0x20000024      0x380 build/13-01-event-post/examples/13-01-event-post/main.o
+ *fill*         0x200003a4        0x4 
+ .bss.g_trigger
+                0x200003a8      0x180 build/13-01-event-post/examples/13-01-event-post/main.o
+ .bss.g_receiver_stack
+                0x20000528      0x380 build/13-01-event-post/examples/13-01-event-post/main.o
+ .bss.g_receiver_queue
+                0x200008a8       0x10 build/13-01-event-post/examples/13-01-event-post/main.o
+ .bss.g_receiver
+                0x200008b8      0x300 build/13-01-event-post/examples/13-01-event-post/main.o
+ .bss.g_hr_current_task_control_block
+                0x20000bb8        0x4 build/13-01-event-post/kernel/src/hr_kernel.o
+                0x20000bb8                g_hr_current_task_control_block
+ .bss.g_idle_stack
+                0x20000bbc      0x200 build/13-01-event-post/kernel/src/hr_kernel.o
+ *fill*         0x20000dbc        0x4 
+ .bss.g_idle_task
+                0x20000dc0      0x180 build/13-01-event-post/kernel/src/hr_kernel.o
+ .bss.g_switch_reasons
+                0x20000f40        0x4 build/13-01-event-post/kernel/src/hr_kernel.o
+ .bss.g_kernel_tick
+                0x20000f44        0x4 build/13-01-event-post/kernel/src/hr_kernel.o
+ .bss.g_task_count
+                0x20000f48        0x4 build/13-01-event-post/kernel/src/hr_kernel.o
+ .bss.g_current_task
+                0x20000f4c        0x4 build/13-01-event-post/kernel/src/hr_kernel.o
+ .bss.g_timeout_list
+                0x20000f50       0x38 build/13-01-event-post/kernel/src/hr_kernel.o
+ .bss.g_all_tasks
+                0x20000f88       0x14 build/13-01-event-post/kernel/src/hr_kernel.o
+ .bss.g_scheduler
+                0x20000f9c       0xa8 build/13-01-event-post/kernel/src/hr_kernel.o
+ .bss.g_kernel_state
+                0x20001044        0x1 build/13-01-event-post/kernel/src/hr_kernel.o
+ *fill*         0x20001045        0x3 
+ .bss.g_timer_signal
+                0x20001048       0x60 build/13-01-event-post/kernel/src/hr_timer.o
+ .bss.g_pending_timers
+                0x200010a8       0x14 build/13-01-event-post/kernel/src/hr_timer.o
+ .bss.g_timer_timeouts
+                0x200010bc       0x38 build/13-01-event-post/kernel/src/hr_timer.o
+ .bss.g_timer_system_initialized
+                0x200010f4        0x1 build/13-01-event-post/kernel/src/hr_timer.o
+ *(COMMON)
+                0x200010f8                        . = ALIGN (0x4)
+ *fill*         0x200010f5        0x3 
+                0x200010f8                        _ebss = .
+                0x200010f8                        __bss_end__ = .
+
+.heap           0x200010f8        0x0 load address 0x08002894
+                0x200010f8                        . = ALIGN (0x8)
+                0x200010f8                        __end__ = .
+                0x200010f8                        end = __end__
+                0x200010f8                        . = (. + _Min_Heap_Size)
+                0x200010f8                        __heap_end__ = .
+
+/DISCARD/
+ *(.comment)
+ *(.note*)
+                0x00000001                        ASSERT ((__heap_end__ <= _sstack), RAM overflow: data/heap collides with reserved main stack)
+OUTPUT(build/13-01-event-post/hairtos_baremetal.elf elf32-littlearm)
+LOAD linker stubs
+
+.ARM.attributes
+                0x00000000       0x2b
+ .ARM.attributes
+                0x00000000       0x2d build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .ARM.attributes
+                0x0000002d       0x2d build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .ARM.attributes
+                0x0000005a       0x2d build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .ARM.attributes
+                0x00000087       0x2d build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .ARM.attributes
+                0x000000b4       0x2d build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .ARM.attributes
+                0x000000e1       0x2d build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .ARM.attributes
+                0x0000010e       0x2d build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .ARM.attributes
+                0x0000013b       0x2d build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .ARM.attributes
+                0x00000168       0x2d build/13-01-event-post/examples/13-01-event-post/main.o
+ .ARM.attributes
+                0x00000195       0x2d build/13-01-event-post/kernel/src/hr_list.o
+ .ARM.attributes
+                0x000001c2       0x2d build/13-01-event-post/kernel/src/hr_scheduler.o
+ .ARM.attributes
+                0x000001ef       0x2d build/13-01-event-post/kernel/src/hr_wait.o
+ .ARM.attributes
+                0x0000021c       0x2d build/13-01-event-post/kernel/src/hr_timeout.o
+ .ARM.attributes
+                0x00000249       0x2d build/13-01-event-post/kernel/src/hr_task.o
+ .ARM.attributes
+                0x00000276       0x2d build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .ARM.attributes
+                0x000002a3       0x2d build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .ARM.attributes
+                0x000002d0       0x2d build/13-01-event-post/kernel/src/hr_kernel.o
+ .ARM.attributes
+                0x000002fd       0x2d build/13-01-event-post/kernel/src/hr_time.o
+ .ARM.attributes
+                0x0000032a       0x2d build/13-01-event-post/kernel/src/hr_context.o
+ .ARM.attributes
+                0x00000357       0x2d build/13-01-event-post/kernel/src/hr_queue.o
+ .ARM.attributes
+                0x00000384       0x2d build/13-01-event-post/kernel/src/hr_semaphore.o
+ .ARM.attributes
+                0x000003b1       0x2d build/13-01-event-post/kernel/src/hr_timer.o
+ .ARM.attributes
+                0x000003de       0x2d build/13-01-event-post/hairevent/src/he_event.o
+ .ARM.attributes
+                0x0000040b       0x2d build/13-01-event-post/hairevent/src/he_state_machine.o
+ .ARM.attributes
+                0x00000438       0x2d build/13-01-event-post/hairevent/src/he_active.o
+ .ARM.attributes
+                0x00000465       0x21 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+ .ARM.attributes
+                0x00000486       0x21 build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_info     0x00000000     0xdabb
+ .debug_info    0x00000000      0x2df build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_info    0x000002df      0x476 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_info    0x00000755      0x13b build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_info    0x00000890      0x5c4 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_info    0x00000e54       0xc1 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_info    0x00000f15      0x572 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_info    0x00001487      0x304 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_info    0x0000178b      0x19c build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_info    0x00001927      0x87e build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_info    0x000021a5      0x67b build/13-01-event-post/kernel/src/hr_list.o
+ .debug_info    0x00002820      0xc18 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_info    0x00003438      0x6f3 build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_info    0x00003b2b      0x88d build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_info    0x000043b8     0x1190 build/13-01-event-post/kernel/src/hr_task.o
+ .debug_info    0x00005548      0x341 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_info    0x00005889      0x1e5 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_info    0x00005a6e     0x1f72 build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_info    0x000079e0       0xeb build/13-01-event-post/kernel/src/hr_time.o
+ .debug_info    0x00007acb      0x18f build/13-01-event-post/kernel/src/hr_context.o
+ .debug_info    0x00007c5a     0x17d3 build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_info    0x0000942d      0xe60 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_info    0x0000a28d     0x1428 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_info    0x0000b6b5      0x8eb build/13-01-event-post/hairevent/src/he_event.o
+ .debug_info    0x0000bfa0      0xa3f build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_info    0x0000c9df      0xdb2 build/13-01-event-post/hairevent/src/he_active.o
+ .debug_info    0x0000d791      0x2e3 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+ .debug_info    0x0000da74       0x47 build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_abbrev   0x00000000     0x2cd0
+ .debug_abbrev  0x00000000      0x10b build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_abbrev  0x0000010b      0x191 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_abbrev  0x0000029c       0x96 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_abbrev  0x00000332      0x1a0 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_abbrev  0x000004d2       0x6a build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_abbrev  0x0000053c      0x183 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_abbrev  0x000006bf      0x156 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_abbrev  0x00000815      0x13f build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_abbrev  0x00000954      0x2a9 build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_abbrev  0x00000bfd      0x140 build/13-01-event-post/kernel/src/hr_list.o
+ .debug_abbrev  0x00000d3d      0x212 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_abbrev  0x00000f4f      0x187 build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_abbrev  0x000010d6      0x1d2 build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_abbrev  0x000012a8      0x2e4 build/13-01-event-post/kernel/src/hr_task.o
+ .debug_abbrev  0x0000158c      0x146 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_abbrev  0x000016d2       0xb6 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_abbrev  0x00001788      0x38f build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_abbrev  0x00001b17       0xa2 build/13-01-event-post/kernel/src/hr_time.o
+ .debug_abbrev  0x00001bb9       0xf4 build/13-01-event-post/kernel/src/hr_context.o
+ .debug_abbrev  0x00001cad      0x314 build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_abbrev  0x00001fc1      0x289 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_abbrev  0x0000224a      0x344 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_abbrev  0x0000258e      0x207 build/13-01-event-post/hairevent/src/he_event.o
+ .debug_abbrev  0x00002795      0x23b build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_abbrev  0x000029d0      0x2b2 build/13-01-event-post/hairevent/src/he_active.o
+ .debug_abbrev  0x00002c82       0x26 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+ .debug_abbrev  0x00002ca8       0x28 build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_aranges  0x00000000      0xb30
+ .debug_aranges
+                0x00000000       0x30 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_aranges
+                0x00000030       0x50 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_aranges
+                0x00000080       0x40 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_aranges
+                0x000000c0       0x78 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_aranges
+                0x00000138       0x28 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_aranges
+                0x00000160       0x60 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_aranges
+                0x000001c0       0x38 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_aranges
+                0x000001f8       0x38 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_aranges
+                0x00000230       0x40 build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_aranges
+                0x00000270       0xa8 build/13-01-event-post/kernel/src/hr_list.o
+ .debug_aranges
+                0x00000318       0xd0 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_aranges
+                0x000003e8       0x60 build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_aranges
+                0x00000448       0x70 build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_aranges
+                0x000004b8       0xc8 build/13-01-event-post/kernel/src/hr_task.o
+ .debug_aranges
+                0x00000580       0x60 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_aranges
+                0x000005e0       0x28 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_aranges
+                0x00000608       0xe0 build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_aranges
+                0x000006e8       0x28 build/13-01-event-post/kernel/src/hr_time.o
+ .debug_aranges
+                0x00000710       0x38 build/13-01-event-post/kernel/src/hr_context.o
+ .debug_aranges
+                0x00000748       0xc8 build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_aranges
+                0x00000810       0x88 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_aranges
+                0x00000898       0xc0 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_aranges
+                0x00000958       0x88 build/13-01-event-post/hairevent/src/he_event.o
+ .debug_aranges
+                0x000009e0       0x88 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_aranges
+                0x00000a68       0x80 build/13-01-event-post/hairevent/src/he_active.o
+ .debug_aranges
+                0x00000ae8       0x28 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+ .debug_aranges
+                0x00000b10       0x20 build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_rnglists
+                0x00000000      0x848
+ .debug_rnglists
+                0x00000000       0x1f build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_rnglists
+                0x0000001f       0x37 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_rnglists
+                0x00000056       0x2b build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_rnglists
+                0x00000081       0x55 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_rnglists
+                0x000000d6       0x19 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_rnglists
+                0x000000ef       0x43 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_rnglists
+                0x00000132       0x25 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_rnglists
+                0x00000157       0x25 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_rnglists
+                0x0000017c       0x2c build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_rnglists
+                0x000001a8       0x7a build/13-01-event-post/kernel/src/hr_list.o
+ .debug_rnglists
+                0x00000222       0x97 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_rnglists
+                0x000002b9       0x4f build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_rnglists
+                0x00000308       0x73 build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_rnglists
+                0x0000037b       0x92 build/13-01-event-post/kernel/src/hr_task.o
+ .debug_rnglists
+                0x0000040d       0x43 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_rnglists
+                0x00000450       0x1a build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_rnglists
+                0x0000046a       0xba build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_rnglists
+                0x00000524       0x19 build/13-01-event-post/kernel/src/hr_time.o
+ .debug_rnglists
+                0x0000053d       0x25 build/13-01-event-post/kernel/src/hr_context.o
+ .debug_rnglists
+                0x00000562       0x95 build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_rnglists
+                0x000005f7       0x62 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_rnglists
+                0x00000659       0x9b build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_rnglists
+                0x000006f4       0x6e build/13-01-event-post/hairevent/src/he_event.o
+ .debug_rnglists
+                0x00000762       0x71 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_rnglists
+                0x000007d3       0x5c build/13-01-event-post/hairevent/src/he_active.o
+ .debug_rnglists
+                0x0000082f       0x19 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+
+.debug_macro    0x00000000     0x2300
+ .debug_macro   0x00000000       0x3b build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x0000003b      0xacc build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000b07       0x22 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000b29      0x190 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000cb9      0x34e build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00001007      0x193 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x0000119a       0x41 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x000011db       0x3b build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00001216       0x78 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_macro   0x0000128e       0x2e build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_macro   0x000012bc       0x45 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00001301       0x4b build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x0000134c       0x5b build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x000013a7       0x45 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x000013ec      0x141 build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_macro   0x0000152d       0x88 build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_macro   0x000015b5       0xe2 build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_macro   0x00001697       0x37 build/13-01-event-post/kernel/src/hr_list.o
+ .debug_macro   0x000016ce       0x6f build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_macro   0x0000173d       0x6f build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_macro   0x000017ac       0x6f build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_macro   0x0000181b       0xd5 build/13-01-event-post/kernel/src/hr_task.o
+ .debug_macro   0x000018f0       0xb4 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x000019a4       0x82 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x00001a26       0x52 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00001a78      0x10d build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_macro   0x00001b85       0xc3 build/13-01-event-post/kernel/src/hr_time.o
+ .debug_macro   0x00001c48       0x5b build/13-01-event-post/kernel/src/hr_context.o
+ .debug_macro   0x00001ca3       0xe7 build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_macro   0x00001d8a       0xe7 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_macro   0x00001e71       0xc1 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_macro   0x00001f32       0xfc build/13-01-event-post/hairevent/src/he_event.o
+ .debug_macro   0x0000202e       0xe8 build/13-01-event-post/hairevent/src/he_event.o
+ .debug_macro   0x00002116       0x10 build/13-01-event-post/hairevent/src/he_event.o
+ .debug_macro   0x00002126       0xed build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_macro   0x00002213       0xed build/13-01-event-post/hairevent/src/he_active.o
+
+.debug_line     0x00000000     0x7ef2
+ .debug_line    0x00000000      0x15a build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_line    0x0000015a      0x26c build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_line    0x000003c6      0x135 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_line    0x000004fb      0x32a build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_line    0x00000825      0x110 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_line    0x00000935      0x2ec build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_line    0x00000c21      0x202 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_line    0x00000e23      0x1af build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_line    0x00000fd2      0x385 build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_line    0x00001357      0x626 build/13-01-event-post/kernel/src/hr_list.o
+ .debug_line    0x0000197d      0x7f1 build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_line    0x0000216e      0x381 build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_line    0x000024ef      0x583 build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_line    0x00002a72      0x946 build/13-01-event-post/kernel/src/hr_task.o
+ .debug_line    0x000033b8      0x237 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_line    0x000035ef      0x208 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_line    0x000037f7     0x11d5 build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_line    0x000049cc      0x1cb build/13-01-event-post/kernel/src/hr_time.o
+ .debug_line    0x00004b97      0x169 build/13-01-event-post/kernel/src/hr_context.o
+ .debug_line    0x00004d00      0xb21 build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_line    0x00005821      0x6a0 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_line    0x00005ec1      0xa61 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_line    0x00006922      0x7e5 build/13-01-event-post/hairevent/src/he_event.o
+ .debug_line    0x00007107      0x6f3 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_line    0x000077fa      0x60e build/13-01-event-post/hairevent/src/he_active.o
+ .debug_line    0x00007e08       0x73 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+ .debug_line    0x00007e7b       0x77 build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_str      0x00000000     0x8576
+ .debug_str     0x00000000     0x8576 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+                               0x46c4 (size before relaxing)
+ .debug_str     0x00008576     0x4737 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_str     0x00008576     0x45f6 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_str     0x00008576     0x4984 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_str     0x00008576     0x45dc build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_str     0x00008576     0x4795 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_str     0x00008576     0x4768 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_str     0x00008576     0x4669 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_str     0x00008576     0x53dd build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_str     0x00008576     0x355a build/13-01-event-post/kernel/src/hr_list.o
+ .debug_str     0x00008576     0x466c build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_str     0x00008576     0x44de build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_str     0x00008576     0x458b build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_str     0x00008576     0x4b1b build/13-01-event-post/kernel/src/hr_task.o
+ .debug_str     0x00008576     0x4755 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_str     0x00008576     0x4436 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_str     0x00008576     0x503d build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_str     0x00008576     0x41e1 build/13-01-event-post/kernel/src/hr_time.o
+ .debug_str     0x00008576     0x41c0 build/13-01-event-post/kernel/src/hr_context.o
+ .debug_str     0x00008576     0x4bcd build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_str     0x00008576     0x4aa6 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_str     0x00008576     0x49f3 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_str     0x00008576     0x4b54 build/13-01-event-post/hairevent/src/he_event.o
+ .debug_str     0x00008576     0x4953 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_str     0x00008576     0x4a98 build/13-01-event-post/hairevent/src/he_active.o
+ .debug_str     0x00008576      0x44d build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+ .debug_str     0x00008576       0x8b build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_frame    0x00000000     0x1e1c
+ .debug_frame   0x00000000       0x50 build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+ .debug_frame   0x00000050       0xb4 build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_frame   0x00000104       0x80 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+ .debug_frame   0x00000184      0x138 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_frame   0x000002bc       0x30 build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+ .debug_frame   0x000002ec       0xdc build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_frame   0x000003c8       0x6c build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_frame   0x00000434       0x50 build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_frame   0x00000484       0x90 build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_frame   0x00000514      0x18c build/13-01-event-post/kernel/src/hr_list.o
+ .debug_frame   0x000006a0      0x2cc build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_frame   0x0000096c      0x130 build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_frame   0x00000a9c      0x174 build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_frame   0x00000c10      0x250 build/13-01-event-post/kernel/src/hr_task.o
+ .debug_frame   0x00000e60       0xb4 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_frame   0x00000f14       0x3c build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_frame   0x00000f50      0x2c0 build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_frame   0x00001210       0x40 build/13-01-event-post/kernel/src/hr_time.o
+ .debug_frame   0x00001250       0x70 build/13-01-event-post/kernel/src/hr_context.o
+ .debug_frame   0x000012c0      0x2ac build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_frame   0x0000156c      0x19c build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_frame   0x00001708      0x240 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_frame   0x00001948      0x1a0 build/13-01-event-post/hairevent/src/he_event.o
+ .debug_frame   0x00001ae8      0x1a0 build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_frame   0x00001c88      0x194 build/13-01-event-post/hairevent/src/he_active.o
+
+.debug_loclists
+                0x00000000     0x52f7
+ .debug_loclists
+                0x00000000      0x15a build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+ .debug_loclists
+                0x0000015a       0xc7 build/13-01-event-post/boards/bluepill_f103c8/board.o
+ .debug_loclists
+                0x00000221      0x2f7 build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_loclists
+                0x00000518       0xc8 build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_loclists
+                0x000005e0       0x3f build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_loclists
+                0x0000061f       0xf8 build/13-01-event-post/examples/13-01-event-post/main.o
+ .debug_loclists
+                0x00000717      0x5b8 build/13-01-event-post/kernel/src/hr_list.o
+ .debug_loclists
+                0x00000ccf      0x73a build/13-01-event-post/kernel/src/hr_scheduler.o
+ .debug_loclists
+                0x00001409      0x32f build/13-01-event-post/kernel/src/hr_wait.o
+ .debug_loclists
+                0x00001738      0x465 build/13-01-event-post/kernel/src/hr_timeout.o
+ .debug_loclists
+                0x00001b9d      0x6de build/13-01-event-post/kernel/src/hr_task.o
+ .debug_loclists
+                0x0000227b      0x104 build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+ .debug_loclists
+                0x0000237f      0x288 build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_loclists
+                0x00002607      0xa79 build/13-01-event-post/kernel/src/hr_kernel.o
+ .debug_loclists
+                0x00003080       0x46 build/13-01-event-post/kernel/src/hr_context.o
+ .debug_loclists
+                0x000030c6      0x900 build/13-01-event-post/kernel/src/hr_queue.o
+ .debug_loclists
+                0x000039c6      0x512 build/13-01-event-post/kernel/src/hr_semaphore.o
+ .debug_loclists
+                0x00003ed8      0x784 build/13-01-event-post/kernel/src/hr_timer.o
+ .debug_loclists
+                0x0000465c      0x515 build/13-01-event-post/hairevent/src/he_event.o
+ .debug_loclists
+                0x00004b71      0x32e build/13-01-event-post/hairevent/src/he_state_machine.o
+ .debug_loclists
+                0x00004e9f      0x458 build/13-01-event-post/hairevent/src/he_active.o
+
+.debug_line_str
+                0x00000000       0x6b
+ .debug_line_str
+                0x00000000       0x6b build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+                                 0x4b (size before relaxing)
+ .debug_line_str
+                0x0000006b       0x4b build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+
+Cross Reference Table
+
+Symbol                                            File
+ADC1_2_IRQHandler                                 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+BusFault_Handler                                  build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+CAN1_RX1_IRQHandler                               build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+CAN1_SCE_IRQHandler                               build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel1_IRQHandler                          build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel2_IRQHandler                          build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel3_IRQHandler                          build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel4_IRQHandler                          build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel5_IRQHandler                          build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel6_IRQHandler                          build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel7_IRQHandler                          build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+DebugMon_Handler                                  build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+EXTI0_IRQHandler                                  build/13-01-event-post/examples/13-01-event-post/main.o
+EXTI15_10_IRQHandler                              build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+EXTI1_IRQHandler                                  build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+EXTI2_IRQHandler                                  build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+EXTI3_IRQHandler                                  build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+EXTI4_IRQHandler                                  build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+EXTI9_5_IRQHandler                                build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+FLASH_IRQHandler                                  build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+HardFault_Handler                                 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+I2C1_ER_IRQHandler                                build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+I2C1_EV_IRQHandler                                build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+I2C2_ER_IRQHandler                                build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+I2C2_EV_IRQHandler                                build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+MemManage_Handler                                 build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+NMI_Handler                                       build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+PVD_IRQHandler                                    build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+PendSV_Handler                                    build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+                                                  build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+RCC_IRQHandler                                    build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+RTCAlarm_IRQHandler                               build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+RTC_IRQHandler                                    build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+Reset_Handler                                     build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+SPI1_IRQHandler                                   build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+SPI2_IRQHandler                                   build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+SVC_Handler                                       build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+                                                  build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+SysTick_Handler                                   build/13-01-event-post/kernel/src/hr_time.o
+SystemCoreClock                                   build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+                                                  build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+SystemCoreClockUpdate                             build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+SystemInit                                        build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+                                                  build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+TAMPER_IRQHandler                                 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+TIM1_BRK_IRQHandler                               build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+TIM1_CC_IRQHandler                                build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+TIM1_TRG_COM_IRQHandler                           build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+TIM1_UP_IRQHandler                                build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+TIM2_IRQHandler                                   build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+TIM3_IRQHandler                                   build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+TIM4_IRQHandler                                   build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+USART1_IRQHandler                                 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+USART2_IRQHandler                                 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+USART3_IRQHandler                                 build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+USBWakeUp_IRQHandler                              build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+USB_HP_CAN1_TX_IRQHandler                         build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+USB_LP_CAN1_RX0_IRQHandler                        build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+UsageFault_Handler                                build/13-01-event-post/soc/stm32f1/stm32f1_irq.o
+WWDG_IRQHandler                                   build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+_ebss                                             build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+_edata                                            build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+_estack                                           build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+                                                  build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+_sbss                                             build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+_sdata                                            build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+_sidata                                           build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+board_clock_is_72mhz                              build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+board_delay_ms                                    build/13-01-event-post/boards/bluepill_f103c8/board.o
+board_get_core_clock_hz                           build/13-01-event-post/boards/bluepill_f103c8/board_clock.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+board_init                                        build/13-01-event-post/boards/bluepill_f103c8/board.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+board_led_off                                     build/13-01-event-post/boards/bluepill_f103c8/board.o
+board_led_on                                      build/13-01-event-post/boards/bluepill_f103c8/board.o
+board_led_toggle                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+board_millis                                      build/13-01-event-post/boards/bluepill_f103c8/board.o
+board_panic                                       build/13-01-event-post/boards/bluepill_f103c8/board.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+board_uart_write_char                             build/13-01-event-post/boards/bluepill_f103c8/board.o
+board_uart_write_line                             build/13-01-event-post/boards/bluepill_f103c8/board.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+board_uart_write_string                           build/13-01-event-post/boards/bluepill_f103c8/board.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+board_uart_write_u32                              build/13-01-event-post/boards/bluepill_f103c8/board.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+g_hr_current_task_control_block                   build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+g_pfnVectors                                      build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+                                                  build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+he_active_control_block                           build/13-01-event-post/hairevent/src/he_active.o
+he_active_control_block_const                     build/13-01-event-post/hairevent/src/he_active.o
+he_active_create_static                           build/13-01-event-post/hairevent/src/he_active.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+he_active_get_name                                build/13-01-event-post/hairevent/src/he_active.o
+he_active_get_pending_count                       build/13-01-event-post/hairevent/src/he_active.o
+he_active_get_state_machine                       build/13-01-event-post/hairevent/src/he_active.o
+he_active_get_task                                build/13-01-event-post/hairevent/src/he_active.o
+he_active_is_valid                                build/13-01-event-post/hairevent/src/he_active.o
+                                                  build/13-01-event-post/hairevent/src/he_pubsub.o
+                                                  build/13-01-event-post/hairevent/src/he_time_event.o
+he_active_post                                    build/13-01-event-post/hairevent/src/he_active.o
+                                                  build/13-01-event-post/hairevent/src/he_time_event.o
+he_active_post_from_isr                           build/13-01-event-post/hairevent/src/he_active.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+he_active_post_shared                             build/13-01-event-post/hairevent/src/he_active.o
+                                                  build/13-01-event-post/hairevent/src/he_pubsub.o
+he_event_get_reference_count                      build/13-01-event-post/hairevent/src/he_event.o
+he_event_init_static                              build/13-01-event-post/hairevent/src/he_event.o
+                                                  build/13-01-event-post/hairevent/src/he_time_event.o
+                                                  build/13-01-event-post/hairevent/src/he_state_machine.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+he_event_is_dynamic                               build/13-01-event-post/hairevent/src/he_event.o
+                                                  build/13-01-event-post/hairevent/src/he_pubsub.o
+he_event_is_valid                                 build/13-01-event-post/hairevent/src/he_event.o
+                                                  build/13-01-event-post/hairevent/src/he_pubsub.o
+                                                  build/13-01-event-post/hairevent/src/he_time_event.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+                                                  build/13-01-event-post/hairevent/src/he_state_machine.o
+he_event_new                                      build/13-01-event-post/hairevent/src/he_event.o
+he_event_pool_control_block                       build/13-01-event-post/hairevent/src/he_event.o
+he_event_pool_control_block_const                 build/13-01-event-post/hairevent/src/he_event.o
+he_event_pool_get_block_count                     build/13-01-event-post/hairevent/src/he_event.o
+he_event_pool_get_free_count                      build/13-01-event-post/hairevent/src/he_event.o
+he_event_pool_init                                build/13-01-event-post/hairevent/src/he_event.o
+he_event_pool_is_valid                            build/13-01-event-post/hairevent/src/he_event.o
+he_event_release                                  build/13-01-event-post/hairevent/src/he_event.o
+                                                  build/13-01-event-post/hairevent/src/he_pubsub.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+he_event_retain                                   build/13-01-event-post/hairevent/src/he_event.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+he_pubsub_control_block                           build/13-01-event-post/hairevent/src/he_pubsub.o
+he_pubsub_control_block_const                     build/13-01-event-post/hairevent/src/he_pubsub.o
+he_pubsub_get_subscriber_count                    build/13-01-event-post/hairevent/src/he_pubsub.o
+he_pubsub_init                                    build/13-01-event-post/hairevent/src/he_pubsub.o
+he_pubsub_is_valid                                build/13-01-event-post/hairevent/src/he_pubsub.o
+he_pubsub_publish                                 build/13-01-event-post/hairevent/src/he_pubsub.o
+he_pubsub_subscribe                               build/13-01-event-post/hairevent/src/he_pubsub.o
+he_pubsub_unsubscribe                             build/13-01-event-post/hairevent/src/he_pubsub.o
+he_state_machine_context                          build/13-01-event-post/hairevent/src/he_state_machine.o
+he_state_machine_context_const                    build/13-01-event-post/hairevent/src/he_state_machine.o
+he_state_machine_control_block                    build/13-01-event-post/hairevent/src/he_state_machine.o
+he_state_machine_control_block_const              build/13-01-event-post/hairevent/src/he_state_machine.o
+he_state_machine_current                          build/13-01-event-post/hairevent/src/he_state_machine.o
+he_state_machine_dispatch                         build/13-01-event-post/hairevent/src/he_state_machine.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+he_state_machine_init                             build/13-01-event-post/hairevent/src/he_state_machine.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+he_state_machine_is_started                       build/13-01-event-post/hairevent/src/he_state_machine.o
+he_state_machine_is_valid                         build/13-01-event-post/hairevent/src/he_state_machine.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+he_state_machine_start                            build/13-01-event-post/hairevent/src/he_state_machine.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+he_state_transition                               build/13-01-event-post/hairevent/src/he_state_machine.o
+he_time_event_arm                                 build/13-01-event-post/hairevent/src/he_time_event.o
+he_time_event_change_period                       build/13-01-event-post/hairevent/src/he_time_event.o
+he_time_event_control_block                       build/13-01-event-post/hairevent/src/he_time_event.o
+he_time_event_control_block_const                 build/13-01-event-post/hairevent/src/he_time_event.o
+he_time_event_create_static                       build/13-01-event-post/hairevent/src/he_time_event.o
+he_time_event_disarm                              build/13-01-event-post/hairevent/src/he_time_event.o
+he_time_event_get_dropped_count                   build/13-01-event-post/hairevent/src/he_time_event.o
+he_time_event_is_armed                            build/13-01-event-post/hairevent/src/he_time_event.o
+he_time_event_is_valid                            build/13-01-event-post/hairevent/src/he_time_event.o
+he_time_event_rearm                               build/13-01-event-post/hairevent/src/he_time_event.o
+hr_critical_enter                                 build/13-01-event-post/kernel/src/hr_context.o
+                                                  build/13-01-event-post/hairevent/src/he_pubsub.o
+                                                  build/13-01-event-post/hairevent/src/he_event.o
+hr_critical_exit                                  build/13-01-event-post/kernel/src/hr_context.o
+                                                  build/13-01-event-post/hairevent/src/he_pubsub.o
+                                                  build/13-01-event-post/hairevent/src/he_event.o
+hr_gpio_config_alternate_push_pull                build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+hr_gpio_config_input_floating                     build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+hr_gpio_config_output_push_pull                   build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+hr_gpio_enable_port_clock                         build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+hr_gpio_read                                      build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+hr_gpio_toggle                                    build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+hr_gpio_write                                     build/13-01-event-post/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+hr_hw_timer_delay_ms                              build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+hr_hw_timer_init_1khz                             build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+hr_hw_timer_millis                                build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+hr_hw_timer_tick_isr                              build/13-01-event-post/drivers/timer/src/hr_hw_timer_stm32f1.o
+hr_is_inside_isr                                  build/13-01-event-post/kernel/src/hr_context.o
+hr_kernel_block_current_on_wait_list              build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+hr_kernel_block_current_on_wait_list_ex           build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+hr_kernel_current_should_preempt                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_kernel_current_task_internal                   build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_kernel_delay_current                           build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_kernel_get_state                               build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+hr_kernel_get_task_count                          build/13-01-event-post/kernel/src/hr_kernel.o
+hr_kernel_get_tick                                build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_time.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_kernel_init                                    build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+hr_kernel_is_running                              build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_kernel_prepare_start                           build/13-01-event-post/kernel/src/hr_kernel.o
+hr_kernel_register_task                           build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_kernel_request_yield                           build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_kernel_resume_task                             build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_kernel_select_next_from_pendsv                 build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+hr_kernel_set_task_effective_priority             build/13-01-event-post/kernel/src/hr_kernel.o
+hr_kernel_start                                   build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+hr_kernel_suspend_task                            build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_kernel_tick_from_isr                           build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_time.o
+hr_kernel_unblock_waiter                          build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+hr_list_back                                      build/13-01-event-post/kernel/src/hr_list.o
+hr_list_front                                     build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_list_init                                      build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+                                                  build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_list_insert_before                             build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+hr_list_is_empty                                  build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_list_next                                      build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+hr_list_node_init                                 build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+                                                  build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_list_node_is_linked                            build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+hr_list_node_owner                                build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_list_pop_back                                  build/13-01-event-post/kernel/src/hr_list.o
+hr_list_pop_front                                 build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_list_previous                                  build/13-01-event-post/kernel/src/hr_list.o
+hr_list_push_back                                 build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_list_push_front                                build/13-01-event-post/kernel/src/hr_list.o
+hr_list_remove                                    build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_list_size                                      build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_list_validate                                  build/13-01-event-post/kernel/src/hr_list.o
+                                                  build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_port_configure_kernel_exceptions               build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_port_enter_critical                            build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/kernel/src/hr_context.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_port_exit_critical                             build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/kernel/src/hr_context.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_port_initialize_stack                          build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_port_initialize_stack_raw                      build/13-01-event-post/arch/arm/cortex-m3/hr_port_stack.o
+                                                  build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+hr_port_is_inside_isr                             build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/kernel/src/hr_context.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_port_request_context_switch                    build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_port_start_first_task                          build/13-01-event-post/arch/arm/cortex-m3/hr_portasm.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_port_thread_uses_psp                           build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+hr_port_wait_for_interrupt                        build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_port_yield_from_isr                            build/13-01-event-post/arch/arm/cortex-m3/hr_port.o
+                                                  build/13-01-event-post/kernel/src/hr_context.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_queue_control_block                            build/13-01-event-post/kernel/src/hr_queue.o
+hr_queue_control_block_const                      build/13-01-event-post/kernel/src/hr_queue.o
+hr_queue_create_static                            build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+hr_queue_get_capacity                             build/13-01-event-post/kernel/src/hr_queue.o
+hr_queue_get_count                                build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+hr_queue_get_waiting_receivers                    build/13-01-event-post/kernel/src/hr_queue.o
+hr_queue_get_waiting_senders                      build/13-01-event-post/kernel/src/hr_queue.o
+hr_queue_is_valid                                 build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+hr_queue_receive                                  build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+hr_queue_receive_from_isr                         build/13-01-event-post/kernel/src/hr_queue.o
+hr_queue_send                                     build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+hr_queue_send_from_isr                            build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+hr_queue_validate_internal                        build/13-01-event-post/kernel/src/hr_queue.o
+hr_ready_node_init                                build/13-01-event-post/kernel/src/hr_scheduler.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_ready_set_bitmap                               build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_ready_set_init                                 build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_ready_set_insert                               build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_ready_set_is_empty                             build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_ready_set_peek_highest                         build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_ready_set_remove                               build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_ready_set_rotate_highest                       build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_ready_set_size                                 build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_ready_set_validate                             build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_scheduler_add_ready                            build/13-01-event-post/kernel/src/hr_scheduler.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_scheduler_has_equal_priority_peer              build/13-01-event-post/kernel/src/hr_scheduler.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_scheduler_init                                 build/13-01-event-post/kernel/src/hr_scheduler.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_scheduler_ready_bitmap                         build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_scheduler_ready_count                          build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_scheduler_remove_ready                         build/13-01-event-post/kernel/src/hr_scheduler.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_scheduler_select_highest                       build/13-01-event-post/kernel/src/hr_scheduler.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_scheduler_should_preempt                       build/13-01-event-post/kernel/src/hr_scheduler.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_scheduler_validate                             build/13-01-event-post/kernel/src/hr_scheduler.o
+hr_scheduler_yield_current                        build/13-01-event-post/kernel/src/hr_scheduler.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_semaphore_control_block                        build/13-01-event-post/kernel/src/hr_semaphore.o
+hr_semaphore_control_block_const                  build/13-01-event-post/kernel/src/hr_semaphore.o
+hr_semaphore_create_binary                        build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+hr_semaphore_create_counting                      build/13-01-event-post/kernel/src/hr_semaphore.o
+hr_semaphore_get_count                            build/13-01-event-post/kernel/src/hr_semaphore.o
+hr_semaphore_get_max_count                        build/13-01-event-post/kernel/src/hr_semaphore.o
+hr_semaphore_get_waiting_tasks                    build/13-01-event-post/kernel/src/hr_semaphore.o
+hr_semaphore_give                                 build/13-01-event-post/kernel/src/hr_semaphore.o
+hr_semaphore_give_from_isr                        build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+hr_semaphore_is_valid                             build/13-01-event-post/kernel/src/hr_semaphore.o
+hr_semaphore_take                                 build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+hr_semaphore_validate_internal                    build/13-01-event-post/kernel/src/hr_semaphore.o
+hr_task_control_block                             build/13-01-event-post/kernel/src/hr_task.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_task_control_block_const                       build/13-01-event-post/kernel/src/hr_task.o
+hr_task_create_static                             build/13-01-event-post/kernel/src/hr_task.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+hr_task_current                                   build/13-01-event-post/kernel/src/hr_task.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+hr_task_delay                                     build/13-01-event-post/kernel/src/hr_task.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+hr_task_delay_until                               build/13-01-event-post/kernel/src/hr_task.o
+hr_task_exit_error                                build/13-01-event-post/kernel/src/hr_task.o
+hr_task_get_base_priority                         build/13-01-event-post/kernel/src/hr_task.o
+hr_task_get_effective_priority                    build/13-01-event-post/kernel/src/hr_task.o
+hr_task_get_name                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_task_get_stack_high_watermark                  build/13-01-event-post/kernel/src/hr_task.o
+hr_task_get_stack_words                           build/13-01-event-post/kernel/src/hr_task.o
+hr_task_get_state                                 build/13-01-event-post/kernel/src/hr_task.o
+hr_task_is_valid                                  build/13-01-event-post/kernel/src/hr_task.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_task_resume                                    build/13-01-event-post/kernel/src/hr_task.o
+hr_task_stack_guard_is_valid                      build/13-01-event-post/kernel/src/hr_task.o
+hr_task_start                                     build/13-01-event-post/kernel/src/hr_task.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+hr_task_suspend                                   build/13-01-event-post/kernel/src/hr_task.o
+hr_task_transition_state                          build/13-01-event-post/kernel/src/hr_task.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_task_yield                                     build/13-01-event-post/kernel/src/hr_task.o
+                                                  build/13-01-event-post/hairevent/src/he_active.o
+hr_time_now                                       build/13-01-event-post/kernel/src/hr_time.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+hr_timeout_list_advance                           build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_timeout_list_init                              build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_timeout_list_insert                            build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_timeout_list_is_empty                          build/13-01-event-post/kernel/src/hr_timeout.o
+hr_timeout_list_last_tick                         build/13-01-event-post/kernel/src/hr_timeout.o
+hr_timeout_list_remove                            build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_timeout_list_size                              build/13-01-event-post/kernel/src/hr_timeout.o
+hr_timeout_list_validate                          build/13-01-event-post/kernel/src/hr_timeout.o
+hr_timeout_node_init                              build/13-01-event-post/kernel/src/hr_timeout.o
+                                                  build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_timer_change_period                            build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/hairevent/src/he_time_event.o
+hr_timer_control_block                            build/13-01-event-post/kernel/src/hr_timer.o
+hr_timer_control_block_const                      build/13-01-event-post/kernel/src/hr_timer.o
+hr_timer_create_static                            build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/hairevent/src/he_time_event.o
+hr_timer_get_name                                 build/13-01-event-post/kernel/src/hr_timer.o
+hr_timer_get_pending_count                        build/13-01-event-post/kernel/src/hr_timer.o
+hr_timer_get_period                               build/13-01-event-post/kernel/src/hr_timer.o
+hr_timer_is_active                                build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/hairevent/src/he_time_event.o
+hr_timer_is_valid                                 build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/hairevent/src/he_time_event.o
+hr_timer_process_one_pending                      build/13-01-event-post/kernel/src/hr_timer.o
+hr_timer_reset                                    build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/hairevent/src/he_time_event.o
+hr_timer_start                                    build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/hairevent/src/he_time_event.o
+hr_timer_stop                                     build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/hairevent/src/he_time_event.o
+hr_timer_system_ensure_initialized                build/13-01-event-post/kernel/src/hr_timer.o
+hr_timer_system_reset                             build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_timer_tick_from_isr                            build/13-01-event-post/kernel/src/hr_timer.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_timer_validate_internal                        build/13-01-event-post/kernel/src/hr_timer.o
+hr_uart_init                                      build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+hr_uart_try_read_char                             build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+hr_uart_write_char                                build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+hr_uart_write_string                              build/13-01-event-post/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o
+hr_wait_list_init                                 build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+hr_wait_list_insert                               build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_wait_list_is_empty                             build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+hr_wait_list_peek                                 build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+hr_wait_list_pop                                  build/13-01-event-post/kernel/src/hr_wait.o
+hr_wait_list_remove                               build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_kernel.o
+hr_wait_list_size                                 build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+hr_wait_list_validate                             build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_semaphore.o
+                                                  build/13-01-event-post/kernel/src/hr_queue.o
+hr_wait_node_init                                 build/13-01-event-post/kernel/src/hr_wait.o
+                                                  build/13-01-event-post/kernel/src/hr_task.o
+hr_yield_from_isr                                 build/13-01-event-post/kernel/src/hr_context.o
+                                                  build/13-01-event-post/examples/13-01-event-post/main.o
+main                                              build/13-01-event-post/examples/13-01-event-post/main.o
+                                                  build/13-01-event-post/soc/stm32f1/startup_stm32f103.o
+stm32f1_clock_configure_hse_pll_72mhz             build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+                                                  build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+stm32f1_clock_get_hclk_hz                         build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+                                                  build/13-01-event-post/soc/stm32f1/system_stm32f1.o
+stm32f1_clock_get_pclk1_hz                        build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+stm32f1_clock_get_pclk2_hz                        build/13-01-event-post/soc/stm32f1/stm32f1_clock.o
+                                                  build/13-01-event-post/boards/bluepill_f103c8/board.o

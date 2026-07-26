@@ -3,14 +3,14 @@
 ## Allowed direction
 
 ```text
-application -> framework/event -> kernel/include -> arch -> soc -> board/drivers
+application -> hairevent/include -> kernel/include -> arch -> soc -> board/drivers
 ```
 
 ## Forbidden dependencies
 
 - Kernel includes STM32 or board headers.
 - Kernel calls GPIO or UART.
-- HairEvent accesses NVIC, SysTick, PSP, MSP, or kernel internal headers.
+- HairEvent accesses NVIC, SysTick, PSP, MSP, or kernel internal headers; it uses only public kernel context wrappers.
 - Drivers include TCB or scheduler internals.
 - Applications include `kernel/internal`.
 - Architecture code contains application signals.
@@ -18,7 +18,7 @@ application -> framework/event -> kernel/include -> arch -> soc -> board/drivers
 
 ## Public boundaries
 
-Public headers are only under `kernel/include`, `framework/event/include`,
+Public headers are only under `kernel/include`, `hairevent/include`,
 driver include directories, and board include directories. All `internal`
 headers are private.
 

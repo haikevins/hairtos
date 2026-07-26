@@ -3,7 +3,7 @@ EXAMPLE          ?= 01-baremetal-foundation
 BUILD_DIR        ?= build/$(EXAMPLE)
 TARGET           := $(BUILD_DIR)/$(PROJECT)
 
-TARGET_EXAMPLES  := 01-baremetal-foundation 03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer
+TARGET_EXAMPLES  := 01-baremetal-foundation 03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo
 HOST_EXAMPLES    := 02-kernel-data-structures-host
 FIRMWARE_GOALS   := all elf bin hex size flash gdb disasm
 REQUESTED_FW     := $(filter $(FIRMWARE_GOALS),$(MAKECMDGOALS))
@@ -36,7 +36,8 @@ INCLUDES         := -Iconfig \
                     -Idrivers/uart/include \
                     -Idrivers/timer/include \
                     -Ikernel/include -Ikernel/internal \
-                    -Iarch/arm/cortex-m3/include
+                    -Iarch/arm/cortex-m3/include \
+                    -Ihairevent/include -Ihairevent/internal
 
 LINKER_SCRIPT    := boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld
 OPENOCD_CFG      := tools/openocd/bluepill_stlink.cfg
@@ -63,11 +64,11 @@ PHASE3_C_SOURCES := kernel/src/hr_list.c \
 C_SOURCES        := $(PLATFORM_C_SOURCES) examples/$(EXAMPLE)/main.c
 ASM_SOURCES      := soc/stm32f1/startup_stm32f103.S
 
-ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer),)
+ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo),)
 C_SOURCES        += $(PHASE3_C_SOURCES)
 endif
 
-ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer),)
+ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo),)
 C_SOURCES        += kernel/src/hr_kernel.c
 ASM_SOURCES      += arch/arm/cortex-m3/hr_portasm.S
 endif
@@ -76,7 +77,7 @@ ifneq ($(filter $(EXAMPLE),01-baremetal-foundation 03-static-task-stack 04-start
 C_SOURCES        += $(BAREMETAL_TICK_SOURCE)
 endif
 
-ifneq ($(filter $(EXAMPLE),07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer),)
+ifneq ($(filter $(EXAMPLE),07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo),)
 C_SOURCES        += kernel/src/hr_time.c
 endif
 
@@ -94,6 +95,18 @@ endif
 
 ifeq ($(EXAMPLE),12-software-timer)
 C_SOURCES        += kernel/src/hr_semaphore.c kernel/src/hr_timer.c
+endif
+
+ifneq ($(filter $(EXAMPLE),13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo),)
+C_SOURCES        += kernel/src/hr_context.c \
+                    kernel/src/hr_queue.c \
+                    kernel/src/hr_semaphore.c \
+                    kernel/src/hr_timer.c \
+                    hairevent/src/he_event.c \
+                    hairevent/src/he_state_machine.c \
+                    hairevent/src/he_active.c \
+                    hairevent/src/he_time_event.c \
+                    hairevent/src/he_pubsub.c
 endif
 
 C_OBJECTS        := $(addprefix $(BUILD_DIR)/,$(C_SOURCES:.c=.o))
@@ -125,7 +138,7 @@ EXAMPLE_DEFINES  :=
 ifeq ($(EXAMPLE),07-task-delay-timeout)
 EXAMPLE_DEFINES  += -DHR_CFG_PREEMPTION=0 -DHR_CFG_TIME_SLICING=0
 endif
-ifeq ($(EXAMPLE),12-software-timer)
+ifneq ($(filter $(EXAMPLE),12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo),)
 EXAMPLE_DEFINES  += -DHR_CFG_ENABLE_SOFTWARE_TIMER=1 -DHR_CFG_TIMER_TASK_PRIORITY=1
 else
 EXAMPLE_DEFINES  += -DHR_CFG_ENABLE_SOFTWARE_TIMER=0
@@ -142,7 +155,7 @@ HOST_FLAGS       := -std=c11 -O0 -g3 -Wall -Wextra -Werror -Wshadow -Wundef \
                     -Wconversion -Wsign-conversion -pedantic \
                     -fsanitize=address,undefined -fno-omit-frame-pointer
 HOST_INCLUDES    := -Iconfig -Ikernel/include -Ikernel/internal -Itests/host \
-                    -Iarch/arm/cortex-m3/include
+                    -Iarch/arm/cortex-m3/include -Ihairevent/include -Ihairevent/internal
 HOST_SOURCES     := kernel/src/hr_list.c \
                     kernel/src/hr_scheduler.c \
                     kernel/src/hr_wait.c \
@@ -154,6 +167,12 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     kernel/src/hr_semaphore.c \
                     kernel/src/hr_mutex.c \
                     kernel/src/hr_timer.c \
+                    kernel/src/hr_context.c \
+                    hairevent/src/he_event.c \
+                    hairevent/src/he_state_machine.c \
+                    hairevent/src/he_active.c \
+                    hairevent/src/he_time_event.c \
+                    hairevent/src/he_pubsub.c \
                     arch/arm/cortex-m3/hr_port_stack.c \
                     tests/mocks/mock_port.c \
                     tests/host/test_main.c \
@@ -168,7 +187,8 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     tests/host/test_queue.c \
                     tests/host/test_semaphore.c \
                     tests/host/test_mutex.c \
-                    tests/host/test_timer.c
+                    tests/host/test_timer.c \
+                    tests/host/test_hairevent.c
 
 LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
                     -Wl,--gc-sections -Wl,-Map=$(TARGET).map \
@@ -176,7 +196,7 @@ LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
 
 .PHONY: all elf bin hex size flash erase debug-server gdb disasm \
         phase0-check phase1-check roadmap-check example-layout-check \
-        phase2-check phase3-check phase4-check phase5-check phase6-check phase7-check phase8-check phase9-check phase10-check phase11-check phase12-check host-tests phase2-example \
+        phase2-check phase3-check phase4-check phase5-check phase6-check phase7-check phase8-check phase9-check phase10-check phase11-check phase12-check phase13-check host-tests phase2-example \
         tree clean help
 
 all: elf bin hex size
@@ -287,6 +307,9 @@ phase11-check:
 phase12-check:
 	python3 tools/scripts/phase12_check.py
 
+phase13-check:
+	python3 tools/scripts/phase13_check.py
+
 tree:
 	@find . -path './.git' -prune -o -path './build' -prune -o -print | sort
 
@@ -294,7 +317,7 @@ clean:
 	rm -rf build out
 
 help:
-	@echo "HairRTOS Phase 12 commands"
+	@echo "HairRTOS Phase 13 commands"
 	@echo "  make EXAMPLE=01-baremetal-foundation       Build Phase 1 target"
 	@echo "  make phase2-example                         Run Phase 2 host demo"
 	@echo "  make EXAMPLE=03-static-task-stack           Build Phase 3 target"
@@ -318,8 +341,14 @@ help:
 	@echo "  make EXAMPLE=11-task-suspend-resume flash    Flash Phase 11 target"
 	@echo "  make EXAMPLE=12-software-timer               Build Phase 12 target"
 	@echo "  make EXAMPLE=12-software-timer flash         Flash Phase 12 target"
-	@echo "  make host-tests                              Run Phase 2–12 host tests"
-	@echo "  make phase12-check                           Validate completed phases"
+	@echo "  make EXAMPLE=13-01-event-post                Build Phase 13 event-post target"
+	@echo "  make EXAMPLE=13-02-active-object             Build Phase 13 Active Object target"
+	@echo "  make EXAMPLE=13-03-flat-state-machine        Build Phase 13 flat-SM target"
+	@echo "  make EXAMPLE=13-04-time-event                Build Phase 13 time-event target"
+	@echo "  make EXAMPLE=13-05-publish-subscribe         Build Phase 13 pub/sub target"
+	@echo "  make EXAMPLE=13-06-event-driven-demo         Build Phase 13 integration target"
+	@echo "  make host-tests                              Run Phase 2–13 host tests"
+	@echo "  make phase13-check                           Validate completed phases"
 	@echo "  make roadmap-check                           Validate roadmap status"
 	@echo "  make example-layout-check                    Validate example matrix"
 	@echo "  make clean                                   Remove build output"

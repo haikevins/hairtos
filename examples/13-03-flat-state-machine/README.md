@@ -1,3 +1,8 @@
 # Phase 13.3 — Flat State Machine
 
-Roadmap placeholder; not implemented in the Phase 12 archive.
+A two-state LED state machine demonstrates run-to-completion dispatch and the
+ordered transition sequence `EXIT -> state change -> ENTRY`.
+
+```bash
+make EXAMPLE=13-03-flat-state-machine flash
+```

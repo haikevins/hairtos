@@ -1,13 +1,28 @@
 # Active Object Specification
 
-An Active Object owns a task, event queue, current state, priority, event
-storage, and private application data.
+An Active Object owns a HairRTOS task, event queue, flat state machine, stack,
+and private context. It is created statically with `he_active_create_static()`.
 
-Only its backing task writes private state. Other modules communicate by posting
-events.
+The internal task loop is:
 
-The internal loop may block on its event queue. State handlers should not block;
-long operations are split into start/completion events.
+```text
+start state machine
+      ↓
+block on event queue
+      ↓
+dispatch one event run-to-completion
+      ↓
+release dynamic event reference
+      ↓
+block again
+```
 
-ISRs may post static or preallocated events through ISR-safe APIs, but never
-dispatch a state machine directly.
+Posting APIs:
+
+- `he_active_post()` from task context;
+- `he_active_post_from_isr()` from ISR context.
+
+State handlers must not contain unbounded loops, busy waits, or long blocking
+operations. Long operations should be split into request and completion events.
+Higher-priority HairRTOS tasks may preempt an Active Object, but a single Active
+Object never dispatches two events concurrently.

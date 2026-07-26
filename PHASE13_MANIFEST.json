@@ -1,36 +1,75 @@
 {
   "project": "HairRTOS",
-  "completed_phase": "Phase 12 — Software timer service",
+  "completed_phase": "Phase 13 — HairEvent framework",
   "target": "STM32F103C8T6 Blue Pill / ARM Cortex-M3",
-  "phase12_features": [
-    "opaque static one-shot and auto-reload timers",
-    "ordered expiration tracking with tick-wrap support",
-    "lazy static timer-service task",
-    "binary semaphore wake-up from SysTick",
-    "pending-expiration counting and equal-deadline FIFO",
-    "start, stop, reset, and period change",
-    "callbacks in task context outside critical sections"
+  "phase13_features": [
+    "static and fixed-pool dynamic events",
+    "reference-counted event ownership",
+    "task and ISR Active Object posting",
+    "statically allocated Active Objects",
+    "flat run-to-completion state machines",
+    "software-timer-backed time events",
+    "fixed-capacity publish/subscribe",
+    "six focused target examples"
+  ],
+  "implemented_examples": [
+    {
+      "name": "13-01-event-post",
+      "environment": "target",
+      "text": 11408,
+      "data": 4,
+      "bss": 4336
+    },
+    {
+      "name": "13-02-active-object",
+      "environment": "target",
+      "text": 11368,
+      "data": 4,
+      "bss": 6056
+    },
+    {
+      "name": "13-03-flat-state-machine",
+      "environment": "target",
+      "text": 11248,
+      "data": 4,
+      "bss": 4328
+    },
+    {
+      "name": "13-04-time-event",
+      "environment": "target",
+      "text": 12656,
+      "data": 4,
+      "bss": 4320
+    },
+    {
+      "name": "13-05-publish-subscribe",
+      "environment": "target",
+      "text": 12820,
+      "data": 20,
+      "bss": 7016
+    },
+    {
+      "name": "13-06-event-driven-demo",
+      "environment": "target",
+      "text": 15060,
+      "data": 4,
+      "bss": 8872
+    }
   ],
   "validation": {
-    "host_clang": "41/41 PASS with ASan/UBSan",
-    "host_gcc": "41/41 PASS with ASan/UBSan",
-    "target_clang_lld": "Phase 1-12 PASS",
-    "cmake_ninja_clang_lld": "PASS",
-    "gnu_arm_target": "not run; compiler unavailable",
-    "physical_hardware": "not performed",
-    "image_size_bytes": {
-      "text": 10488,
-      "data": 8,
-      "bss": 3984
-    }
+    "host_tests": "44/44 PASS with Clang and GCC ASan/UBSan",
+    "target_regression": "Phase 1-13 PASS with Clang/LLD",
+    "cmake_ninja": "PASS",
+    "physical_hardware": "not performed"
   },
-  "file_count": 250,
+  "scope_boundary": "Hierarchical state machines are deferred; Phase 13 implements flat state machines.",
+  "file_count": 268,
   "files": [
     "CHANGELOG.md",
     "CMakeLists.txt",
     "LICENSE",
     "Makefile",
-    "PHASE12_VALIDATION.txt",
+    "PHASE13_VALIDATION.txt",
     "README.md",
     "adapters/button_event/hr_button_event.c",
     "adapters/button_event/hr_button_event.h",
@@ -81,6 +120,7 @@
     "docs/phase10-semaphore-mutex.md",
     "docs/phase11-suspend-resume.md",
     "docs/phase12-software-timer.md",
+    "docs/phase13-hairevent-framework.md",
     "docs/phase2-kernel-data-structures.md",
     "docs/phase3-tcb-initial-stack.md",
     "docs/phase4-start-first-task-svc.md",
@@ -170,7 +210,21 @@
     "framework/event/src/he_pubsub.c",
     "framework/event/src/he_state_machine.c",
     "framework/event/src/he_time_event.c",
+    "hairevent/include/hairevent/hairevent.h",
+    "hairevent/include/hairevent/he_active.h",
+    "hairevent/include/hairevent/he_event.h",
+    "hairevent/include/hairevent/he_pubsub.h",
+    "hairevent/include/hairevent/he_state_machine.h",
+    "hairevent/include/hairevent/he_time_event.h",
+    "hairevent/include/hairevent/he_types.h",
+    "hairevent/internal/he_internal.h",
+    "hairevent/src/he_active.c",
+    "hairevent/src/he_event.c",
+    "hairevent/src/he_pubsub.c",
+    "hairevent/src/he_state_machine.c",
+    "hairevent/src/he_time_event.c",
     "kernel/include/hairtos/hairtos.h",
+    "kernel/include/hairtos/hr_context.h",
     "kernel/include/hairtos/hr_event_flags.h",
     "kernel/include/hairtos/hr_hooks.h",
     "kernel/include/hairtos/hr_kernel.h",
@@ -193,6 +247,7 @@
     "kernel/internal/hr_timeout_internal.h",
     "kernel/internal/hr_timer_internal.h",
     "kernel/internal/hr_wait_internal.h",
+    "kernel/src/hr_context.c",
     "kernel/src/hr_diagnostics.c",
     "kernel/src/hr_event_flags.c",
     "kernel/src/hr_kernel.c",
@@ -224,6 +279,7 @@
     "tests/host/test_allocator_lab.c",
     "tests/host/test_delay_list.c",
     "tests/host/test_event_pool.c",
+    "tests/host/test_hairevent.c",
     "tests/host/test_kernel_start.c",
     "tests/host/test_list.c",
     "tests/host/test_main.c",
@@ -262,6 +318,7 @@
     "tools/scripts/phase10_check.py",
     "tools/scripts/phase11_check.py",
     "tools/scripts/phase12_check.py",
+    "tools/scripts/phase13_check.py",
     "tools/scripts/phase1_check.py",
     "tools/scripts/phase2_check.py",
     "tools/scripts/phase3_check.py",
@@ -275,6 +332,6 @@
     "tools/scripts/run_format_check.sh",
     "tools/scripts/run_host_tests.sh",
     "tools/scripts/size_report.sh",
-    "PHASE12_MANIFEST.json"
+    "PHASE13_MANIFEST.json"
   ]
 }

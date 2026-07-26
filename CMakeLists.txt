@@ -19,6 +19,12 @@ set(HAIRTOS_TARGET_EXAMPLES
     10-02-mutex-priority-inheritance
     11-task-suspend-resume
     12-software-timer
+    13-01-event-post
+    13-02-active-object
+    13-03-flat-state-machine
+    13-04-time-event
+    13-05-publish-subscribe
+    13-06-event-driven-demo
 )
 
 list(FIND HAIRTOS_TARGET_EXAMPLES "${HAIRTOS_EXAMPLE}" HAIRTOS_EXAMPLE_INDEX)
@@ -40,7 +46,8 @@ if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack" OR
    HAIRTOS_EXAMPLE STREQUAL "10-01-semaphore-from-isr" OR
    HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance" OR
    HAIRTOS_EXAMPLE STREQUAL "11-task-suspend-resume" OR
-   HAIRTOS_EXAMPLE STREQUAL "12-software-timer")
+   HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
+   HAIRTOS_EXAMPLE MATCHES "^13-")
     list(APPEND HAIRTOS_KERNEL_SOURCES
         kernel/src/hr_list.c
         kernel/src/hr_scheduler.c
@@ -61,7 +68,8 @@ if(HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
    HAIRTOS_EXAMPLE STREQUAL "10-01-semaphore-from-isr" OR
    HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance" OR
    HAIRTOS_EXAMPLE STREQUAL "11-task-suspend-resume" OR
-   HAIRTOS_EXAMPLE STREQUAL "12-software-timer")
+   HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
+   HAIRTOS_EXAMPLE MATCHES "^13-")
     list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_kernel.c)
     list(APPEND HAIRTOS_PORT_ASM arch/arm/cortex-m3/hr_portasm.S)
 endif()
@@ -85,6 +93,20 @@ if(HAIRTOS_EXAMPLE STREQUAL "12-software-timer")
     )
 endif()
 
+if(HAIRTOS_EXAMPLE MATCHES "^13-")
+    list(APPEND HAIRTOS_KERNEL_SOURCES
+        kernel/src/hr_context.c
+        kernel/src/hr_queue.c
+        kernel/src/hr_semaphore.c
+        kernel/src/hr_timer.c
+        hairevent/src/he_event.c
+        hairevent/src/he_state_machine.c
+        hairevent/src/he_active.c
+        hairevent/src/he_time_event.c
+        hairevent/src/he_pubsub.c
+    )
+endif()
+
 set(HAIRTOS_TICK_SOURCE drivers/timer/src/hr_systick_baremetal_irq.c)
 if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
    HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin" OR
@@ -92,7 +114,8 @@ if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
    HAIRTOS_EXAMPLE STREQUAL "10-01-semaphore-from-isr" OR
    HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance" OR
    HAIRTOS_EXAMPLE STREQUAL "11-task-suspend-resume" OR
-   HAIRTOS_EXAMPLE STREQUAL "12-software-timer")
+   HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
+   HAIRTOS_EXAMPLE MATCHES "^13-")
     set(HAIRTOS_TICK_SOURCE kernel/src/hr_time.c)
 endif()
 
@@ -119,7 +142,7 @@ if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout")
     )
 endif()
 
-if(HAIRTOS_EXAMPLE STREQUAL "12-software-timer")
+if(HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR HAIRTOS_EXAMPLE MATCHES "^13-")
     target_compile_definitions(hairtos_baremetal PRIVATE
         HR_CFG_ENABLE_SOFTWARE_TIMER=1
         HR_CFG_TIMER_TASK_PRIORITY=1
@@ -140,6 +163,8 @@ target_include_directories(hairtos_baremetal PRIVATE
     kernel/include
     kernel/internal
     arch/arm/cortex-m3/include
+    hairevent/include
+    hairevent/internal
 )
 
 target_compile_options(hairtos_baremetal PRIVATE

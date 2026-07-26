@@ -1,10 +1,10 @@
 # HairRTOS
 
 HairRTOS is an educational fixed-priority RTOS for ARM Cortex-M. The first
-target is the STM32F103C8T6 Blue Pill. HairEvent is an optional Event-Driven
-framework above the kernel.
+target is the STM32F103C8T6 Blue Pill. HairEvent is the optional static-first
+Event-Driven framework implemented above the kernel.
 
-## Current status: Phase 12 complete
+## Current status: Phase 13 complete
 
 Implemented phases:
 
@@ -20,11 +20,14 @@ Implemented phases:
 - **Phase 9:** static FIFO queues with blocking, timeout, direct handoff, and ISR API;
 - **Phase 10:** semaphores, mutex ownership, and priority inheritance;
 - **Phase 11:** administrative suspend/resume for READY, RUNNING, and BLOCKED tasks;
-- **Phase 12:** static one-shot/periodic software timers with task-context callbacks.
+- **Phase 12:** static one-shot/periodic software timers with task-context callbacks;
+- **Phase 13:** HairEvent event pools, Active Objects, flat state machines, time events,
+  and publish/subscribe.
 
-Phase 12 keeps SysTick bounded: the interrupt only advances deadlines and wakes
-the dedicated timer-service task. Application callbacks run later in task
-context, outside kernel critical sections.
+HairEvent keeps state handlers run-to-completion. ISRs and software-timer
+callbacks only post events. Each Active Object owns a HairRTOS task, event queue,
+state machine, stack, and private context; its handler executes later in that
+Active Object task context.
 
 ## Roadmap
 
@@ -43,39 +46,49 @@ context, outside kernel critical sections.
 | 10 | Semaphore and mutex | ✅ Complete |
 | 11 | Suspend/resume | ✅ Complete |
 | 12 | Software timer | ✅ Complete |
-| 13 | HairEvent framework | ⬜ Not started |
+| 13 | HairEvent framework | ✅ Complete |
 | 14 | Memory allocator lab | ⬜ Not started |
 | 15 | Kernel benchmark | ⬜ Not started |
 | 16 | Diagnostics and stabilization | ⬜ Not started |
 
 Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
 
-## Phase 12 components
+## Phase 13 components
 
-- opaque statically allocated one-shot and auto-reload timer objects;
-- ordered expiration tracking with 32-bit tick-wrap support;
-- dedicated timer-service task and binary wake semaphore;
-- pending-expiration counting without duplicate intrusive-list insertion;
-- start, stop, reset, and period-change task-context APIs;
-- callback execution outside SysTick and outside kernel critical sections;
-- STM32 target example and host sanitizer validation.
+- immutable static events and fixed-block dynamic event pools;
+- reference-counted ownership for direct post and multicast delivery;
+- task-context and ISR-safe Active Object posting;
+- one task, one queue, one flat state machine, and private context per Active Object;
+- `ENTRY`, `EXIT`, and `INIT` reserved signals;
+- run-to-completion flat transitions;
+- software-timer-backed time events that post rather than dispatch directly;
+- fixed-capacity publish/subscribe tables;
+- six STM32 examples from isolated event posting through an integrated demo;
+- host tests under Clang/GCC with ASan and UBSan.
+
+Hierarchical state machines are intentionally not part of Phase 13. The current
+framework establishes and tests flat-state semantics first; HSM parent bubbling
+and least-common-ancestor transitions remain a later extension.
 
 ## Examples: host versus target
 
 See `examples/README.md` for the complete matrix.
 
-Run the host demo/tests:
+Run the host demo and tests:
 
 ```bash
 make phase2-example
 make host-tests
 ```
 
-Build or flash the Phase 12 target example:
+Build or flash a Phase 13 target example:
 
 ```bash
-make EXAMPLE=12-software-timer
-make EXAMPLE=12-software-timer flash
+make EXAMPLE=13-01-event-post
+make EXAMPLE=13-01-event-post flash
+
+make EXAMPLE=13-06-event-driven-demo
+make EXAMPLE=13-06-event-driven-demo flash
 ```
 
 The `EXAMPLE` value must be passed in the same invocation used for `flash`.
@@ -87,15 +100,16 @@ make phase0-check
 make roadmap-check
 make example-layout-check
 make host-tests
-make phase12-check
+make phase13-check
 ```
 
 Read:
 
 - `docs/roadmap.md`
-- `docs/task-model.md`
-- `docs/software-timer.md`
-- `docs/phase12-software-timer.md`
+- `docs/event-framework.md`
+- `docs/active-object.md`
+- `docs/state-machine.md`
+- `docs/phase13-hairevent-framework.md`
 - `examples/README.md`
 
-The next implementation phase is **Phase 13 — HairEvent framework**.
+The next implementation phase is **Phase 14 — Memory allocator lab**.

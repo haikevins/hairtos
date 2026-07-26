@@ -14,7 +14,7 @@
 | 10 | `10-01-semaphore-from-isr`, `10-02-mutex-priority-inheritance` | STM32 target | Complete |
 | 11 | `11-task-suspend-resume` | STM32 target | Complete |
 | 12 | `12-software-timer` | STM32 target | Complete |
-| 13 | `13-*` | STM32 target | Placeholder |
+| 13 | `13-01-event-post` through `13-06-event-driven-demo` | STM32 target | Complete |
 | 14 | `14-memory-allocator-lab` | Host + target | Placeholder |
 | 15 | `15-kernel-benchmark` | STM32 target | Placeholder |
 | 16 | `16-diagnostics-stress-stabilization` | Host + target | Placeholder |

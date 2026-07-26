@@ -1,0 +1,27 @@
+HairRTOS Phase 13 validation
+
+- Phase 0 specification check: PASS
+- Roadmap status check: PASS
+- Canonical example layout check: PASS
+- Host tests with Clang + ASan + UBSan: 44/44 PASS
+- Host tests with GCC + ASan + UBSan: 44/44 PASS
+- Phase 1-12 Cortex-M3 regression builds with Clang/LLD: PASS
+- Phase 13.1 ISR event-post target build: PASS
+- Phase 13.2 Active Object target build: PASS
+- Phase 13.3 flat state-machine target build: PASS
+- Phase 13.4 time-event target build: PASS
+- Phase 13.5 publish/subscribe target build: PASS
+- Phase 13.6 integrated HairEvent target build: PASS
+- Phase 13 public symbol/disassembly checks: PASS
+- Strong EXTI0_IRQHandler, SysTick_Handler, and PendSV_Handler checks: PASS
+- CMake + Ninja + Clang/LLD integration build: PASS
+- Host-only example flash rejection: PASS
+- Phase 13.1 image: text=11408, data=4, bss=4336 bytes
+- Phase 13.2 image: text=11368, data=4, bss=6056 bytes
+- Phase 13.3 image: text=11248, data=4, bss=4328 bytes
+- Phase 13.4 image: text=12656, data=4, bss=4320 bytes
+- Phase 13.5 image: text=12820, data=20, bss=7016 bytes
+- Phase 13.6 image: text=15060, data=4, bss=8872 bytes
+- Physical STM32F103 flash/runtime validation: not performed in this environment
+- Current completed phase: Phase 13
+- Next phase: Phase 14 — Memory allocator lab

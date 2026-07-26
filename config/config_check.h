@@ -40,6 +40,21 @@
 #if (HR_CFG_TIME_SLICING == 1) && (HR_CFG_TIME_SLICE_TICKS == 0U)
 #error "HR_CFG_TIME_SLICE_TICKS must be greater than zero when time slicing is enabled"
 #endif
+
+#if (HE_CFG_ENABLED != 0) && (HE_CFG_ENABLED != 1)
+#error "HE_CFG_ENABLED must be 0 or 1"
+#endif
+#if (HE_CFG_MAX_ACTIVE_OBJECTS == 0U)
+#error "HE_CFG_MAX_ACTIVE_OBJECTS must be greater than zero"
+#endif
+#if (HE_CFG_MAX_SIGNALS <= 32U)
+/* Reserved signals occupy values below the first application signal. */
+#error "HE_CFG_MAX_SIGNALS must be greater than 32"
+#endif
+#if (HE_CFG_ACTIVE_STORAGE_BYTES < 512U)
+#error "HE_CFG_ACTIVE_STORAGE_BYTES is too small"
+#endif
+
 #if (HR_CFG_SINGLE_CORE != 1)
 #error "Phase 0 specifies a single-core kernel"
 #endif

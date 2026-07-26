@@ -9,7 +9,7 @@ validation satisfy its Definition of Done.
 Current completed phase:
 
 ```text
-Phase 12 — Software timer service
+Phase 13 — HairEvent framework
 ```
 
 ## Phase 0 — Specification and principles
@@ -355,25 +355,34 @@ Callback jitter measurement remains part of physical target validation.
 
 ## Phase 13 — HairEvent framework
 
+**Status: Complete.**
+
 ### Goals
 
-Build Event-Driven Programming above the completed kernel primitives.
+Build Event-Driven Programming above the completed kernel primitives without
+moving state-handler execution into ISR or timer-service context.
 
 ### Deliverables
 
-1. signal and static event;
-2. direct event post;
-3. Active Object;
-4. flat state machine;
-5. time event;
-6. fixed-size dynamic event pools;
-7. publish/subscribe;
-8. hierarchical state machine after the flat model is stable.
+1. reserved and application signals;
+2. immutable static events;
+3. fixed-block dynamic event pools and reference counting;
+4. direct task-context and ISR-safe event post;
+5. statically allocated Active Objects;
+6. flat state machines with ENTRY, EXIT, INIT, and run-to-completion transitions;
+7. software-timer-backed time events;
+8. fixed-capacity publish/subscribe;
+9. six focused STM32 examples and host sanitizer tests.
+
+Hierarchical state machines remain an explicit post-Phase-13 extension. Flat
+transition and ownership semantics are stabilized first.
 
 ### Definition of Done
 
-An ISR posts an event, an Active Object wakes, its state machine handles the
-event run-to-completion, and the task blocks again.
+`13-01-event-post` uses EXTI0 software interrupt to post an event. The Active
+Object wakes after exception return, handles the event run-to-completion in its
+own task, releases ownership when required, and blocks again. Time-event and
+publish/subscribe examples validate the remaining framework layers.
 
 ---
 

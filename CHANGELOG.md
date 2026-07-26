@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Added — Phase 13: HairEvent framework
+
+- Added immutable static events and fixed-block dynamic event pools.
+- Added reference-counted direct-post and multicast ownership semantics.
+- Added statically allocated Active Objects backed by HairRTOS tasks and queues.
+- Added flat run-to-completion state machines with ENTRY, EXIT, and INIT signals.
+- Added software-timer-backed time events that post into Active Object queues.
+- Added fixed-capacity publish/subscribe with caller-provided subscriber storage.
+- Added ISR event-post, Active Object, flat-SM, time-event, pub/sub, and integration examples.
+- Added HairEvent host tests, documentation, Make/CMake integration, and Phase 13 validation.
+
 ### Added — Phase 12: Software timer service
 
 - Added opaque static one-shot and auto-reload software timers.

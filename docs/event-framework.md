@@ -1,24 +1,59 @@
 # HairEvent Framework
 
-HairEvent adds Event-Driven Programming above HairRTOS without replacing the
-preemptive kernel.
+HairEvent is a static-first Event-Driven Programming layer above HairRTOS. It
+uses the completed queue, task, timeout, preemption, and software-timer services;
+it does not replace the kernel scheduler.
 
-An Active Object is one HairRTOS task, one event queue, one current state
-handler, and private state. Its task waits for one event, dispatches it, releases
-it when necessary, and blocks again.
+## Event model
 
-Handlers are run-to-completion: no busy waits, unbounded loops, long mutex holds,
-or lengthy blocking calls. Higher-priority RTOS tasks may still preempt them.
+A signal is a 16-bit value. Signals `NONE`, `ENTRY`, `EXIT`, `INIT`, and
+`TIMEOUT` are reserved. Application signals begin at `HE_SIG_USER`.
 
-Reserved signals include NONE, ENTRY, EXIT, INIT, and TIMEOUT. Application
-signals begin at `HE_SIG_USER`. The kernel never interprets signal values.
+Static events are immutable and have no lifetime management. Dynamic events are
+allocated from a user-provided fixed-block pool and carry a reference count.
+There is no heap dependency.
 
-Static events are immutable and never freed. For a direct dynamic post, a
-successful queue insertion transfers ownership to the receiver/framework. A
-failed post leaves ownership with the sender.
+For direct posting, a successful post transfers one dynamic-event reference to
+the receiving Active Object. A failed post leaves that reference with the
+sender. Publish/subscribe retains one reference for every successful subscriber
+and consumes the publisher's original reference.
 
-Time events post TIMEOUT into the Active Object queue; SysTick and timer ISR
-contexts never call state handlers directly.
+## Active Object model
 
-Publish/subscribe and hierarchical state machines are deferred until direct
-posting, ownership, reference counting, and flat transitions are proven.
+An Active Object combines:
+
+- one HairRTOS task;
+- one fixed-capacity queue of `he_event_t *`;
+- one flat state machine;
+- one task stack;
+- one private application context.
+
+Its task blocks on the queue, dispatches one event run-to-completion, releases
+the event, then blocks again. Only the Active Object task should mutate its
+private context.
+
+## ISR boundary
+
+ISRs may post a static or already allocated event using
+`he_active_post_from_isr()`. They never call state handlers. A woken
+higher-priority Active Object is selected through the normal PendSV path after
+ISR return.
+
+## Time events
+
+A HairEvent time event wraps a HairRTOS software timer and an immutable static
+event. The timer-service callback posts that event to the target Active Object.
+The target state handler still runs in the Active Object task context.
+
+## Publish/subscribe
+
+A bus uses caller-supplied subscriber-slot storage. Subscription capacity and
+signal range are fixed at initialization, making memory use deterministic.
+Publishing snapshots the subscriber list, then posts outside the bus critical
+section.
+
+## Scope boundary
+
+Phase 13 implements flat state machines. Hierarchical parent relationships,
+event bubbling, least-common-ancestor transition paths, event deferral, and
+recall queues are intentionally deferred.

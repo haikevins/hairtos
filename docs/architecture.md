@@ -16,7 +16,7 @@ diagnostics.
 ### HairEvent
 
 An optional layer above the kernel. It owns events, signals, Active Objects,
-state machines, time events, event pools, and later publish/subscribe.
+state machines, time events, event pools, and publish/subscribe.
 
 ## Layering
 

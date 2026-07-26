@@ -1,12 +1,23 @@
-# State Machine Specification
+# Flat State Machine Specification
 
-Implementation order is flat states, ENTRY/EXIT, initial transition, time events,
-then hierarchical states after v1.0.
+A handler returns one of:
 
-A handler returns HANDLED, IGNORED, or TRANSITION.
+- `HE_STATE_HANDLED`;
+- `HE_STATE_IGNORED`;
+- `HE_STATE_TRANSITION`.
 
-A flat transition sends EXIT to the current state, changes the current state
-pointer, then sends ENTRY to the target state.
+A transition is requested with `he_state_transition(machine, target)`.
+HairEvent applies the transition in this order:
 
-HSM support later requires parent relationships, event bubbling,
-least-common-ancestor computation, and correct ordered exit/entry paths.
+```text
+EXIT current state
+change current-state pointer
+ENTRY target state
+INIT target state
+```
+
+`ENTRY`, `EXIT`, and `INIT` are framework-generated immutable events. Normal
+application events are dispatched run-to-completion by the owning Active Object.
+
+Phase 13 is intentionally flat. Hierarchical state ancestry, bubbling, and
+least-common-ancestor exit/entry paths are not implemented in this archive.

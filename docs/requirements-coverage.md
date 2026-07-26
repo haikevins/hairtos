@@ -15,7 +15,7 @@
 | Semaphore, mutex, priority inheritance | 10 | Implemented |
 | Task suspend/resume | 11 | Implemented |
 | Software timers | 12 | Implemented |
-| HairEvent Active Objects and state machines | 13 | Not started |
+| HairEvent events, Active Objects, flat state machines, time events, pub/sub | 13 | Implemented |
 | First-fit allocator lab | 14 | Not started |
 | Kernel latency benchmarks | 15 | Not started |
 | Diagnostics and stabilization | 16 | Not started |
@@ -30,4 +30,6 @@ correct when a task owns more than one contended mutex.
 
 Phase 11 adds administrative suspension while preserving ready/wait/timeout
 invariants. Phase 12 adds static one-shot and periodic timers whose callbacks run
-in a dedicated service task rather than SysTick context.
+in a dedicated service task rather than SysTick context. Phase 13 adds the
+static-first HairEvent layer with deterministic event pools, Active Objects,
+flat state machines, time events, and reference-counted publish/subscribe.

@@ -8,7 +8,7 @@ Phase 0 has no runtime example because it contains specifications only.
 | Environment | Meaning |
 |---|---|
 | **Host** | Native Ubuntu executable built with the system `cc`, GCC, or Clang. It does not use STM32 startup code and cannot be flashed. |
-| **Target** | Cortex-M3 firmware cross-compiled for the STM32F103C8T6 Blue Pill. It may be flashed only after that phase is implemented. |
+| **Target** | Cortex-M3 firmware cross-compiled for the STM32F103C8T6 Blue Pill. |
 | **Host + Target** | The phase is planned to include both native tests/labs and an STM32 demonstration. |
 
 ## Example matrix
@@ -28,25 +28,26 @@ Phase 0 has no runtime example because it contains specifications only.
 | `10-02-mutex-priority-inheritance` | 10 | Target | ✅ Implemented | `make EXAMPLE=10-02-mutex-priority-inheritance flash` |
 | `11-task-suspend-resume` | 11 | Target | ✅ Implemented | `make EXAMPLE=11-task-suspend-resume flash` |
 | `12-software-timer` | 12 | Target | ✅ Implemented | `make EXAMPLE=12-software-timer flash` |
-| `13-01-event-post` | 13 | Target | ⬜ Placeholder | Not runnable yet |
-| `13-02-active-object` | 13 | Target | ⬜ Placeholder | Not runnable yet |
-| `13-03-flat-state-machine` | 13 | Target | ⬜ Placeholder | Not runnable yet |
-| `13-04-time-event` | 13 | Target | ⬜ Placeholder | Not runnable yet |
-| `13-05-publish-subscribe` | 13 | Target | ⬜ Placeholder | Not runnable yet |
-| `13-06-event-driven-demo` | 13 | Target | ⬜ Placeholder | Not runnable yet |
+| `13-01-event-post` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-01-event-post flash` |
+| `13-02-active-object` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-02-active-object flash` |
+| `13-03-flat-state-machine` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-03-flat-state-machine flash` |
+| `13-04-time-event` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-04-time-event flash` |
+| `13-05-publish-subscribe` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-05-publish-subscribe flash` |
+| `13-06-event-driven-demo` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-06-event-driven-demo flash` |
 | `14-memory-allocator-lab` | 14 | Host + Target | ⬜ Placeholder | Not runnable yet |
 | `15-kernel-benchmark` | 15 | Target | ⬜ Placeholder | Not runnable yet |
 | `16-diagnostics-stress-stabilization` | 16 | Host + Target | ⬜ Placeholder | Not runnable yet |
 
 ## Host commands
 
-Run the only implemented host example with:
+Run the only standalone host example with:
 
 ```bash
 make phase2-example
 ```
 
-Run all completed host-side unit tests with:
+Run all completed host-side unit tests, including HairEvent event-pool,
+state-machine, Active Object queue, and publish/subscribe ownership tests:
 
 ```bash
 make host-tests
@@ -58,30 +59,31 @@ Never run:
 make EXAMPLE=02-kernel-data-structures-host flash
 ```
 
-The Makefile rejects that command because the host example uses native facilities
-and is not freestanding STM32 firmware.
+The Makefile rejects that command because the host example is not freestanding
+STM32 firmware.
 
-## Target commands
-
-Always pass the target example name in the same invocation used for flashing:
+## Phase 13 target sequence
 
 ```bash
-make EXAMPLE=01-baremetal-foundation flash
-make EXAMPLE=03-static-task-stack flash
-make EXAMPLE=04-start-first-task flash
-make EXAMPLE=05-cooperative-context-switch flash
-make EXAMPLE=06-priority-scheduler flash
-make EXAMPLE=07-task-delay-timeout flash
-make EXAMPLE=08-preemption-round-robin flash
-make EXAMPLE=09-queue-blocking-ipc flash
-make EXAMPLE=10-01-semaphore-from-isr flash
-make EXAMPLE=10-02-mutex-priority-inheritance flash
-make EXAMPLE=11-task-suspend-resume flash
-make EXAMPLE=12-software-timer flash
+make EXAMPLE=13-01-event-post flash
+make EXAMPLE=13-02-active-object flash
+make EXAMPLE=13-03-flat-state-machine flash
+make EXAMPLE=13-04-time-event flash
+make EXAMPLE=13-05-publish-subscribe flash
+make EXAMPLE=13-06-event-driven-demo flash
 ```
 
-A previous build command does not make a later standalone `make flash` remember
-the selected example.
+The lessons build in this order:
+
+1. ISR-safe event post;
+2. Active Object ownership and private state;
+3. flat run-to-completion state transitions;
+4. software-timer-backed time events;
+5. reference-counted publish/subscribe;
+6. integrated controller/observer event-driven application.
+
+Always pass the target example name in the same invocation used for flashing. A
+previous build does not make a later standalone `make flash` remember it.
 
 ## Current runnable set
 
@@ -102,6 +104,12 @@ Target:
   10-02-mutex-priority-inheritance
   11-task-suspend-resume
   12-software-timer
+  13-01-event-post
+  13-02-active-object
+  13-03-flat-state-machine
+  13-04-time-event
+  13-05-publish-subscribe
+  13-06-event-driven-demo
 ```
 
-All examples from Phase 13 onward are roadmap placeholders.
+Phase 14 onward remains roadmap placeholder content.

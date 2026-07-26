@@ -4,248 +4,259 @@ project(hairtos LANGUAGES C ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(HAIRTOS_EXAMPLE "16-diagnostics-stress-stabilization" CACHE STRING "Implemented target example")
-set(HAIRTOS_TARGET_EXAMPLES
-    01-baremetal-foundation
-    03-static-task-stack
-    04-start-first-task
-    05-cooperative-context-switch
-    06-priority-scheduler
-    07-task-delay-timeout
-    08-preemption-round-robin
-    09-queue-blocking-ipc
-    10-01-semaphore-from-isr
-    10-02-mutex-priority-inheritance
-    11-task-suspend-resume
-    12-software-timer
-    13-01-event-post
-    13-02-active-object
-    13-03-flat-state-machine
-    13-04-time-event
-    13-05-publish-subscribe
-    13-06-event-driven-demo
-    14-memory-allocator-lab
-    15-kernel-benchmark
-    16-diagnostics-stress-stabilization
-)
+include(cmake/hairtos_examples.cmake)
+include(cmake/hairtos_modules.cmake)
 
-list(FIND HAIRTOS_TARGET_EXAMPLES "${HAIRTOS_EXAMPLE}" HAIRTOS_EXAMPLE_INDEX)
-if(HAIRTOS_EXAMPLE_INDEX EQUAL -1)
-    message(FATAL_ERROR
-        "${HAIRTOS_EXAMPLE} is not an implemented STM32 target example. "
-        "Run 'make list-examples' to see supported target examples.")
+set(HAIRTOS_ENVIRONMENT "target" CACHE STRING "Build environment: auto, host or target")
+set_property(CACHE HAIRTOS_ENVIRONMENT PROPERTY STRINGS auto host target)
+set(HAIRTOS_EXAMPLE "${HAIRTOS_DEFAULT_EXAMPLE}" CACHE STRING "Example name")
+set(HAIRTOS_BUILD_TESTS OFF CACHE BOOL "Build native host tests")
+set(HAIRTOS_EXTRA_C_FLAGS "" CACHE STRING "Additional compiler flags")
+
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" HAIRTOS_VERSION_RAW)
+string(STRIP "${HAIRTOS_VERSION_RAW}" HAIRTOS_VERSION)
+message(STATUS "hairtos version: ${HAIRTOS_VERSION}")
+
+if(HAIRTOS_ENVIRONMENT STREQUAL "auto")
+    list(FIND HAIRTOS_HOST_ONLY_EXAMPLES "${HAIRTOS_EXAMPLE}" _host_only_index)
+    if(_host_only_index EQUAL -1)
+        set(HAIRTOS_ENVIRONMENT target)
+    else()
+        set(HAIRTOS_ENVIRONMENT host)
+    endif()
 endif()
 
-set(HAIRTOS_KERNEL_SOURCES "")
-set(HAIRTOS_PORT_ASM "")
-if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack" OR
-   HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
-   HAIRTOS_EXAMPLE STREQUAL "05-cooperative-context-switch" OR
-   HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler" OR
-   HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
-   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin" OR
-   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc" OR
-   HAIRTOS_EXAMPLE STREQUAL "10-01-semaphore-from-isr" OR
-   HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance" OR
-   HAIRTOS_EXAMPLE STREQUAL "11-task-suspend-resume" OR
-   HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
-   HAIRTOS_EXAMPLE MATCHES "^13-" OR
-   HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark" OR
-   HAIRTOS_EXAMPLE STREQUAL "16-diagnostics-stress-stabilization")
-    list(APPEND HAIRTOS_KERNEL_SOURCES
-        kernel/src/hr_list.c
-        kernel/src/hr_scheduler.c
-        kernel/src/hr_wait.c
-        kernel/src/hr_timeout.c
-        kernel/src/hr_task.c
-        arch/arm/cortex-m3/hr_port.c
-        arch/arm/cortex-m3/hr_port_stack.c
-    )
-endif()
+hairtos_validate_example("${HAIRTOS_ENVIRONMENT}" "${HAIRTOS_EXAMPLE}")
 
-if(HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
-   HAIRTOS_EXAMPLE STREQUAL "05-cooperative-context-switch" OR
-   HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler" OR
-   HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
-   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin" OR
-   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc" OR
-   HAIRTOS_EXAMPLE STREQUAL "10-01-semaphore-from-isr" OR
-   HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance" OR
-   HAIRTOS_EXAMPLE STREQUAL "11-task-suspend-resume" OR
-   HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
-   HAIRTOS_EXAMPLE MATCHES "^13-" OR
-   HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark" OR
-   HAIRTOS_EXAMPLE STREQUAL "16-diagnostics-stress-stabilization")
-    list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_kernel.c)
-    list(APPEND HAIRTOS_PORT_ASM arch/arm/cortex-m3/hr_portasm.S)
-endif()
+set(HAIRTOS_PUBLIC_INCLUDES
+    ${CMAKE_CURRENT_SOURCE_DIR}/config
+    ${CMAKE_CURRENT_SOURCE_DIR}/soc/stm32f1/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/boards/bluepill_f103c8/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/kernel/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/arch/arm/cortex-m3/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/haievent/include)
 
-if(HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc")
-    list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_queue.c)
-endif()
+set(HAIRTOS_INTERNAL_INCLUDES
+    ${CMAKE_CURRENT_SOURCE_DIR}/kernel/internal
+    ${CMAKE_CURRENT_SOURCE_DIR}/haievent/internal)
 
-if(HAIRTOS_EXAMPLE STREQUAL "10-01-semaphore-from-isr")
-    list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_semaphore.c)
-endif()
-
-if(HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance")
-    list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_mutex.c)
-endif()
-
-if(HAIRTOS_EXAMPLE STREQUAL "12-software-timer")
-    list(APPEND HAIRTOS_KERNEL_SOURCES
-        kernel/src/hr_semaphore.c
-        kernel/src/hr_timer.c
-    )
-endif()
-
-if(HAIRTOS_EXAMPLE MATCHES "^13-")
-    list(APPEND HAIRTOS_KERNEL_SOURCES
-        kernel/src/hr_context.c
-        kernel/src/hr_queue.c
-        kernel/src/hr_semaphore.c
-        kernel/src/hr_timer.c
-        haievent/src/he_event.c
-        haievent/src/he_state_machine.c
-        haievent/src/he_active.c
-        haievent/src/he_time_event.c
-        haievent/src/he_pubsub.c
-    )
-endif()
-
-if(HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark")
-    list(APPEND HAIRTOS_KERNEL_SOURCES
-        kernel/src/hr_context.c
-        kernel/src/hr_queue.c
-        kernel/src/hr_semaphore.c
-        kernel/src/hr_mutex.c
-        kernel/src/hr_timer.c
-        haievent/src/he_event.c
-        haievent/src/he_state_machine.c
-        haievent/src/he_active.c
-        benchmarks/kernel/src/hr_benchmark_stats.c
-        benchmarks/kernel/src/hr_benchmark_dwt.c
-        benchmarks/kernel/src/hr_benchmark_gpio.c
-    )
-endif()
-
-if(HAIRTOS_EXAMPLE STREQUAL "16-diagnostics-stress-stabilization")
-    list(APPEND HAIRTOS_KERNEL_SOURCES
-        kernel/src/hr_context.c
-        kernel/src/hr_queue.c
-        kernel/src/hr_semaphore.c
-        kernel/src/hr_mutex.c
-        kernel/src/hr_timer.c
-        kernel/src/hr_diagnostics.c
-        arch/arm/cortex-m3/hr_fault.c
-    )
-    list(APPEND HAIRTOS_PORT_ASM arch/arm/cortex-m3/hr_faultasm.S)
-endif()
-
-set(HAIRTOS_LAB_SOURCES "")
-if(HAIRTOS_EXAMPLE STREQUAL "14-memory-allocator-lab")
-    list(APPEND HAIRTOS_LAB_SOURCES
-        labs/memory-allocator/src/hr_heap_lab.c
-        labs/memory-allocator/src/hr_pool_lab.c
-    )
-endif()
-
-set(HAIRTOS_TICK_SOURCE drivers/timer/src/hr_systick_baremetal_irq.c)
-if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
-   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin" OR
-   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc" OR
-   HAIRTOS_EXAMPLE STREQUAL "10-01-semaphore-from-isr" OR
-   HAIRTOS_EXAMPLE STREQUAL "10-02-mutex-priority-inheritance" OR
-   HAIRTOS_EXAMPLE STREQUAL "11-task-suspend-resume" OR
-   HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
-   HAIRTOS_EXAMPLE MATCHES "^13-" OR
-   HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark" OR
-   HAIRTOS_EXAMPLE STREQUAL "16-diagnostics-stress-stabilization")
-    set(HAIRTOS_TICK_SOURCE kernel/src/hr_time.c)
-endif()
-
-add_executable(hairtos
-    soc/stm32f1/startup_stm32f103.S
-    soc/stm32f1/system_stm32f1.c
-    soc/stm32f1/stm32f1_clock.c
-    soc/stm32f1/stm32f1_irq.c
-    boards/bluepill_f103c8/board.c
-    boards/bluepill_f103c8/board_clock.c
-    drivers/gpio/src/hr_gpio_stm32f1.c
-    drivers/uart/src/hr_uart_stm32f1.c
-    drivers/timer/src/hr_hw_timer_stm32f1.c
-    ${HAIRTOS_TICK_SOURCE}
-    examples/${HAIRTOS_EXAMPLE}/main.c
-    ${HAIRTOS_KERNEL_SOURCES}
-    ${HAIRTOS_LAB_SOURCES}
-    ${HAIRTOS_PORT_ASM}
-)
-
-if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout")
-    target_compile_definitions(hairtos PRIVATE
-        HR_CFG_PREEMPTION=0
-        HR_CFG_TIME_SLICING=0
-    )
-endif()
-
-if(HAIRTOS_EXAMPLE STREQUAL "16-diagnostics-stress-stabilization")
-    target_compile_definitions(hairtos PRIVATE
-        HR_CFG_PREEMPTION=1
-        HR_CFG_TIME_SLICING=1
-        HR_CFG_ENABLE_SOFTWARE_TIMER=1
-        HR_CFG_TIMER_TASK_PRIORITY=1
-        HR_CFG_ENABLE_DIAGNOSTICS=1
-        HR_CFG_ENABLE_RUNTIME_STATS=1
-    )
-elseif(HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark")
-    target_compile_definitions(hairtos PRIVATE
-        HR_CFG_PREEMPTION=1
-        HR_CFG_TIME_SLICING=0
-        HR_CFG_ENABLE_SOFTWARE_TIMER=1
-        HR_CFG_TIMER_TASK_PRIORITY=1
-    )
-elseif(HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR HAIRTOS_EXAMPLE MATCHES "^13-")
-    target_compile_definitions(hairtos PRIVATE
-        HR_CFG_ENABLE_SOFTWARE_TIMER=1
-        HR_CFG_TIMER_TASK_PRIORITY=1
-    )
+if(HAIRTOS_EXTRA_C_FLAGS)
+    separate_arguments(HAIRTOS_EXTRA_C_FLAGS_LIST NATIVE_COMMAND "${HAIRTOS_EXTRA_C_FLAGS}")
 else()
-    target_compile_definitions(hairtos PRIVATE
-        HR_CFG_ENABLE_SOFTWARE_TIMER=0
-    )
+    set(HAIRTOS_EXTRA_C_FLAGS_LIST "")
 endif()
 
-target_include_directories(hairtos PRIVATE
-    config
-    soc/stm32f1/include
-    boards/bluepill_f103c8/include
-    drivers/gpio/include
-    drivers/uart/include
-    drivers/timer/include
-    kernel/include
-    kernel/internal
-    arch/arm/cortex-m3/include
-    haievent/include
-    haievent/internal
-    labs/memory-allocator/include
-    benchmarks/kernel/include
-)
+function(hairtos_apply_target_warnings target)
+    target_compile_options(${target} PRIVATE
+        -mcpu=cortex-m3 -mthumb -Og -g3
+        -ffreestanding -fno-common -fno-builtin
+        -fno-unwind-tables -fno-asynchronous-unwind-tables
+        -ffunction-sections -fdata-sections
+        -Wall -Wextra -Werror -Wshadow -Wundef
+        -Wconversion -Wsign-conversion
+        ${HAIRTOS_EXTRA_C_FLAGS_LIST})
+endfunction()
 
-target_compile_options(hairtos PRIVATE
-    -mcpu=cortex-m3 -mthumb -Og -g3 -ffreestanding -fno-common
-    -fno-builtin -ffunction-sections -fdata-sections
-    -Wall -Wextra -Werror -Wshadow -Wundef -Wconversion -Wsign-conversion
-)
+function(hairtos_apply_host_warnings target)
+    target_compile_options(${target} PRIVATE
+        -O0 -g3 -Wall -Wextra -Werror -Wshadow -Wundef
+        -Wconversion -Wsign-conversion -pedantic
+        -fsanitize=address,undefined -fno-omit-frame-pointer
+        ${HAIRTOS_EXTRA_C_FLAGS_LIST})
+    target_link_options(${target} PRIVATE
+        -fsanitize=address,undefined -fno-omit-frame-pointer)
+endfunction()
 
-target_link_options(hairtos PRIVATE
-    -mcpu=cortex-m3 -mthumb -nostdlib
-    -Wl,--gc-sections
-    -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/hairtos.map
-    -T${CMAKE_CURRENT_SOURCE_DIR}/boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld
-)
+if(HAIRTOS_ENVIRONMENT STREQUAL "target")
+    hairtos_target_example_config(
+        "${HAIRTOS_EXAMPLE}"
+        HAIRTOS_SELECTED_MODULES
+        HAIRTOS_EXAMPLE_DEFINITIONS
+        HAIRTOS_MAIN_NEEDS_INTERNAL)
 
-if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang")
-    target_link_libraries(hairtos PRIVATE gcc)
+    hairtos_collect_modules(
+        "${HAIRTOS_SELECTED_MODULES}"
+        HAIRTOS_PUBLIC_C
+        HAIRTOS_PUBLIC_ASM
+        HAIRTOS_INTERNAL_C
+        HAIRTOS_INTERNAL_ASM
+        HAIRTOS_ALLOCATOR_C
+        HAIRTOS_BENCHMARK_C)
+
+    if(HAIRTOS_PUBLIC_C OR HAIRTOS_PUBLIC_ASM)
+        add_library(hairtos_platform_objects OBJECT ${HAIRTOS_PUBLIC_C} ${HAIRTOS_PUBLIC_ASM})
+        target_include_directories(hairtos_platform_objects PRIVATE ${HAIRTOS_PUBLIC_INCLUDES})
+        target_compile_definitions(hairtos_platform_objects PRIVATE ${HAIRTOS_EXAMPLE_DEFINITIONS})
+        hairtos_apply_target_warnings(hairtos_platform_objects)
+    endif()
+
+    if(HAIRTOS_INTERNAL_C OR HAIRTOS_INTERNAL_ASM)
+        add_library(hairtos_internal_objects OBJECT ${HAIRTOS_INTERNAL_C} ${HAIRTOS_INTERNAL_ASM})
+        target_include_directories(hairtos_internal_objects PRIVATE
+            ${HAIRTOS_PUBLIC_INCLUDES}
+            ${HAIRTOS_INTERNAL_INCLUDES})
+        target_compile_definitions(hairtos_internal_objects PRIVATE ${HAIRTOS_EXAMPLE_DEFINITIONS})
+        hairtos_apply_target_warnings(hairtos_internal_objects)
+    endif()
+
+    if(HAIRTOS_ALLOCATOR_C)
+        add_library(hairtos_allocator_objects OBJECT ${HAIRTOS_ALLOCATOR_C})
+        target_include_directories(hairtos_allocator_objects PRIVATE
+            ${HAIRTOS_PUBLIC_INCLUDES}
+            ${CMAKE_CURRENT_SOURCE_DIR}/labs/memory-allocator/include)
+        target_compile_definitions(hairtos_allocator_objects PRIVATE ${HAIRTOS_EXAMPLE_DEFINITIONS})
+        hairtos_apply_target_warnings(hairtos_allocator_objects)
+    endif()
+
+    if(HAIRTOS_BENCHMARK_C)
+        add_library(hairtos_benchmark_objects OBJECT ${HAIRTOS_BENCHMARK_C})
+        target_include_directories(hairtos_benchmark_objects PRIVATE
+            ${HAIRTOS_PUBLIC_INCLUDES}
+            ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/kernel/include)
+        target_compile_definitions(hairtos_benchmark_objects PRIVATE ${HAIRTOS_EXAMPLE_DEFINITIONS})
+        hairtos_apply_target_warnings(hairtos_benchmark_objects)
+    endif()
+
+    add_executable(hairtos examples/${HAIRTOS_EXAMPLE}/main.c)
+    target_include_directories(hairtos PRIVATE ${HAIRTOS_PUBLIC_INCLUDES})
+
+    if(HAIRTOS_EXAMPLE STREQUAL "14-memory-allocator-lab")
+        target_include_directories(hairtos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/labs/memory-allocator/include)
+    endif()
+    if(HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark")
+        target_include_directories(hairtos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/kernel/include)
+    endif()
+    if(HAIRTOS_MAIN_NEEDS_INTERNAL)
+        target_include_directories(hairtos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/kernel/internal)
+    endif()
+
+    target_compile_definitions(hairtos PRIVATE ${HAIRTOS_EXAMPLE_DEFINITIONS})
+    hairtos_apply_target_warnings(hairtos)
+
+    foreach(object_target
+            hairtos_platform_objects
+            hairtos_internal_objects
+            hairtos_allocator_objects
+            hairtos_benchmark_objects)
+        if(TARGET ${object_target})
+            target_sources(hairtos PRIVATE $<TARGET_OBJECTS:${object_target}>)
+        endif()
+    endforeach()
+
+    target_link_options(hairtos PRIVATE
+        -mcpu=cortex-m3 -mthumb -nostdlib
+        -Wl,--gc-sections
+        -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/hairtos.map
+        -Wl,--cref
+        -T${CMAKE_CURRENT_SOURCE_DIR}/boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld)
+
+    if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang")
+        target_link_libraries(hairtos PRIVATE gcc)
+    endif()
+
+    set_target_properties(hairtos PROPERTIES SUFFIX ".elf")
+
+    if(NOT CMAKE_OBJCOPY)
+        find_program(CMAKE_OBJCOPY NAMES arm-none-eabi-objcopy llvm-objcopy REQUIRED)
+    endif()
+    find_program(HAIRTOS_SIZE_TOOL NAMES arm-none-eabi-size llvm-size size REQUIRED)
+    find_program(HAIRTOS_OBJDUMP_TOOL NAMES arm-none-eabi-objdump llvm-objdump REQUIRED)
+
+    add_custom_command(TARGET hairtos POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:hairtos> ${CMAKE_CURRENT_BINARY_DIR}/hairtos.bin
+        COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:hairtos> ${CMAKE_CURRENT_BINARY_DIR}/hairtos.hex
+        VERBATIM)
+
+    add_custom_target(size
+        COMMAND ${HAIRTOS_SIZE_TOOL} $<TARGET_FILE:hairtos>
+        DEPENDS hairtos
+        VERBATIM)
+
+    add_custom_target(disasm
+        COMMAND ${HAIRTOS_OBJDUMP_TOOL} -d -S $<TARGET_FILE:hairtos> > ${CMAKE_CURRENT_BINARY_DIR}/hairtos.lst
+        DEPENDS hairtos
+        VERBATIM)
+
+elseif(HAIRTOS_ENVIRONMENT STREQUAL "host")
+    if(HAIRTOS_BUILD_TESTS)
+        enable_testing()
+        add_executable(hairtos_tests
+            kernel/src/hr_list.c
+            kernel/src/hr_scheduler.c
+            kernel/src/hr_wait.c
+            kernel/src/hr_timeout.c
+            kernel/src/hr_task.c
+            kernel/src/hr_kernel.c
+            kernel/src/hr_time.c
+            kernel/src/hr_queue.c
+            kernel/src/hr_semaphore.c
+            kernel/src/hr_mutex.c
+            kernel/src/hr_timer.c
+            kernel/src/hr_context.c
+            kernel/src/hr_diagnostics.c
+            haievent/src/he_event.c
+            haievent/src/he_state_machine.c
+            haievent/src/he_active.c
+            haievent/src/he_time_event.c
+            haievent/src/he_pubsub.c
+            labs/memory-allocator/src/hr_heap_lab.c
+            labs/memory-allocator/src/hr_pool_lab.c
+            benchmarks/kernel/src/hr_benchmark_stats.c
+            tests/stress/scheduler_stress_core.c
+            arch/arm/cortex-m3/hr_port_stack.c
+            tests/mocks/mock_port.c
+            tests/host/test_main.c
+            tests/host/test_list.c
+            tests/host/test_ready_queue.c
+            tests/host/test_wait_list.c
+            tests/host/test_timeout.c
+            tests/host/test_port_stack.c
+            tests/host/test_task.c
+            tests/host/test_kernel_start.c
+            tests/host/test_scheduler_policy.c
+            tests/host/test_queue.c
+            tests/host/test_semaphore.c
+            tests/host/test_mutex.c
+            tests/host/test_timer.c
+            tests/host/test_haievent.c
+            tests/host/test_benchmark.c
+            tests/host/test_diagnostics.c
+            tests/stress/test_scheduler_stress.c
+            labs/memory-allocator/tests/test_heap_lab.c)
+        target_include_directories(hairtos_tests PRIVATE
+            ${HAIRTOS_PUBLIC_INCLUDES}
+            ${HAIRTOS_INTERNAL_INCLUDES}
+            ${CMAKE_CURRENT_SOURCE_DIR}/tests/host
+            ${CMAKE_CURRENT_SOURCE_DIR}/tests/stress
+            ${CMAKE_CURRENT_SOURCE_DIR}/labs/memory-allocator/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/kernel/include)
+        target_compile_definitions(hairtos_tests PRIVATE
+            HR_CFG_ENABLE_DIAGNOSTICS=1
+            HR_CFG_ENABLE_RUNTIME_STATS=1)
+        hairtos_apply_host_warnings(hairtos_tests)
+        add_test(NAME hairtos_host_tests COMMAND hairtos_tests)
+        set_tests_properties(hairtos_host_tests PROPERTIES
+            ENVIRONMENT "ASAN_OPTIONS=detect_leaks=1:halt_on_error=1;UBSAN_OPTIONS=halt_on_error=1")
+    else()
+        hairtos_host_example_config(
+            "${HAIRTOS_EXAMPLE}"
+            HAIRTOS_HOST_SOURCES
+            HAIRTOS_HOST_NEEDS_INTERNAL
+            HAIRTOS_HOST_EXTRA_INCLUDES)
+        add_executable(hairtos_host ${HAIRTOS_HOST_SOURCES})
+        set_target_properties(hairtos_host PROPERTIES OUTPUT_NAME "${HAIRTOS_EXAMPLE}")
+        target_include_directories(hairtos_host PRIVATE
+            ${HAIRTOS_PUBLIC_INCLUDES}
+            ${HAIRTOS_HOST_EXTRA_INCLUDES})
+        if(HAIRTOS_HOST_NEEDS_INTERNAL)
+            target_include_directories(hairtos_host PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/kernel/internal)
+        endif()
+        target_compile_definitions(hairtos_host PRIVATE
+            HR_CFG_ENABLE_DIAGNOSTICS=1
+            HR_CFG_ENABLE_RUNTIME_STATS=1)
+        hairtos_apply_host_warnings(hairtos_host)
+    endif()
 endif()
-set_target_properties(hairtos PROPERTIES SUFFIX ".elf")

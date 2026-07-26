@@ -33,7 +33,6 @@
 
 ## 5. Package
 
-- [ ] `repository-hygiene-check` PASS.
 - [ ] ZIP không có `.git`/build/cache.
 - [ ] SHA-256 được tạo và verify.
 - [ ] Docs link check PASS.

@@ -17,4 +17,4 @@
 
 ## Build source of truth
 
-Target source selection nằm trong `Makefile` và `CMakeLists.txt`. Host tests nằm trong `tests/host`; stress trong `tests/stress`; validation trong `tools/scripts`.
+Example-to-module mapping nằm trong `cmake/hairtos_examples.cmake`; module-to-source mapping nằm trong `cmake/hairtos_modules.cmake`. `CMakeLists.txt` dựng target từ hai manifest này. Root `Makefile` chỉ gọi CMake và không duy trì source list riêng. Host tests nằm trong `tests/host`, stress trong `tests/stress`.

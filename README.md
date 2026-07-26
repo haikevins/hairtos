@@ -4,6 +4,8 @@
 The current reference target is the STM32F103C8T6 Blue Pill. `haievent` is the
 optional event-driven framework implemented above the kernel.
 
+Current version: `1.0.0-rc1` (see `VERSION` and `CHANGELOG.md`).
+
 ## Current status
 
 The repository is the **hairtos mainline**, while the integrated diagnostics image keeps the historical numbered example `16-diagnostics-stress-stabilization`. It
@@ -58,6 +60,19 @@ make TOOLCHAIN=clang EXAMPLE=16-diagnostics-stress-stabilization check
 Run `make help` for the compact command summary and `make list-examples` for the
 complete host/target classification.
 
+
+## Build architecture
+
+CMake is the single source of truth for example availability, module sources and
+compile definitions. The root Makefile is only a short command wrapper, so Make
+and direct CMake builds cannot drift into separate source mappings.
+
+Application examples compile with public include paths only. Kernel and
+`haievent` internal headers are restricted to implementation objects, tests,
+`02-kernel-data-structures-host`, and `15-kernel-benchmark`.
+
+Project release metadata is stored in `VERSION` and `CHANGELOG.md`.
+
 ## Validation boundary
 
 `make check` runs the native sanitizer suite and builds the selected example.
@@ -76,5 +91,3 @@ Start with:
 - `docs/06-testing-and-quality/testing-guide.md`
 - `examples/README.md`
 
-Repository cleanup rules are documented in
-`docs/06-testing-and-quality/repository-hygiene.md`.

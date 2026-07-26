@@ -11,10 +11,10 @@ hairtos/
 ├── arch/                  # CPU architecture port
 ├── benchmarks/            # Benchmark code chỉ dùng khi được chọn
 ├── boards/                # Board-specific clock, pin, linker
-├── cmake/                 # Toolchain files
+├── cmake/                 # Source-of-truth build modules and toolchains
 ├── config/                # hairtos và haievent configuration
 ├── docs/                  # Tài liệu đã phân loại
-├── drivers/               # GPIO, UART, hardware timer
+├── drivers/               # Public interfaces, common code, SoC implementations
 ├── examples/              # Host và target demonstrations
 ├── haievent/             # Event-driven framework
 ├── kernel/                # Public API, internal headers, implementation
@@ -36,7 +36,9 @@ hairtos/
 | CPU port | `arch/<architecture>/` |
 | MCU family | `soc/<family>/` |
 | Board | `boards/<board>/` |
-| Peripheral driver | `drivers/<driver>/` |
+| Public driver API | `drivers/include/` |
+| Common driver code | `drivers/common/` |
+| SoC driver implementation | `drivers/<soc>/` |
 | Independent experiment | `labs/<name>/` |
 | User-facing demo | `examples/<number-name>/` |
 | Host unit test | `tests/host/` |
@@ -55,3 +57,11 @@ Tên example bám theo roadmap. Phase 10 và Phase 13 có nhiều example nên s
 ## 6. Không nên tạo lại
 
 Không thêm skeleton rỗng, ghost API hoặc file không tham gia build. Mỗi source mới phải được một trong các thành phần sau sử dụng: Makefile, CMake, host tests, stress tests, validation tool hoặc tài liệu rõ ràng.
+## 7. Build source of truth
+
+`cmake/hairtos_examples.cmake` maps examples to modules and feature definitions.
+`cmake/hairtos_modules.cmake` owns module-to-source mappings. The root Makefile
+never repeats these lists; it configures and invokes CMake.
+
+This arrangement prevents Make and CMake from selecting different source sets.
+

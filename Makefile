@@ -1,443 +1,140 @@
 .DEFAULT_GOAL := build
 
-PROJECT          := hairtos
-EXAMPLE          ?= 16-diagnostics-stress-stabilization
-ENVIRONMENT      ?= auto
-BUILD_ROOT       ?= build
+PROJECT       := hairtos
+EXAMPLE       ?= $(strip $(shell cmake -P cmake/print_default_example.cmake 2>/dev/null))
+ENVIRONMENT   ?= auto
+BUILD_ROOT    ?= build
+TOOLCHAIN     ?= gcc
+OPENOCD       ?= openocd
+EXTRA_DEFINES ?=
 
-TARGET_EXAMPLES  := 01-baremetal-foundation \
-                    03-static-task-stack \
-                    04-start-first-task \
-                    05-cooperative-context-switch \
-                    06-priority-scheduler \
-                    07-task-delay-timeout \
-                    08-preemption-round-robin \
-                    09-queue-blocking-ipc \
-                    10-01-semaphore-from-isr \
-                    10-02-mutex-priority-inheritance \
-                    11-task-suspend-resume \
-                    12-software-timer \
-                    13-01-event-post \
-                    13-02-active-object \
-                    13-03-flat-state-machine \
-                    13-04-time-event \
-                    13-05-publish-subscribe \
-                    13-06-event-driven-demo \
-                    14-memory-allocator-lab \
-                    15-kernel-benchmark \
-                    16-diagnostics-stress-stabilization
+RESOLVED_ENVIRONMENT := $(strip $(shell cmake \
+    -DHAIRTOS_EXAMPLE=$(EXAMPLE) \
+    -DHAIRTOS_ENVIRONMENT=$(ENVIRONMENT) \
+    -P cmake/resolve_environment.cmake 2>/dev/null))
 
-HOST_EXAMPLES    := 02-kernel-data-structures-host \
-                    14-memory-allocator-lab \
-                    16-diagnostics-stress-stabilization
-
-HOST_ONLY_EXAMPLES := 02-kernel-data-structures-host
-DUAL_EXAMPLES      := 14-memory-allocator-lab 16-diagnostics-stress-stabilization
-ALL_EXAMPLES       := $(sort $(TARGET_EXAMPLES) $(HOST_EXAMPLES))
-
-ifeq ($(ENVIRONMENT),auto)
-ifneq ($(filter $(EXAMPLE),$(HOST_ONLY_EXAMPLES)),)
-RESOLVED_PLATFORM := host
-else
-RESOLVED_PLATFORM := target
-endif
-else ifeq ($(ENVIRONMENT),host)
-RESOLVED_PLATFORM := host
-else ifeq ($(ENVIRONMENT),target)
-RESOLVED_PLATFORM := target
-else
-$(error ENVIRONMENT must be auto, host, or target)
+ifeq ($(RESOLVED_ENVIRONMENT),)
+$(error Invalid EXAMPLE or ENVIRONMENT. Run 'make list-examples')
 endif
 
-TARGET_BUILD_DIR ?= $(BUILD_ROOT)/target/$(EXAMPLE)
-HOST_BUILD_DIR   ?= $(BUILD_ROOT)/host/$(EXAMPLE)
-BUILD_DIR         := $(TARGET_BUILD_DIR)
-TARGET            := $(TARGET_BUILD_DIR)/$(PROJECT)
-
-TOOLCHAIN        ?= gcc
-CROSS_COMPILE    ?= arm-none-eabi-
-OPENOCD          ?= openocd
-GDB_PORT         ?= 3333
-
-CPU_FLAGS        := -mcpu=cortex-m3 -mthumb
-COMMON_FLAGS     := $(CPU_FLAGS) -std=c11 -Og -g3 \
-                    -ffreestanding -fno-common -fno-builtin \
-                    -fno-unwind-tables -fno-asynchronous-unwind-tables \
-                    -ffunction-sections -fdata-sections \
-                    -Wall -Wextra -Werror -Wshadow -Wundef \
-                    -Wconversion -Wsign-conversion
-
-INCLUDES         := -Iconfig \
-                    -Isoc/stm32f1/include \
-                    -Iboards/bluepill_f103c8/include \
-                    -Idrivers/gpio/include \
-                    -Idrivers/uart/include \
-                    -Idrivers/timer/include \
-                    -Ikernel/include -Ikernel/internal \
-                    -Iarch/arm/cortex-m3/include \
-                    -Ihaievent/include -Ihaievent/internal \
-                    -Ilabs/memory-allocator/include \
-                    -Ibenchmarks/kernel/include
-
-LINKER_SCRIPT    := boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld
-OPENOCD_CFG      := tools/openocd/bluepill_stlink.cfg
-
-PLATFORM_C_SOURCES := soc/stm32f1/system_stm32f1.c \
-                      soc/stm32f1/stm32f1_clock.c \
-                      soc/stm32f1/stm32f1_irq.c \
-                      boards/bluepill_f103c8/board.c \
-                      boards/bluepill_f103c8/board_clock.c \
-                      drivers/gpio/src/hr_gpio_stm32f1.c \
-                      drivers/uart/src/hr_uart_stm32f1.c \
-                      drivers/timer/src/hr_hw_timer_stm32f1.c
-
-BAREMETAL_TICK_SOURCE := drivers/timer/src/hr_systick_baremetal_irq.c
-
-TASK_KERNEL_C_SOURCES := kernel/src/hr_list.c \
-                    kernel/src/hr_scheduler.c \
-                    kernel/src/hr_wait.c \
-                    kernel/src/hr_timeout.c \
-                    kernel/src/hr_task.c \
-                    arch/arm/cortex-m3/hr_port.c \
-                    arch/arm/cortex-m3/hr_port_stack.c
-
-C_SOURCES        := $(PLATFORM_C_SOURCES) examples/$(EXAMPLE)/main.c
-ASM_SOURCES      := soc/stm32f1/startup_stm32f103.S
-
-ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark 16-diagnostics-stress-stabilization),)
-C_SOURCES        += $(TASK_KERNEL_C_SOURCES)
-endif
-
-ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark 16-diagnostics-stress-stabilization),)
-C_SOURCES        += kernel/src/hr_kernel.c
-ASM_SOURCES      += arch/arm/cortex-m3/hr_portasm.S
-endif
-
-ifneq ($(filter $(EXAMPLE),01-baremetal-foundation 03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler),)
-C_SOURCES        += $(BAREMETAL_TICK_SOURCE)
-endif
-
-ifneq ($(filter $(EXAMPLE),07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark 16-diagnostics-stress-stabilization),)
-C_SOURCES        += kernel/src/hr_time.c
-endif
-
-ifeq ($(EXAMPLE),09-queue-blocking-ipc)
-C_SOURCES        += kernel/src/hr_queue.c
-endif
-
-ifeq ($(EXAMPLE),10-01-semaphore-from-isr)
-C_SOURCES        += kernel/src/hr_semaphore.c
-endif
-
-ifeq ($(EXAMPLE),10-02-mutex-priority-inheritance)
-C_SOURCES        += kernel/src/hr_mutex.c
-endif
-
-ifeq ($(EXAMPLE),12-software-timer)
-C_SOURCES        += kernel/src/hr_semaphore.c kernel/src/hr_timer.c
-endif
-
-ifneq ($(filter $(EXAMPLE),13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo),)
-C_SOURCES        += kernel/src/hr_context.c \
-                    kernel/src/hr_queue.c \
-                    kernel/src/hr_semaphore.c \
-                    kernel/src/hr_timer.c \
-                    haievent/src/he_event.c \
-                    haievent/src/he_state_machine.c \
-                    haievent/src/he_active.c \
-                    haievent/src/he_time_event.c \
-                    haievent/src/he_pubsub.c
-endif
-
-ifeq ($(EXAMPLE),15-kernel-benchmark)
-C_SOURCES        += kernel/src/hr_context.c \
-                    kernel/src/hr_queue.c \
-                    kernel/src/hr_semaphore.c \
-                    kernel/src/hr_mutex.c \
-                    kernel/src/hr_timer.c \
-                    haievent/src/he_event.c \
-                    haievent/src/he_state_machine.c \
-                    haievent/src/he_active.c \
-                    benchmarks/kernel/src/hr_benchmark_stats.c \
-                    benchmarks/kernel/src/hr_benchmark_dwt.c \
-                    benchmarks/kernel/src/hr_benchmark_gpio.c
-endif
-
-ifeq ($(EXAMPLE),16-diagnostics-stress-stabilization)
-C_SOURCES        += kernel/src/hr_context.c \
-                    kernel/src/hr_queue.c \
-                    kernel/src/hr_semaphore.c \
-                    kernel/src/hr_mutex.c \
-                    kernel/src/hr_timer.c \
-                    kernel/src/hr_diagnostics.c \
-                    arch/arm/cortex-m3/hr_fault.c
-ASM_SOURCES      += arch/arm/cortex-m3/hr_faultasm.S
-endif
-
-ifeq ($(EXAMPLE),14-memory-allocator-lab)
-C_SOURCES        += labs/memory-allocator/src/hr_heap_lab.c \
-                    labs/memory-allocator/src/hr_pool_lab.c
-endif
-
-C_OBJECTS        := $(addprefix $(BUILD_DIR)/,$(C_SOURCES:.c=.o))
-ASM_OBJECTS      := $(addprefix $(BUILD_DIR)/,$(ASM_SOURCES:.S=.o))
-OBJECTS          := $(C_OBJECTS) $(ASM_OBJECTS)
-DEPS             := $(C_OBJECTS:.o=.d)
+BUILD_DIR := $(BUILD_ROOT)/$(RESOLVED_ENVIRONMENT)/$(EXAMPLE)
+TARGET_ELF := $(BUILD_DIR)/$(PROJECT).elf
+HOST_BINARY := $(BUILD_DIR)/$(EXAMPLE)
+HOST_TEST_DIR := $(BUILD_ROOT)/host/tests
+OPENOCD_CFG := tools/openocd/bluepill_stlink.cfg
 
 ifeq ($(TOOLCHAIN),clang)
-CC               := clang
-OBJCOPY          := llvm-objcopy
-SIZE             := size
-OBJDUMP          := llvm-objdump
-GDB              := gdb-multiarch
-TOOLCHAIN_FLAGS  := --target=arm-none-eabi
-LD_DRIVER_FLAGS  := --target=arm-none-eabi -fuse-ld=lld
-LDLIBS           :=
+TOOLCHAIN_FILE := cmake/toolchains/arm-none-eabi-clang.cmake
+GDB ?= gdb-multiarch
+else ifeq ($(TOOLCHAIN),gcc)
+TOOLCHAIN_FILE := cmake/toolchains/arm-none-eabi-gcc.cmake
+GDB ?= arm-none-eabi-gdb
 else
-CC               := $(CROSS_COMPILE)gcc
-OBJCOPY          := $(CROSS_COMPILE)objcopy
-SIZE             := $(CROSS_COMPILE)size
-OBJDUMP          := $(CROSS_COMPILE)objdump
-GDB              := $(CROSS_COMPILE)gdb
-TOOLCHAIN_FLAGS  :=
-LD_DRIVER_FLAGS  :=
-LDLIBS           := -lgcc
+$(error TOOLCHAIN must be gcc or clang)
 endif
 
-EXAMPLE_DEFINES  :=
-ifeq ($(EXAMPLE),07-task-delay-timeout)
-EXAMPLE_DEFINES  += -DHR_CFG_PREEMPTION=0 -DHR_CFG_TIME_SLICING=0
-endif
-ifeq ($(EXAMPLE),16-diagnostics-stress-stabilization)
-EXAMPLE_DEFINES  += -DHR_CFG_PREEMPTION=1 -DHR_CFG_TIME_SLICING=1 \
-                    -DHR_CFG_ENABLE_SOFTWARE_TIMER=1 \
-                    -DHR_CFG_TIMER_TASK_PRIORITY=1 \
-                    -DHR_CFG_ENABLE_DIAGNOSTICS=1 \
-                    -DHR_CFG_ENABLE_RUNTIME_STATS=1
-else ifeq ($(EXAMPLE),15-kernel-benchmark)
-EXAMPLE_DEFINES  += -DHR_CFG_PREEMPTION=1 -DHR_CFG_TIME_SLICING=0 \
-                    -DHR_CFG_ENABLE_SOFTWARE_TIMER=1 \
-                    -DHR_CFG_TIMER_TASK_PRIORITY=1
-else ifneq ($(filter $(EXAMPLE),12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo),)
-EXAMPLE_DEFINES  += -DHR_CFG_ENABLE_SOFTWARE_TIMER=1 -DHR_CFG_TIMER_TASK_PRIORITY=1
-else
-EXAMPLE_DEFINES  += -DHR_CFG_ENABLE_SOFTWARE_TIMER=0
-endif
+TARGET_CONFIGURE = cmake -S . -B $(BUILD_DIR) -G Ninja \
+    -DCMAKE_TOOLCHAIN_FILE=$(TOOLCHAIN_FILE) \
+    -DHAIRTOS_ENVIRONMENT=target \
+    -DHAIRTOS_EXAMPLE=$(EXAMPLE) \
+    -DHAIRTOS_EXTRA_C_FLAGS="$(EXTRA_DEFINES)"
 
-CFLAGS           := $(TOOLCHAIN_FLAGS) $(COMMON_FLAGS) $(EXAMPLE_DEFINES) $(EXTRA_DEFINES) $(INCLUDES) -MMD -MP
-ASFLAGS          := $(TOOLCHAIN_FLAGS) $(CPU_FLAGS) -g3 -x assembler-with-cpp $(INCLUDES)
+HOST_CONFIGURE = cmake -S . -B $(BUILD_DIR) -G Ninja \
+    -DHAIRTOS_ENVIRONMENT=host \
+    -DHAIRTOS_EXAMPLE=$(EXAMPLE) \
+    -DHAIRTOS_BUILD_TESTS=OFF \
+    -DHAIRTOS_EXTRA_C_FLAGS="$(EXTRA_DEFINES)"
 
-
-HOST_CC          ?= cc
-HOST_TEST_BUILD_DIR := $(BUILD_ROOT)/host/tests
-HOST_TEST        := $(HOST_TEST_BUILD_DIR)/hairtos_tests
-HOST_BINARY      := $(HOST_BUILD_DIR)/$(EXAMPLE)
-HOST_EXAMPLE_SOURCES :=
-
-ifeq ($(EXAMPLE),02-kernel-data-structures-host)
-HOST_EXAMPLE_SOURCES := kernel/src/hr_list.c \
-                        kernel/src/hr_scheduler.c \
-                        kernel/src/hr_wait.c \
-                        examples/02-kernel-data-structures-host/main.c
-endif
-
-ifeq ($(EXAMPLE),14-memory-allocator-lab)
-HOST_EXAMPLE_SOURCES := labs/memory-allocator/src/hr_heap_lab.c \
-                        labs/memory-allocator/src/hr_pool_lab.c \
-                        labs/memory-allocator/demo.c
-endif
-
-ifeq ($(EXAMPLE),16-diagnostics-stress-stabilization)
-HOST_EXAMPLE_SOURCES := kernel/src/hr_list.c \
-                        kernel/src/hr_scheduler.c \
-                        tests/stress/scheduler_stress_core.c \
-                        tests/stress/scheduler_stress_main.c
-endif
-
-HOST_FLAGS       := -std=c11 -O0 -g3 -Wall -Wextra -Werror -Wshadow -Wundef \
-                    -Wconversion -Wsign-conversion -pedantic \
-                    -fsanitize=address,undefined -fno-omit-frame-pointer \
-                    -DHR_CFG_ENABLE_DIAGNOSTICS=1 -DHR_CFG_ENABLE_RUNTIME_STATS=1
-HOST_INCLUDES    := -Iconfig -Ikernel/include -Ikernel/internal -Itests/host \
-                    -Iarch/arm/cortex-m3/include -Ihaievent/include -Ihaievent/internal \
-                    -Ilabs/memory-allocator/include -Ibenchmarks/kernel/include -Itests/stress
-HOST_SOURCES     := kernel/src/hr_list.c \
-                    kernel/src/hr_scheduler.c \
-                    kernel/src/hr_wait.c \
-                    kernel/src/hr_timeout.c \
-                    kernel/src/hr_task.c \
-                    kernel/src/hr_kernel.c \
-                    kernel/src/hr_time.c \
-                    kernel/src/hr_queue.c \
-                    kernel/src/hr_semaphore.c \
-                    kernel/src/hr_mutex.c \
-                    kernel/src/hr_timer.c \
-                    kernel/src/hr_context.c \
-                    haievent/src/he_event.c \
-                    haievent/src/he_state_machine.c \
-                    haievent/src/he_active.c \
-                    haievent/src/he_time_event.c \
-                    haievent/src/he_pubsub.c \
-                    labs/memory-allocator/src/hr_heap_lab.c \
-                    labs/memory-allocator/src/hr_pool_lab.c \
-                    benchmarks/kernel/src/hr_benchmark_stats.c \
-                    kernel/src/hr_diagnostics.c \
-                    tests/stress/scheduler_stress_core.c \
-                    arch/arm/cortex-m3/hr_port_stack.c \
-                    tests/mocks/mock_port.c \
-                    tests/host/test_main.c \
-                    tests/host/test_list.c \
-                    tests/host/test_ready_queue.c \
-                    tests/host/test_wait_list.c \
-                    tests/host/test_timeout.c \
-                    tests/host/test_port_stack.c \
-                    tests/host/test_task.c \
-                    tests/host/test_kernel_start.c \
-                    tests/host/test_scheduler_policy.c \
-                    tests/host/test_queue.c \
-                    tests/host/test_semaphore.c \
-                    tests/host/test_mutex.c \
-                    tests/host/test_timer.c \
-                    tests/host/test_haievent.c \
-                    tests/host/test_benchmark.c \
-                    tests/host/test_diagnostics.c \
-                    tests/stress/test_scheduler_stress.c \
-                    labs/memory-allocator/tests/test_heap_lab.c
-
-LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
-                    -Wl,--gc-sections -Wl,-Map=$(TARGET).map \
-                    -Wl,--cref -T$(LINKER_SCRIPT)
+HOST_TEST_CONFIGURE = cmake -S . -B $(HOST_TEST_DIR) -G Ninja \
+    -DHAIRTOS_ENVIRONMENT=host \
+    -DHAIRTOS_EXAMPLE=16-diagnostics-stress-stabilization \
+    -DHAIRTOS_BUILD_TESTS=ON
 
 .PHONY: all build run check clean clean-all help list-examples tree \
         target-build target-run host-build host-run host-tests \
-        elf bin hex size flash erase debug-server gdb disasm \
-        validate-example validate-target-example validate-host-example
+        size flash erase debug-server gdb disasm
 
 all: build
 
-ifeq ($(RESOLVED_PLATFORM),host)
+ifeq ($(RESOLVED_ENVIRONMENT),host)
 build: host-build
 run: host-run
-check: host-tests host-build
 else
 build: target-build
 run: target-run
-check: host-tests target-build
 endif
 
-target-build: elf bin hex size
-target-run: flash
-host-build: $(HOST_BINARY)
-host-run: $(HOST_BINARY)
-	ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 \
-	UBSAN_OPTIONS=halt_on_error=1 $(HOST_BINARY)
+check: host-tests build
 
-validate-example:
-	@case " $(ALL_EXAMPLES) " in \
-		*" $(EXAMPLE) "*) ;; \
-		*) echo "Error: unknown EXAMPLE=$(EXAMPLE)"; \
-		   echo "Run 'make list-examples' to see valid names."; exit 2 ;; \
-	esac
+# CMake owns every example/module/source/definition mapping. The Makefile is
+# intentionally only a stable user-facing command wrapper.
+target-build:
+	@$(TARGET_CONFIGURE)
+	@ln -sfn $(abspath $(BUILD_DIR))/compile_commands.json compile_commands.json
+	@cmake --build $(BUILD_DIR) --target hairtos
+	@cmake --build $(BUILD_DIR) --target size
 
-validate-target-example: validate-example
-	@case " $(TARGET_EXAMPLES) " in \
-		*" $(EXAMPLE) "*) ;; \
-		*) echo "Error: EXAMPLE=$(EXAMPLE) is not available for ENVIRONMENT=target."; \
-		   echo "Use ENVIRONMENT=host for a host example."; exit 2 ;; \
-	esac
+host-build:
+	@$(HOST_CONFIGURE)
+	@ln -sfn $(abspath $(BUILD_DIR))/compile_commands.json compile_commands.json
+	@cmake --build $(BUILD_DIR) --target hairtos_host
 
-validate-host-example: validate-example
-	@case " $(HOST_EXAMPLES) " in \
-		*" $(EXAMPLE) "*) ;; \
-		*) echo "Error: EXAMPLE=$(EXAMPLE) is not available for ENVIRONMENT=host."; \
-		   echo "Use ENVIRONMENT=target for an STM32 example."; exit 2 ;; \
-	esac
+host-run: host-build
+	@ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 \
+	 UBSAN_OPTIONS=halt_on_error=1 $(HOST_BINARY)
 
-elf: $(TARGET).elf
-bin: $(TARGET).bin
-hex: $(TARGET).hex
-
-$(TARGET).elf: $(OBJECTS) $(LINKER_SCRIPT) | validate-target-example
-	@mkdir -p $(dir $@)
-	$(CC) $(OBJECTS) $(LDFLAGS) $(LDLIBS) -o $@
-
-$(TARGET).bin: $(TARGET).elf
-	$(OBJCOPY) -O binary $< $@
-
-$(TARGET).hex: $(TARGET).elf
-	$(OBJCOPY) -O ihex $< $@
-
-$(TARGET_BUILD_DIR)/%.o: %.c | validate-target-example
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(TARGET_BUILD_DIR)/%.o: %.S | validate-target-example
-	@mkdir -p $(dir $@)
-	$(CC) $(ASFLAGS) -c $< -o $@
-
-size: $(TARGET).elf
-	$(SIZE) $<
-
-$(HOST_BINARY): $(HOST_EXAMPLE_SOURCES) | validate-host-example
-	@mkdir -p $(HOST_BUILD_DIR)
-	$(HOST_CC) $(HOST_FLAGS) $(HOST_INCLUDES) $(HOST_EXAMPLE_SOURCES) -o $@
-
-$(HOST_TEST): $(HOST_SOURCES)
-	@mkdir -p $(HOST_TEST_BUILD_DIR)
-	$(HOST_CC) $(HOST_FLAGS) $(HOST_INCLUDES) $(HOST_SOURCES) -o $@
-
-host-tests: $(HOST_TEST)
-	ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 \
-	UBSAN_OPTIONS=halt_on_error=1 $(HOST_TEST)
-
-flash: $(TARGET).elf
+target-run: target-build
 	$(OPENOCD) -f $(OPENOCD_CFG) \
-		-c "program $(abspath $<) verify reset exit"
+		-c "program $(abspath $(TARGET_ELF)) verify reset exit"
 
-erase: validate-target-example
+host-tests:
+	@$(HOST_TEST_CONFIGURE)
+	@cmake --build $(HOST_TEST_DIR) --target hairtos_tests
+	@ctest --test-dir $(HOST_TEST_DIR) --output-on-failure
+
+size:
+	@$(TARGET_CONFIGURE)
+	@cmake --build $(BUILD_DIR) --target size
+
+flash: target-run
+
+disasm:
+	@$(TARGET_CONFIGURE)
+	@cmake --build $(BUILD_DIR) --target disasm
+	@echo "Generated $(BUILD_DIR)/hairtos.lst"
+
+erase:
 	$(OPENOCD) -f $(OPENOCD_CFG) \
 		-c "init" -c "reset halt" -c "stm32f1x mass_erase 0" -c "shutdown"
 
-debug-server: validate-target-example
+debug-server:
 	$(OPENOCD) -f $(OPENOCD_CFG)
 
-gdb: $(TARGET).elf
-	$(GDB) -q $< -x tools/gdb/hairtos.gdb
+gdb: target-build
+	$(GDB) -q $(TARGET_ELF) -x tools/gdb/hairtos.gdb
 
-disasm: $(TARGET).elf
-	$(OBJDUMP) -d -S $< > $(TARGET).lst
-	@echo "Generated $(TARGET).lst"
+clean:
+ifeq ($(origin EXAMPLE),command line)
+	@echo "Cleaning $(RESOLVED_ENVIRONMENT) example: $(EXAMPLE)"
+	@rm -rf $(BUILD_DIR)
+else
+	@echo "Cleaning all generated files"
+	@rm -rf $(BUILD_ROOT) out compile_commands.json
+endif
+
+clean-all:
+	@rm -rf $(BUILD_ROOT) out compile_commands.json
+
+list-examples:
+	@cmake -P cmake/print_examples.cmake
 
 tree:
 	@find . -path './.git' -prune -o -path './build' -prune -o -print | sort
 
-clean:
-ifeq ($(origin EXAMPLE),command line)
-	@echo "Cleaning $(RESOLVED_PLATFORM) example: $(EXAMPLE)"
-	@rm -rf $(if $(filter host,$(RESOLVED_PLATFORM)),$(HOST_BUILD_DIR),$(TARGET_BUILD_DIR))
-else
-	@echo "Cleaning all generated files"
-	@rm -rf $(BUILD_ROOT) out
-endif
-
-clean-all:
-	rm -rf $(BUILD_ROOT) out
-
-list-examples:
-	@echo "Host only:"
-	@printf '  %s\n' $(HOST_ONLY_EXAMPLES)
-	@echo "Target only:"
-	@for item in $(filter-out $(DUAL_EXAMPLES),$(TARGET_EXAMPLES)); do echo "  $$item"; done
-	@echo "Host + target:"
-	@printf '  %s\n' $(DUAL_EXAMPLES)
-
 help:
-	@echo "hairtos Makefile"
+	@echo "hairtos"
 	@echo "  make EXAMPLE=<name> build [ENVIRONMENT=host|target]"
 	@echo "  make EXAMPLE=<name> run   [ENVIRONMENT=host|target]"
 	@echo "  make EXAMPLE=<name> check [ENVIRONMENT=host|target]"
 	@echo "  make EXAMPLE=<name> clean [ENVIRONMENT=host|target]"
 	@echo "  make host-tests | list-examples | clean-all"
-	@echo "Auto mode: host-only examples use host; all others use target."
-
--include $(DEPS)

@@ -44,4 +44,4 @@ ISR đánh thức task dùng `hr_yield_from_isr(required)` thay vì gọi trực
 
 ## 6. Kiểm tra
 
-`make repository-hygiene-check` phải thất bại nếu skeleton/ghost API quay lại. Review code cần kiểm tra include graph, source list của Make/CMake và public/private boundary.
+CMake phải giữ `kernel/internal` và `haievent/internal` ngoài include path của application example. Review code cần kiểm tra include graph, module mapping trong `cmake/hairtos_examples.cmake` và public/private boundary.

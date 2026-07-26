@@ -6,6 +6,6 @@ set(CMAKE_C_COMPILER clang)
 set(CMAKE_ASM_COMPILER clang)
 set(CMAKE_C_COMPILER_TARGET arm-none-eabi)
 set(CMAKE_ASM_COMPILER_TARGET arm-none-eabi)
-
 set(CMAKE_EXE_LINKER_FLAGS_INIT "-fuse-ld=lld")
 set(CMAKE_OBJCOPY llvm-objcopy CACHE FILEPATH "LLVM objcopy")
+set(CMAKE_OBJDUMP llvm-objdump CACHE FILEPATH "LLVM objdump")

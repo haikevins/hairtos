@@ -10,5 +10,4 @@
 - [diagnostics.md](diagnostics.md)
 - [stress-testing.md](stress-testing.md)
 - [kernel-benchmark.md](kernel-benchmark.md)
-- [repository-hygiene.md](repository-hygiene.md)
 - [release-checklist.md](release-checklist.md)

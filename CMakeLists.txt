@@ -13,6 +13,7 @@ set(HAIRTOS_TARGET_EXAMPLES
     05-cooperative-context-switch
     06-priority-scheduler
     07-task-delay-timeout
+    08-preemption-round-robin
 )
 
 list(FIND HAIRTOS_TARGET_EXAMPLES "${HAIRTOS_EXAMPLE}" HAIRTOS_EXAMPLE_INDEX)
@@ -28,7 +29,8 @@ if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack" OR
    HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
    HAIRTOS_EXAMPLE STREQUAL "05-cooperative-context-switch" OR
    HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler" OR
-   HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout")
+   HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
+   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin")
     list(APPEND HAIRTOS_KERNEL_SOURCES
         kernel/src/hr_list.c
         kernel/src/hr_scheduler.c
@@ -43,13 +45,15 @@ endif()
 if(HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
    HAIRTOS_EXAMPLE STREQUAL "05-cooperative-context-switch" OR
    HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler" OR
-   HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout")
+   HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
+   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin")
     list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_kernel.c)
     list(APPEND HAIRTOS_PORT_ASM arch/arm/cortex-m3/hr_portasm.S)
 endif()
 
 set(HAIRTOS_TICK_SOURCE drivers/timer/src/hr_systick_baremetal_irq.c)
-if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout")
+if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
+   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin")
     set(HAIRTOS_TICK_SOURCE kernel/src/hr_time.c)
 endif()
 
@@ -68,6 +72,13 @@ add_executable(hairtos_baremetal
     ${HAIRTOS_KERNEL_SOURCES}
     ${HAIRTOS_PORT_ASM}
 )
+
+if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout")
+    target_compile_definitions(hairtos_baremetal PRIVATE
+        HR_CFG_PREEMPTION=0
+        HR_CFG_TIME_SLICING=0
+    )
+endif()
 
 target_include_directories(hairtos_baremetal PRIVATE
     config

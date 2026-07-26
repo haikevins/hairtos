@@ -1,1 +1,1 @@
-/* Phase 13.3 — Flat State Machine: planning placeholder, excluded from the Phase 4 build. */
+/* Phase 13.3 — Flat State Machine: roadmap placeholder, excluded from implemented target builds. */

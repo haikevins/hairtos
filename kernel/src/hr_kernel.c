@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdint.h>
 
 #include "hairtos_config.h"
 #include "hairtos/hr_kernel.h"
@@ -10,6 +11,12 @@
 #include "hr_task_internal.h"
 #include "hr_timeout_internal.h"
 
+#define HR_SWITCH_REASON_NONE        UINT32_C(0)
+#define HR_SWITCH_REASON_YIELD       (UINT32_C(1) << 0U)
+#define HR_SWITCH_REASON_BLOCK       (UINT32_C(1) << 1U)
+#define HR_SWITCH_REASON_PREEMPT     (UINT32_C(1) << 2U)
+#define HR_SWITCH_REASON_TIME_SLICE  (UINT32_C(1) << 3U)
+
 static hr_kernel_state_t g_kernel_state = HR_KERNEL_STATE_RESET;
 static hr_scheduler_t g_scheduler;
 static hr_list_t g_all_tasks;
@@ -17,6 +24,7 @@ static hr_timeout_list_t g_timeout_list;
 static hr_task_t *g_current_task;
 static size_t g_task_count;
 static volatile hr_tick_t g_kernel_tick;
+static volatile uint32_t g_switch_reasons;
 
 static hr_task_t g_idle_task;
 static hr_stack_t g_idle_stack[HR_CFG_IDLE_STACK_WORDS];
@@ -38,9 +46,17 @@ static void hr_idle_task(void *argument)
     }
 }
 
-static bool hr_kernel_current_is_idle(void)
+static void hr_kernel_mark_switch_reason(uint32_t reason)
 {
-    return g_current_task == &g_idle_task;
+    g_switch_reasons |= reason;
+}
+
+static void hr_kernel_reload_time_slice(hr_task_control_block_t *control_block)
+{
+    if (control_block != NULL)
+    {
+        control_block->time_slice_remaining = HR_CFG_TIME_SLICE_TICKS;
+    }
 }
 
 hr_status_t hr_kernel_init(void)
@@ -59,6 +75,7 @@ hr_status_t hr_kernel_init(void)
     g_hr_current_task_control_block = NULL;
     g_task_count = 0U;
     g_kernel_tick = 0U;
+    g_switch_reasons = HR_SWITCH_REASON_NONE;
     g_kernel_state = HR_KERNEL_STATE_INITIALIZED;
 
     status = hr_task_create_static(&g_idle_task,
@@ -67,7 +84,7 @@ hr_status_t hr_kernel_init(void)
                                    NULL,
                                    g_idle_stack,
                                    HR_CFG_IDLE_STACK_WORDS,
-                                   (hr_priority_t)(HR_CFG_PRIORITY_COUNT - 1U));
+                                   (hr_priority_t)HR_CFG_IDLE_PRIORITY);
     if (status != HR_OK)
     {
         hr_kernel_panic();
@@ -100,6 +117,12 @@ hr_status_t hr_kernel_register_task(hr_task_t *task)
     }
 
     control_block = hr_task_control_block(task);
+    if ((task != &g_idle_task) &&
+        (control_block->effective_priority == (hr_priority_t)HR_CFG_IDLE_PRIORITY))
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
     if ((control_block->state != HR_TASK_STATE_CREATED) ||
         hr_list_node_is_linked(&control_block->ready_node.node) ||
         hr_list_node_is_linked(&control_block->all_task_node))
@@ -130,6 +153,7 @@ hr_status_t hr_kernel_register_task(hr_task_t *task)
         return status;
     }
 
+    hr_kernel_reload_time_slice(control_block);
     g_task_count++;
     return HR_OK;
 }
@@ -170,10 +194,32 @@ hr_status_t hr_kernel_prepare_start(void)
         return HR_ERROR_INVALID_STATE;
     }
 
+    hr_kernel_reload_time_slice(control_block);
     g_current_task = selected_task;
     g_hr_current_task_control_block = control_block;
     g_kernel_state = HR_KERNEL_STATE_RUNNING;
     return HR_OK;
+}
+
+void hr_kernel_request_yield(void)
+{
+    hr_irq_state_t irq_state;
+    bool request_switch = false;
+
+    irq_state = hr_port_enter_critical();
+    if ((g_kernel_state == HR_KERNEL_STATE_RUNNING) &&
+        (g_current_task != NULL) &&
+        (hr_task_control_block(g_current_task)->state == HR_TASK_STATE_RUNNING))
+    {
+        hr_kernel_mark_switch_reason(HR_SWITCH_REASON_YIELD);
+        request_switch = true;
+    }
+    hr_port_exit_critical(irq_state);
+
+    if (request_switch)
+    {
+        hr_port_request_context_switch();
+    }
 }
 
 hr_status_t hr_kernel_delay_current(hr_tick_t delay_ticks)
@@ -225,6 +271,8 @@ hr_status_t hr_kernel_delay_current(hr_tick_t delay_ticks)
 
     control_block->wake_tick = g_kernel_tick + delay_ticks;
     control_block->waiting_object = &g_timeout_list;
+    hr_kernel_reload_time_slice(control_block);
+    hr_kernel_mark_switch_reason(HR_SWITCH_REASON_BLOCK);
     return HR_OK;
 }
 
@@ -235,7 +283,10 @@ void hr_kernel_select_next_from_pendsv(void)
     hr_task_t *next_task;
     hr_task_control_block_t *current_control_block;
     hr_task_control_block_t *next_control_block;
+    const uint32_t switch_reasons = g_switch_reasons;
     hr_status_t status;
+
+    g_switch_reasons = HR_SWITCH_REASON_NONE;
 
     if ((g_kernel_state != HR_KERNEL_STATE_RUNNING) ||
         (g_current_task == NULL) ||
@@ -256,9 +307,15 @@ void hr_kernel_select_next_from_pendsv(void)
             return;
         }
 
-        /* A cooperative yield rotates only if the current task is still highest. */
-        if (hr_list_node_owner(&selected_ready_node->node) == g_current_task)
+        if ((hr_list_node_owner(&selected_ready_node->node) == g_current_task) &&
+            ((switch_reasons & (HR_SWITCH_REASON_YIELD |
+                                HR_SWITCH_REASON_TIME_SLICE)) != 0U))
         {
+            if ((switch_reasons & HR_SWITCH_REASON_YIELD) != 0U)
+            {
+                hr_kernel_reload_time_slice(current_control_block);
+            }
+
             status = hr_scheduler_yield_current(&g_scheduler,
                                                 &current_control_block->ready_node);
             if (status != HR_OK)
@@ -273,7 +330,7 @@ void hr_kernel_select_next_from_pendsv(void)
         /*
          * A one-tick timeout can expire after the task blocks but before the
          * pending PendSV runs. The task is READY again while its CPU context is
-         * still the active context. Selection below resolves that race safely.
+         * still active. The normal highest-ready selection resolves the race.
          */
     }
     else if (current_control_block->state != HR_TASK_STATE_BLOCKED)
@@ -339,7 +396,8 @@ void hr_kernel_tick_from_isr(void)
 {
     hr_list_t expired_nodes;
     hr_list_node_t *node;
-    bool application_task_woken = false;
+    hr_task_control_block_t *current_control_block;
+    bool switch_required = false;
 
     if (g_kernel_state != HR_KERNEL_STATE_RUNNING)
     {
@@ -394,15 +452,56 @@ void hr_kernel_tick_from_isr(void)
         }
 
         control_block->waiting_object = NULL;
-        application_task_woken = application_task_woken || (task != &g_idle_task);
+        hr_kernel_reload_time_slice(control_block);
         node = hr_list_pop_front(&expired_nodes);
     }
 
-    /* Phase 7 wakes a delayed task immediately only when idle is running. */
-    if (application_task_woken && hr_kernel_current_is_idle())
+    if ((g_current_task == NULL) || !hr_task_is_valid(g_current_task))
     {
-        hr_port_request_context_switch();
+        hr_kernel_panic();
+        return;
     }
+
+    current_control_block = hr_task_control_block(g_current_task);
+    if (current_control_block->state == HR_TASK_STATE_RUNNING)
+    {
+        current_control_block->runtime_counter++;
+
+#if (HR_CFG_PREEMPTION == 1)
+        if (hr_scheduler_should_preempt(&g_scheduler,
+                                        &current_control_block->ready_node))
+        {
+            hr_kernel_mark_switch_reason(HR_SWITCH_REASON_PREEMPT);
+            switch_required = true;
+        }
+#endif
+#if (HR_CFG_TIME_SLICING == 1)
+        if (!switch_required)
+        {
+            if (hr_scheduler_has_equal_priority_peer(&g_scheduler,
+                                                     &current_control_block->ready_node))
+            {
+                if (current_control_block->time_slice_remaining > 0U)
+                {
+                    current_control_block->time_slice_remaining--;
+                }
+
+                if (current_control_block->time_slice_remaining == 0U)
+                {
+                    hr_kernel_reload_time_slice(current_control_block);
+                    hr_kernel_mark_switch_reason(HR_SWITCH_REASON_TIME_SLICE);
+                    switch_required = true;
+                }
+            }
+            else
+            {
+                hr_kernel_reload_time_slice(current_control_block);
+            }
+        }
+#endif
+    }
+
+    hr_port_yield_from_isr(switch_required);
 }
 
 hr_status_t hr_kernel_start(void)

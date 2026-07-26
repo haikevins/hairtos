@@ -1,77 +1,55 @@
 # Testing Guide
 
-## Host tests
+## Completed host tests through Phase 8
 
-Host tests cover:
+Host tests currently cover:
 
 - intrusive lists;
-- ready queues;
-- timeout ordering;
-- queue ring buffers;
-- waiter ordering;
-- suspend/resume state policy;
-- event pools;
-- state transitions;
-- allocator-lab split/coalesce and misuse detection.
+- ready queues and bitmap maintenance;
+- wait-list priority/FIFO ordering;
+- timeout ordering and tick wrap;
+- Cortex-M initial stack-frame construction;
+- TCB creation, state transitions, stack guard, and high-water mark;
+- fixed-priority selection;
+- higher-priority preemption decisions;
+- equal-priority peer detection and time slicing;
+- delay/block/wake transitions and the one-tick PendSV race.
 
-Build with:
+They build with strict warnings and AddressSanitizer/UndefinedBehaviorSanitizer.
 
-```text
--Wall -Wextra -Werror
--fsanitize=address
--fsanitize=undefined
+```bash
+make host-tests
 ```
 
-## Target tests
+## Completed target build checks through Phase 8
 
-Target tests cover:
+Automated cross-build and symbol/disassembly checks cover:
 
-- SVC startup;
-- PendSV switching;
-- preemption;
-- round-robin;
-- ISR-safe wake-up;
-- tick wrap;
-- stack guards;
-- priority inheritance;
-- task suspend/resume;
-- software-timer expiration.
+- SVC first-task startup;
+- PendSV R4-R11 and PSP save/restore;
+- fixed-priority cooperative switching;
+- kernel SysTick and blocking delay;
+- strong SysTick/PendSV handlers;
+- preemption and round-robin scheduler paths;
+- interrupt masking around the PendSV selector.
 
-## Stress tests
+```bash
+make phase8-check
+```
 
-Stress tests run many:
+Physical timing and runtime behavior must still be validated on the STM32F103
+board.
 
-- task switches;
-- queue contention sequences;
-- event allocation/release cycles;
-- timeout/object races;
-- suspend/resume operations;
-- randomized allocator-lab sequences.
+## Planned tests
 
-## Benchmarks
-
-Phase 15 benchmarks are separate from pass/fail tests. They measure latency,
-jitter, code size, static RAM, and stack usage with DWT and GPIO instrumentation.
-See `benchmark-plan.md`.
-
-A fast benchmark does not prove correctness, and an average latency does not
-prove a worst-case real-time bound.
+Later phases add queue contention, ISR-safe wake-up, priority inheritance, task
+suspend/resume, software-timer expiration, event pools, allocator misuse, stress
+loads, and DWT/GPIO benchmarks.
 
 ## Definition of Done
 
-A feature is complete only with:
-
-- API;
-- implementation;
-- validation;
-- context rules;
-- timeout and ISR behavior;
-- host tests where possible;
-- target tests where required;
-- focused example;
-- documentation;
-- return statuses;
-- misuse assertions.
+A feature is complete only with API, implementation, validation, context rules,
+focused tests, an example, documentation, return statuses, and misuse handling.
 
 Test names follow:
 

@@ -1,1 +1,1 @@
-/* Phase 13.2 — Active Object: planning placeholder, excluded from the Phase 4 build. */
+/* Phase 13.2 — Active Object: roadmap placeholder, excluded from implemented target builds. */

@@ -271,6 +271,36 @@ hr_status_t hr_scheduler_yield_current(hr_scheduler_t *scheduler,
     return hr_ready_set_rotate_highest(&scheduler->ready);
 }
 
+bool hr_scheduler_should_preempt(const hr_scheduler_t *scheduler,
+                                 const hr_ready_node_t *current)
+{
+    hr_ready_node_t *selected;
+
+    if ((scheduler == NULL) || (current == NULL) ||
+        !hr_priority_is_valid(current->priority))
+    {
+        return false;
+    }
+
+    selected = hr_scheduler_select_highest(scheduler);
+    return (selected != NULL) && (selected->priority < current->priority);
+}
+
+bool hr_scheduler_has_equal_priority_peer(const hr_scheduler_t *scheduler,
+                                          const hr_ready_node_t *current)
+{
+    const hr_list_t *queue;
+
+    if ((scheduler == NULL) || (current == NULL) ||
+        !hr_priority_is_valid(current->priority))
+    {
+        return false;
+    }
+
+    queue = &scheduler->ready.queues[current->priority];
+    return (current->node.list == queue) && (hr_list_size(queue) > 1U);
+}
+
 size_t hr_scheduler_ready_count(const hr_scheduler_t *scheduler)
 {
     return (scheduler == NULL) ? 0U : hr_ready_set_size(&scheduler->ready);

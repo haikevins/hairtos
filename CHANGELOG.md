@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Added — Phase 8: Preemption and round-robin
+
+- Added strict higher-priority preemption after timeout wake-up.
+- Added tick-driven equal-priority round-robin with per-task quantum.
+- Added deferred switch-reason tracking for yield, block, preemption, and time slice.
+- Added Phase 8 host coverage, STM32 target example, documentation, and validation.
+- Made PendSV scheduler selection atomic with interrupt masking.
+
 ### Added — Phase 7: SysTick and delay
 
 - Added kernel-owned 1 kHz SysTick and monotonic tick time.

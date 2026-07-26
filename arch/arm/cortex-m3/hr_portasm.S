@@ -61,6 +61,9 @@ PendSV_Handler:
     stmdb r0!, {r4-r11}
     str r0, [r2]
 
+    /* PendSV is the lowest-priority exception; make selection atomic. */
+    cpsid i
+
     /* Keep MSP 8-byte aligned across the C call and preserve EXC_RETURN. */
     push {r3, lr}
     bl hr_kernel_select_next_from_pendsv
@@ -72,6 +75,7 @@ PendSV_Handler:
     ldr r0, [r2]
     ldmia r0!, {r4-r11}
     msr psp, r0
+    cpsie i
     bx lr
 
 3:

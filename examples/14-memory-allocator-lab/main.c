@@ -1,1 +1,1 @@
-/* Phase 14 — Memory Allocator Lab: planning placeholder, excluded from the Phase 4 build. */
+/* Phase 14 — Memory Allocator Lab: roadmap placeholder, excluded from implemented target builds. */

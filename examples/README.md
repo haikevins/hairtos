@@ -22,7 +22,7 @@ Phase 0 has no runtime example because it contains specifications only.
 | `05-cooperative-context-switch` | 5 | Target | ✅ Implemented | `make EXAMPLE=05-cooperative-context-switch flash` |
 | `06-priority-scheduler` | 6 | Target | ✅ Implemented | `make EXAMPLE=06-priority-scheduler flash` |
 | `07-task-delay-timeout` | 7 | Target | ✅ Implemented | `make EXAMPLE=07-task-delay-timeout flash` |
-| `08-preemption-round-robin` | 8 | Target | ⬜ Placeholder | Not runnable yet |
+| `08-preemption-round-robin` | 8 | Target | ✅ Implemented | `make EXAMPLE=08-preemption-round-robin flash` |
 | `09-queue-blocking-ipc` | 9 | Target | ⬜ Placeholder | Not runnable yet |
 | `10-01-semaphore-from-isr` | 10 | Target | ⬜ Placeholder | Not runnable yet |
 | `10-02-mutex-priority-inheritance` | 10 | Target | ⬜ Placeholder | Not runnable yet |
@@ -72,6 +72,7 @@ make EXAMPLE=04-start-first-task flash
 make EXAMPLE=05-cooperative-context-switch flash
 make EXAMPLE=06-priority-scheduler flash
 make EXAMPLE=07-task-delay-timeout flash
+make EXAMPLE=08-preemption-round-robin flash
 ```
 
 A previous build command does not make a later standalone `make flash` remember
@@ -90,6 +91,7 @@ Target:
   05-cooperative-context-switch
   06-priority-scheduler
   07-task-delay-timeout
+  08-preemption-round-robin
 ```
 
 All other example directories are roadmap placeholders.

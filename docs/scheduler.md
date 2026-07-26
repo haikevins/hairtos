@@ -1,8 +1,8 @@
 # Scheduler Specification
 
-HairRTOS uses fixed-priority scheduling with one FIFO ready queue per priority.
-Phase 7 adds BLOCKED tasks and timeout wake-up while preserving the cooperative
-Phase 6 boundary for normal running tasks.
+HairRTOS uses preemptive fixed-priority scheduling with one FIFO ready queue per
+priority. Phase 8 adds strict higher-priority preemption and tick-driven
+round-robin among equal-priority tasks.
 
 ## Priority policy
 
@@ -10,25 +10,41 @@ Phase 6 boundary for normal running tasks.
 - Each priority has a FIFO ready queue.
 - A ready bitmap records non-empty queues.
 - The selected task is the head of the highest-priority non-empty queue.
-- The idle task is always READY at the lowest configured priority.
+- `HR_CFG_IDLE_PRIORITY` is reserved for the kernel idle task.
 - Registration order matters only among tasks with the same priority.
+
+## Preemption
+
+After timeout wake-up, SysTick compares the highest READY priority with the
+currently RUNNING task. A strictly higher-priority task causes PendSV to be
+pended. A lower-priority or equal-priority wake-up does not use the preemption
+path.
+
+The interrupted task remains at the head of its own priority queue and retains
+its unused quantum, so it resumes before later peers at that priority.
+
+## Round-robin
+
+When at least two tasks share the highest priority, SysTick decrements the
+RUNNING task's `time_slice_remaining`. At zero, the queue head moves to the tail
+and PendSV restores the next peer. The quantum is configured by
+`HR_CFG_TIME_SLICE_TICKS`.
+
+The quantum reloads after expiration, explicit yield, blocking, and timeout
+wake-up. With no equal-priority peer, the current task keeps running and its
+quantum is reloaded.
 
 ## Yield
 
 `hr_task_yield()` pends PendSV. If the current task remains the highest READY
 task, its equal-priority queue is rotated. If a higher-priority task is already
-READY, PendSV selects that task without rotating the lower-priority current
-queue.
+READY, PendSV selects it without rotating the lower-priority current queue.
 
 ## Delay and timeout
 
 A delaying task is removed from its ready queue before it becomes BLOCKED. When
-its timeout expires, SysTick returns it to the correct priority queue.
-
-Phase 7 pends PendSV immediately when an application task wakes while idle is
-running. If a non-idle task is already running, the woken task remains READY
-until a cooperative scheduling point. Phase 8 generalizes this into automatic
-higher-priority preemption and adds tick-based equal-priority rotation.
+its timeout expires, SysTick returns it to the correct priority queue and
+requests preemption when required.
 
 ## Invariants
 
@@ -38,4 +54,4 @@ higher-priority preemption and adds tick-based equal-priority rotation.
   when their wait is finite.
 - Ready bitmap and queue emptiness agree.
 - A task cannot exist in multiple ready queues.
-- The idle task cannot block.
+- The idle task cannot block and owns the reserved idle priority.

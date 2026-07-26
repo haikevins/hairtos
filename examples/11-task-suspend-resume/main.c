@@ -1,1 +1,1 @@
-/* Phase 11 — Task Suspend and Resume: planning placeholder, excluded from the Phase 4 build. */
+/* Phase 11 — Task Suspend and Resume: roadmap placeholder, excluded from implemented target builds. */

@@ -50,6 +50,10 @@ hr_status_t hr_scheduler_remove_ready(hr_scheduler_t *scheduler, hr_ready_node_t
 hr_ready_node_t *hr_scheduler_select_highest(const hr_scheduler_t *scheduler);
 hr_status_t hr_scheduler_yield_current(hr_scheduler_t *scheduler,
                                        hr_ready_node_t *current);
+bool hr_scheduler_should_preempt(const hr_scheduler_t *scheduler,
+                                 const hr_ready_node_t *current);
+bool hr_scheduler_has_equal_priority_peer(const hr_scheduler_t *scheduler,
+                                          const hr_ready_node_t *current);
 size_t hr_scheduler_ready_count(const hr_scheduler_t *scheduler);
 uint32_t hr_scheduler_ready_bitmap(const hr_scheduler_t *scheduler);
 bool hr_scheduler_validate(const hr_scheduler_t *scheduler);

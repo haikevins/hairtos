@@ -228,7 +228,7 @@ void hr_task_yield(void)
 {
     if (hr_kernel_is_running() && !hr_port_is_inside_isr())
     {
-        hr_port_request_context_switch();
+        hr_kernel_request_yield();
     }
 }
 

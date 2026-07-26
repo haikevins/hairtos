@@ -1,0 +1,22 @@
+HairRTOS Phase 8 validation
+
+- Phase 0 specification check: PASS
+- Roadmap status check: PASS
+- Canonical example layout check: PASS
+- Completed host tests with Clang + ASan + UBSan: 30/30 PASS
+- Completed host tests with GCC + ASan + UBSan: 30/30 PASS
+- Phase 1 Cortex-M3 regression build with Clang/LLD: PASS
+- Phase 3 Cortex-M3 regression build with Clang/LLD: PASS
+- Phase 4 Cortex-M3 SVC regression build with Clang/LLD: PASS
+- Phase 5 Cortex-M3 PendSV regression build with Clang/LLD: PASS
+- Phase 6 Cortex-M3 priority scheduler regression build with Clang/LLD: PASS
+- Phase 7 Cortex-M3 delay build with preemption/time slicing disabled: PASS
+- Phase 8 Cortex-M3 preemption/round-robin build with Clang/LLD: PASS
+- Strong SysTick_Handler and PendSV_Handler symbols: PASS
+- PendSV PSP/R4-R11 save/restore and interrupt-mask disassembly checks: PASS
+- Feature configuration compile matrix: PASS
+- Host-only example flash rejection: PASS
+- Phase 8 image: text=7480, data=4, bss=4384 bytes
+- Physical STM32F103 flash/runtime validation: not performed in this environment
+- Current completed phase: Phase 8
+- Next phase: Phase 9 — Queue and blocking IPC

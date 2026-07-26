@@ -1,1 +1,1 @@
-/* Phase 13.6 — Event-Driven Integration Demo: planning placeholder, excluded from the Phase 4 build. */
+/* Phase 13.6 — Event-Driven Integration Demo: roadmap placeholder, excluded from implemented target builds. */

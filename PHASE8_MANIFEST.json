@@ -1,6 +1,6 @@
 {
   "project": "HairRTOS",
-  "completed_phase": "Phase 7 — SysTick and delay",
+  "completed_phase": "Phase 8 — Preemption and Round-Robin",
   "target": "STM32F103C8T6 Blue Pill / ARM Cortex-M3",
   "implemented_examples": [
     {
@@ -29,42 +29,44 @@
     },
     {
       "name": "07-task-delay-timeout",
-      "environment": "target"
+      "environment": "target",
+      "phase8_features": "disabled at build time"
+    },
+    {
+      "name": "08-preemption-round-robin",
+      "environment": "target",
+      "phase8_features": "enabled"
     }
   ],
-  "phase7_features": [
-    "kernel-owned 1 kHz SysTick",
-    "monotonic 32-bit kernel tick",
-    "relative blocking task delay",
-    "periodic delay-until without cumulative drift",
-    "RUNNING-to-BLOCKED-to-READY transitions",
-    "two-epoch timeout lists for tick wrap",
-    "idle-to-woken-task deferred PendSV",
-    "PRIMASK critical sections and ISR-context detection",
-    "safe one-tick timeout before pending PendSV handling",
-    "separate bare-metal and kernel SysTick handlers"
+  "phase8_features": [
+    "strict higher-priority preemption from SysTick wake-up",
+    "deferred PendSV scheduling",
+    "equal-priority round-robin time slicing",
+    "per-task remaining quantum",
+    "idle-priority reservation",
+    "atomic PendSV C selector",
+    "switch-reason tracking for yield, block, preemption, and time slice"
   ],
-  "phase_boundary": "General arbitrary-task preemption and tick time slicing remain Phase 8.",
   "validation": {
-    "host_tests_clang": "28/28 PASS with ASan/UBSan",
-    "host_tests_gcc": "28/28 PASS with ASan/UBSan",
-    "target_regressions": "Phase 1, 3, 4, 5, and 6 PASS with Clang/LLD",
-    "phase7_target_build": "PASS with Clang/LLD",
+    "host_tests_clang": "30/30 PASS with ASan/UBSan",
+    "host_tests_gcc": "30/30 PASS with ASan/UBSan",
+    "target_regression": "Phase 1, 3, 4, 5, 6, 7, and 8 PASS with Clang/LLD",
     "symbols_and_disassembly": "PASS",
+    "feature_configuration_matrix": "PASS",
     "physical_hardware": "not performed",
-    "image_size_bytes": {
-      "text": 7020,
+    "phase8_image_size_bytes": {
+      "text": 7480,
       "data": 4,
-      "bss": 3024
+      "bss": 4384
     }
   },
-  "file_count": 232,
+  "file_count": 234,
   "files": [
     "CHANGELOG.md",
     "CMakeLists.txt",
     "LICENSE",
     "Makefile",
-    "PHASE7_VALIDATION.txt",
+    "PHASE8_VALIDATION.txt",
     "README.md",
     "adapters/button_event/hr_button_event.c",
     "adapters/button_event/hr_button_event.h",
@@ -117,6 +119,7 @@
     "docs/phase5-cooperative-context-switch.md",
     "docs/phase6-priority-scheduler.md",
     "docs/phase7-systick-delay.md",
+    "docs/phase8-preemption-round-robin.md",
     "docs/porting-guide.md",
     "docs/requirements-coverage.md",
     "docs/roadmap.md",
@@ -287,10 +290,11 @@
     "tools/scripts/phase5_check.py",
     "tools/scripts/phase6_check.py",
     "tools/scripts/phase7_check.py",
+    "tools/scripts/phase8_check.py",
     "tools/scripts/roadmap_check.py",
     "tools/scripts/run_format_check.sh",
     "tools/scripts/run_host_tests.sh",
     "tools/scripts/size_report.sh",
-    "PHASE7_MANIFEST.json"
+    "PHASE8_MANIFEST.json"
   ]
 }

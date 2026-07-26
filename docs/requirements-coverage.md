@@ -10,7 +10,7 @@
 | PendSV task-to-task context switching | 5 | Implemented |
 | Fixed-priority scheduling integration | 6 | Implemented |
 | Kernel SysTick, delay, periodic delay, timeout wake | 7 | Implemented |
-| General preemption and tick round-robin | 8 | Not started |
+| General preemption and tick round-robin | 8 | Implemented |
 | Queue and blocking IPC | 9 | Not started |
 | Semaphore, mutex, priority inheritance | 10 | Not started |
 | Task suspend/resume | 11 | Not started |
@@ -23,6 +23,6 @@
 | MPU isolation | Future major version | Deferred |
 | SMP/multi-core | Out of v1.x scope | Deferred |
 
-Phase 7 proves blocking delay and timeout wake-up. A woken task immediately leaves
-idle through PendSV, but preemption of an arbitrary running lower-priority task
-and tick-based round-robin remain Phase 8 work.
+Phase 8 proves strict higher-priority preemption and equal-priority time slicing.
+Queue/object wake-up paths will reuse the same deferred PendSV mechanism beginning
+in Phase 9.

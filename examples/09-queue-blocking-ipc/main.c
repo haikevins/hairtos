@@ -1,1 +1,1 @@
-/* Phase 9 — Queue and Blocking IPC: planning placeholder, excluded from the Phase 4 build. */
+/* Phase 9 — Queue and Blocking IPC: roadmap placeholder, excluded from implemented target builds. */

@@ -22,8 +22,9 @@ registered with `hr_task_start()`.
 startup path. A successful call never returns. The selected task becomes RUNNING
 and executes on PSP.
 
-The first-task startup is implemented in Phase 4. PendSV switching between
-multiple tasks is available cooperatively from Phase 5; preemption remains later.
+The first-task startup is implemented in Phase 4. PendSV switching begins in
+Phase 5, fixed-priority selection is integrated in Phase 6, delay wake-up is
+added in Phase 7, and Phase 8 enables strict preemption plus round-robin.
 
 ## PANIC
 

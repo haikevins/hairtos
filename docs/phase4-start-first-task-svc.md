@@ -71,7 +71,7 @@ The Cortex-M3 port configures:
 
 The idle task is a real static HairRTOS task whose entry loops on `WFI`. It is
 always ready but cannot run in Phase 4 after the higher-priority first task has
-started, because context switching is not implemented yet.
+started. Task-to-task context switching is deliberately outside Phase 4 and is implemented beginning in Phase 5.
 
 ## Definition of Done
 

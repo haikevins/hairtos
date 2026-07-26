@@ -1,1 +1,1 @@
-/* Phase 13.1 — Event Post: planning placeholder, excluded from the Phase 4 build. */
+/* Phase 13.1 — Event Post: roadmap placeholder, excluded from implemented target builds. */

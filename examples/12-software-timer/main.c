@@ -1,1 +1,1 @@
-/* Phase 12 — Software Timer Service: planning placeholder, excluded from the Phase 4 build. */
+/* Phase 12 — Software Timer Service: roadmap placeholder, excluded from implemented target builds. */

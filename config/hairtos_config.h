@@ -2,10 +2,17 @@
 #define HAIRTOS_CONFIG_H
 #define HR_CFG_TICK_RATE_HZ              1000U
 #define HR_CFG_PRIORITY_COUNT            8U
+#define HR_CFG_IDLE_PRIORITY             (HR_CFG_PRIORITY_COUNT - 1U)
 #define HR_CFG_MAX_TASKS                 8U
+#ifndef HR_CFG_PREEMPTION
 #define HR_CFG_PREEMPTION                1
+#endif
+#ifndef HR_CFG_TIME_SLICING
 #define HR_CFG_TIME_SLICING              1
+#endif
+#ifndef HR_CFG_TIME_SLICE_TICKS
 #define HR_CFG_TIME_SLICE_TICKS          1U
+#endif
 #define HR_CFG_STATIC_ALLOCATION         1
 #define HR_CFG_DYNAMIC_ALLOCATION        0
 #define HR_CFG_ENABLE_QUEUE              1

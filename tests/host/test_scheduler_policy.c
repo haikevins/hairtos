@@ -101,10 +101,57 @@ static void test_scheduler_rejects_yield_from_non_selected_task(void)
     TEST_ASSERT_TRUE(hr_scheduler_validate(&scheduler));
 }
 
+
+static void test_scheduler_preempts_only_for_strictly_higher_priority(void)
+{
+    hr_scheduler_t scheduler;
+    scheduler_task_t low;
+    scheduler_task_t high;
+
+    hr_scheduler_init(&scheduler);
+    scheduler_task_init(&low, 1U, 5U);
+    scheduler_task_init(&high, 2U, 1U);
+
+    TEST_ASSERT_EQ_UINT(HR_OK, hr_scheduler_add_ready(&scheduler, &low.ready));
+    TEST_ASSERT_TRUE(!hr_scheduler_should_preempt(&scheduler, &low.ready));
+
+    TEST_ASSERT_EQ_UINT(HR_OK, hr_scheduler_add_ready(&scheduler, &high.ready));
+    TEST_ASSERT_TRUE(hr_scheduler_should_preempt(&scheduler, &low.ready));
+    TEST_ASSERT_TRUE(!hr_scheduler_should_preempt(&scheduler, &high.ready));
+}
+
+static void test_scheduler_detects_equal_priority_time_slice_peer(void)
+{
+    hr_scheduler_t scheduler;
+    scheduler_task_t peer_a;
+    scheduler_task_t peer_b;
+    scheduler_task_t low;
+
+    hr_scheduler_init(&scheduler);
+    scheduler_task_init(&peer_a, 1U, 2U);
+    scheduler_task_init(&peer_b, 2U, 2U);
+    scheduler_task_init(&low, 3U, 5U);
+
+    TEST_ASSERT_EQ_UINT(HR_OK, hr_scheduler_add_ready(&scheduler, &peer_a.ready));
+    TEST_ASSERT_TRUE(!hr_scheduler_has_equal_priority_peer(&scheduler, &peer_a.ready));
+
+    TEST_ASSERT_EQ_UINT(HR_OK, hr_scheduler_add_ready(&scheduler, &low.ready));
+    TEST_ASSERT_TRUE(!hr_scheduler_has_equal_priority_peer(&scheduler, &peer_a.ready));
+
+    TEST_ASSERT_EQ_UINT(HR_OK, hr_scheduler_add_ready(&scheduler, &peer_b.ready));
+    TEST_ASSERT_TRUE(hr_scheduler_has_equal_priority_peer(&scheduler, &peer_a.ready));
+    TEST_ASSERT_TRUE(hr_scheduler_has_equal_priority_peer(&scheduler, &peer_b.ready));
+
+    TEST_ASSERT_EQ_UINT(HR_OK, hr_scheduler_remove_ready(&scheduler, &peer_b.ready));
+    TEST_ASSERT_TRUE(!hr_scheduler_has_equal_priority_peer(&scheduler, &peer_a.ready));
+}
+
 void run_scheduler_policy_tests(void)
 {
     RUN_TEST(test_scheduler_ignores_registration_order_across_priorities);
     RUN_TEST(test_scheduler_yield_rotates_only_highest_priority_fifo);
     RUN_TEST(test_scheduler_single_highest_task_yields_to_itself);
     RUN_TEST(test_scheduler_rejects_yield_from_non_selected_task);
+    RUN_TEST(test_scheduler_preempts_only_for_strictly_higher_priority);
+    RUN_TEST(test_scheduler_detects_equal_priority_time_slice_peer);
 }

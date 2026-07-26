@@ -1,1 +1,1 @@
-/* Phase 13.5 — Publish/Subscribe: planning placeholder, excluded from the Phase 4 build. */
+/* Phase 13.5 — Publish/Subscribe: roadmap placeholder, excluded from implemented target builds. */

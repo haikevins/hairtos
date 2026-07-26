@@ -4,7 +4,7 @@ HairRTOS is an educational fixed-priority RTOS for ARM Cortex-M. The first
 target is the STM32F103C8T6 Blue Pill. HairEvent is an optional Event-Driven
 framework above the kernel.
 
-## Current status: Phase 7 complete
+## Current status: Phase 8 complete
 
 Implemented phases:
 
@@ -16,13 +16,13 @@ Implemented phases:
 - **Phase 5:** cooperative task-to-task context switching through PendSV;
 - **Phase 6:** fixed-priority scheduler with FIFO queues for equal priorities;
 - **Phase 7:** kernel SysTick, blocking task delay, periodic delay, and timeout
-  wake-up.
+  wake-up;
+- **Phase 8:** strict higher-priority preemption and tick-driven round-robin
+  among equal-priority tasks.
 
-Phase 7 removes a delayed task from the ready queues and runs another task or
-the idle task. When a timeout expires while idle is running, SysTick pends
-PendSV so the woken application task can resume. General preemption of an
-arbitrary running lower-priority task and tick-driven equal-priority time
-slicing belong to Phase 8.
+Phase 8 makes a newly READY higher-priority task preempt the running task after
+exception return. CPU-bound equal-priority tasks rotate automatically after
+`HR_CFG_TIME_SLICE_TICKS` and no longer need to call `hr_task_yield()`.
 
 ## Roadmap
 
@@ -36,7 +36,7 @@ slicing belong to Phase 8.
 | 5 | PendSV cooperative context switch | ✅ Complete |
 | 6 | Priority scheduler | ✅ Complete |
 | 7 | SysTick and delay | ✅ Complete |
-| 8 | Preemption and round-robin | ⬜ Not started |
+| 8 | Preemption and round-robin | ✅ Complete |
 | 9 | Queue and blocking | ⬜ Not started |
 | 10 | Semaphore and mutex | ⬜ Not started |
 | 11 | Suspend/resume | ⬜ Not started |
@@ -48,17 +48,16 @@ slicing belong to Phase 8.
 
 Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
 
-## Phase 7 components
+## Phase 8 components
 
-- strong kernel `SysTick_Handler` for RTOS examples;
-- separate bare-metal SysTick handler retained for Phase 1–6 examples;
-- monotonic 1 kHz kernel tick;
-- two-epoch timeout lists for 32-bit tick wrap;
-- `hr_task_delay()` for relative blocking delays;
-- `hr_task_delay_until()` for drift-resistant periodic releases;
-- `RUNNING -> BLOCKED -> READY` transitions;
-- basic PRIMASK critical-section port primitives;
-- timeout-driven switch from idle through PendSV.
+- strict fixed-priority preemption when a higher-priority task becomes READY;
+- deferred scheduling through PendSV;
+- equal-priority round-robin controlled by `HR_CFG_TIME_SLICE_TICKS`;
+- per-task remaining quantum;
+- idle preemption when an application task wakes;
+- the lowest configured priority reserved for the idle task;
+- atomic PendSV selector update with interrupts masked;
+- Phase 7 delay and timeout behavior retained; its example disables Phase 8 scheduling features at build time.
 
 ## Examples: host versus target
 
@@ -80,6 +79,7 @@ make EXAMPLE=04-start-first-task flash
 make EXAMPLE=05-cooperative-context-switch flash
 make EXAMPLE=06-priority-scheduler flash
 make EXAMPLE=07-task-delay-timeout flash
+make EXAMPLE=08-preemption-round-robin flash
 ```
 
 The `EXAMPLE` value must be passed in the same command used for `flash`.
@@ -97,6 +97,7 @@ make phase4-check
 make phase5-check
 make phase6-check
 make phase7-check
+make phase8-check
 ```
 
 Read:
@@ -108,6 +109,7 @@ Read:
 - `docs/phase5-cooperative-context-switch.md`
 - `docs/phase6-priority-scheduler.md`
 - `docs/phase7-systick-delay.md`
+- `docs/phase8-preemption-round-robin.md`
 - `examples/README.md`
 
-The next implementation phase is **Phase 8 — Preemption and round-robin**.
+The next implementation phase is **Phase 9 — Queue and blocking IPC**.

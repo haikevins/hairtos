@@ -1,1 +1,1 @@
-/* Phase 15 — Kernel Benchmarks: planning placeholder, excluded from the Phase 4 build. */
+/* Phase 15 — Kernel Benchmarks: roadmap placeholder, excluded from implemented target builds. */

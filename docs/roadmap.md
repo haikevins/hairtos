@@ -9,7 +9,7 @@ validation satisfy its Definition of Done.
 Current completed phase:
 
 ```text
-Phase 7 — SysTick, delay, and timeout base
+Phase 8 — Preemption and round-robin
 ```
 
 ## Phase 0 — Specification and principles
@@ -219,6 +219,8 @@ drift.
 ---
 
 ## Phase 8 — Preemption and round-robin
+
+**Status: Complete.**
 
 ### Goals
 

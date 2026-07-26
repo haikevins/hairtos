@@ -26,7 +26,7 @@ structures. See `task-suspend-resume.md`.
 
 ## TCB requirements
 
-The saved stack pointer is the first field. Planned fields include:
+The saved stack pointer is the first field. The Phase 8 TCB includes:
 
 - stack bounds;
 - name and state;

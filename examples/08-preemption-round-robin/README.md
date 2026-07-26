@@ -12,13 +12,13 @@ This STM32F103 target example demonstrates both Phase 8 scheduling rules.
 Build:
 
 ```bash
-make EXAMPLE=08-preemption-round-robin
+make EXAMPLE=08-preemption-round-robin build
 ```
 
 Flash:
 
 ```bash
-make EXAMPLE=08-preemption-round-robin flash
+make EXAMPLE=08-preemption-round-robin run
 ```
 
 Expected behavior: both worker counters continue increasing, while the monitor

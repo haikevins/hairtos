@@ -1,6 +1,6 @@
 # 00 — Bare-metal blink
 
-This is the executable deliverable for HairRTOS Phase 1.
+This is the executable deliverable for hairtos Phase 1.
 
 ## Hardware
 
@@ -23,28 +23,28 @@ The onboard LED is on PC13 and is active-low.
 ## Build
 
 ```bash
-make
+make EXAMPLE=01-baremetal-foundation build
 ```
 
 Expected outputs:
 
 ```text
-build/01-baremetal-foundation/hairtos_baremetal.elf
-build/01-baremetal-foundation/hairtos_baremetal.bin
-build/01-baremetal-foundation/hairtos_baremetal.hex
-build/01-baremetal-foundation/hairtos_baremetal.map
+build/target/01-baremetal-foundation/hairtos.elf
+build/target/01-baremetal-foundation/hairtos.bin
+build/target/01-baremetal-foundation/hairtos.hex
+build/target/01-baremetal-foundation/hairtos.map
 ```
 
 For a local Clang/LLD validation build:
 
 ```bash
-make TOOLCHAIN=clang
+make TOOLCHAIN=clang EXAMPLE=01-baremetal-foundation build
 ```
 
 ## Flash
 
 ```bash
-make flash
+make EXAMPLE=01-baremetal-foundation run
 ```
 
 The OpenOCD configuration uses SWD without an NRST connection. It requests a
@@ -53,7 +53,7 @@ software/system reset after programming.
 ## Expected UART output
 
 ```text
-HairRTOS Phase 1
+hairtos Phase 1
 Board: Blue Pill STM32F103C8T6
 Core clock: 72000000 Hz
 Clock source: HSE 8 MHz -> PLL x9

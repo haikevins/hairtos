@@ -85,7 +85,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 13.2 - Active Objects");
+    board_uart_write_line("hairtos Phase 13.2 - Active Objects");
 
     (void)he_event_init_static(&g_ping_event,
                                SIGNAL_PING,

@@ -22,7 +22,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 3");
+    board_uart_write_line("hairtos Phase 3");
     board_uart_write_line("Creating a static TCB and Cortex-M3 initial stack frame...");
 
     status = hr_task_create_static(&g_demo_task,

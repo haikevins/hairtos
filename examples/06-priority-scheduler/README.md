@@ -24,14 +24,14 @@ while the two priority-1 tasks remain READY.
 ## Build and flash
 
 ```bash
-make EXAMPLE=06-priority-scheduler
-make EXAMPLE=06-priority-scheduler flash
+make EXAMPLE=06-priority-scheduler build
+make EXAMPLE=06-priority-scheduler run
 ```
 
 ## Expected UART pattern
 
 ```text
-HairRTOS Phase 6
+hairtos Phase 6
 Fixed-priority scheduler: smaller number means higher priority.
 Low task is registered first but must never run while high tasks are READY.
 Starting scheduler through SVC...

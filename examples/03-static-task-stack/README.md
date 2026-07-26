@@ -7,7 +7,7 @@ Phase 4.
 Build:
 
 ```bash
-make EXAMPLE=03-static-task-stack
+make EXAMPLE=03-static-task-stack build
 ```
 
 Expected UART output confirms that the TCB and initial frame were created.

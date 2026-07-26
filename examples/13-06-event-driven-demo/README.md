@@ -6,5 +6,5 @@ queues. The controller transitions between IDLE and ACTIVE, publishes heartbeat
 status, and an observer consumes the status event.
 
 ```bash
-make EXAMPLE=13-06-event-driven-demo flash
+make EXAMPLE=13-06-event-driven-demo run
 ```

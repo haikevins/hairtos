@@ -10,7 +10,7 @@
 static void board_print_boot_banner(void)
 {
     board_uart_write_line("");
-    board_uart_write_line("HairRTOS platform boot");
+    board_uart_write_line("hairtos platform boot");
     board_uart_write_line("Board: Blue Pill STM32F103C8T6");
     board_uart_write_string("Core clock: ");
     board_uart_write_u32(board_get_core_clock_hz());

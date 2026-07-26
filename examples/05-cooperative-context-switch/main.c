@@ -91,7 +91,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 5");
+    board_uart_write_line("hairtos Phase 5");
     board_uart_write_line("Two equal-priority tasks switch cooperatively through PendSV.");
 
     status = hr_kernel_init();

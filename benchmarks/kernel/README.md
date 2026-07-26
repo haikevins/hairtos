@@ -1,4 +1,4 @@
-# HairRTOS kernel benchmark support
+# hairtos kernel benchmark support
 
 This directory contains code that is linked only by the Phase 15 benchmark
 firmware.
@@ -11,14 +11,14 @@ firmware.
 - `src/hr_benchmark_dwt.c`: Cortex-M3 DWT_CYCCNT initialization and reads;
 - `src/hr_benchmark_gpio.c`: PB0 active-high timing marker for logic analyzers.
 
-The benchmark module is not included in ordinary HairRTOS applications and does
+The benchmark module is not included in ordinary hairtos applications and does
 not modify scheduler, queue, semaphore, mutex, timer, or HairEvent hot paths.
 
 Build the target:
 
 ```bash
-make EXAMPLE=15-kernel-benchmark
-make EXAMPLE=15-kernel-benchmark flash
+make EXAMPLE=15-kernel-benchmark build
+make EXAMPLE=15-kernel-benchmark run
 ```
 
 Run generic statistics tests on the host:

@@ -84,7 +84,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 13.3 - Flat state machine");
+    board_uart_write_line("hairtos Phase 13.3 - Flat state machine");
     (void)he_event_init_static(&g_toggle_event,
                                SIGNAL_TOGGLE,
                                sizeof(g_toggle_event));

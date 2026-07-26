@@ -81,7 +81,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 7");
+    board_uart_write_line("hairtos Phase 7");
     board_uart_write_line("SysTick drives the kernel tick and blocking delays.");
     board_uart_write_line("Tasks block; idle runs until a timeout expires.");
 

@@ -12,7 +12,7 @@ base and blocking delays.
 Build and flash:
 
 ```bash
-make EXAMPLE=07-task-delay-timeout flash
+make EXAMPLE=07-task-delay-timeout run
 ```
 
 Phase 7 does not yet implement general higher-priority preemption or equal-

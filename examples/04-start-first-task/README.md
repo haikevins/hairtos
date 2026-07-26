@@ -19,14 +19,14 @@ application task that can execute.
 ## Build and flash
 
 ```bash
-make EXAMPLE=04-start-first-task
-make EXAMPLE=04-start-first-task flash
+make EXAMPLE=04-start-first-task build
+make EXAMPLE=04-start-first-task run
 ```
 
 ## Expected UART output
 
 ```text
-HairRTOS Phase 4
+hairtos Phase 4
 Preparing idle task and first application task...
 Invoking SVC to leave main/MSP and enter task/PSP...
 First task entered through SVC.

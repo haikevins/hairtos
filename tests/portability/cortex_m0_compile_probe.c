@@ -9,9 +9,9 @@
 #include "hr_wait_internal.h"
 
 _Static_assert(sizeof(hr_tick_t) == sizeof(uint32_t),
-               "HairRTOS tick must remain 32-bit");
+               "hairtos tick must remain 32-bit");
 _Static_assert(sizeof(hr_priority_t) == sizeof(uint8_t),
-               "HairRTOS priority must remain 8-bit");
+               "hairtos priority must remain 8-bit");
 _Static_assert(HR_CFG_USE_FPU == 0,
                "Cortex-M0 proof assumes no FPU context");
 

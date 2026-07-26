@@ -11,5 +11,5 @@ Target-only STM32F103 demonstration of:
 Build and flash:
 
 ```bash
-make EXAMPLE=11-task-suspend-resume flash
+make EXAMPLE=11-task-suspend-resume run
 ```

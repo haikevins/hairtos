@@ -5,5 +5,5 @@ EXTI0 software interrupt posts an immutable static event through
 run-to-completion in task context, then blocks on its queue again.
 
 ```bash
-make EXAMPLE=13-01-event-post flash
+make EXAMPLE=13-01-event-post run
 ```

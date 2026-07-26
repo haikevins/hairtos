@@ -11,7 +11,7 @@ This target example demonstrates an ISR-to-task synchronization path:
 Build and flash:
 
 ```bash
-make EXAMPLE=10-01-semaphore-from-isr flash
+make EXAMPLE=10-01-semaphore-from-isr run
 ```
 
 The EXTI interrupt is software-triggered, so no external button wiring is

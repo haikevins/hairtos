@@ -5,5 +5,5 @@ service never invokes the state handler directly; dispatch occurs in the
 Active Object task context.
 
 ```bash
-make EXAMPLE=13-04-time-event flash
+make EXAMPLE=13-04-time-event run
 ```

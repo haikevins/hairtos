@@ -96,7 +96,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 6");
+    board_uart_write_line("hairtos Phase 6");
     board_uart_write_line("Fixed-priority scheduler: smaller number means higher priority.");
     board_uart_write_line("Low task is registered first but must never run while high tasks are READY.");
 

@@ -19,7 +19,7 @@ void run_hairevent_tests(void);
 void run_memory_allocator_lab_tests(void);
 void run_benchmark_tests(void);
 void run_diagnostics_tests(void);
-void run_phase16_stress_tests(void);
+void run_scheduler_stress_tests(void);
 
 int main(void)
 {
@@ -33,7 +33,7 @@ int main(void)
     run_memory_allocator_lab_tests();
     run_benchmark_tests();
     run_diagnostics_tests();
-    run_phase16_stress_tests();
+    run_scheduler_stress_tests();
     run_queue_tests();
     run_semaphore_tests();
     run_mutex_tests();
@@ -41,7 +41,7 @@ int main(void)
     run_timer_tests();
     run_scheduler_policy_tests();
 
-    printf("\nHairRTOS completed host tests: %u run, %u failed\n",
+    printf("\nhairtos completed host tests: %u run, %u failed\n",
            g_test_count,
            g_test_failures);
 

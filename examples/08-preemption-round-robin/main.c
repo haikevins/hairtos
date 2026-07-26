@@ -102,7 +102,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 8");
+    board_uart_write_line("hairtos Phase 8");
     board_uart_write_line("Two CPU-bound equal-priority workers never call yield().");
     board_uart_write_line("SysTick round-robin shares CPU; monitor wake-up preempts them.");
 

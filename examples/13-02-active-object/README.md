@@ -4,5 +4,5 @@ Two Active Objects communicate only through immutable static events. Each
 Active Object owns one task, queue, state machine, stack, and private context.
 
 ```bash
-make EXAMPLE=13-02-active-object flash
+make EXAMPLE=13-02-active-object run
 ```

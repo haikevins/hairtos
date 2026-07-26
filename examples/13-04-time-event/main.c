@@ -56,7 +56,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 13.4 - Time Event");
+    board_uart_write_line("hairtos Phase 13.4 - Time Event");
     board_uart_write_line("Timer service posts events; the AO dispatches them in task context.");
 
     if (hr_kernel_init() != HR_OK)

@@ -144,7 +144,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 11");
+    board_uart_write_line("hairtos Phase 11");
     board_uart_write_line("Suspend/resume for READY, RUNNING, and BLOCKED tasks.");
     board_uart_write_line("A suspended timeout completes but cannot make the task READY.");
 

@@ -1,110 +1,80 @@
-# HairRTOS
+# hairtos
 
-HairRTOS is an educational fixed-priority RTOS for ARM Cortex-M. The first
-target is the STM32F103C8T6 Blue Pill. HairEvent is the optional static-first
-Event-Driven framework implemented above the kernel.
+`hairtos` is a static-first educational real-time operating system for ARM Cortex-M.
+The current reference target is the STM32F103C8T6 Blue Pill. `HairEvent` is the
+optional event-driven framework implemented above the kernel.
 
-## Current status: Phase 16 complete — v1.0.0-rc1
+## Current status
 
-Implemented phases:
+The repository is the **hairtos mainline**, not a phase-specific package. It
+contains the complete implementation developed through the roadmap milestones:
 
-- **Phase 0:** specification and principles;
-- **Phase 1:** register-level Blue Pill bare-metal foundation;
-- **Phase 2:** intrusive lists and host-tested kernel data structures;
-- **Phase 3:** opaque static TCB and Cortex-M3 initial task stack;
-- **Phase 4:** first-task startup through SVC from MSP to PSP;
-- **Phase 5:** cooperative task-to-task context switching through PendSV;
-- **Phase 6:** fixed-priority scheduler with FIFO queues for equal priorities;
-- **Phase 7:** kernel SysTick, blocking delay, periodic delay, and timeout wake-up;
-- **Phase 8:** strict higher-priority preemption and tick-driven round-robin;
-- **Phase 9:** static FIFO queues with blocking, timeout, direct handoff, and ISR API;
-- **Phase 10:** semaphores, mutex ownership, and priority inheritance;
-- **Phase 11:** administrative suspend/resume for READY, RUNNING, and BLOCKED tasks;
-- **Phase 12:** static one-shot/periodic software timers with task-context callbacks;
-- **Phase 13:** HairEvent event pools, Active Objects, flat state machines, time events,
-  and publish/subscribe;
-- **Phase 14:** isolated fixed-block pool and first-fit heap allocator laboratory;
-- **Phase 15:** DWT/GPIO kernel benchmark with deferred UART reporting;
-- **Phase 16:** retained fault diagnostics, runtime counters, invariant checks, stress tests, and release stabilization.
+- static task creation and Cortex-M3 initial stack frames;
+- SVC first-task startup and PendSV context switching;
+- fixed-priority preemptive scheduling and equal-priority round-robin;
+- SysTick, delay, timeout, queue, semaphore, mutex and priority inheritance;
+- suspend/resume and task-context software timers;
+- HairEvent Active Objects, flat state machines, time events and publish/subscribe;
+- allocator laboratory, DWT benchmark, retained fault diagnostics and stress tests.
 
-## Roadmap
+The numbered examples remain as a learning path. The fully integrated image is
+selected with `EXAMPLE=hairtos`.
 
-| Phase | Scope | Status |
-|---:|---|---|
-| 0 | Specification | ✅ Complete |
-| 1 | Bare-metal foundation | ✅ Complete |
-| 2 | Intrusive list and kernel data structures | ✅ Complete |
-| 3 | TCB and initial task stack | ✅ Complete |
-| 4 | Start first task using SVC | ✅ Complete |
-| 5 | PendSV cooperative context switch | ✅ Complete |
-| 6 | Priority scheduler | ✅ Complete |
-| 7 | SysTick and delay | ✅ Complete |
-| 8 | Preemption and round-robin | ✅ Complete |
-| 9 | Queue and blocking | ✅ Complete |
-| 10 | Semaphore and mutex | ✅ Complete |
-| 11 | Suspend/resume | ✅ Complete |
-| 12 | Software timer | ✅ Complete |
-| 13 | HairEvent framework | ✅ Complete |
-| 14 | Memory allocator lab | ✅ Complete |
-| 15 | Kernel benchmark | ✅ Complete |
-| 16 | Diagnostics and stabilization | ✅ Complete |
+## Unified Make commands
 
-Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
-
-## Phase 16 diagnostics and stabilization
-
-The final roadmap phase adds:
-
-- retained `.noinit` panic/fault records across reset;
-- strong NMI, HardFault, MemManage, BusFault, and UsageFault handlers;
-- assert, panic, and stack-overflow hooks;
-- kernel/task runtime counters and stack high-water snapshots;
-- whole-kernel intrusive-list/state invariant validation;
-- deterministic native scheduler stress and a long-duration STM32 workload;
-- API, porting, Cortex-M0 compile-proof, and release-checklist documentation.
-
-Diagnostics are optional and are linked only by the Phase 16 target. The normal
-kernel remains static-first and the Phase 14 allocator remains isolated.
-
-## Examples: host versus target
-
-See `examples/README.md` for the complete matrix.
-
-Host demos and tests:
+Host and target examples use the same layout:
 
 ```bash
-make phase2-example
-make phase14-lab
-make phase16-stress
-make host-tests
+make EXAMPLE=<name> build [ENVIRONMENT=host|target]
+make EXAMPLE=<name> run   [ENVIRONMENT=host|target]
+make EXAMPLE=<name> check [ENVIRONMENT=host|target]
+make EXAMPLE=<name> clean [ENVIRONMENT=host|target]
 ```
 
-Build or flash the Phase 16 stabilization image:
+The default command builds the integrated target image:
 
 ```bash
-make EXAMPLE=16-diagnostics-stress-stabilization
-make EXAMPLE=16-diagnostics-stress-stabilization flash
+make build
+# equivalent to:
+make EXAMPLE=hairtos ENVIRONMENT=target build
 ```
 
-The `EXAMPLE` value must be passed in the same invocation used for `flash`.
-
-## Validation
+Common examples:
 
 ```bash
-make phase0-check
-make roadmap-check
-make example-layout-check
-make host-tests
-make phase16-check
+# Integrated STM32 image: build, flash, verify and reset
+make EXAMPLE=hairtos run
+
+# Native diagnostics/scheduler stress
+make ENVIRONMENT=host EXAMPLE=hairtos run
+
+# Host-only kernel data-structure example
+make EXAMPLE=02-kernel-data-structures-host run
+
+# Full sanitizer suite plus selected build
+make TOOLCHAIN=clang EXAMPLE=hairtos check
 ```
 
-Read:
+Run `make help` for the compact command summary and `make list-examples` for the
+complete host/target classification.
 
-- `docs/roadmap.md`
-- `docs/diagnostics.md`
-- `docs/stress-test-plan.md`
-- `docs/api-reference.md`
-- `docs/release-checklist.md`
+## Validation boundary
+
+`make check` runs the native sanitizer suite and builds the selected example.
+A successful cross-build does not replace runtime validation on physical STM32
+hardware. Retained fault records, long-duration stress and timing measurements
+must still be verified on the board.
+
+## Documentation
+
+Start with:
+
+- `docs/README.md`
+- `docs/00-overview/architecture.md`
+- `docs/00-overview/roadmap.md`
+- `docs/05-api-reference/README.md`
+- `docs/06-testing-and-quality/testing-guide.md`
 - `examples/README.md`
 
-The Phase 0–16 educational roadmap is source-complete. Physical long-duration and fault-injection sign-off remains documented in the release checklist.
+Repository cleanup rules are documented in
+`docs/06-testing-and-quality/repository-hygiene.md`.

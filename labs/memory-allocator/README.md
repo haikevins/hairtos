@@ -1,6 +1,6 @@
 # Phase 14 — Memory Allocator Lab
 
-This lab studies allocator mechanics without making HairRTOS depend on dynamic
+This lab studies allocator mechanics without making hairtos depend on dynamic
 memory. The production kernel remains static-first.
 
 ## Implemented allocators
@@ -35,19 +35,19 @@ It implements:
 ## Host commands
 
 ```bash
-make phase14-lab
+make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
 make host-tests
-make phase14-check
+make EXAMPLE=14-memory-allocator-lab check
 ```
 
 The standalone native demo prints allocator statistics. `host-tests` runs the
-allocator through ASan/UBSan together with all completed HairRTOS tests.
+allocator through ASan/UBSan together with all completed hairtos tests.
 
 ## STM32 target demonstration
 
 ```bash
-make EXAMPLE=14-memory-allocator-lab
-make EXAMPLE=14-memory-allocator-lab flash
+make EXAMPLE=14-memory-allocator-lab build
+make EXAMPLE=14-memory-allocator-lab run
 ```
 
 The target example uses statically reserved application arenas and prints

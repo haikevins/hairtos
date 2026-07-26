@@ -106,7 +106,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 12");
+    board_uart_write_line("hairtos Phase 12");
     board_uart_write_line("SysTick only schedules expirations; callbacks run in timer-service task context.");
 
     status = hr_kernel_init();

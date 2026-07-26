@@ -52,7 +52,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 4");
+    board_uart_write_line("hairtos Phase 4");
     board_uart_write_line("Preparing idle task and first application task...");
 
     status = hr_kernel_init();

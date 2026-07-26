@@ -9,7 +9,6 @@
 #include "hr_semaphore.h"
 #include "hr_mutex.h"
 #include "hr_timer.h"
-#include "hr_event_flags.h"
 #include "hr_diagnostics.h"
 #include "hr_hooks.h"
 #include "hr_context.h"

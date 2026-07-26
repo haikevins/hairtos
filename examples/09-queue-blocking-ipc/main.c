@@ -130,7 +130,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 9");
+    board_uart_write_line("hairtos Phase 9");
     board_uart_write_line("Static FIFO queue with blocking send/receive and timeout.");
     board_uart_write_line("The high-priority consumer blocks; producer wake-up preempts immediately.");
 

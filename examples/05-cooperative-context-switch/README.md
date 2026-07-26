@@ -14,14 +14,14 @@ Both tasks retain independent local counters and stack cookies.
 ## Build and flash
 
 ```bash
-make EXAMPLE=05-cooperative-context-switch
-make EXAMPLE=05-cooperative-context-switch flash
+make EXAMPLE=05-cooperative-context-switch build
+make EXAMPLE=05-cooperative-context-switch run
 ```
 
 ## Expected UART pattern
 
 ```text
-HairRTOS Phase 5
+hairtos Phase 5
 Two equal-priority tasks switch cooperatively through PendSV.
 task=A local_counter=1 -> yield
 task=B local_counter=1010 -> yield

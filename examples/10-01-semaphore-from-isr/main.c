@@ -112,7 +112,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 10.1");
+    board_uart_write_line("hairtos Phase 10.1");
     board_uart_write_line("EXTI0 software interrupt gives a binary semaphore.");
     board_uart_write_line("The higher-priority waiter preempts after ISR return.");
 

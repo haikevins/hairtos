@@ -14,11 +14,11 @@ This example demonstrates:
 Build:
 
 ```bash
-make EXAMPLE=12-software-timer
+make EXAMPLE=12-software-timer build
 ```
 
 Flash:
 
 ```bash
-make EXAMPLE=12-software-timer flash
+make EXAMPLE=12-software-timer run
 ```

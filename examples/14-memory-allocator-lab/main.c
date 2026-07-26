@@ -46,7 +46,7 @@ int main(void)
     void *pool_block;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 14 - Memory allocator lab");
+    board_uart_write_line("hairtos Phase 14 - Memory allocator lab");
     board_uart_write_line("Allocator remains isolated from the kernel runtime.");
 
     if (hr_heap_lab_init(&heap, g_heap_arena, sizeof(g_heap_arena)) !=

@@ -1,6 +1,6 @@
 # Phase 15 — Kernel benchmark
 
-This STM32F103 target example measures HairRTOS with the Cortex-M3 DWT cycle
+This STM32F103 target example measures hairtos with the Cortex-M3 DWT cycle
 counter. It stores all samples in static RAM and prints the CSV-like report only
 after collection completes.
 
@@ -25,8 +25,8 @@ for optional logic-analyzer validation.
 Build and flash:
 
 ```bash
-make EXAMPLE=15-kernel-benchmark
-make EXAMPLE=15-kernel-benchmark flash
+make EXAMPLE=15-kernel-benchmark build
+make EXAMPLE=15-kernel-benchmark run
 ```
 
 Monitor USART1 at 115200 8-N-1. Results are hardware-, compiler-, optimization-,

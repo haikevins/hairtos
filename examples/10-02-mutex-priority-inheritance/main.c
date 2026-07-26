@@ -133,7 +133,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("HairRTOS Phase 10.2");
+    board_uart_write_line("hairtos Phase 10.2");
     board_uart_write_line("Priority inversion corrected by mutex inheritance.");
     board_uart_write_line("High=1, Medium=3, Low=5.");
 

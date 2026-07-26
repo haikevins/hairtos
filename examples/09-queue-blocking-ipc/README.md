@@ -18,19 +18,19 @@ fills the queue and eventually blocks or times out.
 Build:
 
 ```bash
-make EXAMPLE=09-queue-blocking-ipc
+make EXAMPLE=09-queue-blocking-ipc build
 ```
 
 Flash:
 
 ```bash
-make EXAMPLE=09-queue-blocking-ipc flash
+make EXAMPLE=09-queue-blocking-ipc run
 ```
 
 Expected UART pattern:
 
 ```text
-HairRTOS Phase 9
+hairtos Phase 9
 Static FIFO queue with blocking send/receive and timeout.
 ...
 consumer received seq=1 produced_at=0 now=0 queued=0 send_timeouts=0

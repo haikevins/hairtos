@@ -1,6 +1,6 @@
 {
   "project": "HairRTOS",
-  "completed_phase": "Phase 6 — Fixed-priority scheduler",
+  "completed_phase": "Phase 7 — SysTick and delay",
   "target": "STM32F103C8T6 Blue Pill / ARM Cortex-M3",
   "implemented_examples": [
     {
@@ -26,37 +26,45 @@
     {
       "name": "06-priority-scheduler",
       "environment": "target"
+    },
+    {
+      "name": "07-task-delay-timeout",
+      "environment": "target"
     }
   ],
-  "phase6_features": [
-    "explicit internal scheduler policy object",
-    "one FIFO ready queue per priority",
-    "ready bitmap",
-    "smallest priority number selected first",
-    "registration-order independence across priorities",
-    "FIFO cooperative rotation among equal priorities",
-    "lower-priority exclusion while a higher priority remains ready",
-    "centralized internal task-state transitions"
+  "phase7_features": [
+    "kernel-owned 1 kHz SysTick",
+    "monotonic 32-bit kernel tick",
+    "relative blocking task delay",
+    "periodic delay-until without cumulative drift",
+    "RUNNING-to-BLOCKED-to-READY transitions",
+    "two-epoch timeout lists for tick wrap",
+    "idle-to-woken-task deferred PendSV",
+    "PRIMASK critical sections and ISR-context detection",
+    "safe one-tick timeout before pending PendSV handling",
+    "separate bare-metal and kernel SysTick handlers"
   ],
+  "phase_boundary": "General arbitrary-task preemption and tick time slicing remain Phase 8.",
   "validation": {
-    "host_clang": "28/28 PASS with ASan/UBSan",
-    "host_gcc": "28/28 PASS with ASan/UBSan",
-    "target_clang_lld": "PASS",
-    "target_gnu_arm": "not available in generation environment",
+    "host_tests_clang": "28/28 PASS with ASan/UBSan",
+    "host_tests_gcc": "28/28 PASS with ASan/UBSan",
+    "target_regressions": "Phase 1, 3, 4, 5, and 6 PASS with Clang/LLD",
+    "phase7_target_build": "PASS with Clang/LLD",
+    "symbols_and_disassembly": "PASS",
     "physical_hardware": "not performed",
     "image_size_bytes": {
-      "text": 5992,
+      "text": 7020,
       "data": 4,
-      "bss": 3928
+      "bss": 3024
     }
   },
-  "file_count": 229,
+  "file_count": 232,
   "files": [
     "CHANGELOG.md",
     "CMakeLists.txt",
     "LICENSE",
     "Makefile",
-    "PHASE6_VALIDATION.txt",
+    "PHASE7_VALIDATION.txt",
     "README.md",
     "adapters/button_event/hr_button_event.c",
     "adapters/button_event/hr_button_event.h",
@@ -108,6 +116,7 @@
     "docs/phase4-start-first-task-svc.md",
     "docs/phase5-cooperative-context-switch.md",
     "docs/phase6-priority-scheduler.md",
+    "docs/phase7-systick-delay.md",
     "docs/porting-guide.md",
     "docs/requirements-coverage.md",
     "docs/roadmap.md",
@@ -124,6 +133,7 @@
     "drivers/gpio/src/hr_gpio_stm32f1.c",
     "drivers/timer/include/hr_hw_timer.h",
     "drivers/timer/src/hr_hw_timer_stm32f1.c",
+    "drivers/timer/src/hr_systick_baremetal_irq.c",
     "drivers/uart/include/hr_uart.h",
     "drivers/uart/src/hr_uart_stm32f1.c",
     "examples/01-baremetal-foundation/README.md",
@@ -276,10 +286,11 @@
     "tools/scripts/phase4_check.py",
     "tools/scripts/phase5_check.py",
     "tools/scripts/phase6_check.py",
+    "tools/scripts/phase7_check.py",
     "tools/scripts/roadmap_check.py",
     "tools/scripts/run_format_check.sh",
     "tools/scripts/run_host_tests.sh",
     "tools/scripts/size_report.sh",
-    "PHASE6_MANIFEST.json"
+    "PHASE7_MANIFEST.json"
   ]
 }

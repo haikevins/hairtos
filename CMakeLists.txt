@@ -12,6 +12,7 @@ set(HAIRTOS_TARGET_EXAMPLES
     04-start-first-task
     05-cooperative-context-switch
     06-priority-scheduler
+    07-task-delay-timeout
 )
 
 list(FIND HAIRTOS_TARGET_EXAMPLES "${HAIRTOS_EXAMPLE}" HAIRTOS_EXAMPLE_INDEX)
@@ -26,7 +27,8 @@ set(HAIRTOS_PORT_ASM "")
 if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack" OR
    HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
    HAIRTOS_EXAMPLE STREQUAL "05-cooperative-context-switch" OR
-   HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler")
+   HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler" OR
+   HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout")
     list(APPEND HAIRTOS_KERNEL_SOURCES
         kernel/src/hr_list.c
         kernel/src/hr_scheduler.c
@@ -40,9 +42,15 @@ endif()
 
 if(HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
    HAIRTOS_EXAMPLE STREQUAL "05-cooperative-context-switch" OR
-   HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler")
+   HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler" OR
+   HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout")
     list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_kernel.c)
     list(APPEND HAIRTOS_PORT_ASM arch/arm/cortex-m3/hr_portasm.S)
+endif()
+
+set(HAIRTOS_TICK_SOURCE drivers/timer/src/hr_systick_baremetal_irq.c)
+if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout")
+    set(HAIRTOS_TICK_SOURCE kernel/src/hr_time.c)
 endif()
 
 add_executable(hairtos_baremetal
@@ -55,6 +63,7 @@ add_executable(hairtos_baremetal
     drivers/gpio/src/hr_gpio_stm32f1.c
     drivers/uart/src/hr_uart_stm32f1.c
     drivers/timer/src/hr_hw_timer_stm32f1.c
+    ${HAIRTOS_TICK_SOURCE}
     examples/${HAIRTOS_EXAMPLE}/main.c
     ${HAIRTOS_KERNEL_SOURCES}
     ${HAIRTOS_PORT_ASM}

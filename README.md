@@ -1,10 +1,10 @@
 # HairRTOS
 
-HairRTOS is an educational fixed-priority preemptive RTOS for ARM Cortex-M.
-The first target is the STM32F103C8T6 Blue Pill. HairEvent is an optional
-Event-Driven framework above the kernel.
+HairRTOS is an educational fixed-priority RTOS for ARM Cortex-M. The first
+target is the STM32F103C8T6 Blue Pill. HairEvent is an optional Event-Driven
+framework above the kernel.
 
-## Current status: Phase 6 complete
+## Current status: Phase 7 complete
 
 Implemented phases:
 
@@ -14,10 +14,15 @@ Implemented phases:
 - **Phase 3:** opaque static TCB and Cortex-M3 initial task stack;
 - **Phase 4:** first-task startup through SVC from MSP to PSP;
 - **Phase 5:** cooperative task-to-task context switching through PendSV;
-- **Phase 6:** fixed-priority scheduler with FIFO queues for equal priorities.
+- **Phase 6:** fixed-priority scheduler with FIFO queues for equal priorities;
+- **Phase 7:** kernel SysTick, blocking task delay, periodic delay, and timeout
+  wake-up.
 
-Phase 6 still switches only when a running task explicitly calls `hr_task_yield()`.
-The scheduler always selects the smallest priority number and rotates only equal-priority peers. Timer-driven preemption, blocking delay, and tick-based time slicing are not implemented.
+Phase 7 removes a delayed task from the ready queues and runs another task or
+the idle task. When a timeout expires while idle is running, SysTick pends
+PendSV so the woken application task can resume. General preemption of an
+arbitrary running lower-priority task and tick-driven equal-priority time
+slicing belong to Phase 8.
 
 ## Roadmap
 
@@ -30,7 +35,7 @@ The scheduler always selects the smallest priority number and rotates only equal
 | 4 | Start first task using SVC | ✅ Complete |
 | 5 | PendSV cooperative context switch | ✅ Complete |
 | 6 | Priority scheduler | ✅ Complete |
-| 7 | SysTick and delay | ⬜ Not started |
+| 7 | SysTick and delay | ✅ Complete |
 | 8 | Preemption and round-robin | ⬜ Not started |
 | 9 | Queue and blocking | ⬜ Not started |
 | 10 | Semaphore and mutex | ⬜ Not started |
@@ -43,21 +48,23 @@ The scheduler always selects the smallest priority number and rotates only equal
 
 Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
 
-## Phase 6 components
+## Phase 7 components
 
-- explicit `hr_scheduler_t` policy layer above the Phase 2 ready set;
-- one FIFO ready queue per priority and a non-empty ready bitmap;
-- smaller priority number always wins regardless of registration order;
-- equal-priority tasks preserve FIFO ordering;
-- cooperative yield rotates only the selected highest-priority queue;
-- a lower-priority READY task cannot run while a higher-priority task remains READY;
-- scheduler policy host tests and Cortex-M3 target example.
+- strong kernel `SysTick_Handler` for RTOS examples;
+- separate bare-metal SysTick handler retained for Phase 1–6 examples;
+- monotonic 1 kHz kernel tick;
+- two-epoch timeout lists for 32-bit tick wrap;
+- `hr_task_delay()` for relative blocking delays;
+- `hr_task_delay_until()` for drift-resistant periodic releases;
+- `RUNNING -> BLOCKED -> READY` transitions;
+- basic PRIMASK critical-section port primitives;
+- timeout-driven switch from idle through PendSV.
 
 ## Examples: host versus target
 
 See `examples/README.md` for the complete environment matrix.
 
-Run the host example and tests:
+Run the host example and completed host tests:
 
 ```bash
 make phase2-example
@@ -72,6 +79,7 @@ make EXAMPLE=03-static-task-stack flash
 make EXAMPLE=04-start-first-task flash
 make EXAMPLE=05-cooperative-context-switch flash
 make EXAMPLE=06-priority-scheduler flash
+make EXAMPLE=07-task-delay-timeout flash
 ```
 
 The `EXAMPLE` value must be passed in the same command used for `flash`.
@@ -88,6 +96,7 @@ make phase3-check
 make phase4-check
 make phase5-check
 make phase6-check
+make phase7-check
 ```
 
 Read:
@@ -98,6 +107,7 @@ Read:
 - `docs/phase4-start-first-task-svc.md`
 - `docs/phase5-cooperative-context-switch.md`
 - `docs/phase6-priority-scheduler.md`
+- `docs/phase7-systick-delay.md`
 - `examples/README.md`
 
-The next implementation phase is **Phase 7 — SysTick and delay**.
+The next implementation phase is **Phase 8 — Preemption and round-robin**.

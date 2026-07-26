@@ -9,7 +9,7 @@ validation satisfy its Definition of Done.
 Current completed phase:
 
 ```text
-Phase 6 — Fixed-priority scheduler
+Phase 7 — SysTick, delay, and timeout base
 ```
 
 ## Phase 0 — Specification and principles
@@ -195,6 +195,8 @@ Scheduler policy is host-tested independently from PendSV assembly.
 ---
 
 ## Phase 7 — SysTick, delay, and timeout base
+
+**Status: Complete.**
 
 ### Goals
 

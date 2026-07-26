@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added — Phase 7: SysTick and delay
+
+- Added kernel-owned 1 kHz SysTick and monotonic tick time.
+- Added blocking relative and periodic task delays.
+- Added timeout wake-up, tick-wrap handling, and idle-to-task PendSV switching.
+- Split the legacy bare-metal SysTick IRQ from the timer driver.
+- Added PRIMASK critical-section primitives and ISR-context detection.
+- Added Phase 7 host coverage, target example, documentation, and validation.
+
 ### Added — Phase 6: Fixed-priority scheduler
 
 - Added an explicit scheduler policy layer above the Phase 2 ready set.

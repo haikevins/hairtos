@@ -1,8 +1,8 @@
 # Scheduler Specification
 
-HairRTOS targets fixed-priority preemptive scheduling. **Phase 6 implements the
-fixed-priority selection policy in cooperative mode.** Automatic preemption and
-tick-based round-robin are introduced later.
+HairRTOS uses fixed-priority scheduling with one FIFO ready queue per priority.
+Phase 7 adds BLOCKED tasks and timeout wake-up while preserving the cooperative
+Phase 6 boundary for normal running tasks.
 
 ## Priority policy
 
@@ -13,26 +13,29 @@ tick-based round-robin are introduced later.
 - The idle task is always READY at the lowest configured priority.
 - Registration order matters only among tasks with the same priority.
 
-## Phase 6 cooperative behavior
+## Yield
 
-`hr_task_yield()` pends PendSV. The scheduler rotates only the selected task's
-priority queue. If no equal-priority peer exists, the same task remains
-selected. A lower-priority task cannot run while any higher-priority task is
-READY.
+`hr_task_yield()` pends PendSV. If the current task remains the highest READY
+task, its equal-priority queue is rotated. If a higher-priority task is already
+READY, PendSV selects that task without rotating the lower-priority current
+queue.
 
-The scheduler chooses a TCB; the Cortex-M port saves and restores registers.
+## Delay and timeout
 
-## Later behavior
+A delaying task is removed from its ready queue before it becomes BLOCKED. When
+its timeout expires, SysTick returns it to the correct priority queue.
 
-- Phase 7 adds blocked delay and timeout wake-up.
-- Phase 8 requests PendSV when a higher-priority task becomes READY.
-- Phase 8 also rotates equal-priority tasks when their time slice expires.
+Phase 7 pends PendSV immediately when an application task wakes while idle is
+running. If a non-idle task is already running, the woken task remains READY
+until a cooperative scheduling point. Phase 8 generalizes this into automatic
+higher-priority preemption and adds tick-based equal-priority rotation.
 
 ## Invariants
 
-- The RUNNING task is at the head of the highest-priority READY queue.
-- Blocked tasks are absent from ready queues.
+- Exactly one task is RUNNING.
+- Every READY or RUNNING task is linked in exactly one ready queue.
+- BLOCKED tasks are absent from ready queues and linked in the timeout structure
+  when their wait is finite.
 - Ready bitmap and queue emptiness agree.
 - A task cannot exist in multiple ready queues.
-- Yield cannot be initiated on behalf of a non-selected lower-priority task.
-- The idle task cannot be removed or blocked.
+- The idle task cannot block.

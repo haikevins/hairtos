@@ -42,7 +42,7 @@ void hr_hw_timer_delay_ms(uint32_t milliseconds)
     }
 }
 
-void SysTick_Handler(void)
+void hr_hw_timer_tick_isr(void)
 {
     g_millisecond_tick++;
 }

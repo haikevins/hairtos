@@ -21,7 +21,7 @@ Phase 0 has no runtime example because it contains specifications only.
 | `04-start-first-task` | 4 | Target | ✅ Implemented | `make EXAMPLE=04-start-first-task flash` |
 | `05-cooperative-context-switch` | 5 | Target | ✅ Implemented | `make EXAMPLE=05-cooperative-context-switch flash` |
 | `06-priority-scheduler` | 6 | Target | ✅ Implemented | `make EXAMPLE=06-priority-scheduler flash` |
-| `07-task-delay-timeout` | 7 | Target | ⬜ Placeholder | Not runnable yet |
+| `07-task-delay-timeout` | 7 | Target | ✅ Implemented | `make EXAMPLE=07-task-delay-timeout flash` |
 | `08-preemption-round-robin` | 8 | Target | ⬜ Placeholder | Not runnable yet |
 | `09-queue-blocking-ipc` | 9 | Target | ⬜ Placeholder | Not runnable yet |
 | `10-01-semaphore-from-isr` | 10 | Target | ⬜ Placeholder | Not runnable yet |
@@ -38,9 +38,7 @@ Phase 0 has no runtime example because it contains specifications only.
 | `15-kernel-benchmark` | 15 | Target | ⬜ Placeholder | Not runnable yet |
 | `16-diagnostics-stress-stabilization` | 16 | Host + Target | ⬜ Placeholder | Not runnable yet |
 
-## Important command rules
-
-### Host example
+## Host commands
 
 Run the only implemented host example with:
 
@@ -60,13 +58,12 @@ Never run:
 make EXAMPLE=02-kernel-data-structures-host flash
 ```
 
-That folder uses native facilities such as `printf()` and is not linked as
-freestanding STM32 firmware.
+The Makefile rejects that command because the host example uses native facilities
+and is not freestanding STM32 firmware.
 
-### Target examples
+## Target commands
 
-Always pass the target example name in the same `make` invocation used for
-flashing:
+Always pass the target example name in the same invocation used for flashing:
 
 ```bash
 make EXAMPLE=01-baremetal-foundation flash
@@ -74,15 +71,13 @@ make EXAMPLE=03-static-task-stack flash
 make EXAMPLE=04-start-first-task flash
 make EXAMPLE=05-cooperative-context-switch flash
 make EXAMPLE=06-priority-scheduler flash
+make EXAMPLE=07-task-delay-timeout flash
 ```
 
-A previous command such as `make EXAMPLE=03-static-task-stack` does not make the
-next standalone `make flash` remember that selection; without `EXAMPLE`, Make
-uses its default target example.
+A previous build command does not make a later standalone `make flash` remember
+the selected example.
 
-## Current implemented examples
-
-At Phase 6, the runnable set is exactly:
+## Current runnable set
 
 ```text
 Host:
@@ -94,6 +89,7 @@ Target:
   04-start-first-task
   05-cooperative-context-switch
   06-priority-scheduler
+  07-task-delay-timeout
 ```
 
 All other example directories are roadmap placeholders.

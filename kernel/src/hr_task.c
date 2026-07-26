@@ -223,12 +223,97 @@ bool hr_task_stack_guard_is_valid(const hr_task_t *task)
 }
 
 
+
 void hr_task_yield(void)
 {
-    if (hr_kernel_is_running())
+    if (hr_kernel_is_running() && !hr_port_is_inside_isr())
     {
         hr_port_request_context_switch();
     }
+}
+
+hr_status_t hr_task_delay(hr_tick_t ticks)
+{
+    hr_irq_state_t irq_state;
+    hr_status_t status;
+
+    if (!hr_kernel_is_running() || hr_port_is_inside_isr())
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
+    if (ticks == 0U)
+    {
+        hr_task_yield();
+        return HR_OK;
+    }
+
+    if (ticks == HR_WAIT_FOREVER)
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    irq_state = hr_port_enter_critical();
+    status = hr_kernel_delay_current(ticks);
+    hr_port_exit_critical(irq_state);
+
+    if (status == HR_OK)
+    {
+        hr_port_request_context_switch();
+    }
+
+    return status;
+}
+
+hr_status_t hr_task_delay_until(hr_tick_t *last_wake_tick, hr_tick_t period)
+{
+    hr_irq_state_t irq_state;
+    hr_tick_t now;
+    hr_tick_t next_wake;
+    hr_tick_t remaining_ticks;
+    bool should_block;
+    hr_status_t status = HR_OK;
+
+    if (last_wake_tick == NULL)
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    if (!hr_kernel_is_running() || hr_port_is_inside_isr())
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
+    if ((period == 0U) || (period > (hr_tick_t)INT32_MAX))
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    irq_state = hr_port_enter_critical();
+    now = hr_kernel_get_tick();
+    next_wake = *last_wake_tick + period;
+    remaining_ticks = next_wake - now;
+    should_block = (remaining_ticks != 0U) &&
+                   (remaining_ticks <= (hr_tick_t)INT32_MAX);
+
+    if (should_block)
+    {
+        status = hr_kernel_delay_current(remaining_ticks);
+    }
+
+    if (status == HR_OK)
+    {
+        *last_wake_tick = next_wake;
+    }
+
+    hr_port_exit_critical(irq_state);
+
+    if ((status == HR_OK) && should_block)
+    {
+        hr_port_request_context_switch();
+    }
+
+    return status;
 }
 
 hr_task_t *hr_task_current(void)

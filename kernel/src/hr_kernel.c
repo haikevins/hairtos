@@ -8,18 +8,25 @@
 #include "hr_port.h"
 #include "hr_scheduler_internal.h"
 #include "hr_task_internal.h"
+#include "hr_timeout_internal.h"
 
 static hr_kernel_state_t g_kernel_state = HR_KERNEL_STATE_RESET;
 static hr_scheduler_t g_scheduler;
 static hr_list_t g_all_tasks;
+static hr_timeout_list_t g_timeout_list;
 static hr_task_t *g_current_task;
 static size_t g_task_count;
-static hr_tick_t g_kernel_tick;
+static volatile hr_tick_t g_kernel_tick;
 
 static hr_task_t g_idle_task;
 static hr_stack_t g_idle_stack[HR_CFG_IDLE_STACK_WORDS];
 
 hr_task_control_block_t *g_hr_current_task_control_block;
+
+static void hr_kernel_panic(void)
+{
+    g_kernel_state = HR_KERNEL_STATE_PANIC;
+}
 
 static void hr_idle_task(void *argument)
 {
@@ -29,6 +36,11 @@ static void hr_idle_task(void *argument)
     {
         hr_port_wait_for_interrupt();
     }
+}
+
+static bool hr_kernel_current_is_idle(void)
+{
+    return g_current_task == &g_idle_task;
 }
 
 hr_status_t hr_kernel_init(void)
@@ -42,6 +54,7 @@ hr_status_t hr_kernel_init(void)
 
     hr_scheduler_init(&g_scheduler);
     hr_list_init(&g_all_tasks);
+    hr_timeout_list_init(&g_timeout_list, 0U);
     g_current_task = NULL;
     g_hr_current_task_control_block = NULL;
     g_task_count = 0U;
@@ -57,14 +70,14 @@ hr_status_t hr_kernel_init(void)
                                    (hr_priority_t)(HR_CFG_PRIORITY_COUNT - 1U));
     if (status != HR_OK)
     {
-        g_kernel_state = HR_KERNEL_STATE_PANIC;
+        hr_kernel_panic();
         return status;
     }
 
     status = hr_task_start(&g_idle_task);
     if (status != HR_OK)
     {
-        g_kernel_state = HR_KERNEL_STATE_PANIC;
+        hr_kernel_panic();
         return status;
     }
 
@@ -163,10 +176,61 @@ hr_status_t hr_kernel_prepare_start(void)
     return HR_OK;
 }
 
+hr_status_t hr_kernel_delay_current(hr_tick_t delay_ticks)
+{
+    hr_task_control_block_t *control_block;
+    hr_status_t status;
+
+    if ((g_kernel_state != HR_KERNEL_STATE_RUNNING) ||
+        (g_current_task == NULL) ||
+        (g_current_task == &g_idle_task) ||
+        (delay_ticks == 0U) ||
+        (delay_ticks == HR_WAIT_FOREVER))
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
+    control_block = hr_task_control_block(g_current_task);
+    if ((control_block->state != HR_TASK_STATE_RUNNING) ||
+        !hr_list_node_is_linked(&control_block->ready_node.node) ||
+        hr_list_node_is_linked(&control_block->timeout_node.node))
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
+    status = hr_scheduler_remove_ready(&g_scheduler, &control_block->ready_node);
+    if (status != HR_OK)
+    {
+        return status;
+    }
+
+    status = hr_timeout_list_insert(&g_timeout_list,
+                                    &control_block->timeout_node,
+                                    delay_ticks);
+    if (status != HR_OK)
+    {
+        (void)hr_scheduler_add_ready(&g_scheduler, &control_block->ready_node);
+        return status;
+    }
+
+    status = hr_task_transition_state(g_current_task,
+                                      HR_TASK_STATE_RUNNING,
+                                      HR_TASK_STATE_BLOCKED);
+    if (status != HR_OK)
+    {
+        (void)hr_timeout_list_remove(&g_timeout_list, &control_block->timeout_node);
+        (void)hr_scheduler_add_ready(&g_scheduler, &control_block->ready_node);
+        return status;
+    }
+
+    control_block->wake_tick = g_kernel_tick + delay_ticks;
+    control_block->waiting_object = &g_timeout_list;
+    return HR_OK;
+}
 
 void hr_kernel_select_next_from_pendsv(void)
 {
-    hr_ready_node_t *current_ready_node;
+    hr_ready_node_t *selected_ready_node;
     hr_ready_node_t *next_ready_node;
     hr_task_t *next_task;
     hr_task_control_block_t *current_control_block;
@@ -177,65 +241,168 @@ void hr_kernel_select_next_from_pendsv(void)
         (g_current_task == NULL) ||
         (g_hr_current_task_control_block == NULL))
     {
-        g_kernel_state = HR_KERNEL_STATE_PANIC;
+        hr_kernel_panic();
         return;
     }
 
-    current_ready_node = hr_scheduler_select_highest(&g_scheduler);
-    if ((current_ready_node == NULL) ||
-        (hr_list_node_owner(&current_ready_node->node) != g_current_task))
-    {
-        g_kernel_state = HR_KERNEL_STATE_PANIC;
-        return;
-    }
+    current_control_block = hr_task_control_block(g_current_task);
 
-    status = hr_scheduler_yield_current(&g_scheduler, current_ready_node);
-    if (status != HR_OK)
+    if (current_control_block->state == HR_TASK_STATE_RUNNING)
     {
-        g_kernel_state = HR_KERNEL_STATE_PANIC;
+        selected_ready_node = hr_scheduler_select_highest(&g_scheduler);
+        if (selected_ready_node == NULL)
+        {
+            hr_kernel_panic();
+            return;
+        }
+
+        /* A cooperative yield rotates only if the current task is still highest. */
+        if (hr_list_node_owner(&selected_ready_node->node) == g_current_task)
+        {
+            status = hr_scheduler_yield_current(&g_scheduler,
+                                                &current_control_block->ready_node);
+            if (status != HR_OK)
+            {
+                hr_kernel_panic();
+                return;
+            }
+        }
+    }
+    else if (current_control_block->state == HR_TASK_STATE_READY)
+    {
+        /*
+         * A one-tick timeout can expire after the task blocks but before the
+         * pending PendSV runs. The task is READY again while its CPU context is
+         * still the active context. Selection below resolves that race safely.
+         */
+    }
+    else if (current_control_block->state != HR_TASK_STATE_BLOCKED)
+    {
+        hr_kernel_panic();
         return;
     }
 
     next_ready_node = hr_scheduler_select_highest(&g_scheduler);
     if (next_ready_node == NULL)
     {
-        g_kernel_state = HR_KERNEL_STATE_PANIC;
+        hr_kernel_panic();
         return;
     }
 
     next_task = (hr_task_t *)hr_list_node_owner(&next_ready_node->node);
     if (!hr_task_is_valid(next_task))
     {
-        g_kernel_state = HR_KERNEL_STATE_PANIC;
+        hr_kernel_panic();
         return;
     }
 
-    current_control_block = hr_task_control_block(g_current_task);
     next_control_block = hr_task_control_block(next_task);
-
     if (next_task != g_current_task)
     {
-        if ((current_control_block->state != HR_TASK_STATE_RUNNING) ||
-            (next_control_block->state != HR_TASK_STATE_READY))
+        if (next_control_block->state != HR_TASK_STATE_READY)
         {
-            g_kernel_state = HR_KERNEL_STATE_PANIC;
+            hr_kernel_panic();
             return;
         }
 
-        if ((hr_task_transition_state(g_current_task,
+        if ((current_control_block->state == HR_TASK_STATE_RUNNING) &&
+            (hr_task_transition_state(g_current_task,
                                       HR_TASK_STATE_RUNNING,
-                                      HR_TASK_STATE_READY) != HR_OK) ||
-            (hr_task_transition_state(next_task,
-                                      HR_TASK_STATE_READY,
-                                      HR_TASK_STATE_RUNNING) != HR_OK))
+                                      HR_TASK_STATE_READY) != HR_OK))
         {
-            g_kernel_state = HR_KERNEL_STATE_PANIC;
+            hr_kernel_panic();
             return;
         }
+
+        if (hr_task_transition_state(next_task,
+                                     HR_TASK_STATE_READY,
+                                     HR_TASK_STATE_RUNNING) != HR_OK)
+        {
+            hr_kernel_panic();
+            return;
+        }
+    }
+    else if ((current_control_block->state == HR_TASK_STATE_READY) &&
+             (hr_task_transition_state(g_current_task,
+                                       HR_TASK_STATE_READY,
+                                       HR_TASK_STATE_RUNNING) != HR_OK))
+    {
+        hr_kernel_panic();
+        return;
     }
 
     g_current_task = next_task;
     g_hr_current_task_control_block = next_control_block;
+}
+
+void hr_kernel_tick_from_isr(void)
+{
+    hr_list_t expired_nodes;
+    hr_list_node_t *node;
+    bool application_task_woken = false;
+
+    if (g_kernel_state != HR_KERNEL_STATE_RUNNING)
+    {
+        return;
+    }
+
+    g_kernel_tick++;
+    hr_list_init(&expired_nodes);
+
+    if (hr_timeout_list_advance(&g_timeout_list,
+                                g_kernel_tick,
+                                &expired_nodes) != HR_OK)
+    {
+        hr_kernel_panic();
+        return;
+    }
+
+    node = hr_list_pop_front(&expired_nodes);
+    while (node != NULL)
+    {
+        hr_task_t *task = (hr_task_t *)hr_list_node_owner(node);
+        hr_task_control_block_t *control_block;
+
+        if (!hr_task_is_valid(task))
+        {
+            hr_kernel_panic();
+            return;
+        }
+
+        control_block = hr_task_control_block(task);
+        if ((control_block->state != HR_TASK_STATE_BLOCKED) ||
+            (control_block->waiting_object != &g_timeout_list))
+        {
+            hr_kernel_panic();
+            return;
+        }
+
+        if (hr_scheduler_add_ready(&g_scheduler, &control_block->ready_node) != HR_OK)
+        {
+            hr_kernel_panic();
+            return;
+        }
+
+        if (hr_task_transition_state(task,
+                                     HR_TASK_STATE_BLOCKED,
+                                     HR_TASK_STATE_READY) != HR_OK)
+        {
+            (void)hr_scheduler_remove_ready(&g_scheduler,
+                                            &control_block->ready_node);
+            hr_kernel_panic();
+            return;
+        }
+
+        control_block->waiting_object = NULL;
+        application_task_woken = application_task_woken || (task != &g_idle_task);
+        node = hr_list_pop_front(&expired_nodes);
+    }
+
+    /* Phase 7 wakes a delayed task immediately only when idle is running. */
+    if (application_task_woken && hr_kernel_current_is_idle())
+    {
+        hr_port_request_context_switch();
+    }
 }
 
 hr_status_t hr_kernel_start(void)
@@ -253,7 +420,7 @@ hr_status_t hr_kernel_start(void)
     hr_port_start_first_task();
 
     /* A successful SVC startup never returns here. */
-    g_kernel_state = HR_KERNEL_STATE_PANIC;
+    hr_kernel_panic();
     return HR_ERROR_INTERNAL;
 }
 

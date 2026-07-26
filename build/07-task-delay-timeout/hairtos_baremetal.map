@@ -1,0 +1,1514 @@
+
+Discarded input sections
+
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .text.stm32f1_clock_get_pclk1_hz
+                0x00000000       0x20 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x00000000      0x193 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x00000000      0x193 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .text.board_millis
+                0x00000000        0x8 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .text.board_delay_ms
+                0x00000000        0x8 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00000000      0x193 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x00000000      0x193 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.hr_gpio_read
+                0x00000000       0x20 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .text.hr_uart_try_read_char
+                0x00000000       0x24 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text.hr_hw_timer_millis
+                0x00000000        0xc build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text.hr_hw_timer_delay_ms
+                0x00000000       0x18 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .text.hr_hw_timer_tick_isr
+                0x00000000       0x10 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x00000000      0x193 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_list.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_list.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_list.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .text.hr_list_back
+                0x00000000       0x10 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .text.hr_list_previous
+                0x00000000       0x24 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .text.hr_list_push_front
+                0x00000000       0x14 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .text.hr_list_pop_back
+                0x00000000       0x18 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .text.hr_list_validate
+                0x00000000       0x82 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .text.hr_ready_set_is_empty
+                0x00000000       0x14 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .text.hr_ready_set_size
+                0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .text.hr_ready_set_bitmap
+                0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .text.hr_ready_set_validate
+                0x00000000       0x68 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .text.hr_scheduler_ready_count
+                0x00000000        0xe build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .text.hr_scheduler_ready_bitmap
+                0x00000000        0xe build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .text.hr_scheduler_validate
+                0x00000000       0x16 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_macro   0x00000000       0xac build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .text.hr_wait_list_init
+                0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .text.hr_wait_list_is_empty
+                0x00000000       0x14 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .text.hr_wait_list_size
+                0x00000000        0xe build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .text.hr_wait_list_insert
+                0x00000000       0x4e build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .text.hr_wait_list_remove
+                0x00000000       0x20 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .text.hr_wait_list_peek
+                0x00000000        0xa build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .text.hr_wait_list_pop
+                0x00000000        0xa build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .text.hr_wait_list_validate
+                0x00000000       0x40 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_macro   0x00000000       0xac build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .text.hr_timeout_order_is_valid
+                0x00000000       0x2e build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .text.hr_timeout_list_is_empty
+                0x00000000       0x12 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .text.hr_timeout_list_size
+                0x00000000        0xa build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .text.hr_timeout_list_last_tick
+                0x00000000        0xa build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .text.hr_timeout_list_validate
+                0x00000000       0x68 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_macro   0x00000000       0xac build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_task.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_task.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_task.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_task.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_task.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .text.hr_task_get_name
+                0x00000000       0x1a build/07-task-delay-timeout/kernel/src/hr_task.o
+ .text.hr_task_get_state
+                0x00000000       0x1a build/07-task-delay-timeout/kernel/src/hr_task.o
+ .text.hr_task_get_base_priority
+                0x00000000       0x1a build/07-task-delay-timeout/kernel/src/hr_task.o
+ .text.hr_task_get_effective_priority
+                0x00000000       0x1a build/07-task-delay-timeout/kernel/src/hr_task.o
+ .text.hr_task_get_stack_words
+                0x00000000       0x1a build/07-task-delay-timeout/kernel/src/hr_task.o
+ .text.hr_task_get_stack_high_watermark
+                0x00000000       0x3a build/07-task-delay-timeout/kernel/src/hr_task.o
+ .text.hr_task_stack_guard_is_valid
+                0x00000000       0x34 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_macro   0x00000000       0xac build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .text.hr_port_yield_from_isr
+                0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x00000000       0xac build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000       0xac build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00000000       0x82 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .text.hr_kernel_get_state
+                0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .text.hr_kernel_get_task_count
+                0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_macro   0x00000000       0xac build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_time.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_time.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_time.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_time.o
+ .group         0x00000000        0xc build/07-task-delay-timeout/kernel/src/hr_time.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_time.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_time.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/kernel/src/hr_time.o
+ .debug_macro   0x00000000      0xac0 build/07-task-delay-timeout/kernel/src/hr_time.o
+ .debug_macro   0x00000000       0x22 build/07-task-delay-timeout/kernel/src/hr_time.o
+ .debug_macro   0x00000000      0x190 build/07-task-delay-timeout/kernel/src/hr_time.o
+ .debug_macro   0x00000000      0x34e build/07-task-delay-timeout/kernel/src/hr_time.o
+ .debug_macro   0x00000000       0xac build/07-task-delay-timeout/kernel/src/hr_time.o
+ .comment       0x00000000       0x27 build/07-task-delay-timeout/kernel/src/hr_time.o
+ .text          0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+ .note.GNU-stack
+                0x00000000        0x0 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+ .data          0x00000000        0x0 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+ .bss           0x00000000        0x0 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+ .note.GNU-stack
+                0x00000000        0x0 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x08000000         0x00010000         xr
+RAM              0x20000000         0x00005000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+LOAD build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+LOAD build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+LOAD build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+LOAD build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+LOAD build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+LOAD build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+LOAD build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+LOAD build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+LOAD build/07-task-delay-timeout/kernel/src/hr_list.o
+LOAD build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+LOAD build/07-task-delay-timeout/kernel/src/hr_wait.o
+LOAD build/07-task-delay-timeout/kernel/src/hr_timeout.o
+LOAD build/07-task-delay-timeout/kernel/src/hr_task.o
+LOAD build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+LOAD build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+LOAD build/07-task-delay-timeout/kernel/src/hr_kernel.o
+LOAD build/07-task-delay-timeout/kernel/src/hr_time.o
+LOAD build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+LOAD build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+LOAD /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a
+                0x00000000                        _Min_Heap_Size = 0x0
+                0x00000400                        _Min_Stack_Size = 0x400
+                0x20005000                        _estack = (ORIGIN (RAM) + LENGTH (RAM))
+                0x20004c00                        _sstack = (_estack - _Min_Stack_Size)
+
+.isr_vector     0x08000000       0xec
+                0x08000000                        . = ALIGN (0x4)
+ *(.isr_vector)
+ .isr_vector    0x08000000       0xec build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+                0x08000000                g_pfnVectors
+                0x080000ec                        . = ALIGN (0x4)
+
+.text           0x080000ec     0x17e0
+                0x080000ec                        . = ALIGN (0x4)
+ *(.text)
+ .text          0x080000ec       0x70 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+                0x080000ec                hr_port_start_first_task
+                0x08000102                SVC_Handler
+                0x08000126                PendSV_Handler
+ *(.text*)
+ .text.system_reset_clock_tree
+                0x0800015c       0x44 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .text.SystemCoreClockUpdate
+                0x080001a0       0x10 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+                0x080001a0                SystemCoreClockUpdate
+ .text.SystemInit
+                0x080001b0       0x20 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+                0x080001b0                SystemInit
+ .text.wait_for_mask
+                0x080001d0       0x1e build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ *fill*         0x080001ee        0x2 
+ .text.decode_ahb_prescaler
+                0x080001f0       0x10 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .text.decode_apb_prescaler
+                0x08000200       0x10 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .text.stm32f1_clock_configure_hse_pll_72mhz
+                0x08000210       0x78 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+                0x08000210                stm32f1_clock_configure_hse_pll_72mhz
+ .text.stm32f1_clock_get_hclk_hz
+                0x08000288       0x40 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+                0x08000288                stm32f1_clock_get_hclk_hz
+ .text.stm32f1_clock_get_pclk2_hz
+                0x080002c8       0x20 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+                0x080002c8                stm32f1_clock_get_pclk2_hz
+ .text.fault_stop
+                0x080002e8        0x6 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .text.HardFault_Handler
+                0x080002ee        0x6 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+                0x080002ee                HardFault_Handler
+ .text.MemManage_Handler
+                0x080002f4        0x6 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+                0x080002f4                MemManage_Handler
+ .text.BusFault_Handler
+                0x080002fa        0x6 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+                0x080002fa                BusFault_Handler
+ .text.UsageFault_Handler
+                0x08000300        0x6 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+                0x08000300                UsageFault_Handler
+ .text.board_led_on
+                0x08000306        0xe build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                0x08000306                board_led_on
+ .text.board_led_off
+                0x08000314        0xe build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                0x08000314                board_led_off
+ .text.board_led_toggle
+                0x08000322        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                0x08000322                board_led_toggle
+ .text.board_uart_write_char
+                0x0800032e        0x8 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                0x0800032e                board_uart_write_char
+ .text.board_uart_write_string
+                0x08000336        0x8 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                0x08000336                board_uart_write_string
+ *fill*         0x0800033e        0x2 
+ .text.board_uart_write_u32
+                0x08000340       0x5c build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                0x08000340                board_uart_write_u32
+ .text.board_uart_write_line
+                0x0800039c       0x14 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                0x0800039c                board_uart_write_line
+ .text.board_print_boot_banner
+                0x080003b0       0x5c build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .text.board_init
+                0x0800040c       0x38 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                0x0800040c                board_init
+ .text.board_panic
+                0x08000444        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                0x08000444                board_panic
+ .text.board_get_core_clock_hz
+                0x08000450        0xc build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+                0x08000450                board_get_core_clock_hz
+ .text.board_clock_is_72mhz
+                0x0800045c       0x18 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+                0x0800045c                board_clock_is_72mhz
+ .text.gpio_from_port
+                0x08000474       0x28 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.gpio_configure_nibble
+                0x0800049c       0x30 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .text.hr_gpio_enable_port_clock
+                0x080004cc       0x34 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x080004cc                hr_gpio_enable_port_clock
+ .text.hr_gpio_config_output_push_pull
+                0x08000500       0x14 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x08000500                hr_gpio_config_output_push_pull
+ .text.hr_gpio_config_alternate_push_pull
+                0x08000514       0x16 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x08000514                hr_gpio_config_alternate_push_pull
+ .text.hr_gpio_config_input_floating
+                0x0800052a       0x12 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x0800052a                hr_gpio_config_input_floating
+ .text.hr_gpio_write
+                0x0800053c       0x22 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x0800053c                hr_gpio_write
+ .text.hr_gpio_toggle
+                0x0800055e       0x28 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                0x0800055e                hr_gpio_toggle
+ *fill*         0x08000586        0x2 
+ .text.hr_uart_init
+                0x08000588       0x54 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+                0x08000588                hr_uart_init
+ .text.hr_uart_write_char
+                0x080005dc       0x14 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+                0x080005dc                hr_uart_write_char
+ .text.hr_uart_write_string
+                0x080005f0       0x16 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+                0x080005f0                hr_uart_write_string
+ *fill*         0x08000606        0x2 
+ .text.hr_hw_timer_init_1khz
+                0x08000608       0x34 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+                0x08000608                hr_hw_timer_init_1khz
+ .text.verify_task_context
+                0x0800063c       0x28 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .text.heartbeat_task
+                0x08000664       0x58 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .text.periodic_task
+                0x080006bc       0x68 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .text.main     0x08000724      0x108 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+                0x08000724                main
+ .text.hr_list_insert_between
+                0x0800082c       0x38 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .text.hr_list_init
+                0x08000864       0x12 build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x08000864                hr_list_init
+ .text.hr_list_node_init
+                0x08000876        0xe build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x08000876                hr_list_node_init
+ .text.hr_list_is_empty
+                0x08000884       0x12 build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x08000884                hr_list_is_empty
+ .text.hr_list_size
+                0x08000896        0xa build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x08000896                hr_list_size
+ .text.hr_list_node_is_linked
+                0x080008a0       0x12 build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x080008a0                hr_list_node_is_linked
+ .text.hr_list_node_owner
+                0x080008b2        0x8 build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x080008b2                hr_list_node_owner
+ .text.hr_list_front
+                0x080008ba       0x10 build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x080008ba                hr_list_front
+ .text.hr_list_next
+                0x080008ca       0x24 build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x080008ca                hr_list_next
+ .text.hr_list_push_back
+                0x080008ee       0x14 build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x080008ee                hr_list_push_back
+ .text.hr_list_insert_before
+                0x08000902       0x24 build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x08000902                hr_list_insert_before
+ .text.hr_list_remove
+                0x08000926       0x3a build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x08000926                hr_list_remove
+ .text.hr_list_pop_front
+                0x08000960       0x18 build/07-task-delay-timeout/kernel/src/hr_list.o
+                0x08000960                hr_list_pop_front
+ .text.hr_priority_is_valid
+                0x08000978        0xa build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .text.hr_priority_mask
+                0x08000982        0x8 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .text.hr_ready_set_highest_priority
+                0x0800098a       0x24 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .text.hr_ready_node_init
+                0x080009ae       0x12 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                0x080009ae                hr_ready_node_init
+ .text.hr_ready_set_init
+                0x080009c0       0x2a build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                0x080009c0                hr_ready_set_init
+ .text.hr_ready_set_insert
+                0x080009ea       0x52 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                0x080009ea                hr_ready_set_insert
+ .text.hr_ready_set_remove
+                0x08000a3c       0x68 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                0x08000a3c                hr_ready_set_remove
+ .text.hr_ready_set_peek_highest
+                0x08000aa4       0x2e build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                0x08000aa4                hr_ready_set_peek_highest
+ .text.hr_ready_set_rotate_highest
+                0x08000ad2       0x50 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                0x08000ad2                hr_ready_set_rotate_highest
+ .text.hr_scheduler_init
+                0x08000b22        0xc build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                0x08000b22                hr_scheduler_init
+ .text.hr_scheduler_add_ready
+                0x08000b2e        0xe build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                0x08000b2e                hr_scheduler_add_ready
+ .text.hr_scheduler_remove_ready
+                0x08000b3c        0xe build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                0x08000b3c                hr_scheduler_remove_ready
+ .text.hr_scheduler_select_highest
+                0x08000b4a        0xa build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                0x08000b4a                hr_scheduler_select_highest
+ .text.hr_scheduler_yield_current
+                0x08000b54       0x26 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                0x08000b54                hr_scheduler_yield_current
+ .text.hr_wait_node_init
+                0x08000b7a       0x12 build/07-task-delay-timeout/kernel/src/hr_wait.o
+                0x08000b7a                hr_wait_node_init
+ .text.hr_timeout_insert_sorted
+                0x08000b8c       0x34 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .text.hr_timeout_node_init
+                0x08000bc0       0x12 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                0x08000bc0                hr_timeout_node_init
+ .text.hr_timeout_list_init
+                0x08000bd2       0x24 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                0x08000bd2                hr_timeout_list_init
+ .text.hr_timeout_list_insert
+                0x08000bf6       0x4c build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                0x08000bf6                hr_timeout_list_insert
+ .text.hr_timeout_list_remove
+                0x08000c42       0x32 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                0x08000c42                hr_timeout_list_remove
+ .text.hr_timeout_list_advance
+                0x08000c74       0x7a build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                0x08000c74                hr_timeout_list_advance
+ .text.hr_task_zero_control_block
+                0x08000cee       0x10 build/07-task-delay-timeout/kernel/src/hr_task.o
+ *fill*         0x08000cfe        0x2 
+ .text.hr_task_fill_stack
+                0x08000d00       0x1c build/07-task-delay-timeout/kernel/src/hr_task.o
+ .text.hr_task_exit_error
+                0x08000d1c        0x2 build/07-task-delay-timeout/kernel/src/hr_task.o
+                0x08000d1c                hr_task_exit_error
+ .text.hr_task_control_block
+                0x08000d1e        0x6 build/07-task-delay-timeout/kernel/src/hr_task.o
+                0x08000d1e                hr_task_control_block
+ .text.hr_task_control_block_const
+                0x08000d24        0x6 build/07-task-delay-timeout/kernel/src/hr_task.o
+                0x08000d24                hr_task_control_block_const
+ *fill*         0x08000d2a        0x2 
+ .text.hr_task_is_valid
+                0x08000d2c       0x24 build/07-task-delay-timeout/kernel/src/hr_task.o
+                0x08000d2c                hr_task_is_valid
+ .text.hr_task_transition_state
+                0x08000d50       0x28 build/07-task-delay-timeout/kernel/src/hr_task.o
+                0x08000d50                hr_task_transition_state
+ .text.hr_task_create_static
+                0x08000d78      0x100 build/07-task-delay-timeout/kernel/src/hr_task.o
+                0x08000d78                hr_task_create_static
+ .text.hr_task_start
+                0x08000e78       0x16 build/07-task-delay-timeout/kernel/src/hr_task.o
+                0x08000e78                hr_task_start
+ .text.hr_task_yield
+                0x08000e8e       0x18 build/07-task-delay-timeout/kernel/src/hr_task.o
+                0x08000e8e                hr_task_yield
+ .text.hr_task_delay
+                0x08000ea6       0x44 build/07-task-delay-timeout/kernel/src/hr_task.o
+                0x08000ea6                hr_task_delay
+ .text.hr_task_delay_until
+                0x08000eea       0x62 build/07-task-delay-timeout/kernel/src/hr_task.o
+                0x08000eea                hr_task_delay_until
+ .text.hr_task_current
+                0x08000f4c        0x8 build/07-task-delay-timeout/kernel/src/hr_task.o
+                0x08000f4c                hr_task_current
+ .text.hr_port_initialize_stack
+                0x08000f54       0x16 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                0x08000f54                hr_port_initialize_stack
+ *fill*         0x08000f6a        0x2 
+ .text.hr_port_configure_kernel_exceptions
+                0x08000f6c       0x34 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                0x08000f6c                hr_port_configure_kernel_exceptions
+ .text.hr_port_request_context_switch
+                0x08000fa0       0x16 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                0x08000fa0                hr_port_request_context_switch
+ .text.hr_port_wait_for_interrupt
+                0x08000fb6        0x4 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                0x08000fb6                hr_port_wait_for_interrupt
+ .text.hr_port_thread_uses_psp
+                0x08000fba        0xa build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                0x08000fba                hr_port_thread_uses_psp
+ .text.hr_port_enter_critical
+                0x08000fc4       0x10 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                0x08000fc4                hr_port_enter_critical
+ .text.hr_port_exit_critical
+                0x08000fd4        0xe build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                0x08000fd4                hr_port_exit_critical
+ .text.hr_port_is_inside_isr
+                0x08000fe2        0xc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                0x08000fe2                hr_port_is_inside_isr
+ .text.hr_port_align_down
+                0x08000fee        0x6 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .text.hr_port_initialize_stack_raw
+                0x08000ff4       0xb6 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+                0x08000ff4                hr_port_initialize_stack_raw
+ *fill*         0x080010aa        0x2 
+ .text.hr_kernel_panic
+                0x080010ac        0xc build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .text.hr_kernel_current_is_idle
+                0x080010b8       0x18 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .text.hr_idle_task
+                0x080010d0        0x8 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .text.hr_kernel_init
+                0x080010d8       0xa0 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                0x080010d8                hr_kernel_init
+ .text.hr_kernel_register_task
+                0x08001178       0xb0 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                0x08001178                hr_kernel_register_task
+ .text.hr_kernel_prepare_start
+                0x08001228       0x6c build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                0x08001228                hr_kernel_prepare_start
+ .text.hr_kernel_delay_current
+                0x08001294       0xc0 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                0x08001294                hr_kernel_delay_current
+ .text.hr_kernel_select_next_from_pendsv
+                0x08001354      0x104 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                0x08001354                hr_kernel_select_next_from_pendsv
+ .text.hr_kernel_tick_from_isr
+                0x08001458       0xe4 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                0x08001458                hr_kernel_tick_from_isr
+ .text.hr_kernel_start
+                0x0800153c       0x1a build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                0x0800153c                hr_kernel_start
+ *fill*         0x08001556        0x2 
+ .text.hr_kernel_is_running
+                0x08001558       0x14 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                0x08001558                hr_kernel_is_running
+ .text.hr_kernel_get_tick
+                0x0800156c        0xc build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                0x0800156c                hr_kernel_get_tick
+ .text.hr_kernel_current_task_internal
+                0x08001578        0xc build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                0x08001578                hr_kernel_current_task_internal
+ .text.hr_time_now
+                0x08001584        0x8 build/07-task-delay-timeout/kernel/src/hr_time.o
+                0x08001584                hr_time_now
+ .text.SysTick_Handler
+                0x0800158c        0x8 build/07-task-delay-timeout/kernel/src/hr_time.o
+                0x0800158c                SysTick_Handler
+ .text.Reset_Handler
+                0x08001594       0x44 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+                0x08001594                Reset_Handler
+ .text.Default_Handler
+                0x080015d8        0x4 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+                0x080015d8                EXTI2_IRQHandler
+                0x080015d8                DebugMon_Handler
+                0x080015d8                TIM1_CC_IRQHandler
+                0x080015d8                PVD_IRQHandler
+                0x080015d8                NMI_Handler
+                0x080015d8                EXTI3_IRQHandler
+                0x080015d8                EXTI0_IRQHandler
+                0x080015d8                I2C2_EV_IRQHandler
+                0x080015d8                ADC1_2_IRQHandler
+                0x080015d8                SPI1_IRQHandler
+                0x080015d8                TAMPER_IRQHandler
+                0x080015d8                DMA1_Channel4_IRQHandler
+                0x080015d8                USART3_IRQHandler
+                0x080015d8                RTC_IRQHandler
+                0x080015d8                DMA1_Channel7_IRQHandler
+                0x080015d8                CAN1_RX1_IRQHandler
+                0x080015d8                TIM4_IRQHandler
+                0x080015d8                I2C1_EV_IRQHandler
+                0x080015d8                DMA1_Channel6_IRQHandler
+                0x080015d8                TIM3_IRQHandler
+                0x080015d8                RCC_IRQHandler
+                0x080015d8                TIM1_TRG_COM_IRQHandler
+                0x080015d8                DMA1_Channel1_IRQHandler
+                0x080015d8                EXTI15_10_IRQHandler
+                0x080015d8                EXTI9_5_IRQHandler
+                0x080015d8                SPI2_IRQHandler
+                0x080015d8                DMA1_Channel5_IRQHandler
+                0x080015d8                EXTI4_IRQHandler
+                0x080015d8                USB_LP_CAN1_RX0_IRQHandler
+                0x080015d8                USB_HP_CAN1_TX_IRQHandler
+                0x080015d8                DMA1_Channel3_IRQHandler
+                0x080015d8                TIM1_UP_IRQHandler
+                0x080015d8                WWDG_IRQHandler
+                0x080015d8                TIM2_IRQHandler
+                0x080015d8                TIM1_BRK_IRQHandler
+                0x080015d8                EXTI1_IRQHandler
+                0x080015d8                RTCAlarm_IRQHandler
+                0x080015d8                USART2_IRQHandler
+                0x080015d8                I2C2_ER_IRQHandler
+                0x080015d8                DMA1_Channel2_IRQHandler
+                0x080015d8                CAN1_SCE_IRQHandler
+                0x080015d8                FLASH_IRQHandler
+                0x080015d8                USART1_IRQHandler
+                0x080015d8                I2C1_ER_IRQHandler
+                0x080015d8                USBWakeUp_IRQHandler
+ *(.rodata)
+ *(.rodata*)
+ .rodata.divisors.0
+                0x080015dc        0x8 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .rodata.divisors.1
+                0x080015e4       0x20 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .rodata.board_uart_write_line.str1.4
+                0x08001604      0x2c5 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                                  0x3 (size before relaxing)
+ .rodata.board_print_boot_banner.str1.4
+                0x080018c9       0xa8 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .rodata.verify_task_context.str1.4
+                0x080018c9       0x1d build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .rodata.heartbeat_task.str1.4
+                0x080018c9       0x4f build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .rodata.periodic_task.str1.4
+                0x080018c9       0x4e build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .rodata.main.str1.4
+                0x080018c9      0x159 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .rodata.hr_kernel_init.str1.4
+                0x080018c9        0x5 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ *(.init)
+ *(.fini)
+                0x08001a24                        . = ALIGN (0x4)
+ *fill*         0x080018c9        0x3 
+                0x080018cc                        _etext = .
+
+.glue_7         0x080018cc        0x0
+ .glue_7        0x080018cc        0x0 linker stubs
+
+.glue_7t        0x080018cc        0x0
+ .glue_7t       0x080018cc        0x0 linker stubs
+
+.vfp11_veneer   0x080018cc        0x0
+ .vfp11_veneer  0x080018cc        0x0 linker stubs
+
+.v4_bx          0x080018cc        0x0
+ .v4_bx         0x080018cc        0x0 linker stubs
+
+.iplt           0x080018cc        0x0
+ .iplt          0x080018cc        0x0 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+
+.rel.dyn        0x080018cc        0x0
+ .rel.iplt      0x080018cc        0x0 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+
+.ARM.exidx      0x080018cc        0x0
+                0x080018cc                        __exidx_start = .
+ *(.ARM.exidx*)
+                0x080018cc                        __exidx_end = .
+                0x080018cc                        _sidata = LOADADDR (.data)
+
+.data           0x20000000        0x4 load address 0x080018cc
+                0x20000000                        . = ALIGN (0x4)
+                0x20000000                        _sdata = .
+ *(.data)
+ *(.data*)
+ .data.SystemCoreClock
+                0x20000000        0x4 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+                0x20000000                SystemCoreClock
+                0x20000004                        . = ALIGN (0x4)
+                0x20000004                        _edata = .
+
+.igot.plt       0x20000004        0x0 load address 0x080018d0
+ .igot.plt      0x20000004        0x0 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+
+.bss            0x20000008      0xbd4 load address 0x080018d0
+                0x20000008                        . = ALIGN (0x4)
+                0x20000008                        _sbss = .
+                0x20000008                        __bss_start__ = .
+ *(.bss)
+ *(.bss*)
+ .bss.g_millisecond_tick
+                0x20000008        0x4 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .bss.g_heartbeat_stack
+                0x2000000c      0x280 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .bss.g_periodic_stack
+                0x2000028c      0x280 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ *fill*         0x2000050c        0x4 
+ .bss.g_heartbeat_task
+                0x20000510      0x140 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .bss.g_periodic_task
+                0x20000650      0x140 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .bss.g_hr_current_task_control_block
+                0x20000790        0x4 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                0x20000790                g_hr_current_task_control_block
+ .bss.g_idle_stack
+                0x20000794      0x200 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ *fill*         0x20000994        0x4 
+ .bss.g_idle_task
+                0x20000998      0x140 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .bss.g_kernel_tick
+                0x20000ad8        0x4 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .bss.g_task_count
+                0x20000adc        0x4 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .bss.g_current_task
+                0x20000ae0        0x4 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .bss.g_timeout_list
+                0x20000ae4       0x38 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .bss.g_all_tasks
+                0x20000b1c       0x14 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .bss.g_scheduler
+                0x20000b30       0xa8 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .bss.g_kernel_state
+                0x20000bd8        0x1 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ *(COMMON)
+                0x20000bdc                        . = ALIGN (0x4)
+ *fill*         0x20000bd9        0x3 
+                0x20000bdc                        _ebss = .
+                0x20000bdc                        __bss_end__ = .
+
+.heap           0x20000bdc        0x4 load address 0x080018d0
+                0x20000be0                        . = ALIGN (0x8)
+ *fill*         0x20000bdc        0x4 
+                0x20000be0                        __end__ = .
+                0x20000be0                        end = __end__
+                0x20000be0                        . = (. + _Min_Heap_Size)
+                0x20000be0                        __heap_end__ = .
+
+/DISCARD/
+ *(.comment)
+ *(.note*)
+                0x00000001                        ASSERT ((__heap_end__ <= _sstack), RAM overflow: data/heap collides with reserved main stack)
+OUTPUT(build/07-task-delay-timeout/hairtos_baremetal.elf elf32-littlearm)
+LOAD linker stubs
+
+.ARM.attributes
+                0x00000000       0x2b
+ .ARM.attributes
+                0x00000000       0x2d build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .ARM.attributes
+                0x0000002d       0x2d build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .ARM.attributes
+                0x0000005a       0x2d build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .ARM.attributes
+                0x00000087       0x2d build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .ARM.attributes
+                0x000000b4       0x2d build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .ARM.attributes
+                0x000000e1       0x2d build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .ARM.attributes
+                0x0000010e       0x2d build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .ARM.attributes
+                0x0000013b       0x2d build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .ARM.attributes
+                0x00000168       0x2d build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .ARM.attributes
+                0x00000195       0x2d build/07-task-delay-timeout/kernel/src/hr_list.o
+ .ARM.attributes
+                0x000001c2       0x2d build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .ARM.attributes
+                0x000001ef       0x2d build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .ARM.attributes
+                0x0000021c       0x2d build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .ARM.attributes
+                0x00000249       0x2d build/07-task-delay-timeout/kernel/src/hr_task.o
+ .ARM.attributes
+                0x00000276       0x2d build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .ARM.attributes
+                0x000002a3       0x2d build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .ARM.attributes
+                0x000002d0       0x2d build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .ARM.attributes
+                0x000002fd       0x2d build/07-task-delay-timeout/kernel/src/hr_time.o
+ .ARM.attributes
+                0x0000032a       0x21 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+ .ARM.attributes
+                0x0000034b       0x21 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_info     0x00000000     0x6a57
+ .debug_info    0x00000000      0x2df build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_info    0x000002df      0x476 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_info    0x00000755      0x13b build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_info    0x00000890      0x5c4 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_info    0x00000e54       0xc1 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_info    0x00000f15      0x572 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_info    0x00001487      0x304 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_info    0x0000178b      0x19c build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_info    0x00001927      0x7b8 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_info    0x000020df      0x663 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_info    0x00002742      0xb16 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_info    0x00003258      0x6db build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_info    0x00003933      0x875 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_info    0x000041a8      0xe75 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_info    0x0000501d      0x341 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_info    0x0000535e      0x1e5 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_info    0x00005543     0x10ff build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_info    0x00006642       0xeb build/07-task-delay-timeout/kernel/src/hr_time.o
+ .debug_info    0x0000672d      0x2e3 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+ .debug_info    0x00006a10       0x47 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_abbrev   0x00000000     0x1af2
+ .debug_abbrev  0x00000000      0x10b build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_abbrev  0x0000010b      0x191 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_abbrev  0x0000029c       0x96 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_abbrev  0x00000332      0x1a0 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_abbrev  0x000004d2       0x6a build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_abbrev  0x0000053c      0x183 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_abbrev  0x000006bf      0x156 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_abbrev  0x00000815      0x13f build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_abbrev  0x00000954      0x206 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_abbrev  0x00000b5a      0x140 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_abbrev  0x00000c9a      0x210 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_abbrev  0x00000eaa      0x187 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_abbrev  0x00001031      0x1d2 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_abbrev  0x00001203      0x2d1 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_abbrev  0x000014d4      0x146 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_abbrev  0x0000161a       0xb6 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_abbrev  0x000016d0      0x332 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_abbrev  0x00001a02       0xa2 build/07-task-delay-timeout/kernel/src/hr_time.o
+ .debug_abbrev  0x00001aa4       0x26 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+ .debug_abbrev  0x00001aca       0x28 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_aranges  0x00000000      0x6e0
+ .debug_aranges
+                0x00000000       0x30 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_aranges
+                0x00000030       0x50 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_aranges
+                0x00000080       0x40 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_aranges
+                0x000000c0       0x78 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_aranges
+                0x00000138       0x28 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_aranges
+                0x00000160       0x60 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_aranges
+                0x000001c0       0x38 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_aranges
+                0x000001f8       0x38 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_aranges
+                0x00000230       0x38 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_aranges
+                0x00000268       0xa8 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_aranges
+                0x00000310       0xc0 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_aranges
+                0x000003d0       0x60 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_aranges
+                0x00000430       0x70 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_aranges
+                0x000004a0       0xb8 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_aranges
+                0x00000558       0x60 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_aranges
+                0x000005b8       0x28 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_aranges
+                0x000005e0       0x90 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_aranges
+                0x00000670       0x28 build/07-task-delay-timeout/kernel/src/hr_time.o
+ .debug_aranges
+                0x00000698       0x28 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+ .debug_aranges
+                0x000006c0       0x20 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_rnglists
+                0x00000000      0x4f7
+ .debug_rnglists
+                0x00000000       0x1f build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_rnglists
+                0x0000001f       0x37 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_rnglists
+                0x00000056       0x2b build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_rnglists
+                0x00000081       0x55 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_rnglists
+                0x000000d6       0x19 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_rnglists
+                0x000000ef       0x43 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_rnglists
+                0x00000132       0x25 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_rnglists
+                0x00000157       0x25 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_rnglists
+                0x0000017c       0x26 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_rnglists
+                0x000001a2       0x7a build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_rnglists
+                0x0000021c       0x8b build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_rnglists
+                0x000002a7       0x4f build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_rnglists
+                0x000002f6       0x73 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_rnglists
+                0x00000369       0x86 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_rnglists
+                0x000003ef       0x43 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_rnglists
+                0x00000432       0x1a build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_rnglists
+                0x0000044c       0x79 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_rnglists
+                0x000004c5       0x19 build/07-task-delay-timeout/kernel/src/hr_time.o
+ .debug_rnglists
+                0x000004de       0x19 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+
+.debug_macro    0x00000000     0x1ab0
+ .debug_macro   0x00000000       0x3b build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x0000003b      0xac0 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000afb       0x22 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000b1d      0x190 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000cad      0x34e build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x00000ffb      0x193 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_macro   0x0000118e       0x41 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_macro   0x000011cf       0x3b build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_macro   0x0000120a       0x78 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_macro   0x00001282       0x2e build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_macro   0x000012b0       0x45 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_macro   0x000012f5       0x4b build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_macro   0x00001340       0x5b build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_macro   0x0000139b       0x45 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_macro   0x000013e0       0xa5 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_macro   0x00001485       0xac build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_macro   0x00001531       0x37 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_macro   0x00001568       0x6f build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_macro   0x000015d7       0x6f build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_macro   0x00001646       0x6f build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_macro   0x000016b5       0xd5 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_macro   0x0000178a       0xb4 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x0000183e       0x82 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_macro   0x000018c0       0x52 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_macro   0x00001912       0xdb build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_macro   0x000019ed       0xc3 build/07-task-delay-timeout/kernel/src/hr_time.o
+
+.debug_line     0x00000000     0x3fdb
+ .debug_line    0x00000000      0x15a build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_line    0x0000015a      0x26c build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_line    0x000003c6      0x135 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_line    0x000004fb      0x32a build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_line    0x00000825      0x110 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_line    0x00000935      0x2ec build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_line    0x00000c21      0x202 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_line    0x00000e23      0x1af build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_line    0x00000fd2      0x2c8 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_line    0x0000129a      0x626 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_line    0x000018c0      0x706 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_line    0x00001fc6      0x381 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_line    0x00002347      0x583 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_line    0x000028ca      0x7e7 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_line    0x000030b1      0x237 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_line    0x000032e8      0x208 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_line    0x000034f0      0x838 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_line    0x00003d28      0x1cb build/07-task-delay-timeout/kernel/src/hr_time.o
+ .debug_line    0x00003ef3       0x73 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+ .debug_line    0x00003f66       0x75 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_str      0x00000000     0x6a35
+ .debug_str     0x00000000     0x6a35 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+                               0x4688 (size before relaxing)
+ .debug_str     0x00006a35     0x46fb build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_str     0x00006a35     0x45ba build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_str     0x00006a35     0x4948 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_str     0x00006a35     0x45a0 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_str     0x00006a35     0x4759 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_str     0x00006a35     0x472c build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_str     0x00006a35     0x462d build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_str     0x00006a35     0x4376 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_str     0x00006a35     0x34c7 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_str     0x00006a35     0x445b build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_str     0x00006a35     0x430e build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_str     0x00006a35     0x43bb build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_str     0x00006a35     0x478c build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_str     0x00006a35     0x45dc build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_str     0x00006a35     0x42bd build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_str     0x00006a35     0x4957 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_str     0x00006a35     0x4068 build/07-task-delay-timeout/kernel/src/hr_time.o
+ .debug_str     0x00006a35      0x44d build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+ .debug_str     0x00006a35       0x8b build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+
+.debug_frame    0x00000000     0x1048
+ .debug_frame   0x00000000       0x50 build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+ .debug_frame   0x00000050       0xb4 build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_frame   0x00000104       0x80 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+ .debug_frame   0x00000184      0x138 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_frame   0x000002bc       0x30 build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+ .debug_frame   0x000002ec       0xdc build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_frame   0x000003c8       0x6c build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_frame   0x00000434       0x50 build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_frame   0x00000484       0x80 build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_frame   0x00000504      0x18c build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_frame   0x00000690      0x26c build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_frame   0x000008fc      0x130 build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_frame   0x00000a2c      0x174 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_frame   0x00000ba0      0x208 build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_frame   0x00000da8       0xb4 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_frame   0x00000e5c       0x3c build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_frame   0x00000e98      0x170 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+ .debug_frame   0x00001008       0x40 build/07-task-delay-timeout/kernel/src/hr_time.o
+
+.debug_loclists
+                0x00000000     0x26cc
+ .debug_loclists
+                0x00000000      0x15a build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+ .debug_loclists
+                0x0000015a       0xc7 build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+ .debug_loclists
+                0x00000221      0x2f7 build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+ .debug_loclists
+                0x00000518       0xc8 build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+ .debug_loclists
+                0x000005e0       0x3f build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+ .debug_loclists
+                0x0000061f       0xbf build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+ .debug_loclists
+                0x000006de      0x5b8 build/07-task-delay-timeout/kernel/src/hr_list.o
+ .debug_loclists
+                0x00000c96      0x655 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+ .debug_loclists
+                0x000012eb      0x32f build/07-task-delay-timeout/kernel/src/hr_wait.o
+ .debug_loclists
+                0x0000161a      0x465 build/07-task-delay-timeout/kernel/src/hr_timeout.o
+ .debug_loclists
+                0x00001a7f      0x5ce build/07-task-delay-timeout/kernel/src/hr_task.o
+ .debug_loclists
+                0x0000204d      0x104 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+ .debug_loclists
+                0x00002151      0x288 build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+ .debug_loclists
+                0x000023d9      0x2f3 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+
+.debug_line_str
+                0x00000000       0x6b
+ .debug_line_str
+                0x00000000       0x6b build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+                                 0x4b (size before relaxing)
+ .debug_line_str
+                0x0000006b       0x4b build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+
+Cross Reference Table
+
+Symbol                                            File
+ADC1_2_IRQHandler                                 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+BusFault_Handler                                  build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+CAN1_RX1_IRQHandler                               build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+CAN1_SCE_IRQHandler                               build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel1_IRQHandler                          build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel2_IRQHandler                          build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel3_IRQHandler                          build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel4_IRQHandler                          build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel5_IRQHandler                          build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel6_IRQHandler                          build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel7_IRQHandler                          build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+DebugMon_Handler                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+EXTI0_IRQHandler                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+EXTI15_10_IRQHandler                              build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+EXTI1_IRQHandler                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+EXTI2_IRQHandler                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+EXTI3_IRQHandler                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+EXTI4_IRQHandler                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+EXTI9_5_IRQHandler                                build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+FLASH_IRQHandler                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+HardFault_Handler                                 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+I2C1_ER_IRQHandler                                build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+I2C1_EV_IRQHandler                                build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+I2C2_ER_IRQHandler                                build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+I2C2_EV_IRQHandler                                build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+MemManage_Handler                                 build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+NMI_Handler                                       build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+PVD_IRQHandler                                    build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+PendSV_Handler                                    build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+                                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+RCC_IRQHandler                                    build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+RTCAlarm_IRQHandler                               build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+RTC_IRQHandler                                    build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+Reset_Handler                                     build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+SPI1_IRQHandler                                   build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+SPI2_IRQHandler                                   build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+SVC_Handler                                       build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+                                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+SysTick_Handler                                   build/07-task-delay-timeout/kernel/src/hr_time.o
+SystemCoreClock                                   build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                                                  build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+SystemCoreClockUpdate                             build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+SystemInit                                        build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+                                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+TAMPER_IRQHandler                                 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+TIM1_BRK_IRQHandler                               build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+TIM1_CC_IRQHandler                                build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+TIM1_TRG_COM_IRQHandler                           build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+TIM1_UP_IRQHandler                                build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+TIM2_IRQHandler                                   build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+TIM3_IRQHandler                                   build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+TIM4_IRQHandler                                   build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+USART1_IRQHandler                                 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+USART2_IRQHandler                                 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+USART3_IRQHandler                                 build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+USBWakeUp_IRQHandler                              build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+USB_HP_CAN1_TX_IRQHandler                         build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+USB_LP_CAN1_RX0_IRQHandler                        build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+UsageFault_Handler                                build/07-task-delay-timeout/soc/stm32f1/stm32f1_irq.o
+WWDG_IRQHandler                                   build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+_ebss                                             build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+_edata                                            build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+_estack                                           build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+                                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+_sbss                                             build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+_sdata                                            build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+_sidata                                           build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+board_clock_is_72mhz                              build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+board_delay_ms                                    build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+board_get_core_clock_hz                           build/07-task-delay-timeout/boards/bluepill_f103c8/board_clock.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+board_init                                        build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+board_led_off                                     build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+board_led_on                                      build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+board_led_toggle                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+board_millis                                      build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+board_panic                                       build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+board_uart_write_char                             build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+board_uart_write_line                             build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+board_uart_write_string                           build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+board_uart_write_u32                              build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+g_hr_current_task_control_block                   build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+g_pfnVectors                                      build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+                                                  build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+hr_gpio_config_alternate_push_pull                build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+hr_gpio_config_input_floating                     build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+hr_gpio_config_output_push_pull                   build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+hr_gpio_enable_port_clock                         build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+hr_gpio_read                                      build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+hr_gpio_toggle                                    build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+hr_gpio_write                                     build/07-task-delay-timeout/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+hr_hw_timer_delay_ms                              build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+hr_hw_timer_init_1khz                             build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+hr_hw_timer_millis                                build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+hr_hw_timer_tick_isr                              build/07-task-delay-timeout/drivers/timer/src/hr_hw_timer_stm32f1.o
+hr_kernel_current_task_internal                   build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_kernel_delay_current                           build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_kernel_get_state                               build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_kernel_get_task_count                          build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_kernel_get_tick                                build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_time.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_kernel_init                                    build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+hr_kernel_is_running                              build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_kernel_prepare_start                           build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_kernel_register_task                           build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_kernel_select_next_from_pendsv                 build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+hr_kernel_start                                   build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+hr_kernel_tick_from_isr                           build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_time.o
+hr_list_back                                      build/07-task-delay-timeout/kernel/src/hr_list.o
+hr_list_front                                     build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_list_init                                      build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_list_insert_before                             build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+hr_list_is_empty                                  build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_list_next                                      build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+hr_list_node_init                                 build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_list_node_is_linked                            build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+hr_list_node_owner                                build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_list_pop_back                                  build/07-task-delay-timeout/kernel/src/hr_list.o
+hr_list_pop_front                                 build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_list_previous                                  build/07-task-delay-timeout/kernel/src/hr_list.o
+hr_list_push_back                                 build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_list_push_front                                build/07-task-delay-timeout/kernel/src/hr_list.o
+hr_list_remove                                    build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_list_size                                      build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_list_validate                                  build/07-task-delay-timeout/kernel/src/hr_list.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_port_configure_kernel_exceptions               build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_port_enter_critical                            build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_port_exit_critical                             build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_port_initialize_stack                          build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_port_initialize_stack_raw                      build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port_stack.o
+                                                  build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+hr_port_is_inside_isr                             build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_port_request_context_switch                    build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_port_start_first_task                          build/07-task-delay-timeout/arch/arm/cortex-m3/hr_portasm.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_port_thread_uses_psp                           build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+hr_port_wait_for_interrupt                        build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_port_yield_from_isr                            build/07-task-delay-timeout/arch/arm/cortex-m3/hr_port.o
+hr_ready_node_init                                build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_ready_set_bitmap                               build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_ready_set_init                                 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_ready_set_insert                               build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_ready_set_is_empty                             build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_ready_set_peek_highest                         build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_ready_set_remove                               build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_ready_set_rotate_highest                       build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_ready_set_size                                 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_ready_set_validate                             build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_scheduler_add_ready                            build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_scheduler_init                                 build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_scheduler_ready_bitmap                         build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_scheduler_ready_count                          build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_scheduler_remove_ready                         build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_scheduler_select_highest                       build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_scheduler_validate                             build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+hr_scheduler_yield_current                        build/07-task-delay-timeout/kernel/src/hr_scheduler.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_task_control_block                             build/07-task-delay-timeout/kernel/src/hr_task.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_task_control_block_const                       build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_task_create_static                             build/07-task-delay-timeout/kernel/src/hr_task.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+hr_task_current                                   build/07-task-delay-timeout/kernel/src/hr_task.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+hr_task_delay                                     build/07-task-delay-timeout/kernel/src/hr_task.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+hr_task_delay_until                               build/07-task-delay-timeout/kernel/src/hr_task.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+hr_task_exit_error                                build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_task_get_base_priority                         build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_task_get_effective_priority                    build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_task_get_name                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_task_get_stack_high_watermark                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_task_get_stack_words                           build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_task_get_state                                 build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_task_is_valid                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_task_stack_guard_is_valid                      build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_task_start                                     build/07-task-delay-timeout/kernel/src/hr_task.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+hr_task_transition_state                          build/07-task-delay-timeout/kernel/src/hr_task.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_task_yield                                     build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_time_now                                       build/07-task-delay-timeout/kernel/src/hr_time.o
+                                                  build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+hr_timeout_list_advance                           build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_timeout_list_init                              build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_timeout_list_insert                            build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_timeout_list_is_empty                          build/07-task-delay-timeout/kernel/src/hr_timeout.o
+hr_timeout_list_last_tick                         build/07-task-delay-timeout/kernel/src/hr_timeout.o
+hr_timeout_list_remove                            build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_kernel.o
+hr_timeout_list_size                              build/07-task-delay-timeout/kernel/src/hr_timeout.o
+hr_timeout_list_validate                          build/07-task-delay-timeout/kernel/src/hr_timeout.o
+hr_timeout_node_init                              build/07-task-delay-timeout/kernel/src/hr_timeout.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+hr_uart_init                                      build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+hr_uart_try_read_char                             build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+hr_uart_write_char                                build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+hr_uart_write_string                              build/07-task-delay-timeout/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o
+hr_wait_list_init                                 build/07-task-delay-timeout/kernel/src/hr_wait.o
+hr_wait_list_insert                               build/07-task-delay-timeout/kernel/src/hr_wait.o
+hr_wait_list_is_empty                             build/07-task-delay-timeout/kernel/src/hr_wait.o
+hr_wait_list_peek                                 build/07-task-delay-timeout/kernel/src/hr_wait.o
+hr_wait_list_pop                                  build/07-task-delay-timeout/kernel/src/hr_wait.o
+hr_wait_list_remove                               build/07-task-delay-timeout/kernel/src/hr_wait.o
+hr_wait_list_size                                 build/07-task-delay-timeout/kernel/src/hr_wait.o
+hr_wait_list_validate                             build/07-task-delay-timeout/kernel/src/hr_wait.o
+hr_wait_node_init                                 build/07-task-delay-timeout/kernel/src/hr_wait.o
+                                                  build/07-task-delay-timeout/kernel/src/hr_task.o
+main                                              build/07-task-delay-timeout/examples/07-task-delay-timeout/main.o
+                                                  build/07-task-delay-timeout/soc/stm32f1/startup_stm32f103.o
+stm32f1_clock_configure_hse_pll_72mhz             build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+                                                  build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+stm32f1_clock_get_hclk_hz                         build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+                                                  build/07-task-delay-timeout/soc/stm32f1/system_stm32f1.o
+stm32f1_clock_get_pclk1_hz                        build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+stm32f1_clock_get_pclk2_hz                        build/07-task-delay-timeout/soc/stm32f1/stm32f1_clock.o
+                                                  build/07-task-delay-timeout/boards/bluepill_f103c8/board.o

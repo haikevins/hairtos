@@ -9,8 +9,8 @@
 | SVC first-task startup and PSP transition | 4 | Implemented |
 | PendSV task-to-task context switching | 5 | Implemented |
 | Fixed-priority scheduling integration | 6 | Implemented |
-| Kernel SysTick, delay, and timeout | 7 | Not started |
-| Preemption and round-robin | 8 | Not started |
+| Kernel SysTick, delay, periodic delay, timeout wake | 7 | Implemented |
+| General preemption and tick round-robin | 8 | Not started |
 | Queue and blocking IPC | 9 | Not started |
 | Semaphore, mutex, priority inheritance | 10 | Not started |
 | Task suspend/resume | 11 | Not started |
@@ -23,4 +23,6 @@
 | MPU isolation | Future major version | Deferred |
 | SMP/multi-core | Out of v1.x scope | Deferred |
 
-Phase 6 proves fixed-priority selection and FIFO rotation among equal-priority READY tasks. Runtime wake-up preemption and tick-based round-robin remain future work.
+Phase 7 proves blocking delay and timeout wake-up. A woken task immediately leaves
+idle through PendSV, but preemption of an arbitrary running lower-priority task
+and tick-based round-robin remain Phase 8 work.

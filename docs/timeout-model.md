@@ -1,18 +1,38 @@
 # Timeout Model
 
-`hr_tick_t` is an unsigned 32-bit counter incremented at 1 kHz.
+`hr_tick_t` is an unsigned 32-bit counter incremented at 1 kHz by the kernel
+`SysTick_Handler`.
 
-- `HR_NO_WAIT` is non-blocking.
-- Finite values are maximum wait ticks.
-- `HR_WAIT_FOREVER` has no timeout.
+Phase 7 implements finite task delays:
 
-A finite blocked task belongs to both an object wait list and a timeout
-structure. Object availability and timeout race through one atomic transition,
-so a task cannot be readied twice.
+- `hr_task_delay(ticks)` blocks relative to the current tick;
+- `hr_task_delay_until(anchor, period)` blocks to an absolute periodic release;
+- `ticks == 0` behaves as a cooperative yield;
+- `HR_WAIT_FOREVER` is not accepted by the task-delay API and is reserved for
+  future object waits.
 
-Tick wrap is a required test case. Tests set the tick counter near `UINT32_MAX`.
-The implementation will choose either bounded signed-difference comparisons or
-two ordered timeout lists before Phase 8.
+## Two-epoch timeout lists
 
-Periodic work uses `hr_task_delay_until()` to avoid accumulating execution-time
-drift.
+The timeout module maintains a current list and an overflow list. A deadline
+whose unsigned addition wraps below the current tick is inserted into the
+overflow list. When the kernel tick wraps, the list roles are swapped.
+
+Each list is ordered by wake tick and preserves FIFO order for equal deadlines.
+
+## State transition
+
+```text
+RUNNING
+  -> remove ready node
+  -> add timeout node
+  -> BLOCKED
+  -> timeout expires
+  -> add ready node
+  -> READY
+```
+
+A timeout node has one owner task, and a task cannot be readied twice.
+
+Periodic work uses `hr_task_delay_until()` so execution time does not accumulate
+as phase drift. Periods are bounded to `INT32_MAX` ticks to keep wrap-safe
+signed-difference comparisons unambiguous.

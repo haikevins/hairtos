@@ -7,6 +7,7 @@
 #define HR_PORT_SCB_ICSR_ADDRESS         0xE000ED04UL
 #define HR_PORT_SCB_CCR_ADDRESS          0xE000ED14UL
 #define HR_PORT_SCB_SHP_ADDRESS          0xE000ED18UL
+#define HR_PORT_SYSTICK_VAL_ADDRESS       0xE000E018UL
 #define HR_PORT_SCB_ICSR_PENDSVSET       (UINT32_C(1) << 28U)
 #define HR_PORT_SCB_CCR_STKALIGN         (UINT32_C(1) << 9U)
 #define HR_PORT_SHP_SVC_INDEX            7U
@@ -44,6 +45,7 @@ void hr_port_configure_kernel_exceptions(void)
     priorities[HR_PORT_SHP_SVC_INDEX] = HR_PORT_PRIORITY_HIGHEST;
     priorities[HR_PORT_SHP_PENDSV_INDEX] = HR_PORT_PRIORITY_LOWEST;
     priorities[HR_PORT_SHP_SYSTICK_INDEX] = HR_PORT_PRIORITY_MEDIUM;
+    HR_PORT_REG32(HR_PORT_SYSTICK_VAL_ADDRESS) = 0U;
 
     __asm volatile ("dsb" ::: "memory");
     __asm volatile ("isb" ::: "memory");
@@ -68,4 +70,38 @@ bool hr_port_thread_uses_psp(void)
 
     __asm volatile ("mrs %0, control" : "=r"(control));
     return (control & UINT32_C(2)) != 0U;
+}
+
+hr_irq_state_t hr_port_enter_critical(void)
+{
+    hr_irq_state_t state;
+
+    __asm volatile ("mrs %0, primask" : "=r"(state));
+    __asm volatile ("cpsid i" ::: "memory");
+    __asm volatile ("dsb" ::: "memory");
+    __asm volatile ("isb" ::: "memory");
+    return state;
+}
+
+void hr_port_exit_critical(hr_irq_state_t state)
+{
+    __asm volatile ("msr primask, %0" :: "r"(state) : "memory");
+    __asm volatile ("dsb" ::: "memory");
+    __asm volatile ("isb" ::: "memory");
+}
+
+bool hr_port_is_inside_isr(void)
+{
+    uint32_t ipsr;
+
+    __asm volatile ("mrs %0, ipsr" : "=r"(ipsr));
+    return ipsr != 0U;
+}
+
+void hr_port_yield_from_isr(bool required)
+{
+    if (required)
+    {
+        hr_port_request_context_switch();
+    }
 }

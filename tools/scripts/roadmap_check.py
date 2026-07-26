@@ -21,6 +21,13 @@ required = [
     "docs/example-index.md",
     "labs/memory-allocator/README.md",
     "benchmarks/kernel/README.md",
+    "docs/diagnostics.md",
+    "docs/stress-test-plan.md",
+    "docs/api-reference.md",
+    "docs/porting-guide.md",
+    "docs/cortex-m0-port-proof.md",
+    "docs/release-checklist.md",
+    "docs/phase16-diagnostics-stabilization.md",
 ]
 
 missing = [item for item in required if not (ROOT / item).is_file()]
@@ -47,8 +54,8 @@ if missing_phases:
     sys.exit(1)
 
 readme = (ROOT / "README.md").read_text(encoding="utf-8")
-if "Current status: Phase 15 complete" not in readme:
-    print("README no longer identifies Phase 15 as the current completed phase")
+if "Current status: Phase 16 complete" not in readme:
+    print("README no longer identifies Phase 16 as the current completed phase")
     sys.exit(1)
 
 subprocess_required = ROOT / "tools/scripts/example_layout_check.py"
@@ -57,5 +64,5 @@ if not subprocess_required.is_file():
     sys.exit(1)
 
 print("HairRTOS roadmap check: PASS")
-print("Current implementation phase: Phase 15")
-print("Future roadmap addition: diagnostics and stabilization")
+print("Current implementation phase: Phase 16")
+print("Roadmap Phase 0-16 source status: complete")

@@ -3,7 +3,7 @@ EXAMPLE          ?= 01-baremetal-foundation
 BUILD_DIR        ?= build/$(EXAMPLE)
 TARGET           := $(BUILD_DIR)/$(PROJECT)
 
-TARGET_EXAMPLES  := 01-baremetal-foundation 03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 14-memory-allocator-lab 15-kernel-benchmark
+TARGET_EXAMPLES  := 01-baremetal-foundation 03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 14-memory-allocator-lab 15-kernel-benchmark 16-diagnostics-stress-stabilization
 HOST_EXAMPLES    := 02-kernel-data-structures-host
 FIRMWARE_GOALS   := all elf bin hex size flash gdb disasm
 REQUESTED_FW     := $(filter $(FIRMWARE_GOALS),$(MAKECMDGOALS))
@@ -66,11 +66,11 @@ PHASE3_C_SOURCES := kernel/src/hr_list.c \
 C_SOURCES        := $(PLATFORM_C_SOURCES) examples/$(EXAMPLE)/main.c
 ASM_SOURCES      := soc/stm32f1/startup_stm32f103.S
 
-ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark),)
+ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark 16-diagnostics-stress-stabilization),)
 C_SOURCES        += $(PHASE3_C_SOURCES)
 endif
 
-ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark),)
+ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark 16-diagnostics-stress-stabilization),)
 C_SOURCES        += kernel/src/hr_kernel.c
 ASM_SOURCES      += arch/arm/cortex-m3/hr_portasm.S
 endif
@@ -79,7 +79,7 @@ ifneq ($(filter $(EXAMPLE),01-baremetal-foundation 03-static-task-stack 04-start
 C_SOURCES        += $(BAREMETAL_TICK_SOURCE)
 endif
 
-ifneq ($(filter $(EXAMPLE),07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark),)
+ifneq ($(filter $(EXAMPLE),07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark 16-diagnostics-stress-stabilization),)
 C_SOURCES        += kernel/src/hr_time.c
 endif
 
@@ -125,6 +125,17 @@ C_SOURCES        += kernel/src/hr_context.c \
                     benchmarks/kernel/src/hr_benchmark_gpio.c
 endif
 
+ifeq ($(EXAMPLE),16-diagnostics-stress-stabilization)
+C_SOURCES        += kernel/src/hr_context.c \
+                    kernel/src/hr_queue.c \
+                    kernel/src/hr_semaphore.c \
+                    kernel/src/hr_mutex.c \
+                    kernel/src/hr_timer.c \
+                    kernel/src/hr_diagnostics.c \
+                    arch/arm/cortex-m3/hr_fault.c
+ASM_SOURCES      += arch/arm/cortex-m3/hr_faultasm.S
+endif
+
 ifeq ($(EXAMPLE),14-memory-allocator-lab)
 C_SOURCES        += labs/memory-allocator/src/hr_heap_lab.c \
                     labs/memory-allocator/src/hr_pool_lab.c
@@ -159,7 +170,13 @@ EXAMPLE_DEFINES  :=
 ifeq ($(EXAMPLE),07-task-delay-timeout)
 EXAMPLE_DEFINES  += -DHR_CFG_PREEMPTION=0 -DHR_CFG_TIME_SLICING=0
 endif
-ifeq ($(EXAMPLE),15-kernel-benchmark)
+ifeq ($(EXAMPLE),16-diagnostics-stress-stabilization)
+EXAMPLE_DEFINES  += -DHR_CFG_PREEMPTION=1 -DHR_CFG_TIME_SLICING=1 \
+                    -DHR_CFG_ENABLE_SOFTWARE_TIMER=1 \
+                    -DHR_CFG_TIMER_TASK_PRIORITY=1 \
+                    -DHR_CFG_ENABLE_DIAGNOSTICS=1 \
+                    -DHR_CFG_ENABLE_RUNTIME_STATS=1
+else ifeq ($(EXAMPLE),15-kernel-benchmark)
 EXAMPLE_DEFINES  += -DHR_CFG_PREEMPTION=1 -DHR_CFG_TIME_SLICING=0 \
                     -DHR_CFG_ENABLE_SOFTWARE_TIMER=1 \
                     -DHR_CFG_TIMER_TASK_PRIORITY=1
@@ -169,7 +186,7 @@ else
 EXAMPLE_DEFINES  += -DHR_CFG_ENABLE_SOFTWARE_TIMER=0
 endif
 
-CFLAGS           := $(TOOLCHAIN_FLAGS) $(COMMON_FLAGS) $(EXAMPLE_DEFINES) $(INCLUDES) -MMD -MP
+CFLAGS           := $(TOOLCHAIN_FLAGS) $(COMMON_FLAGS) $(EXAMPLE_DEFINES) $(EXTRA_DEFINES) $(INCLUDES) -MMD -MP
 ASFLAGS          := $(TOOLCHAIN_FLAGS) $(CPU_FLAGS) -g3 -x assembler-with-cpp $(INCLUDES)
 
 HOST_CC          ?= cc
@@ -177,12 +194,14 @@ HOST_BUILD_DIR   ?= build/host
 HOST_TEST        := $(HOST_BUILD_DIR)/completed_phase_tests
 PHASE2_EXAMPLE   := $(HOST_BUILD_DIR)/02-kernel-data-structures-host
 PHASE14_LAB      := $(HOST_BUILD_DIR)/14-memory-allocator-lab
+PHASE16_STRESS   := $(HOST_BUILD_DIR)/16-diagnostics-stress
 HOST_FLAGS       := -std=c11 -O0 -g3 -Wall -Wextra -Werror -Wshadow -Wundef \
                     -Wconversion -Wsign-conversion -pedantic \
-                    -fsanitize=address,undefined -fno-omit-frame-pointer
+                    -fsanitize=address,undefined -fno-omit-frame-pointer \
+                    -DHR_CFG_ENABLE_DIAGNOSTICS=1 -DHR_CFG_ENABLE_RUNTIME_STATS=1
 HOST_INCLUDES    := -Iconfig -Ikernel/include -Ikernel/internal -Itests/host \
                     -Iarch/arm/cortex-m3/include -Ihairevent/include -Ihairevent/internal \
-                    -Ilabs/memory-allocator/include -Ibenchmarks/kernel/include
+                    -Ilabs/memory-allocator/include -Ibenchmarks/kernel/include -Itests/stress
 HOST_SOURCES     := kernel/src/hr_list.c \
                     kernel/src/hr_scheduler.c \
                     kernel/src/hr_wait.c \
@@ -203,6 +222,8 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     labs/memory-allocator/src/hr_heap_lab.c \
                     labs/memory-allocator/src/hr_pool_lab.c \
                     benchmarks/kernel/src/hr_benchmark_stats.c \
+                    kernel/src/hr_diagnostics.c \
+                    tests/stress/phase16_stress_core.c \
                     arch/arm/cortex-m3/hr_port_stack.c \
                     tests/mocks/mock_port.c \
                     tests/host/test_main.c \
@@ -220,6 +241,8 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     tests/host/test_timer.c \
                     tests/host/test_hairevent.c \
                     tests/host/test_benchmark.c \
+                    tests/host/test_diagnostics.c \
+                    tests/stress/test_phase16_stress.c \
                     labs/memory-allocator/tests/test_heap_lab.c
 
 LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
@@ -228,7 +251,7 @@ LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
 
 .PHONY: all elf bin hex size flash erase debug-server gdb disasm \
         phase0-check phase1-check roadmap-check example-layout-check \
-        phase2-check phase3-check phase4-check phase5-check phase6-check phase7-check phase8-check phase9-check phase10-check phase11-check phase12-check phase13-check phase14-check phase15-check host-tests phase2-example phase14-lab \
+        phase2-check phase3-check phase4-check phase5-check phase6-check phase7-check phase8-check phase9-check phase10-check phase11-check phase12-check phase13-check phase14-check phase15-check phase16-check host-tests phase2-example phase14-lab phase16-stress \
         tree clean help
 
 all: elf bin hex size
@@ -287,6 +310,18 @@ $(PHASE14_LAB): labs/memory-allocator/src/hr_heap_lab.c \
 
 phase14-lab: $(PHASE14_LAB)
 	$(PHASE14_LAB)
+
+$(PHASE16_STRESS): kernel/src/hr_list.c kernel/src/hr_scheduler.c \
+        tests/stress/phase16_stress_core.c tests/stress/phase16_stress_main.c
+	@mkdir -p $(HOST_BUILD_DIR)
+	$(HOST_CC) $(HOST_FLAGS) $(HOST_INCLUDES) \
+		kernel/src/hr_list.c kernel/src/hr_scheduler.c \
+		tests/stress/phase16_stress_core.c \
+		tests/stress/phase16_stress_main.c -o $@
+
+phase16-stress: $(PHASE16_STRESS)
+	ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 \
+	UBSAN_OPTIONS=halt_on_error=1 $(PHASE16_STRESS)
 
 flash: $(TARGET).elf
 	$(OPENOCD) -f $(OPENOCD_CFG) \
@@ -360,6 +395,9 @@ phase14-check:
 phase15-check:
 	python3 tools/scripts/phase15_check.py
 
+phase16-check:
+	python3 tools/scripts/phase16_check.py
+
 tree:
 	@find . -path './.git' -prune -o -path './build' -prune -o -print | sort
 
@@ -367,7 +405,7 @@ clean:
 	rm -rf build out
 
 help:
-	@echo "HairRTOS Phase 15 commands"
+	@echo "HairRTOS Phase 16 commands"
 	@echo "  make EXAMPLE=01-baremetal-foundation       Build Phase 1 target"
 	@echo "  make phase2-example                         Run Phase 2 host demo"
 	@echo "  make EXAMPLE=03-static-task-stack           Build Phase 3 target"
@@ -402,8 +440,11 @@ help:
 	@echo "  make phase14-lab                              Run Phase 14 native allocator demo"
 	@echo "  make EXAMPLE=15-kernel-benchmark              Build Phase 15 benchmark target"
 	@echo "  make EXAMPLE=15-kernel-benchmark flash        Flash Phase 15 benchmark target"
-	@echo "  make host-tests                              Run Phase 2–15 host tests"
-	@echo "  make phase15-check                           Validate completed phases"
+	@echo "  make EXAMPLE=16-diagnostics-stress-stabilization  Build Phase 16 target"
+	@echo "  make EXAMPLE=16-diagnostics-stress-stabilization flash  Flash Phase 16 target"
+	@echo "  make phase16-stress                           Run native deterministic stress"
+	@echo "  make host-tests                              Run Phase 2–16 host tests"
+	@echo "  make phase16-check                           Validate completed phases"
 	@echo "  make roadmap-check                           Validate roadmap status"
 	@echo "  make example-layout-check                    Validate example matrix"
 	@echo "  make clean                                   Remove build output"

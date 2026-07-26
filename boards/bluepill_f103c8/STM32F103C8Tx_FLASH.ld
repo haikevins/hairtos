@@ -70,6 +70,16 @@ SECTIONS
         __bss_end__ = .;
     } > RAM
 
+    .noinit (NOLOAD) :
+    {
+        . = ALIGN(8);
+        __noinit_start__ = .;
+        *(.noinit)
+        *(.noinit*)
+        . = ALIGN(8);
+        __noinit_end__ = .;
+    } > RAM
+
     .heap (NOLOAD) :
     {
         . = ALIGN(8);

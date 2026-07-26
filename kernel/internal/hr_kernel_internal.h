@@ -5,6 +5,16 @@
 #include "hairtos/hr_task.h"
 #include "hr_task_internal.h"
 
+
+typedef struct
+{
+    size_t task_count;
+    size_t ready_task_count;
+    size_t timeout_task_count;
+    uint32_t ready_bitmap;
+    hr_task_t *current_task;
+} hr_kernel_internal_snapshot_t;
+
 /* Read directly by Cortex-M handlers. The saved SP is TCB field zero. */
 extern hr_task_control_block_t *g_hr_current_task_control_block;
 
@@ -36,5 +46,8 @@ hr_status_t hr_kernel_set_task_effective_priority(
     hr_task_control_block_t *control_block,
     hr_priority_t priority);
 bool hr_kernel_current_should_preempt(void);
+bool hr_kernel_validate_internal(void);
+hr_status_t hr_kernel_get_internal_snapshot(hr_kernel_internal_snapshot_t *snapshot);
+hr_task_t *hr_kernel_get_task_by_index_internal(size_t index);
 
 #endif /* HR_KERNEL_INTERNAL_H */

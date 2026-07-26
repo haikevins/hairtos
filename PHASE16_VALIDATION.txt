@@ -1,0 +1,34 @@
+HairRTOS Phase 16 validation
+
+Release candidate: v1.0.0-rc1
+Completed phase: Phase 16 — Diagnostics and stabilization
+
+Automated validation:
+- Phase 0 specification check: PASS
+- Canonical example layout check: PASS (22 directories)
+- Roadmap status check: PASS (Phase 0–16 complete)
+- Host tests, Clang + ASan + UBSan: 64/64 PASS
+- Host tests, GCC + ASan + UBSan: 64/64 PASS
+- Deterministic scheduler stress: PASS (500,000 operations)
+- Cortex-M0 architecture-independent compile proof: PASS
+- Phase 1–16 Cortex-M3 target regression with Clang/LLD: PASS
+- Phase 16 intentional fault-injection build path: PASS
+- Phase 16 CMake + Ninja + Clang/LLD build: PASS
+- Strong NMI/HardFault/MemManage/BusFault/UsageFault handlers: PASS
+- Strong SysTick/PendSV/SVC integration: PASS
+- Retained .noinit panic/fault record section: PASS
+- Freestanding diagnostics without memcpy/memclr runtime dependency: PASS
+- Normal examples exclude Phase 16 diagnostics implementation: PASS
+- Host-only example flash rejection: PASS
+- Flash/RAM limit checks for STM32F103C8T6: PASS
+
+Phase 16 image size:
+- text: 19084 bytes
+- data: 4 bytes
+- bss: 7312 bytes
+
+Not performed in this environment:
+- Physical STM32F103C8T6 flash and runtime validation
+- Eight-hour target stress/endurance run
+- Reset-retention verification after a real injected hardware fault
+- Electrical/timing measurements on physical hardware

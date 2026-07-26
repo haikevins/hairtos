@@ -96,6 +96,18 @@ void board_uart_write_u32(uint32_t value)
     }
 }
 
+void board_uart_write_hex32(uint32_t value)
+{
+    static const char digits[] = "0123456789ABCDEF";
+    int shift;
+
+    board_uart_write_string("0x");
+    for (shift = 28; shift >= 0; shift -= 4)
+    {
+        board_uart_write_char(digits[(value >> (uint32_t)shift) & 0x0FU]);
+    }
+}
+
 void board_uart_write_line(const char *text)
 {
     board_uart_write_string(text);

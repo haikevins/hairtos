@@ -9,7 +9,7 @@ validation satisfy its Definition of Done.
 Current completed phase:
 
 ```text
-Phase 15 — Kernel benchmarks
+Phase 16 — Diagnostics, stress, and stabilization
 ```
 
 ## Phase 0 — Specification and principles
@@ -463,27 +463,22 @@ benchmark instrumentation out of normal kernel hot paths.
 
 ## Phase 16 — Diagnostics, stress, and stabilization
 
-### Goals
+**Status: Complete in source/build validation; hardware endurance sign-off remains pending.**
 
-Prepare an educational v1.0 release.
+### Delivered
 
-### Deliverables
+- retained `.noinit` panic/fault record and Cortex-M3 fault-frame capture;
+- assert, panic, and stack-overflow hooks;
+- runtime counters and per-task runtime/stack diagnostics;
+- whole-kernel ready/wait/timeout/task-state invariant validation;
+- native deterministic scheduler stress and target mixed-IPC stress;
+- public API reference, porting guide, Cortex-M0 compile proof, and release checklist.
 
-- stack-overflow hook;
-- kernel panic path;
-- runtime counters;
-- queue and synchronization diagnostics;
-- long-duration stress tests;
-- API reference;
-- porting guide;
-- Cortex-M0 proof-of-port;
-- release checklist.
+### Definition of Done
 
-### v1.0 exit criteria
-
-- no known kernel invariant failure in stress runs;
-- all host and target tests pass;
-- misuse assertions are documented;
-- every public API states task/ISR context and blocking behavior;
-- Cortex-M3 target is stable;
-- kernel remains independent of STM32F1 and HairEvent.
+- Clang/GCC sanitizer tests and 500,000-operation stress pass;
+- all Phase 1–16 target images cross-build;
+- Make and CMake/Ninja build the final image;
+- strong fault handlers and `.noinit` record are present;
+- architecture-independent core compiles for Cortex-M0;
+- physical eight-hour run and injected-fault reset verification remain explicit release-candidate tasks.

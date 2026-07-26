@@ -4,7 +4,7 @@ HairRTOS is an educational fixed-priority RTOS for ARM Cortex-M. The first
 target is the STM32F103C8T6 Blue Pill. HairEvent is the optional static-first
 Event-Driven framework implemented above the kernel.
 
-## Current status: Phase 15 complete
+## Current status: Phase 16 complete — v1.0.0-rc1
 
 Implemented phases:
 
@@ -24,7 +24,8 @@ Implemented phases:
 - **Phase 13:** HairEvent event pools, Active Objects, flat state machines, time events,
   and publish/subscribe;
 - **Phase 14:** isolated fixed-block pool and first-fit heap allocator laboratory;
-- **Phase 15:** DWT/GPIO kernel benchmark with deferred UART reporting.
+- **Phase 15:** DWT/GPIO kernel benchmark with deferred UART reporting;
+- **Phase 16:** retained fault diagnostics, runtime counters, invariant checks, stress tests, and release stabilization.
 
 ## Roadmap
 
@@ -46,26 +47,24 @@ Implemented phases:
 | 13 | HairEvent framework | ✅ Complete |
 | 14 | Memory allocator lab | ✅ Complete |
 | 15 | Kernel benchmark | ✅ Complete |
-| 16 | Diagnostics and stabilization | ⬜ Not started |
+| 16 | Diagnostics and stabilization | ✅ Complete |
 
 Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
 
-## Phase 15 benchmark
+## Phase 16 diagnostics and stabilization
 
-The dedicated target image measures:
+The final roadmap phase adds:
 
-- SVC startup;
-- DWT read overhead and critical-section cost;
-- fixed-priority scheduler short/long scan positions;
-- queue, semaphore, mutex, and software-timer command paths;
-- two-switch PendSV yield round trip;
-- queue wake/preempt and HairEvent post/dispatch round trips;
-- periodic software-timer interval and absolute jitter;
-- linked Flash/static RAM and task stack high-water marks.
+- retained `.noinit` panic/fault records across reset;
+- strong NMI, HardFault, MemManage, BusFault, and UsageFault handlers;
+- assert, panic, and stack-overflow hooks;
+- kernel/task runtime counters and stack high-water snapshots;
+- whole-kernel intrusive-list/state invariant validation;
+- deterministic native scheduler stress and a long-duration STM32 workload;
+- API, porting, Cortex-M0 compile-proof, and release-checklist documentation.
 
-Samples are stored in static RAM. UART output starts only after collection, and
-PB0 provides an external active-high timing marker. No benchmark code is linked
-into normal examples.
+Diagnostics are optional and are linked only by the Phase 16 target. The normal
+kernel remains static-first and the Phase 14 allocator remains isolated.
 
 ## Examples: host versus target
 
@@ -76,14 +75,15 @@ Host demos and tests:
 ```bash
 make phase2-example
 make phase14-lab
+make phase16-stress
 make host-tests
 ```
 
-Build or flash the Phase 15 benchmark:
+Build or flash the Phase 16 stabilization image:
 
 ```bash
-make EXAMPLE=15-kernel-benchmark
-make EXAMPLE=15-kernel-benchmark flash
+make EXAMPLE=16-diagnostics-stress-stabilization
+make EXAMPLE=16-diagnostics-stress-stabilization flash
 ```
 
 The `EXAMPLE` value must be passed in the same invocation used for `flash`.
@@ -95,15 +95,16 @@ make phase0-check
 make roadmap-check
 make example-layout-check
 make host-tests
-make phase15-check
+make phase16-check
 ```
 
 Read:
 
 - `docs/roadmap.md`
-- `docs/kernel-benchmark.md`
-- `docs/phase15-kernel-benchmark.md`
-- `benchmarks/kernel/README.md`
+- `docs/diagnostics.md`
+- `docs/stress-test-plan.md`
+- `docs/api-reference.md`
+- `docs/release-checklist.md`
 - `examples/README.md`
 
-The next implementation phase is **Phase 16 — Diagnostics and stabilization**.
+The Phase 0–16 educational roadmap is source-complete. Physical long-duration and fault-injection sign-off remains documented in the release checklist.

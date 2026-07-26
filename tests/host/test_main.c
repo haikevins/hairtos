@@ -18,6 +18,8 @@ void run_timer_tests(void);
 void run_hairevent_tests(void);
 void run_memory_allocator_lab_tests(void);
 void run_benchmark_tests(void);
+void run_diagnostics_tests(void);
+void run_phase16_stress_tests(void);
 
 int main(void)
 {
@@ -30,6 +32,8 @@ int main(void)
     run_hairevent_tests();
     run_memory_allocator_lab_tests();
     run_benchmark_tests();
+    run_diagnostics_tests();
+    run_phase16_stress_tests();
     run_queue_tests();
     run_semaphore_tests();
     run_mutex_tests();

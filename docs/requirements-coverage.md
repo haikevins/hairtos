@@ -18,7 +18,7 @@
 | HairEvent events, Active Objects, flat state machines, time events, pub/sub | 13 | Implemented |
 | First-fit allocator lab | 14 | Implemented |
 | Kernel latency benchmarks | 15 | Implemented |
-| Diagnostics and stabilization | 16 | Not started |
+| Diagnostics and stabilization | 16 | Implemented |
 | Tickless idle | After v1.0 | Deferred |
 | MPU isolation | Future major version | Deferred |
 | SMP/multi-core | Out of v1.x scope | Deferred |
@@ -34,4 +34,4 @@ in a dedicated service task rather than SysTick context. Phase 13 adds the
 static-first HairEvent layer with deterministic event pools, Active Objects,
 flat state machines, time events, and reference-counted publish/subscribe.
 
-Phase 14 keeps allocation experiments isolated from the kernel. Phase 15 adds a dedicated DWT/GPIO target image with deferred UART reporting and host-tested statistics; benchmark code is excluded from ordinary kernel builds.
+Phase 14 keeps allocation experiments isolated from the kernel. Phase 15 adds a dedicated DWT/GPIO target image with deferred UART reporting and host-tested statistics; benchmark code is excluded from ordinary kernel builds. Phase 16 adds optional retained fault records, runtime counters, invariant checks, stress tests, portability evidence, and release-candidate documentation.

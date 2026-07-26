@@ -13,6 +13,7 @@ void board_led_toggle(void);
 void board_uart_write_char(char character);
 void board_uart_write_string(const char *text);
 void board_uart_write_u32(uint32_t value);
+void board_uart_write_hex32(uint32_t value);
 void board_uart_write_line(const char *text);
 
 uint32_t board_millis(void);

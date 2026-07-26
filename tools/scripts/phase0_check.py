@@ -7,7 +7,7 @@ required=['README.md','config/hairtos_config.h','config/hairevent_config.h',
 'docs/scheduler.md','docs/context-switch.md','docs/interrupt-model.md',
 'docs/timeout-model.md','docs/event-framework.md','docs/memory-model.md',
 'docs/testing-guide.md','docs/roadmap.md','docs/requirements-coverage.md','kernel/include/hairtos/hairtos.h',
-'framework/event/include/hairevent/he_event.h','arch/arm/cortex-m3/include/hr_port.h',
+'hairevent/include/hairevent/he_event.h','arch/arm/cortex-m3/include/hr_port.h',
 'soc/stm32f1/startup_stm32f103.S','boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld']
 missing=[x for x in required if not (root/x).exists()]
 config=(root/'config/hairtos_config.h').read_text()

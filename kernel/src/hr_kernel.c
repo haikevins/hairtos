@@ -5,6 +5,7 @@
 #include "hairtos/hr_kernel.h"
 #include "hairtos/hr_task.h"
 #include "hr_kernel_internal.h"
+#include "hr_diagnostics_internal.h"
 #include "hr_list_internal.h"
 #include "hr_port.h"
 #include "hr_scheduler_internal.h"
@@ -34,10 +35,13 @@ static hr_stack_t g_idle_stack[HR_CFG_IDLE_STACK_WORDS];
 
 hr_task_control_block_t *g_hr_current_task_control_block;
 
-static void hr_kernel_panic(void)
+static void hr_kernel_panic_at(uint32_t source_line)
 {
     g_kernel_state = HR_KERNEL_STATE_PANIC;
+    hr_diagnostics_internal_note_kernel_panic(source_line);
 }
+
+#define hr_kernel_panic() hr_kernel_panic_at((uint32_t)__LINE__)
 
 static void hr_idle_task(void *argument)
 {
@@ -65,6 +69,10 @@ static void hr_kernel_reload_time_slice(hr_task_control_block_t *control_block)
 hr_status_t hr_kernel_init(void)
 {
     hr_status_t status;
+
+#if (HR_CFG_ENABLE_DIAGNOSTICS == 1)
+    hr_diagnostics_initialize();
+#endif
 
     if (g_kernel_state != HR_KERNEL_STATE_RESET)
     {
@@ -814,6 +822,8 @@ void hr_kernel_select_next_from_pendsv(void)
         return;
     }
 
+    hr_diagnostics_internal_note_switch(switch_reasons,
+                                         next_task != g_current_task);
     g_current_task = next_task;
     g_hr_current_task_control_block = next_control_block;
 }
@@ -833,6 +843,7 @@ void hr_kernel_tick_from_isr(void)
         return;
     }
 
+    hr_diagnostics_internal_note_tick();
     g_kernel_tick++;
     hr_list_init(&expired_nodes);
 
@@ -857,6 +868,7 @@ void hr_kernel_tick_from_isr(void)
         }
 
         control_block = hr_task_control_block(task);
+        hr_diagnostics_internal_note_timeout_wakeup();
         if ((control_block->state != HR_TASK_STATE_BLOCKED) &&
             !((control_block->state == HR_TASK_STATE_SUSPENDED) &&
               (control_block->suspended_resume_state ==
@@ -1105,4 +1117,197 @@ bool hr_kernel_current_should_preempt(void)
 hr_task_t *hr_kernel_current_task_internal(void)
 {
     return g_current_task;
+}
+
+
+hr_status_t hr_kernel_get_internal_snapshot(
+    hr_kernel_internal_snapshot_t *snapshot)
+{
+    if (snapshot == NULL)
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    snapshot->task_count = g_task_count;
+    snapshot->ready_task_count = hr_scheduler_ready_count(&g_scheduler);
+    snapshot->timeout_task_count = hr_timeout_list_size(&g_timeout_list);
+    snapshot->ready_bitmap = hr_scheduler_ready_bitmap(&g_scheduler);
+    snapshot->current_task = g_current_task;
+    return HR_OK;
+}
+
+hr_task_t *hr_kernel_get_task_by_index_internal(size_t index)
+{
+    hr_list_node_t *node;
+    size_t current_index = 0U;
+
+    if (index >= g_task_count)
+    {
+        return NULL;
+    }
+
+    node = hr_list_front(&g_all_tasks);
+    while (node != NULL)
+    {
+        if (current_index == index)
+        {
+            return (hr_task_t *)hr_list_node_owner(node);
+        }
+        current_index++;
+        node = hr_list_next(&g_all_tasks, node);
+    }
+
+    return NULL;
+}
+
+bool hr_kernel_validate_internal(void)
+{
+    hr_list_node_t *node;
+    size_t registered_count = 0U;
+    size_t ready_state_count = 0U;
+    size_t running_count = 0U;
+
+    if (!hr_scheduler_validate(&g_scheduler) ||
+        !hr_list_validate(&g_all_tasks) ||
+        !hr_timeout_list_validate(&g_timeout_list) ||
+        (hr_list_size(&g_all_tasks) != g_task_count))
+    {
+        return false;
+    }
+
+    node = hr_list_front(&g_all_tasks);
+    while (node != NULL)
+    {
+        hr_task_t *task = (hr_task_t *)hr_list_node_owner(node);
+        hr_task_control_block_t *control_block;
+        bool ready_linked;
+        bool wait_linked;
+        bool timeout_linked;
+
+        if ((task == NULL) || !hr_task_is_valid(task))
+        {
+            return false;
+        }
+
+        control_block = hr_task_control_block(task);
+        ready_linked = hr_list_node_is_linked(&control_block->ready_node.node);
+        wait_linked = hr_list_node_is_linked(&control_block->wait_node.node);
+        timeout_linked =
+            hr_list_node_is_linked(&control_block->timeout_node.node);
+
+        if ((control_block->all_task_node.list != &g_all_tasks) ||
+            (control_block->ready_node.priority !=
+             control_block->effective_priority) ||
+            (control_block->wait_node.priority !=
+             control_block->effective_priority))
+        {
+            return false;
+        }
+
+        switch (control_block->state)
+        {
+            case HR_TASK_STATE_READY:
+                if (!ready_linked || wait_linked || timeout_linked ||
+                    (control_block->wait_kind != HR_TASK_WAIT_NONE))
+                {
+                    return false;
+                }
+                ready_state_count++;
+                break;
+
+            case HR_TASK_STATE_RUNNING:
+                if (!ready_linked || wait_linked || timeout_linked ||
+                    (control_block->wait_kind != HR_TASK_WAIT_NONE) ||
+                    (task != g_current_task))
+                {
+                    return false;
+                }
+                ready_state_count++;
+                running_count++;
+                break;
+
+            case HR_TASK_STATE_BLOCKED:
+                if (ready_linked ||
+                    (control_block->wait_kind == HR_TASK_WAIT_NONE) ||
+                    (control_block->waiting_object == NULL))
+                {
+                    return false;
+                }
+                if (control_block->wait_kind == HR_TASK_WAIT_DELAY)
+                {
+                    if (wait_linked || !timeout_linked)
+                    {
+                        return false;
+                    }
+                }
+                else if (!wait_linked)
+                {
+                    return false;
+                }
+                break;
+
+            case HR_TASK_STATE_SUSPENDED:
+                if (ready_linked)
+                {
+                    return false;
+                }
+                if (control_block->suspended_resume_state ==
+                    HR_TASK_STATE_READY)
+                {
+                    if (wait_linked || timeout_linked ||
+                        (control_block->wait_kind != HR_TASK_WAIT_NONE))
+                    {
+                        return false;
+                    }
+                }
+                else if (control_block->suspended_resume_state ==
+                         HR_TASK_STATE_BLOCKED)
+                {
+                    if ((control_block->wait_kind == HR_TASK_WAIT_NONE) ||
+                        (control_block->waiting_object == NULL))
+                    {
+                        return false;
+                    }
+                    if ((control_block->wait_kind == HR_TASK_WAIT_DELAY) &&
+                        (wait_linked || !timeout_linked))
+                    {
+                        return false;
+                    }
+                    if ((control_block->wait_kind != HR_TASK_WAIT_DELAY) &&
+                        !wait_linked)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+
+        registered_count++;
+        node = hr_list_next(&g_all_tasks, node);
+    }
+
+    if ((registered_count != g_task_count) ||
+        (ready_state_count != hr_scheduler_ready_count(&g_scheduler)))
+    {
+        return false;
+    }
+
+    if (g_kernel_state == HR_KERNEL_STATE_RUNNING)
+    {
+        return (running_count == 1U) && (g_current_task != NULL) &&
+               (g_hr_current_task_control_block ==
+                hr_task_control_block(g_current_task));
+    }
+
+    return (running_count == 0U) &&
+           ((g_kernel_state == HR_KERNEL_STATE_INITIALIZED) ||
+            (g_kernel_state == HR_KERNEL_STATE_RESET) ||
+            (g_kernel_state == HR_KERNEL_STATE_PANIC));
 }

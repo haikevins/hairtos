@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.0-rc1 — Phase 16 diagnostics and stabilization
+
+- Added retained `.noinit` panic/fault records and strong Cortex-M3 fault handlers.
+- Added runtime counters, task snapshots, stack checks, and whole-kernel invariant validation.
+- Added `HR_ASSERT`, weak panic/stack/assert hooks, and optional UsageFault injection.
+- Added a 500,000-operation native scheduler stress and mixed-IPC target stress image.
+- Added API, porting, Cortex-M0 compile-proof, stress-plan, and release-checklist docs.
+- Removed the obsolete duplicate `framework/event` placeholder tree.
+- Marked the Phase 0–16 source roadmap complete.
+
 ## Unreleased
 
 ### Added — Phase 15: Kernel benchmark

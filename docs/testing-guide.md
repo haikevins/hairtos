@@ -56,3 +56,19 @@ Test names follow:
 ```text
 test_<unit>_<condition>_<expected_result>
 ```
+
+
+## Phase 16 stabilization validation
+
+```bash
+make host-tests
+make phase16-stress
+make EXAMPLE=16-diagnostics-stress-stabilization
+make phase16-check
+```
+
+The automated check cross-builds every target example, runs both host compilers
+when available, validates strong Cortex-M fault symbols and the `.noinit`
+section, compiles the architecture-independent core for Cortex-M0, and builds
+the final target with Make and CMake/Ninja. Physical endurance and fault-reset
+checks remain manual release-candidate activities.

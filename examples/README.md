@@ -36,7 +36,7 @@ Phase 0 has no runtime example because it contains specifications only.
 | `13-06-event-driven-demo` | 13 | Target | ✅ Implemented | `make EXAMPLE=13-06-event-driven-demo flash` |
 | `14-memory-allocator-lab` | 14 | Host + Target | ✅ Implemented | `make phase14-lab`; target: `make EXAMPLE=14-memory-allocator-lab flash` |
 | `15-kernel-benchmark` | 15 | Target | ✅ Implemented | `make EXAMPLE=15-kernel-benchmark flash` |
-| `16-diagnostics-stress-stabilization` | 16 | Host + Target | ⬜ Placeholder | Not runnable yet |
+| `16-diagnostics-stress-stabilization` | 16 | Host + Target | ✅ Implemented | `make phase16-stress`; target: `make EXAMPLE=16-diagnostics-stress-stabilization flash` |
 
 ## Host commands
 
@@ -45,9 +45,10 @@ Run the standalone host examples/labs with:
 ```bash
 make phase2-example
 make phase14-lab
+make phase16-stress
 ```
 
-Run all completed host-side unit tests, including HairEvent and allocator
+Run all completed host-side unit tests, including HairEvent, allocator, diagnostics, and stress
 validation tests:
 
 ```bash
@@ -87,12 +88,26 @@ The Phase 15 image runs only on the STM32 target because SVC, PendSV, PSP,
 DWT_CYCCNT, and exception preemption cannot be represented by a native host
 program. Generic statistics logic remains covered by `make host-tests`.
 
+
+## Phase 16 stabilization sequence
+
+```bash
+make phase16-stress
+make EXAMPLE=16-diagnostics-stress-stabilization flash
+make phase16-check
+```
+
+The host command runs a reproducible 500,000-operation scheduler stress. The
+target continuously exercises queue, semaphore, mutex, software timer, timeout,
+preemption, stack guards, retained fault records, and health monitoring.
+
 ## Current runnable set
 
 ```text
 Host:
   02-kernel-data-structures-host
   Phase 14 native allocator lab (`make phase14-lab`)
+  Phase 16 deterministic scheduler stress (`make phase16-stress`)
 
 Target:
   01-baremetal-foundation
@@ -115,6 +130,5 @@ Target:
   13-06-event-driven-demo
   14-memory-allocator-lab
   15-kernel-benchmark
+  16-diagnostics-stress-stabilization
 ```
-
-Phase 16 remains roadmap placeholder content.

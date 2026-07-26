@@ -1,5 +1,7 @@
+#include "hairtos_config.h"
 #include "stm32f1.h"
 
+#if (HR_CFG_ENABLE_DIAGNOSTICS == 0)
 static void fault_stop(void)
 {
     stm32f1_cpu_disable_irq();
@@ -29,3 +31,4 @@ void UsageFault_Handler(void)
 {
     fault_stop();
 }
+#endif

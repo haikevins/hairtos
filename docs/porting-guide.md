@@ -1,15 +1,17 @@
-# Porting Guide — Phase 0 Contract
+# HairRTOS Porting Guide
 
-The architecture port must eventually provide stack initialization, first-task
-startup, deferred switch request, nested critical sections, ISR-context
-detection, and yield-from-ISR.
+A new target port must provide stack-frame initialization, first-task startup,
+PendSV save/restore, critical sections, ISR detection, context-switch request,
+and wait-for-interrupt. The first TCB field must remain the saved stack pointer.
 
-Cortex-M3 assumptions: Thumb, PSP for tasks, MSP for exceptions, PendSV, SVC,
-SysTick, privileged tasks, and no FPU context.
+Required steps:
 
-A valid port demonstrates correct first-task argument, retained local variables
-across millions of switches, lowest PendSV priority, restored interrupt state,
-correct tick rate, deferred ISR preemption, and 8-byte stack alignment.
+1. Define board memory and linker symbols, including `_estack` and `.noinit`.
+2. Implement startup, vector table, clock, tick source, UART, and panic LED.
+3. Implement `hr_port.h` functions and SVC/PendSV assembly.
+4. Keep PendSV at the lowest exception priority and SysTick below SVC.
+5. Add fault-frame capture for the architecture.
+6. Run host tests, target symbol/disassembly checks, and a long target stress run.
 
-Porting to Cortex-M0 must not require edits to kernel scheduler, queue,
-semaphore, or HairEvent source files.
+The kernel, HairEvent, and allocator lab must not include STM32 headers.
+Architecture code may depend on ARM core registers but not board peripherals.

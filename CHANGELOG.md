@@ -8,6 +8,7 @@ The format follows Keep a Changelog and the project uses Semantic Versioning.
 
 ### Changed
 
+- Rewrote the root, VS Code, driver, kernel benchmark and memory allocator README files in Vietnamese with complete, role-specific structures while leaving the existing `examples/` and `docs/` documentation unchanged.
 - Rewrote every `examples/*/README.md` in Vietnamese with one consistent
   ten-section structure covering goals, configuration, execution flow, APIs,
   build commands, expected output, PASS criteria, troubleshooting and scope.

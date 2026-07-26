@@ -1,26 +1,38 @@
 # Scheduler Specification
 
-HairRTOS uses fixed-priority preemptive scheduling.
+HairRTOS targets fixed-priority preemptive scheduling. **Phase 6 implements the
+fixed-priority selection policy in cooperative mode.** Automatic preemption and
+tick-based round-robin are introduced later.
+
+## Priority policy
 
 - Smaller number means higher priority.
 - Each priority has a FIFO ready queue.
 - A ready bitmap records non-empty queues.
-- The next task is the head of the highest-priority non-empty queue.
-- Equal-priority tasks rotate when their time slice expires.
-- The idle task is always ready at the lowest reserved priority.
+- The selected task is the head of the highest-priority non-empty queue.
+- The idle task is always READY at the lowest configured priority.
+- Registration order matters only among tasks with the same priority.
 
-The scheduler selects a TCB; it does not save or restore CPU registers.
+## Phase 6 cooperative behavior
 
-A higher-priority task becoming READY requests PendSV. The switch occurs only
-after the active exception completes.
+`hr_task_yield()` pends PendSV. The scheduler rotates only the selected task's
+priority queue. If no equal-priority peer exists, the same task remains
+selected. A lower-priority task cannot run while any higher-priority task is
+READY.
 
-`hr_task_yield()` rotates only the current priority queue. It never allows a
-lower-priority task to run while a higher-priority task remains READY.
+The scheduler chooses a TCB; the Cortex-M port saves and restores registers.
+
+## Later behavior
+
+- Phase 7 adds blocked delay and timeout wake-up.
+- Phase 8 requests PendSV when a higher-priority task becomes READY.
+- Phase 8 also rotates equal-priority tasks when their time slice expires.
 
 ## Invariants
 
-- RUNNING task is at the head of its ready queue.
+- The RUNNING task is at the head of the highest-priority READY queue.
 - Blocked tasks are absent from ready queues.
 - Ready bitmap and queue emptiness agree.
 - A task cannot exist in multiple ready queues.
-- Idle task cannot be removed or blocked.
+- Yield cannot be initiated on behalf of a non-selected lower-priority task.
+- The idle task cannot be removed or blocked.

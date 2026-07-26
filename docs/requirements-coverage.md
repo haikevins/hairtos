@@ -7,8 +7,8 @@
 | Intrusive lists, ready/wait/timeout structures | 2 | Implemented |
 | TCB and independent initial task stacks | 3 | Implemented |
 | SVC first-task startup and PSP transition | 4 | Implemented |
-| PendSV task-to-task context switching | 5 | Not started |
-| Fixed-priority scheduling integration | 6 | Not started |
+| PendSV task-to-task context switching | 5 | Implemented |
+| Fixed-priority scheduling integration | 6 | Implemented |
 | Kernel SysTick, delay, and timeout | 7 | Not started |
 | Preemption and round-robin | 8 | Not started |
 | Queue and blocking IPC | 9 | Not started |
@@ -23,5 +23,4 @@
 | MPU isolation | Future major version | Deferred |
 | SMP/multi-core | Out of v1.x scope | Deferred |
 
-Phase 4 proves the startup boundary between `main()` on MSP and the first task
-on PSP. It does not yet prove switching from one task to another.
+Phase 6 proves fixed-priority selection and FIFO rotation among equal-priority READY tasks. Runtime wake-up preemption and tick-based round-robin remain future work.

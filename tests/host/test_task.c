@@ -105,10 +105,30 @@ static void test_task_high_watermark_tracks_low_stack_use(void)
     TEST_ASSERT_EQ_UINT(0U, hr_task_get_stack_high_watermark(&task));
 }
 
+static void test_task_internal_transition_checks_expected_state(void)
+{
+    hr_task_t task = {0};
+    hr_stack_t stack[64];
+
+    TEST_ASSERT_EQ_UINT(HR_OK,
+                        hr_task_create_static(&task, "transition", dummy_task, NULL,
+                                              stack, 64U, 2U));
+    TEST_ASSERT_EQ_UINT(HR_ERROR_INVALID_STATE,
+                        hr_task_transition_state(&task,
+                                                 HR_TASK_STATE_READY,
+                                                 HR_TASK_STATE_RUNNING));
+    TEST_ASSERT_EQ_UINT(HR_OK,
+                        hr_task_transition_state(&task,
+                                                 HR_TASK_STATE_CREATED,
+                                                 HR_TASK_STATE_READY));
+    TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY, hr_task_get_state(&task));
+}
+
 void run_task_tests(void)
 {
     RUN_TEST(test_task_create_initializes_tcb_and_stack);
     RUN_TEST(test_task_create_rejects_invalid_arguments);
     RUN_TEST(test_task_stack_guard_detects_corruption);
     RUN_TEST(test_task_high_watermark_tracks_low_stack_use);
+    RUN_TEST(test_task_internal_transition_checks_expected_state);
 }

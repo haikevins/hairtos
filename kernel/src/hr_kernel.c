@@ -10,7 +10,7 @@
 #include "hr_task_internal.h"
 
 static hr_kernel_state_t g_kernel_state = HR_KERNEL_STATE_RESET;
-static hr_ready_set_t g_ready_set;
+static hr_scheduler_t g_scheduler;
 static hr_list_t g_all_tasks;
 static hr_task_t *g_current_task;
 static size_t g_task_count;
@@ -40,7 +40,7 @@ hr_status_t hr_kernel_init(void)
         return HR_ERROR_INVALID_STATE;
     }
 
-    hr_ready_set_init(&g_ready_set);
+    hr_scheduler_init(&g_scheduler);
     hr_list_init(&g_all_tasks);
     g_current_task = NULL;
     g_hr_current_task_control_block = NULL;
@@ -94,7 +94,7 @@ hr_status_t hr_kernel_register_task(hr_task_t *task)
         return HR_ERROR_INVALID_STATE;
     }
 
-    status = hr_ready_set_insert(&g_ready_set, &control_block->ready_node);
+    status = hr_scheduler_add_ready(&g_scheduler, &control_block->ready_node);
     if (status != HR_OK)
     {
         return status;
@@ -103,11 +103,20 @@ hr_status_t hr_kernel_register_task(hr_task_t *task)
     status = hr_list_push_back(&g_all_tasks, &control_block->all_task_node);
     if (status != HR_OK)
     {
-        (void)hr_ready_set_remove(&g_ready_set, &control_block->ready_node);
+        (void)hr_scheduler_remove_ready(&g_scheduler, &control_block->ready_node);
         return status;
     }
 
-    control_block->state = HR_TASK_STATE_READY;
+    status = hr_task_transition_state(task,
+                                      HR_TASK_STATE_CREATED,
+                                      HR_TASK_STATE_READY);
+    if (status != HR_OK)
+    {
+        (void)hr_list_remove(&control_block->all_task_node);
+        (void)hr_scheduler_remove_ready(&g_scheduler, &control_block->ready_node);
+        return status;
+    }
+
     g_task_count++;
     return HR_OK;
 }
@@ -123,7 +132,7 @@ hr_status_t hr_kernel_prepare_start(void)
         return HR_ERROR_INVALID_STATE;
     }
 
-    ready_node = hr_ready_set_peek_highest(&g_ready_set);
+    ready_node = hr_scheduler_select_highest(&g_scheduler);
     if (ready_node == NULL)
     {
         return HR_ERROR_INTERNAL;
@@ -141,7 +150,13 @@ hr_status_t hr_kernel_prepare_start(void)
         return HR_ERROR_INVALID_STATE;
     }
 
-    control_block->state = HR_TASK_STATE_RUNNING;
+    if (hr_task_transition_state(selected_task,
+                                 HR_TASK_STATE_READY,
+                                 HR_TASK_STATE_RUNNING) != HR_OK)
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
     g_current_task = selected_task;
     g_hr_current_task_control_block = control_block;
     g_kernel_state = HR_KERNEL_STATE_RUNNING;
@@ -166,7 +181,7 @@ void hr_kernel_select_next_from_pendsv(void)
         return;
     }
 
-    current_ready_node = hr_ready_set_peek_highest(&g_ready_set);
+    current_ready_node = hr_scheduler_select_highest(&g_scheduler);
     if ((current_ready_node == NULL) ||
         (hr_list_node_owner(&current_ready_node->node) != g_current_task))
     {
@@ -174,14 +189,14 @@ void hr_kernel_select_next_from_pendsv(void)
         return;
     }
 
-    status = hr_ready_set_rotate_highest(&g_ready_set);
+    status = hr_scheduler_yield_current(&g_scheduler, current_ready_node);
     if (status != HR_OK)
     {
         g_kernel_state = HR_KERNEL_STATE_PANIC;
         return;
     }
 
-    next_ready_node = hr_ready_set_peek_highest(&g_ready_set);
+    next_ready_node = hr_scheduler_select_highest(&g_scheduler);
     if (next_ready_node == NULL)
     {
         g_kernel_state = HR_KERNEL_STATE_PANIC;
@@ -207,8 +222,16 @@ void hr_kernel_select_next_from_pendsv(void)
             return;
         }
 
-        current_control_block->state = HR_TASK_STATE_READY;
-        next_control_block->state = HR_TASK_STATE_RUNNING;
+        if ((hr_task_transition_state(g_current_task,
+                                      HR_TASK_STATE_RUNNING,
+                                      HR_TASK_STATE_READY) != HR_OK) ||
+            (hr_task_transition_state(next_task,
+                                      HR_TASK_STATE_READY,
+                                      HR_TASK_STATE_RUNNING) != HR_OK))
+        {
+            g_kernel_state = HR_KERNEL_STATE_PANIC;
+            return;
+        }
     }
 
     g_current_task = next_task;

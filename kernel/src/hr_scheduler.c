@@ -215,3 +215,73 @@ bool hr_ready_set_validate(const hr_ready_set_t *set)
 
     return (total == set->count) && (expected_bitmap == set->bitmap);
 }
+
+void hr_scheduler_init(hr_scheduler_t *scheduler)
+{
+    if (scheduler == NULL)
+    {
+        return;
+    }
+
+    hr_ready_set_init(&scheduler->ready);
+}
+
+hr_status_t hr_scheduler_add_ready(hr_scheduler_t *scheduler, hr_ready_node_t *node)
+{
+    if (scheduler == NULL)
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    return hr_ready_set_insert(&scheduler->ready, node);
+}
+
+hr_status_t hr_scheduler_remove_ready(hr_scheduler_t *scheduler, hr_ready_node_t *node)
+{
+    if (scheduler == NULL)
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    return hr_ready_set_remove(&scheduler->ready, node);
+}
+
+hr_ready_node_t *hr_scheduler_select_highest(const hr_scheduler_t *scheduler)
+{
+    return (scheduler == NULL) ? NULL : hr_ready_set_peek_highest(&scheduler->ready);
+}
+
+hr_status_t hr_scheduler_yield_current(hr_scheduler_t *scheduler,
+                                       hr_ready_node_t *current)
+{
+    hr_ready_node_t *selected;
+
+    if ((scheduler == NULL) || (current == NULL))
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    selected = hr_scheduler_select_highest(scheduler);
+    if (selected != current)
+    {
+        /* Fixed-priority policy never lets a non-highest task drive rotation. */
+        return HR_ERROR_INVALID_STATE;
+    }
+
+    return hr_ready_set_rotate_highest(&scheduler->ready);
+}
+
+size_t hr_scheduler_ready_count(const hr_scheduler_t *scheduler)
+{
+    return (scheduler == NULL) ? 0U : hr_ready_set_size(&scheduler->ready);
+}
+
+uint32_t hr_scheduler_ready_bitmap(const hr_scheduler_t *scheduler)
+{
+    return (scheduler == NULL) ? 0U : hr_ready_set_bitmap(&scheduler->ready);
+}
+
+bool hr_scheduler_validate(const hr_scheduler_t *scheduler)
+{
+    return (scheduler != NULL) && hr_ready_set_validate(&scheduler->ready);
+}

@@ -50,6 +50,9 @@ _Static_assert(sizeof(hr_task_control_block_t) <= sizeof(hr_task_t),
 
 hr_task_control_block_t *hr_task_control_block(hr_task_t *task);
 const hr_task_control_block_t *hr_task_control_block_const(const hr_task_t *task);
+hr_status_t hr_task_transition_state(hr_task_t *task,
+                                          hr_task_state_t expected,
+                                          hr_task_state_t next);
 void hr_task_exit_error(void);
 
 #endif /* HR_TASK_INTERNAL_H */

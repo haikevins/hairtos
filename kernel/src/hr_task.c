@@ -42,6 +42,27 @@ const hr_task_control_block_t *hr_task_control_block_const(const hr_task_t *task
     return (task == NULL) ? NULL : (const hr_task_control_block_t *)(const void *)task->storage;
 }
 
+hr_status_t hr_task_transition_state(hr_task_t *task,
+                                          hr_task_state_t expected,
+                                          hr_task_state_t next)
+{
+    hr_task_control_block_t *control_block;
+
+    if (!hr_task_is_valid(task))
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    control_block = hr_task_control_block(task);
+    if (control_block->state != expected)
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
+    control_block->state = next;
+    return HR_OK;
+}
+
 void hr_task_exit_error(void)
 {
     for (;;)

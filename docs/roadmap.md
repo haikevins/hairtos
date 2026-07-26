@@ -9,7 +9,7 @@ validation satisfy its Definition of Done.
 Current completed phase:
 
 ```text
-Phase 5 — PendSV cooperative context switch
+Phase 6 — Fixed-priority scheduler
 ```
 
 ## Phase 0 — Specification and principles
@@ -174,6 +174,8 @@ context-switch stress run.
 ---
 
 ## Phase 6 — Fixed-priority scheduler
+
+**Status: Complete.**
 
 ### Goals
 

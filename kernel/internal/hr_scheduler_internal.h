@@ -23,6 +23,7 @@ typedef struct
     size_t count;
 } hr_ready_set_t;
 
+/* Phase 2 data-structure API. */
 void hr_ready_node_init(hr_ready_node_t *node, void *owner, hr_priority_t priority);
 void hr_ready_set_init(hr_ready_set_t *set);
 
@@ -36,5 +37,21 @@ hr_ready_node_t *hr_ready_set_peek_highest(const hr_ready_set_t *set);
 hr_status_t hr_ready_set_rotate_highest(hr_ready_set_t *set);
 
 bool hr_ready_set_validate(const hr_ready_set_t *set);
+
+/* Phase 6 fixed-priority scheduler policy. */
+typedef struct
+{
+    hr_ready_set_t ready;
+} hr_scheduler_t;
+
+void hr_scheduler_init(hr_scheduler_t *scheduler);
+hr_status_t hr_scheduler_add_ready(hr_scheduler_t *scheduler, hr_ready_node_t *node);
+hr_status_t hr_scheduler_remove_ready(hr_scheduler_t *scheduler, hr_ready_node_t *node);
+hr_ready_node_t *hr_scheduler_select_highest(const hr_scheduler_t *scheduler);
+hr_status_t hr_scheduler_yield_current(hr_scheduler_t *scheduler,
+                                       hr_ready_node_t *current);
+size_t hr_scheduler_ready_count(const hr_scheduler_t *scheduler);
+uint32_t hr_scheduler_ready_bitmap(const hr_scheduler_t *scheduler);
+bool hr_scheduler_validate(const hr_scheduler_t *scheduler);
 
 #endif /* HR_SCHEDULER_INTERNAL_H */

@@ -10,6 +10,7 @@ void run_timeout_tests(void);
 void run_port_stack_tests(void);
 void run_task_tests(void);
 void run_kernel_start_tests(void);
+void run_scheduler_policy_tests(void);
 
 int main(void)
 {
@@ -20,6 +21,7 @@ int main(void)
     run_port_stack_tests();
     run_task_tests();
     run_kernel_start_tests();
+    run_scheduler_policy_tests();
 
     printf("\nHairRTOS completed host tests: %u run, %u failed\n",
            g_test_count,

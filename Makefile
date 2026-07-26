@@ -3,7 +3,7 @@ EXAMPLE          ?= 01-baremetal-foundation
 BUILD_DIR        ?= build/$(EXAMPLE)
 TARGET           := $(BUILD_DIR)/$(PROJECT)
 
-TARGET_EXAMPLES  := 01-baremetal-foundation 03-static-task-stack 04-start-first-task 05-cooperative-context-switch
+TARGET_EXAMPLES  := 01-baremetal-foundation 03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler
 HOST_EXAMPLES    := 02-kernel-data-structures-host
 FIRMWARE_GOALS   := all elf bin hex size flash gdb disasm
 REQUESTED_FW     := $(filter $(FIRMWARE_GOALS),$(MAKECMDGOALS))
@@ -61,11 +61,11 @@ PHASE3_C_SOURCES := kernel/src/hr_list.c \
 C_SOURCES        := $(PLATFORM_C_SOURCES) examples/$(EXAMPLE)/main.c
 ASM_SOURCES      := soc/stm32f1/startup_stm32f103.S
 
-ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch),)
+ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler),)
 C_SOURCES        += $(PHASE3_C_SOURCES)
 endif
 
-ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch),)
+ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch 06-priority-scheduler),)
 C_SOURCES        += kernel/src/hr_kernel.c
 ASM_SOURCES      += arch/arm/cortex-m3/hr_portasm.S
 endif
@@ -122,7 +122,8 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     tests/host/test_timeout.c \
                     tests/host/test_port_stack.c \
                     tests/host/test_task.c \
-                    tests/host/test_kernel_start.c
+                    tests/host/test_kernel_start.c \
+                    tests/host/test_scheduler_policy.c
 
 LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
                     -Wl,--gc-sections -Wl,-Map=$(TARGET).map \
@@ -130,7 +131,7 @@ LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
 
 .PHONY: all elf bin hex size flash erase debug-server gdb disasm \
         phase0-check phase1-check roadmap-check example-layout-check \
-        phase2-check phase3-check phase4-check phase5-check host-tests phase2-example \
+        phase2-check phase3-check phase4-check phase5-check phase6-check host-tests phase2-example \
         tree clean help
 
 all: elf bin hex size
@@ -220,6 +221,9 @@ phase4-check:
 phase5-check:
 	python3 tools/scripts/phase5_check.py
 
+phase6-check:
+	python3 tools/scripts/phase6_check.py
+
 tree:
 	@find . -path './.git' -prune -o -path './build' -prune -o -print | sort
 
@@ -227,7 +231,7 @@ clean:
 	rm -rf build out
 
 help:
-	@echo "HairRTOS Phase 5 commands"
+	@echo "HairRTOS Phase 6 commands"
 	@echo "  make EXAMPLE=01-baremetal-foundation       Build Phase 1 target"
 	@echo "  make phase2-example                         Run Phase 2 host demo"
 	@echo "  make EXAMPLE=03-static-task-stack           Build Phase 3 target"
@@ -235,8 +239,10 @@ help:
 	@echo "  make EXAMPLE=04-start-first-task flash      Flash Phase 4 target"
 	@echo "  make EXAMPLE=05-cooperative-context-switch  Build Phase 5 target"
 	@echo "  make EXAMPLE=05-cooperative-context-switch flash  Flash Phase 5 target"
-	@echo "  make host-tests                              Run Phase 2–5 host tests"
-	@echo "  make phase5-check                            Validate completed phases"
+	@echo "  make EXAMPLE=06-priority-scheduler        Build Phase 6 target"
+	@echo "  make EXAMPLE=06-priority-scheduler flash  Flash Phase 6 target"
+	@echo "  make host-tests                              Run Phase 2–6 host tests"
+	@echo "  make phase6-check                            Validate completed phases"
 	@echo "  make roadmap-check                           Validate roadmap status"
 	@echo "  make example-layout-check                    Validate example matrix"
 	@echo "  make clean                                   Remove build output"

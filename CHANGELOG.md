@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added — Phase 6: Fixed-priority scheduler
+
+- Added an explicit scheduler policy layer above the Phase 2 ready set.
+- Added highest-priority selection independent of task registration order.
+- Added FIFO cooperative rotation among equal-priority tasks.
+- Added rejection of yield attempts from a non-selected lower-priority task.
+- Added mixed-priority host tests and the Phase 6 STM32 target example.
+- Added Phase 6 documentation, target build, symbol, and disassembly validation.
+
 
 ### Added — Phase 5: Cooperative context switch
 

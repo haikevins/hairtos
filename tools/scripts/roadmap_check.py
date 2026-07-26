@@ -37,10 +37,10 @@ if missing_phases:
     sys.exit(1)
 
 readme = (ROOT / "README.md").read_text(encoding="utf-8")
-if "Current status: Phase 1 complete" not in readme:
-    print("README no longer identifies Phase 1 as the current completed phase")
+if "Current status: Phase 2 complete" not in readme:
+    print("README no longer identifies Phase 2 as the current completed phase")
     sys.exit(1)
 
 print("HairRTOS roadmap check: PASS")
-print("Current implementation phase: Phase 1")
+print("Current implementation phase: Phase 2")
 print("Future roadmap additions: suspend/resume, allocator lab, benchmarks")

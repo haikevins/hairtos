@@ -65,12 +65,30 @@ endif
 
 CFLAGS           := $(TOOLCHAIN_FLAGS) $(COMMON_FLAGS) $(INCLUDES) -MMD -MP
 ASFLAGS          := $(TOOLCHAIN_FLAGS) $(CPU_FLAGS) -g3 -x assembler-with-cpp $(INCLUDES)
+
+HOST_CC          ?= cc
+HOST_BUILD_DIR   ?= build/host
+HOST_TEST        := $(HOST_BUILD_DIR)/phase2_tests
+HOST_FLAGS       := -std=c11 -O0 -g3 -Wall -Wextra -Werror -Wshadow -Wundef \
+                    -Wconversion -Wsign-conversion -pedantic \
+                    -fsanitize=address,undefined -fno-omit-frame-pointer
+HOST_INCLUDES    := -Iconfig -Ikernel/include -Ikernel/internal -Itests/host
+HOST_SOURCES     := kernel/src/hr_list.c \
+                    kernel/src/hr_scheduler.c \
+                    kernel/src/hr_wait.c \
+                    kernel/src/hr_timeout.c \
+                    tests/host/test_main.c \
+                    tests/host/test_list.c \
+                    tests/host/test_ready_queue.c \
+                    tests/host/test_wait_list.c \
+                    tests/host/test_timeout.c
+
 LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
                     -Wl,--gc-sections -Wl,-Map=$(TARGET).map \
                     -Wl,--cref -T$(LINKER_SCRIPT)
 
 .PHONY: all elf bin hex size flash erase debug-server gdb disasm \
-        phase0-check phase1-check roadmap-check tree clean help
+        phase0-check phase1-check roadmap-check phase2-check host-tests tree clean help
 
 all: elf bin hex size
 
@@ -101,6 +119,14 @@ $(BUILD_DIR)/%.o: %.S
 size: $(TARGET).elf
 	$(SIZE) $<
 
+$(HOST_TEST): $(HOST_SOURCES)
+	@mkdir -p $(HOST_BUILD_DIR)
+	$(HOST_CC) $(HOST_FLAGS) $(HOST_INCLUDES) $(HOST_SOURCES) -o $@
+
+host-tests: $(HOST_TEST)
+	ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 \
+	UBSAN_OPTIONS=halt_on_error=1 $(HOST_TEST)
+
 flash: $(TARGET).elf
 	$(OPENOCD) -f $(OPENOCD_CFG) \
 		-c "program $(abspath $<) verify reset exit"
@@ -125,6 +151,9 @@ phase0-check:
 phase1-check:
 	python3 tools/scripts/phase1_check.py
 
+phase2-check:
+	python3 tools/scripts/phase2_check.py
+
 roadmap-check:
 	python3 tools/scripts/roadmap_check.py
 
@@ -135,7 +164,7 @@ clean:
 	rm -rf build out
 
 help:
-	@echo "HairRTOS Phase 1 commands"
+	@echo "HairRTOS Phase 2 commands"
 	@echo "  make                         Build the bare-metal example with GCC"
 	@echo "  make TOOLCHAIN=clang         Build with Clang/LLD"
 	@echo "  make flash                   Build, verify, flash, and reset"
@@ -144,6 +173,8 @@ help:
 	@echo "  make gdb                     Connect GDB to localhost:3333"
 	@echo "  make disasm                  Generate source/interleaved listing"
 	@echo "  make phase1-check            Validate and build Phase 1 files"
+	@echo "  make host-tests              Build and run Phase 2 host tests"
+	@echo "  make phase2-check            Validate Phase 2 and all completed work"
 	@echo "  make roadmap-check           Validate future roadmap specifications"
 	@echo "  make clean                   Remove build output"
 

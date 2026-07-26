@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added — Phase 2 kernel data structures
+
+- Circular intrusive doubly linked list with membership validation.
+- Priority ready set with FIFO queues and bitmap.
+- Priority-ordered wait list with equal-priority FIFO.
+- Dual timeout lists with 32-bit tick-wrap handling.
+- Host tests with AddressSanitizer and UndefinedBehaviorSanitizer.
+- Phase 2 validation script and documentation.
+
 ### Updated — Roadmap refinement while remaining at Phase 1
 
 - Added the official Phase 0–16 implementation roadmap.

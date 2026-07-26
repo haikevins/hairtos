@@ -9,7 +9,7 @@ validation satisfy its Definition of Done.
 Current completed phase:
 
 ```text
-Phase 1 — Bare-metal foundation
+Phase 2 — Intrusive lists and kernel data structures
 ```
 
 ## Phase 0 — Specification and principles
@@ -69,6 +69,10 @@ user-side activity.
 ---
 
 ## Phase 2 — Intrusive lists and kernel data structures
+
+### Status
+
+Complete.
 
 ### Goals
 

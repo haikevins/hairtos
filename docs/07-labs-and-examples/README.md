@@ -1,4 +1,4 @@
-# 07 — Labs và examples
+# 07 — Bài thực hành và ví dụ
 
 Nhóm này giúp chọn đúng example, phân biệt host với target và sử dụng hai lab độc lập mà không nhầm pipeline build.
 

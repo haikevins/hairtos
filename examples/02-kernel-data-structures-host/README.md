@@ -1,6 +1,6 @@
-# `02-kernel-data-structures-host` — Kernel Data Structures — Host Demo
+# `02-kernel-data-structures-host` — Cấu trúc dữ liệu kernel — Demo trên host
 
-> **Môi trường:** Host — Linux/macOS development computer  
+> **Môi trường:** Host — máy phát triển Linux/macOS  
 > **Vị trí mã nguồn:** `examples/02-kernel-data-structures-host/main.c`  
 > **Mục đích:** Minh họa ready set và wait list bằng các node intrusive mà chưa cần tạo task thật hoặc chạy trên Cortex-M3.
 
@@ -13,7 +13,7 @@
 
 ## 2. Kiến thức trọng tâm
 
-- Intrusive doubly-linked list.
+- Danh sách liên kết đôi intrusive.
 - Ready bitmap và một FIFO queue cho mỗi priority.
 - Owner pointer từ node trở về đối tượng chứa node.
 - Host-native test không có ISR, task stack hoặc context switch.
@@ -42,7 +42,7 @@
 
 1. Khởi tạo ready set và wait list.
 2. Khởi tạo ba demo node và chèn vào ready set.
-3. Peek highest: `communication` priority 1.
+3. Xem phần tử ưu tiên cao nhất: `communication` priority 1.
 4. Loại `communication`, peek `sensor-a`, rotate và peek `sensor-b`.
 5. Chèn waiter theo thứ tự không ưu tiên và xác nhận `communication` vẫn đứng đầu.
 6. Validate cả hai cấu trúc trước khi trả về `EXIT_SUCCESS`.
@@ -63,22 +63,22 @@
 - `hr_wait_list_insert()`
 - `hr_*_validate()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `kernel/src/hr_list.c`
 - `kernel/src/hr_scheduler.c`
 - `kernel/src/hr_wait.c`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=02-kernel-data-structures-host build` |
+| Biên dịch | `make EXAMPLE=02-kernel-data-structures-host build` |
 | Chạy | `make EXAMPLE=02-kernel-data-structures-host run` |
 | Kiểm tra | `make EXAMPLE=02-kernel-data-structures-host check` |
-| Xóa build | `make EXAMPLE=02-kernel-data-structures-host clean` |
+| Dọn build | `make EXAMPLE=02-kernel-data-structures-host clean` |
 
 Host example dùng compiler native do CMake phát hiện. Có thể đặt `CC=clang` hoặc cấu hình CMake host riêng khi cần so sánh compiler.
 
@@ -114,7 +114,7 @@ make EXAMPLE=02-kernel-data-structures-host clean
 make EXAMPLE=02-kernel-data-structures-host build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Không tạo TCB thật.
 - Không mô phỏng Cortex-M3 exception frame.

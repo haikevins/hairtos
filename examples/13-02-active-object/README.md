@@ -61,22 +61,22 @@
 - `he_active_post()`
 - `he_state_machine_context()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `queue`
 - `timer`
 - `haievent`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=13-02-active-object build` |
+| Biên dịch | `make EXAMPLE=13-02-active-object build` |
 | Flash và chạy | `make EXAMPLE=13-02-active-object run` |
 | Kiểm tra | `make EXAMPLE=13-02-active-object check` |
-| Xóa build riêng | `make EXAMPLE=13-02-active-object clean` |
+| Dọn build riêng | `make EXAMPLE=13-02-active-object clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -119,7 +119,7 @@ make EXAMPLE=13-02-active-object clean
 make EXAMPLE=13-02-active-object build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

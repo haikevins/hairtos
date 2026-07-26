@@ -1,4 +1,4 @@
-# `11-task-suspend-resume` — Task Suspend and Resume
+# `11-task-suspend-resume` — Tạm dừng và tiếp tục tác vụ
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/11-task-suspend-resume/main.c`  
@@ -46,7 +46,7 @@
 2. Supervisor delay 50 rồi suspend worker đang BLOCKED.
 3. Worker timeout ở tick 100 nhưng vẫn SUSPENDED.
 4. Supervisor chờ thêm 200 ticks và xác nhận worker chưa READY.
-5. Supervisor resume worker; worker priority 1 preempt ngay.
+5. Supervisor tiếp tục worker; worker priority 1 chiếm quyền ngay.
 6. Worker in trạng thái resume rồi tự suspend.
 7. Supervisor resume lần hai; worker tiếp tục ngay sau lời gọi self-suspend.
 
@@ -64,22 +64,22 @@
 - `hr_task_get_state()`
 - `hr_task_delay()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=11-task-suspend-resume build` |
+| Biên dịch | `make EXAMPLE=11-task-suspend-resume build` |
 | Flash và chạy | `make EXAMPLE=11-task-suspend-resume run` |
 | Kiểm tra | `make EXAMPLE=11-task-suspend-resume check` |
-| Xóa build riêng | `make EXAMPLE=11-task-suspend-resume clean` |
+| Dọn build riêng | `make EXAMPLE=11-task-suspend-resume clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -114,7 +114,7 @@ worker: self-resume PASS at tick=<...>
 
 - Worker READY trước resume: suspend overlay không được bảo toàn.
 - Không preempt sau resume: scheduler không xét effective priority.
-- Resume invalid state: kiểm tra task state trước lời gọi.
+- Resume ở trạng thái không hợp lệ: kiểm tra trạng thái tác vụ trước lời gọi.
 
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
@@ -123,7 +123,7 @@ make EXAMPLE=11-task-suspend-resume clean
 make EXAMPLE=11-task-suspend-resume build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

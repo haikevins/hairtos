@@ -1,4 +1,4 @@
-# 05 — API reference
+# 05 — Tham chiếu API
 
 
 > **Bố cục chuẩn của nhóm:** Header → Kiểu dữ liệu → API → Ngữ cảnh gọi → Giá trị trả về → Ví dụ → Lưu ý.

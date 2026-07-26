@@ -1,4 +1,4 @@
-# `15-kernel-benchmark` — Kernel Benchmark
+# `15-kernel-benchmark` — Benchmark kernel
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/15-kernel-benchmark/main.c`  
@@ -32,10 +32,10 @@
 | LED | PC13, active-low | Hiển thị heartbeat hoặc trạng thái quan sát. |
 | PB0 | Active-high marker | Bao quanh switch/wake/event samples cho logic analyzer. |
 | `startup-probe` | Priority 0, stack 128 | Đo SVC đến instruction đầu tiên. |
-| `benchmark-receiver` | Priority 2, stack 192 | Queue wake/preempt. |
-| Event AO | Priority 3, stack 224 | haievent dispatch round trip. |
+| `benchmark-receiver` | Priority 2, stack 192 | Đánh thức qua queue và chiếm quyền. |
+| AO sự kiện | Priority 3, stack 224 | Một vòng dispatch của haievent. |
 | `benchmark-runner` | Priority 4, stack 320 | Thực hiện và in phép đo. |
-| `benchmark-peer` | Priority 4, stack 160 | Yield round trip. |
+| `benchmark-peer` | Priority 4, stack 160 | Một vòng yield. |
 
 ### Tham số quan trọng
 
@@ -74,22 +74,22 @@
 - `hr_benchmark_stats_percentile()`
 - Các API queue/semaphore/mutex/timer/context được đo
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `benchmark`
 - `haievent_benchmark`
 - Toàn bộ kernel primitives cần đo
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=15-kernel-benchmark build` |
+| Biên dịch | `make EXAMPLE=15-kernel-benchmark build` |
 | Flash và chạy | `make EXAMPLE=15-kernel-benchmark run` |
 | Kiểm tra | `make EXAMPLE=15-kernel-benchmark check` |
-| Xóa build riêng | `make EXAMPLE=15-kernel-benchmark clean` |
+| Dọn build riêng | `make EXAMPLE=15-kernel-benchmark clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -138,7 +138,7 @@ make EXAMPLE=15-kernel-benchmark clean
 make EXAMPLE=15-kernel-benchmark build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

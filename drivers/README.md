@@ -1,4 +1,4 @@
-# Driver layer
+# Lớp driver
 
 ## 1. Mục đích
 
@@ -81,13 +81,13 @@ Mode: polling
 
 BRR được tính từ peripheral clock và baud rate do caller cung cấp.
 
-### Hardware timer
+### Bộ định thời phần cứng
 
 `hr_hw_timer_stm32f1.c` cấu hình SysTick ở 1 kHz và duy trì `g_millisecond_tick`.
 
 `drivers/common/hr_systick_baremetal_irq.c` cung cấp `SysTick_Handler()` cho các example bare-metal. Các example kernel-time không link module này; chúng dùng strong kernel SysTick handler trong `kernel/src/hr_time.c`.
 
-## 5. Public API
+## 5. API công khai
 
 ### GPIO
 
@@ -114,7 +114,7 @@ void hr_uart_write_string(const char *text);
 bool hr_uart_try_read_char(char *character);
 ```
 
-### Bare-metal timer
+### Bộ định thời bare-metal
 
 ```c
 void hr_hw_timer_init_1khz(uint32_t core_clock_hz);
@@ -127,7 +127,7 @@ Các API hiện dùng `void` cho nhiều thao tác cấu hình. Input không h�
 
 ## 6. Luồng hoạt động
 
-### Bare-metal millisecond delay
+### Trì hoãn mili giây bare-metal
 
 ```text
 board_init()
@@ -145,7 +145,7 @@ board_init()
 
 `hr_hw_timer_delay_ms()` ghi nhận tick bắt đầu, sau đó dùng `WFI` cho tới khi unsigned delta đạt thời gian yêu cầu. Phép trừ unsigned cho phép hoạt động đúng qua wrap 32-bit nếu khoảng chờ nhỏ hơn toàn bộ chu kỳ wrap.
 
-### UART polling transmit
+### Truyền UART theo polling
 
 ```text
 hr_uart_write_string()
@@ -157,7 +157,7 @@ hr_uart_write_string()
                          +--> ghi USART_DR
 ```
 
-## 7. Tích hợp build và dependency
+## 7. Tích hợp build và quan hệ phụ thuộc
 
 Module `platform` trong `cmake/hairtos_modules.cmake` link:
 
@@ -173,7 +173,7 @@ Module `baremetal_tick` link:
 drivers/common/hr_systick_baremetal_irq.c
 ```
 
-Public include path:
+Đường dẫn include công khai:
 
 ```text
 drivers/include
@@ -181,7 +181,7 @@ drivers/include
 
 Driver implementation được compile với public platform includes, không nhận kernel internal includes.
 
-## 8. Build và kiểm tra
+## 8. Biên dịch và kiểm tra
 
 Build example bare-metal dùng cả ba driver và bare-metal SysTick handler:
 
@@ -195,7 +195,7 @@ Build firmware tích hợp dùng GPIO/UART nhưng kernel sở hữu SysTick:
 make EXAMPLE=16-diagnostics-stress-stabilization build
 ```
 
-Flash example:
+Flash ví dụ:
 
 ```bash
 make EXAMPLE=01-baremetal-foundation run

@@ -1,4 +1,4 @@
-# Memory allocator lab
+# Bài thực hành bộ cấp phát bộ nhớ
 
 ## 1. Mục đích
 
@@ -61,7 +61,7 @@ labs/memory-allocator/
 
 ## 4. Thành phần triển khai
 
-### Fixed-block pool
+### Pool khối cố định
 
 `hr_pool_lab_t` chia arena thành các block có stride đã căn chỉnh.
 
@@ -74,7 +74,7 @@ labs/memory-allocator/
 - không có external fragmentation;
 - có internal fragmentation do block stride lớn hơn requested block size.
 
-### First-fit heap
+### Heap first-fit
 
 `hr_heap_lab_t` quản lý physical block chain:
 
@@ -98,7 +98,7 @@ Free:
 4. coalesce với next block;
 5. coalesce với previous block nếu adjacent và free.
 
-## 5. Public API
+## 5. API công khai
 
 ### Status dùng chung
 
@@ -115,7 +115,7 @@ typedef enum
 } hr_heap_lab_status_t;
 ```
 
-### First-fit heap
+### Heap first-fit
 
 ```c
 hr_heap_lab_status_t hr_heap_lab_init(hr_heap_lab_t *heap,
@@ -129,7 +129,7 @@ bool hr_heap_lab_validate(const hr_heap_lab_t *heap);
 size_t hr_heap_lab_alignment(void);
 ```
 
-### Fixed-block pool
+### Pool khối cố định
 
 ```c
 hr_heap_lab_status_t hr_pool_lab_init(hr_pool_lab_t *pool,
@@ -146,7 +146,7 @@ bool hr_pool_lab_validate(const hr_pool_lab_t *pool);
 
 ## 6. Luồng hoạt động
 
-### Heap allocation
+### Cấp phát trên heap
 
 ```text
 requested bytes
@@ -162,7 +162,7 @@ requested bytes
       +--> mark allocated và trả payload pointer
 ```
 
-### Heap free và coalesce
+### Giải phóng heap và gộp khối
 
 ```text
 pointer
@@ -178,7 +178,7 @@ pointer
    +--> merge previous
 ```
 
-### Fragmentation metrics
+### Chỉ số phân mảnh
 
 ```text
 internal fragmentation
@@ -190,7 +190,7 @@ external fragmentation
 
 Khi toàn bộ allocation được giải phóng và coalescing thành công, heap trở lại một free block và external fragmentation bằng 0.
 
-## 7. Tích hợp build và dependency
+## 7. Tích hợp build và quan hệ phụ thuộc
 
 Module `allocator` trong `cmake/hairtos_modules.cmake` chứa:
 
@@ -209,9 +209,9 @@ Host example 14 link cùng hai source và `demo.c`.
 
 Dependency của allocator lab chỉ gồm C standard integer, size, alignment và caller-provided memory. Nó không include kernel internal headers và không gọi scheduler/critical-section API.
 
-## 8. Build và kiểm tra
+## 8. Biên dịch và kiểm tra
 
-### Host demo
+### Demo trên host
 
 ```bash
 make ENVIRONMENT=host \
@@ -227,7 +227,7 @@ Demo thực hiện:
 - khởi tạo fixed-block pool;
 - allocate hai block và validate pool.
 
-### Target demo
+### Demo trên target
 
 ```bash
 make ENVIRONMENT=target \
@@ -241,7 +241,7 @@ make ENVIRONMENT=target \
 
 Target dùng arena tĩnh trong application và in statistics qua USART1.
 
-### Host tests
+### Kiểm thử trên host
 
 ```bash
 make host-tests
@@ -262,7 +262,7 @@ Các test allocator kiểm tra:
 
 ## 9. Bất biến và giới hạn
 
-### Heap invariants
+### Bất biến của heap
 
 - arena begin/end và block chain phải nằm trong managed range;
 - mỗi block header phải căn chỉnh đúng;
@@ -271,7 +271,7 @@ Các test allocator kiểm tra:
 - allocated block phải giữ requested size hợp lệ;
 - adjacent free blocks không được tồn tại sau coalescing hoàn chỉnh.
 
-### Pool invariants
+### Bất biến của pool
 
 - block stride phải căn chỉnh;
 - mọi free node phải trỏ tới block boundary trong arena;

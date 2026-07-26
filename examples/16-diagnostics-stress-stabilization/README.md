@@ -1,4 +1,4 @@
-# `16-diagnostics-stress-stabilization` — Diagnostics and Stress Stabilization
+# `16-diagnostics-stress-stabilization` — Chẩn đoán và ổn định bằng stress test
 
 > **Môi trường:** Host + Target  
 > **Vị trí mã nguồn:** `examples/16-diagnostics-stress-stabilization/main.c`  
@@ -14,9 +14,9 @@
 
 ## 2. Kiến thức trọng tâm
 
-- Strong fault handlers.
-- Panic record retained qua reset.
-- Health monitor priority cao.
+- Các fault handler mạnh.
+- Panic record được giữ lại qua reset.
+- Tác vụ giám sát sức khỏe có priority cao.
 - Queue producer/consumer, semaphore pulse, mutex-protected counters và periodic timer.
 - Fault injection bằng `udf #0`.
 
@@ -30,10 +30,10 @@
 | `queue-consumer` | Priority 2, stack 144 | Receive sequence và kiểm tra ordering. |
 | `timer-pulse` | Priority 2, stack 128 | Take counting semaphore từ timer callback. |
 | `queue-producer` | Priority 3, stack 144 | Send mỗi 2 ticks với timeout 10. |
-| Message queue | 8 × `uint32_t` | Stress blocking/timeout. |
-| Diagnostic timer | Periodic 10 ticks | Give counting semaphore, coalesce khi full. |
+| Queue thông điệp | 8 × `uint32_t` | Stress blocking/timeout. |
+| Bộ định thời chẩn đoán | Periodic 10 ticks | Give counting semaphore, coalesce khi full. |
 | Statistics mutex | Non-recursive | Bảo vệ counters. |
-| Host stress | 500.000 iterations | Insert/remove/rotate/validate scheduler structures. |
+| Stress trên host | 500.000 iterations | Insert/remove/rotate/validate scheduler structures. |
 
 ### Tham số quan trọng
 
@@ -41,9 +41,9 @@
 | --- | --- |
 | Diagnostics/runtime stats | Bật |
 | Preemption/time slicing | Bật |
-| Health report period | 1000 ticks |
+| Chu kỳ báo cáo sức khỏe | 1000 ticks |
 | PASS checkpoint | Report 10, khoảng 10 giây |
-| Fault injection macro | `HR_DIAGNOSTICS_INJECT_USAGE_FAULT=1` |
+| Macro tiêm lỗi | `HR_DIAGNOSTICS_INJECT_USAGE_FAULT=1` |
 
 ## 4. Luồng thực thi
 
@@ -70,7 +70,7 @@
 - `hr_diagnostics_get_runtime_statistics()`
 - Queue/semaphore/mutex/timer/task APIs
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `diagnostics`
 - `fault`
@@ -79,19 +79,19 @@
 - `mutex`
 - `timer`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Target build | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization build` |
-| Target flash/run | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization run` |
-| Host stress build | `make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization build` |
-| Host stress run | `make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run` |
-| Target check | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization check` |
-| Fault injection | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization EXTRA_DEFINES=-DHR_DIAGNOSTICS_INJECT_USAGE_FAULT=1 run` |
-| Clean | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization clean` |
+| Biên dịch target | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization build` |
+| Flash/chạy target | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization run` |
+| Biên dịch stress trên host | `make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization build` |
+| Chạy stress trên host | `make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run` |
+| Kiểm tra target | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization check` |
+| Tiêm lỗi | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization EXTRA_DEFINES=-DHR_DIAGNOSTICS_INJECT_USAGE_FAULT=1 run` |
+| Dọn build | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization clean` |
 
 Biến thể target có thể cross-build bằng Clang/LLD:
 
@@ -145,7 +145,7 @@ make EXAMPLE=16-diagnostics-stress-stabilization clean
 make EXAMPLE=16-diagnostics-stress-stabilization build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Checkpoint 10 giây không thay thế soak test nhiều giờ trên phần cứng.
 - Fault injection phải tắt trong image bình thường.

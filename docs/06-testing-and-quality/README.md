@@ -1,4 +1,4 @@
-# 06 — Testing và chất lượng
+# 06 — Kiểm thử và chất lượng
 
 
 > **Bố cục chuẩn của nhóm:** Mục tiêu → Thành phần → Mô hình dữ liệu → Luồng thực thi → Bất biến → API/cấu hình → Kiểm thử → Giới hạn.

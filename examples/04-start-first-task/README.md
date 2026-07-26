@@ -1,4 +1,4 @@
-# `04-start-first-task` — Start the First Task with SVC
+# `04-start-first-task` — Khởi chạy tác vụ đầu tiên bằng SVC
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/04-start-first-task/main.c`  
@@ -37,8 +37,8 @@
 | Tham số | Giá trị |
 | --- | --- |
 | Context switch nhiều task | Chưa có |
-| Start mechanism | SVC |
-| Thread stack | PSP |
+| Cơ chế khởi chạy | SVC |
+| Ngăn xếp Thread mode | PSP |
 
 ## 4. Luồng thực thi
 
@@ -66,22 +66,22 @@
 - `hr_task_current()`
 - `hr_task_get_name()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `task_kernel`
 - `kernel_runtime`
 - `baremetal_tick`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=04-start-first-task build` |
+| Biên dịch | `make EXAMPLE=04-start-first-task build` |
 | Flash và chạy | `make EXAMPLE=04-start-first-task run` |
 | Kiểm tra | `make EXAMPLE=04-start-first-task check` |
-| Xóa build riêng | `make EXAMPLE=04-start-first-task clean` |
+| Dọn build riêng | `make EXAMPLE=04-start-first-task clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -126,7 +126,7 @@ make EXAMPLE=04-start-first-task clean
 make EXAMPLE=04-start-first-task build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

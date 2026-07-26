@@ -1,4 +1,4 @@
-# `13-03-flat-state-machine` — Flat State Machine
+# `13-03-flat-state-machine` — Máy trạng thái phẳng
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/13-03-flat-state-machine/main.c`  
@@ -38,7 +38,7 @@
 | --- | --- |
 | Số lần toggle | 6 |
 | Chu kỳ | 400 ticks |
-| States | `state_off`, `state_on` |
+| Các trạng thái | `state_off`, `state_on` |
 
 ## 4. Luồng thực thi
 
@@ -61,22 +61,22 @@
 - `he_active_post()`
 - `he_event_init_static()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `queue`
 - `timer`
 - `haievent`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=13-03-flat-state-machine build` |
+| Biên dịch | `make EXAMPLE=13-03-flat-state-machine build` |
 | Flash và chạy | `make EXAMPLE=13-03-flat-state-machine run` |
 | Kiểm tra | `make EXAMPLE=13-03-flat-state-machine check` |
-| Xóa build riêng | `make EXAMPLE=13-03-flat-state-machine clean` |
+| Dọn build riêng | `make EXAMPLE=13-03-flat-state-machine clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -120,7 +120,7 @@ make EXAMPLE=13-03-flat-state-machine clean
 make EXAMPLE=13-03-flat-state-machine build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

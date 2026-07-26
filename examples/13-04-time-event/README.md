@@ -1,4 +1,4 @@
-# `13-04-time-event` — haievent Time Event
+# `13-04-time-event` — Sự kiện thời gian haievent
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/13-04-time-event/main.c`  
@@ -13,7 +13,7 @@
 
 ## 2. Kiến thức trọng tâm
 
-- Time event sở hữu static event nội bộ.
+- Time event sở hữu một static event nội bộ.
 - Software timer expiry chỉ post vào AO queue.
 - AO xử lý event theo run-to-completion.
 - Disarm ngăn deadline tiếp theo.
@@ -29,7 +29,7 @@
 | UART | USART1, PA9 TX / PA10 RX, 115200 8-N-1 | Theo dõi log và trạng thái PASS/FAIL. |
 | LED | PC13, active-low | Hiển thị heartbeat hoặc trạng thái quan sát. |
 | `blinker-AO` | Priority 2, stack 224, queue 6 | Toggle LED khi nhận tick. |
-| `blink-time-event` | Period 250 ticks, auto reload | Post `SIGNAL_TICK`. |
+| `blink-time-event` | Chu kỳ 250 tick, tự động nạp lại | Đăng `SIGNAL_TICK`. |
 | Timer service | Priority 1 | Chuyển expiration thành post operation. |
 
 ### Tham số quan trọng
@@ -38,14 +38,14 @@
 | --- | --- |
 | Period | 250 ticks |
 | Số event trước disarm | 6 |
-| Signal | `SIGNAL_TICK` |
+| Tín hiệu | `SIGNAL_TICK` |
 
 ## 4. Luồng thực thi
 
 1. Tạo AO và time event.
-2. Arm time event trước kernel start.
+2. Kích hoạt time event trước khi khởi chạy kernel.
 3. Mỗi 250 tick software timer hết hạn.
-4. Timer service post event vào AO queue.
+4. Dịch vụ timer đăng event vào queue của AO.
 5. AO tăng count, toggle LED và in tick.
 6. Tại count 6, AO disarm event và in PASS.
 
@@ -62,21 +62,21 @@
 - `he_time_event_arm()`
 - `he_time_event_disarm()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `timer`
 - `haievent`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=13-04-time-event build` |
+| Biên dịch | `make EXAMPLE=13-04-time-event build` |
 | Flash và chạy | `make EXAMPLE=13-04-time-event run` |
 | Kiểm tra | `make EXAMPLE=13-04-time-event check` |
-| Xóa build riêng | `make EXAMPLE=13-04-time-event clean` |
+| Dọn build riêng | `make EXAMPLE=13-04-time-event clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -108,8 +108,8 @@ Time event: PASS
 
 ### Lỗi thường gặp
 
-- Event vẫn chạy sau disarm: timer chưa remove/rearm state sai.
-- Callback trực tiếp gọi state: vi phạm task context.
+- Event vẫn chạy sau khi disarm: timer chưa được gỡ hoặc trạng thái rearm sai.
+- Callback gọi trực tiếp state: vi phạm yêu cầu chạy trong task context.
 - Queue overflow: AO không consume đủ nhanh.
 
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
@@ -119,11 +119,11 @@ make EXAMPLE=13-04-time-event clean
 make EXAMPLE=13-04-time-event build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
-- Không minh họa rearm/change period của time event; software timer example đã bao phủ command đó.
+- Không minh họa rearm hoặc đổi chu kỳ của time event; ví dụ software timer đã bao phủ thao tác đó.
 
 ## 10. Liên hệ với lộ trình
 

@@ -1,4 +1,4 @@
-# `09-queue-blocking-ipc` — Queue and Blocking IPC
+# `09-queue-blocking-ipc` — Queue và IPC chặn
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/09-queue-blocking-ipc/main.c`  
@@ -13,8 +13,8 @@
 
 ## 2. Kiến thức trọng tâm
 
-- Ring buffer head/tail/count.
-- Priority-ordered send/receive wait lists.
+- Ring buffer với head/tail/count.
+- Các wait list gửi/nhận được sắp theo priority.
 - Direct handoff tới blocked receiver.
 - Refill slot từ blocked sender khi receiver lấy item.
 - Timeout cleanup khỏi queue wait list và timeout list.
@@ -37,10 +37,10 @@
 
 | Tham số | Giá trị |
 | --- | --- |
-| Queue capacity | 2 |
-| Send timeout | 100 ticks |
-| Consumer delay | 200 ticks |
-| Receive timeout | `HR_WAIT_FOREVER` |
+| Dung lượng queue | 2 |
+| Timeout gửi | 100 ticks |
+| Độ trễ consumer | 200 ticks |
+| Timeout nhận | `HR_WAIT_FOREVER` |
 
 ## 4. Luồng thực thi
 
@@ -65,23 +65,23 @@
 - `hr_queue_receive()`
 - `hr_queue_get_count()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
 - `queue`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=09-queue-blocking-ipc build` |
+| Biên dịch | `make EXAMPLE=09-queue-blocking-ipc build` |
 | Flash và chạy | `make EXAMPLE=09-queue-blocking-ipc run` |
 | Kiểm tra | `make EXAMPLE=09-queue-blocking-ipc check` |
-| Xóa build riêng | `make EXAMPLE=09-queue-blocking-ipc clean` |
+| Dọn build riêng | `make EXAMPLE=09-queue-blocking-ipc clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -121,7 +121,7 @@ make EXAMPLE=09-queue-blocking-ipc clean
 make EXAMPLE=09-queue-blocking-ipc build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

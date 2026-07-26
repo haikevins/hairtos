@@ -1,4 +1,4 @@
-# `01-baremetal-foundation` — Bare-metal Foundation
+# `01-baremetal-foundation` — Nền tảng bare-metal
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/01-baremetal-foundation/main.c`  
@@ -61,21 +61,21 @@
 - `board_millis()`
 - `board_delay_ms()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `platform`
 - `baremetal_tick`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=01-baremetal-foundation build` |
+| Biên dịch | `make EXAMPLE=01-baremetal-foundation build` |
 | Flash và chạy | `make EXAMPLE=01-baremetal-foundation run` |
 | Kiểm tra | `make EXAMPLE=01-baremetal-foundation check` |
-| Xóa build riêng | `make EXAMPLE=01-baremetal-foundation clean` |
+| Dọn build riêng | `make EXAMPLE=01-baremetal-foundation clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -116,7 +116,7 @@ make EXAMPLE=01-baremetal-foundation clean
 make EXAMPLE=01-baremetal-foundation build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

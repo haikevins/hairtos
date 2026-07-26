@@ -1,4 +1,4 @@
-# `10-02-mutex-priority-inheritance` — Mutex and Priority Inheritance
+# `10-02-mutex-priority-inheritance` — Mutex và kế thừa ưu tiên
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/10-02-mutex-priority-inheritance/main.c`  
@@ -13,7 +13,7 @@
 
 ## 2. Kiến thức trọng tâm
 
-- Mutex ownership.
+- Quyền sở hữu mutex.
 - Priority inheritance từ waiter cao nhất.
 - Owner được requeue khi effective priority thay đổi.
 - Unlock chuyển ownership trực tiếp cho waiter phù hợp.
@@ -37,9 +37,9 @@
 
 | Tham số | Giá trị |
 | --- | --- |
-| High release | Tick 10 |
-| Medium release | Tick 20 |
-| Low work deadline | Tick 120 |
+| Thời điểm đánh thức High | Tick 10 |
+| Thời điểm đánh thức Medium | Tick 20 |
+| Deadline công việc của Low | Tick 120 |
 
 ## 4. Luồng thực thi
 
@@ -66,23 +66,23 @@
 - `hr_mutex_get_waiting_tasks()`
 - `hr_task_get_effective_priority()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
 - `mutex`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=10-02-mutex-priority-inheritance build` |
+| Biên dịch | `make EXAMPLE=10-02-mutex-priority-inheritance build` |
 | Flash và chạy | `make EXAMPLE=10-02-mutex-priority-inheritance run` |
 | Kiểm tra | `make EXAMPLE=10-02-mutex-priority-inheritance check` |
-| Xóa build riêng | `make EXAMPLE=10-02-mutex-priority-inheritance clean` |
+| Dọn build riêng | `make EXAMPLE=10-02-mutex-priority-inheritance clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -126,7 +126,7 @@ make EXAMPLE=10-02-mutex-priority-inheritance clean
 make EXAMPLE=10-02-mutex-priority-inheritance build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

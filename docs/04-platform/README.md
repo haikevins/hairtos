@@ -1,4 +1,4 @@
-# 04 — Platform và port
+# 04 — Nền tảng và port
 
 
 > **Bố cục chuẩn của nhóm:** Mục tiêu → Thành phần → Mô hình dữ liệu → Luồng thực thi → Bất biến → API/cấu hình → Kiểm thử → Giới hạn.

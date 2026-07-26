@@ -4,7 +4,7 @@
 
 Phiên bản hiện tại: **`1.0.0-rc1`**. Xem [`VERSION`](VERSION) và [`CHANGELOG.md`](CHANGELOG.md) để theo dõi phiên bản và thay đổi.
 
-## 1. Mục tiêu project
+## 1. Mục tiêu dự án
 
 Project được xây dựng với ba mục tiêu chính:
 
@@ -21,7 +21,7 @@ Kernel hiện hỗ trợ:
 - tạo task tĩnh và khởi tạo initial Cortex-M3 stack frame;
 - khởi chạy task đầu tiên bằng SVC;
 - context switch bằng PendSV và PSP;
-- fixed-priority preemptive scheduler;
+- bộ lập lịch chiếm quyền với ưu tiên cố định;
 - FIFO round-robin giữa các task cùng priority;
 - SysTick 1 kHz, delay, periodic delay và timeout có xử lý tick wrap;
 - queue blocking, direct handoff và API từ ISR;
@@ -203,7 +203,7 @@ make clean-all
 
 CMake là nguồn duy nhất quản lý example, module, source và compile definition. Makefile chỉ là command wrapper ổn định cho người dùng.
 
-## 8. Host và target examples
+## 8. Ví dụ trên host và target
 
 Phân loại đầy đủ nằm trong [`examples/README.md`](examples/README.md). Một số ví dụ thường dùng:
 
@@ -320,9 +320,9 @@ Sau đó chọn **`hairtos - Active CMake Build`**.
 - [`docs/00-overview/architecture.md`](docs/00-overview/architecture.md): kiến trúc tổng thể;
 - [`docs/01-kernel-core/README.md`](docs/01-kernel-core/README.md): task, scheduler và context switch;
 - [`docs/02-synchronization/README.md`](docs/02-synchronization/README.md): queue, semaphore, mutex và timer;
-- [`docs/03-haievent/README.md`](docs/03-haievent/README.md): event framework;
+- [`docs/03-haievent/README.md`](docs/03-haievent/README.md): framework sự kiện;
 - [`docs/05-api-reference/README.md`](docs/05-api-reference/README.md): public API;
-- [`docs/06-testing-and-quality/testing-guide.md`](docs/06-testing-and-quality/testing-guide.md): testing workflow;
+- [`docs/06-testing-and-quality/testing-guide.md`](docs/06-testing-and-quality/testing-guide.md): quy trình kiểm thử;
 - [`examples/README.md`](examples/README.md): lộ trình example.
 
 ## 13. Giới hạn hiện tại

@@ -1,4 +1,4 @@
-# `05-cooperative-context-switch` — Cooperative Context Switch
+# `05-cooperative-context-switch` — Chuyển ngữ cảnh hợp tác
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/05-cooperative-context-switch/main.c`  
@@ -63,22 +63,22 @@
 - `hr_task_current()`
 - `hr_kernel_start()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `task_kernel`
 - `kernel_runtime`
 - `baremetal_tick`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=05-cooperative-context-switch build` |
+| Biên dịch | `make EXAMPLE=05-cooperative-context-switch build` |
 | Flash và chạy | `make EXAMPLE=05-cooperative-context-switch run` |
 | Kiểm tra | `make EXAMPLE=05-cooperative-context-switch check` |
-| Xóa build riêng | `make EXAMPLE=05-cooperative-context-switch clean` |
+| Dọn build riêng | `make EXAMPLE=05-cooperative-context-switch clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -121,7 +121,7 @@ make EXAMPLE=05-cooperative-context-switch clean
 make EXAMPLE=05-cooperative-context-switch build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

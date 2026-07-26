@@ -1,4 +1,4 @@
-# `13-01-event-post` — haievent Post from ISR
+# `13-01-event-post` — Đăng sự kiện haievent từ ISR
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/13-01-event-post/main.c`  
@@ -13,7 +13,7 @@
 
 ## 2. Kiến thức trọng tâm
 
-- Active Object = task + queue + state machine.
+- Active Object = tác vụ + queue + máy trạng thái.
 - Static event không cần release về pool.
 - ISR chỉ enqueue; AO task dispatch.
 - Higher-priority wake-up dùng `hr_yield_from_isr`.
@@ -36,9 +36,9 @@
 
 | Tham số | Giá trị |
 | --- | --- |
-| Signal | `HE_SIG_USER` |
+| Tín hiệu | `HE_SIG_USER` |
 | EXTI source | Software interrupt line 0 |
-| Queue capacity | 4 |
+| Dung lượng queue | 4 |
 
 ## 4. Luồng thực thi
 
@@ -63,23 +63,23 @@
 - `he_active_post_from_isr()`
 - `hr_yield_from_isr()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `context`
 - `queue`
 - `timer`
 - `haievent`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=13-01-event-post build` |
+| Biên dịch | `make EXAMPLE=13-01-event-post build` |
 | Flash và chạy | `make EXAMPLE=13-01-event-post run` |
 | Kiểm tra | `make EXAMPLE=13-01-event-post check` |
-| Xóa build riêng | `make EXAMPLE=13-01-event-post clean` |
+| Dọn build riêng | `make EXAMPLE=13-01-event-post clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -120,7 +120,7 @@ make EXAMPLE=13-01-event-post clean
 make EXAMPLE=13-01-event-post build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

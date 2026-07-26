@@ -1,4 +1,4 @@
-# `14-memory-allocator-lab` — Memory Allocator Lab
+# `14-memory-allocator-lab` — Bài thực hành bộ cấp phát bộ nhớ
 
 > **Môi trường:** Host + Target  
 > **Vị trí mã nguồn:** `examples/14-memory-allocator-lab/main.c`  
@@ -13,10 +13,10 @@
 
 ## 2. Kiến thức trọng tâm
 
-- Application-owned static arena.
+- Vùng nhớ tĩnh do ứng dụng sở hữu.
 - Alignment theo `max_align_t`.
 - Heap block header và payload.
-- First-fit reuse.
+- Tái sử dụng theo chiến lược first-fit.
 - Allocator lab tách khỏi TCB/queue/timer/AO.
 
 ## 3. Thành phần và cấu hình
@@ -35,7 +35,7 @@
 | Tham số | Giá trị |
 | --- | --- |
 | Kernel dependency | Không |
-| Target loop sau PASS | LED toggle 500 ms |
+| Vòng lặp target sau PASS | LED toggle 500 ms |
 | Environment selection | Phải chỉ rõ host/target khi cần |
 
 ## 4. Luồng thực thi
@@ -64,23 +64,23 @@
 - `hr_heap_lab_validate()`
 - `hr_pool_lab_*()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `allocator` trên target
 - `labs/memory-allocator/demo.c` trên host
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Host build | `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab build` |
-| Host run | `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run` |
-| Target build | `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab build` |
-| Target flash/run | `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run` |
+| Biên dịch trên host | `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab build` |
+| Chạy trên host | `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run` |
+| Biên dịch target | `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab build` |
+| Flash/chạy target | `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run` |
 | Kiểm tra | `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab check` |
-| Clean | `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab clean` |
+| Dọn build | `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab clean` |
 
 Biến thể target có thể cross-build bằng Clang/LLD:
 
@@ -111,7 +111,7 @@ Memory allocator lab: PASS
 
 ### Tiêu chí PASS
 
-- Host exit code 0.
+- Chương trình host kết thúc với mã 0.
 - Heap validate đúng sau full coalesce.
 - External fragmentation về 0 sau free tất cả.
 - Pool capacity/free count hợp lệ.
@@ -130,11 +130,11 @@ make EXAMPLE=14-memory-allocator-lab clean
 make EXAMPLE=14-memory-allocator-lab build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Allocator chỉ phục vụ học tập; không thread-safe và không tích hợp kernel.
 - Không gọi allocator trong ISR hoặc scheduler hot path.
-- Target build không thay thế sanitizer host tests.
+- Biên dịch target không thay thế kiểm thử sanitizer trên host.
 
 ## 10. Liên hệ với lộ trình
 

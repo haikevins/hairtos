@@ -1,4 +1,4 @@
-# hairtos Documentation
+# Tài liệu hairtos
 
 Tài liệu này mô tả **hairtos mainline** trên STM32F103C8T6/Cortex-M3. Đây là tài liệu của sản phẩm hiện hành, không phải gói tài liệu riêng cho một phase. Bộ tài liệu được tổ chức theo subsystem và chỉ giữ những nội dung cần để hiểu kiến trúc, sử dụng API, kiểm thử và bảo trì project.
 

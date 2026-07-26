@@ -1,4 +1,4 @@
-# `13-06-event-driven-demo` — Integrated haievent Demo
+# `13-06-event-driven-demo` — Demo haievent tích hợp
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/13-06-event-driven-demo/main.c`  
@@ -67,7 +67,7 @@
 - `he_event_new()`
 - `he_pubsub_publish()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `context`
 - `queue`
@@ -75,16 +75,16 @@
 - `timer`
 - `haievent`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=13-06-event-driven-demo build` |
+| Biên dịch | `make EXAMPLE=13-06-event-driven-demo build` |
 | Flash và chạy | `make EXAMPLE=13-06-event-driven-demo run` |
 | Kiểm tra | `make EXAMPLE=13-06-event-driven-demo check` |
-| Xóa build riêng | `make EXAMPLE=13-06-event-driven-demo clean` |
+| Dọn build riêng | `make EXAMPLE=13-06-event-driven-demo clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -129,7 +129,7 @@ make EXAMPLE=13-06-event-driven-demo clean
 make EXAMPLE=13-06-event-driven-demo build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

@@ -1,4 +1,4 @@
-# `12-software-timer` — Software Timer Service
+# `12-software-timer` — Dịch vụ bộ định thời phần mềm
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/12-software-timer/main.c`  
@@ -13,7 +13,7 @@
 
 ## 2. Kiến thức trọng tâm
 
-- Ordered timer deadline list.
+- Danh sách deadline của timer được sắp thứ tự.
 - Pending callback list và timer-service semaphore.
 - Callback không chạy trong ISR.
 - Periodic rearm từ deadline để hạn chế drift.
@@ -38,9 +38,9 @@
 | Tham số | Giá trị |
 | --- | --- |
 | Software timer | Bật |
-| Periodic initial | 250 ticks |
+| Chu kỳ ban đầu | 250 ticks |
 | One-shot | 1000 ticks |
-| One-shot argument | 120012 |
+| Đối số one-shot | 120012 |
 
 ## 4. Luồng thực thi
 
@@ -66,7 +66,7 @@
 - `hr_timer_change_period()`
 - `hr_timer_stop()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `task_kernel`
 - `kernel_runtime`
@@ -74,16 +74,16 @@
 - `semaphore`
 - `timer`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=12-software-timer build` |
+| Biên dịch | `make EXAMPLE=12-software-timer build` |
 | Flash và chạy | `make EXAMPLE=12-software-timer run` |
 | Kiểm tra | `make EXAMPLE=12-software-timer check` |
-| Xóa build riêng | `make EXAMPLE=12-software-timer clean` |
+| Dọn build riêng | `make EXAMPLE=12-software-timer clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -126,7 +126,7 @@ make EXAMPLE=12-software-timer clean
 make EXAMPLE=12-software-timer build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

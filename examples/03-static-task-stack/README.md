@@ -1,4 +1,4 @@
-# `03-static-task-stack` — Static TCB and Initial Task Stack
+# `03-static-task-stack` — TCB tĩnh và ngăn xếp khởi tạo của tác vụ
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/03-static-task-stack/main.c`  
@@ -60,22 +60,22 @@
 - `hr_task_create_static()`
 - `board_delay_ms()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `platform`
 - `baremetal_tick`
 - `task_kernel`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=03-static-task-stack build` |
+| Biên dịch | `make EXAMPLE=03-static-task-stack build` |
 | Flash và chạy | `make EXAMPLE=03-static-task-stack run` |
 | Kiểm tra | `make EXAMPLE=03-static-task-stack check` |
-| Xóa build riêng | `make EXAMPLE=03-static-task-stack clean` |
+| Dọn build riêng | `make EXAMPLE=03-static-task-stack clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -116,7 +116,7 @@ make EXAMPLE=03-static-task-stack clean
 make EXAMPLE=03-static-task-stack build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

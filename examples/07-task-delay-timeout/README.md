@@ -1,4 +1,4 @@
-# `07-task-delay-timeout` — SysTick, Task Delay and Timeout
+# `07-task-delay-timeout` — SysTick, trì hoãn tác vụ và timeout
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/07-task-delay-timeout/main.c`  
@@ -13,8 +13,8 @@
 
 ## 2. Kiến thức trọng tâm
 
-- Kernel-owned SysTick.
-- RUNNING → BLOCKED → READY.
+- SysTick do kernel quản lý.
+- Chuyển trạng thái RUNNING → BLOCKED → READY.
 - Dual timeout list hỗ trợ tick wrap.
 - Example tắt general preemption và time slicing để tập trung vào delay.
 
@@ -36,9 +36,9 @@
 
 | Tham số | Giá trị |
 | --- | --- |
-| Tick rate | 1 kHz |
-| Periodic interval | 500 ticks |
-| Heartbeat interval | 1000 ticks |
+| Tần số tick | 1 kHz |
+| Chu kỳ định kỳ | 500 ticks |
+| Chu kỳ heartbeat | 1000 ticks |
 | Preemption/time slicing | Tắt trong cấu hình example |
 
 ## 4. Luồng thực thi
@@ -63,22 +63,22 @@
 - `hr_task_delay()`
 - `hr_task_delay_until()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=07-task-delay-timeout build` |
+| Biên dịch | `make EXAMPLE=07-task-delay-timeout build` |
 | Flash và chạy | `make EXAMPLE=07-task-delay-timeout run` |
 | Kiểm tra | `make EXAMPLE=07-task-delay-timeout check` |
-| Xóa build riêng | `make EXAMPLE=07-task-delay-timeout clean` |
+| Dọn build riêng | `make EXAMPLE=07-task-delay-timeout clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -120,7 +120,7 @@ make EXAMPLE=07-task-delay-timeout clean
 make EXAMPLE=07-task-delay-timeout build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

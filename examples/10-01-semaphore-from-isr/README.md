@@ -1,4 +1,4 @@
-# `10-01-semaphore-from-isr` — Semaphore Give from ISR
+# `10-01-semaphore-from-isr` — Trao semaphore từ ISR
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/10-01-semaphore-from-isr/main.c`  
@@ -64,23 +64,23 @@
 - `hr_semaphore_give_from_isr()`
 - `hr_yield_from_isr()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
 - `semaphore`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=10-01-semaphore-from-isr build` |
+| Biên dịch | `make EXAMPLE=10-01-semaphore-from-isr build` |
 | Flash và chạy | `make EXAMPLE=10-01-semaphore-from-isr run` |
 | Kiểm tra | `make EXAMPLE=10-01-semaphore-from-isr check` |
-| Xóa build riêng | `make EXAMPLE=10-01-semaphore-from-isr clean` |
+| Dọn build riêng | `make EXAMPLE=10-01-semaphore-from-isr clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -121,7 +121,7 @@ make EXAMPLE=10-01-semaphore-from-isr clean
 make EXAMPLE=10-01-semaphore-from-isr build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

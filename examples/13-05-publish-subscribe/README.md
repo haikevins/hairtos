@@ -1,4 +1,4 @@
-# `13-05-publish-subscribe` — Publish–Subscribe and Dynamic Event Ownership
+# `13-05-publish-subscribe` — Publish–Subscribe và quyền sở hữu sự kiện động
 
 > **Môi trường:** Target — STM32F103C8T6  
 > **Vị trí mã nguồn:** `examples/13-05-publish-subscribe/main.c`  
@@ -38,16 +38,16 @@
 
 | Tham số | Giá trị |
 | --- | --- |
-| Signal | `SIGNAL_TELEMETRY` |
-| Subscribers | 2 |
-| Publish timeout | `HR_WAIT_FOREVER` |
+| Tín hiệu | `SIGNAL_TELEMETRY` |
+| Số subscriber | 2 |
+| Timeout publish | `HR_WAIT_FOREVER` |
 
 ## 4. Luồng thực thi
 
 1. Publisher xin block từ pool và ghi sequence.
 2. Bus tra subscriber list của signal.
 3. Event được retain và post tới logger/display.
-4. Publisher in delivered=2.
+4. Publisher in `delivered=2`.
 5. Mỗi AO đọc payload, tăng count và dispatch hoàn tất.
 6. Sau reference cuối, block quay về pool; chu kỳ lặp sau 500 ticks.
 
@@ -65,22 +65,22 @@
 - `he_pubsub_subscribe()`
 - `he_pubsub_publish()`
 
-### Module được đưa vào build
+### Module được đưa vào bản biên dịch
 
 - `queue`
 - `timer`
 - `haievent`
 
-## 6. Build, run và kiểm tra
+## 6. Biên dịch, chạy và kiểm tra
 
 Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Build | `make EXAMPLE=13-05-publish-subscribe build` |
+| Biên dịch | `make EXAMPLE=13-05-publish-subscribe build` |
 | Flash và chạy | `make EXAMPLE=13-05-publish-subscribe run` |
 | Kiểm tra | `make EXAMPLE=13-05-publish-subscribe check` |
-| Xóa build riêng | `make EXAMPLE=13-05-publish-subscribe clean` |
+| Dọn build riêng | `make EXAMPLE=13-05-publish-subscribe clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
@@ -121,7 +121,7 @@ make EXAMPLE=13-05-publish-subscribe clean
 make EXAMPLE=13-05-publish-subscribe build
 ```
 
-## 9. Giới hạn của example
+## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.

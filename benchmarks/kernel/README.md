@@ -1,4 +1,4 @@
-# Kernel benchmark support
+# Hỗ trợ benchmark kernel
 
 ## 1. Mục đích
 
@@ -51,7 +51,7 @@ benchmarks/kernel/
 
 ## 4. Thành phần triển khai
 
-### DWT cycle counter
+### Bộ đếm chu kỳ DWT
 
 `hr_benchmark_clock_init()`:
 
@@ -63,7 +63,7 @@ benchmarks/kernel/
 6. chạy một chuỗi NOP để xác nhận counter tăng;
 7. lưu core frequency.
 
-### Fixed-capacity statistics
+### Thống kê dung lượng cố định
 
 `hr_benchmark_stats_t` chứa tối đa:
 
@@ -83,7 +83,7 @@ Mean dùng phép chia `uint64_t / uint32_t` tự cài đặt để tránh kéo r
 
 Percentile dùng nearest-rank sau khi copy và insertion-sort tối đa 64 mẫu.
 
-### GPIO marker
+### Tín hiệu đánh dấu GPIO
 
 PB0 được cấu hình output push-pull 50 MHz:
 
@@ -94,9 +94,9 @@ mark_end()   → PB0 low
 
 Marker cho phép so sánh DWT result với logic analyzer hoặc oscilloscope.
 
-## 5. Public API
+## 5. API công khai
 
-### Statistics
+### Thống kê
 
 ```c
 void hr_benchmark_stats_reset(hr_benchmark_stats_t *stats);
@@ -109,7 +109,7 @@ uint32_t hr_benchmark_stats_percentile(const hr_benchmark_stats_t *stats,
                                        uint32_t percentile);
 ```
 
-### Cycle utilities
+### Tiện ích chu kỳ
 
 ```c
 uint32_t hr_benchmark_elapsed_cycles(uint32_t start_cycles,
@@ -120,7 +120,7 @@ uint32_t hr_benchmark_cycles_to_nanoseconds(uint32_t cycles,
                                             uint32_t core_clock_hz);
 ```
 
-### Target clock và marker
+### Clock target và tín hiệu đánh dấu
 
 ```c
 bool hr_benchmark_clock_init(uint32_t core_clock_hz);
@@ -166,11 +166,11 @@ end_cycles - start_cycles
 
 sử dụng unsigned wrap semantics và hợp lệ nếu một phép đo không kéo dài quá toàn bộ chu kỳ wrap 32-bit.
 
-## 7. Tích hợp build và dependency
+## 7. Tích hợp build và quan hệ phụ thuộc
 
 Module `benchmark` được khai báo trong `cmake/hairtos_modules.cmake` và chỉ được chọn bởi `15-kernel-benchmark`.
 
-Module source:
+Mã nguồn module:
 
 ```text
 benchmarks/kernel/src/hr_benchmark_stats.c
@@ -184,7 +184,7 @@ Include path bổ sung:
 benchmarks/kernel/include
 ```
 
-Dependency:
+Quan hệ phụ thuộc:
 
 ```text
 benchmark stats → C standard integer/types only
@@ -194,9 +194,9 @@ GPIO marker    → public driver API hr_gpio.h
 
 Example 15 được phép dùng một số kernel internal API có chủ đích để đo scheduler internals; quyền này chỉ áp dụng cho main của benchmark, không mở internal path cho các example khác.
 
-## 8. Build và kiểm tra
+## 8. Biên dịch và kiểm tra
 
-Build firmware:
+Biên dịch firmware:
 
 ```bash
 make EXAMPLE=15-kernel-benchmark build

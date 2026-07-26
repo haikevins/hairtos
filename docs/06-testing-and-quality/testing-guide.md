@@ -22,7 +22,7 @@ make HOST_CC=gcc host-tests
 ## 3. Phase checks
 
 ```bash
-make EXAMPLE=hairtos check
+make EXAMPLE=16-diagnostics-stress-stabilization check
 ```
 
 Script phase cuối chạy hygiene, host regression, stress, target builds, symbol/disassembly checks, CMake/Ninja và memory limits.
@@ -30,7 +30,7 @@ Script phase cuối chạy hygiene, host regression, stress, target builds, symb
 ## 4. Target build
 
 ```bash
-make EXAMPLE=hairtos TOOLCHAIN=clang build
+make EXAMPLE=16-diagnostics-stress-stabilization TOOLCHAIN=clang build
 ```
 
 Cross-build PASS chỉ chứng minh compile/link/static checks, không chứng minh behavior trên board.

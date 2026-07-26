@@ -4,27 +4,27 @@
 
 #include "hairtos_config.h"
 #include "hr_scheduler_internal.h"
-#include "scheduler_stress.h"
+#include "phase16_stress.h"
 
-#define SCHEDULER_STRESS_NODE_COUNT 7U
+#define PHASE16_STRESS_NODE_COUNT 7U
 
 typedef struct
 {
     hr_ready_node_t ready;
     bool linked;
-} hairtos_stress_node_t;
+} phase16_stress_node_t;
 
-static uint32_t hairtos_next_random(uint32_t *state)
+static uint32_t phase16_next_random(uint32_t *state)
 {
     *state = (*state * UINT32_C(1664525)) + UINT32_C(1013904223);
     return *state;
 }
 
-bool scheduler_stress_run(uint32_t iterations,
-                          scheduler_stress_result_t *result)
+bool phase16_scheduler_stress_run(uint32_t iterations,
+                                  phase16_stress_result_t *result)
 {
     hr_scheduler_t scheduler;
-    hairtos_stress_node_t nodes[SCHEDULER_STRESS_NODE_COUNT];
+    phase16_stress_node_t nodes[PHASE16_STRESS_NODE_COUNT];
     uint32_t random_state = UINT32_C(0xC0FFEE11);
     uint32_t iteration;
     size_t index;
@@ -41,7 +41,7 @@ bool scheduler_stress_run(uint32_t iterations,
     result->validations = 0U;
 
     hr_scheduler_init(&scheduler);
-    for (index = 0U; index < SCHEDULER_STRESS_NODE_COUNT; index++)
+    for (index = 0U; index < PHASE16_STRESS_NODE_COUNT; index++)
     {
         hr_ready_node_init(&nodes[index].ready,
                            &nodes[index],
@@ -52,9 +52,9 @@ bool scheduler_stress_run(uint32_t iterations,
 
     for (iteration = 0U; iteration < iterations; iteration++)
     {
-        const uint32_t random_value = hairtos_next_random(&random_state);
+        const uint32_t random_value = phase16_next_random(&random_state);
         const size_t selected =
-            (size_t)(random_value % SCHEDULER_STRESS_NODE_COUNT);
+            (size_t)(random_value % PHASE16_STRESS_NODE_COUNT);
         const uint32_t operation = (random_value >> 8U) % 3U;
 
         if (operation == 0U)
@@ -104,7 +104,7 @@ bool scheduler_stress_run(uint32_t iterations,
         result->validations++;
     }
 
-    for (index = 0U; index < SCHEDULER_STRESS_NODE_COUNT; index++)
+    for (index = 0U; index < PHASE16_STRESS_NODE_COUNT; index++)
     {
         if (nodes[index].linked)
         {

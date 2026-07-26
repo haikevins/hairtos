@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := build
 
 PROJECT          := hairtos
-EXAMPLE          ?= hairtos
+EXAMPLE          ?= 16-diagnostics-stress-stabilization
 ENVIRONMENT      ?= auto
 BUILD_ROOT       ?= build
 
@@ -25,14 +25,14 @@ TARGET_EXAMPLES  := 01-baremetal-foundation \
                     13-06-event-driven-demo \
                     14-memory-allocator-lab \
                     15-kernel-benchmark \
-                    hairtos
+                    16-diagnostics-stress-stabilization
 
 HOST_EXAMPLES    := 02-kernel-data-structures-host \
                     14-memory-allocator-lab \
-                    hairtos
+                    16-diagnostics-stress-stabilization
 
 HOST_ONLY_EXAMPLES := 02-kernel-data-structures-host
-DUAL_EXAMPLES      := 14-memory-allocator-lab hairtos
+DUAL_EXAMPLES      := 14-memory-allocator-lab 16-diagnostics-stress-stabilization
 ALL_EXAMPLES       := $(sort $(TARGET_EXAMPLES) $(HOST_EXAMPLES))
 
 ifeq ($(ENVIRONMENT),auto)
@@ -104,11 +104,11 @@ PHASE3_C_SOURCES := kernel/src/hr_list.c \
 C_SOURCES        := $(PLATFORM_C_SOURCES) examples/$(EXAMPLE)/main.c
 ASM_SOURCES      := soc/stm32f1/startup_stm32f103.S
 
-ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark hairtos),)
+ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark 16-diagnostics-stress-stabilization),)
 C_SOURCES        += $(PHASE3_C_SOURCES)
 endif
 
-ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark hairtos),)
+ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark 16-diagnostics-stress-stabilization),)
 C_SOURCES        += kernel/src/hr_kernel.c
 ASM_SOURCES      += arch/arm/cortex-m3/hr_portasm.S
 endif
@@ -117,7 +117,7 @@ ifneq ($(filter $(EXAMPLE),01-baremetal-foundation 03-static-task-stack 04-start
 C_SOURCES        += $(BAREMETAL_TICK_SOURCE)
 endif
 
-ifneq ($(filter $(EXAMPLE),07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark hairtos),)
+ifneq ($(filter $(EXAMPLE),07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark 16-diagnostics-stress-stabilization),)
 C_SOURCES        += kernel/src/hr_time.c
 endif
 
@@ -163,7 +163,7 @@ C_SOURCES        += kernel/src/hr_context.c \
                     benchmarks/kernel/src/hr_benchmark_gpio.c
 endif
 
-ifeq ($(EXAMPLE),hairtos)
+ifeq ($(EXAMPLE),16-diagnostics-stress-stabilization)
 C_SOURCES        += kernel/src/hr_context.c \
                     kernel/src/hr_queue.c \
                     kernel/src/hr_semaphore.c \
@@ -208,7 +208,7 @@ EXAMPLE_DEFINES  :=
 ifeq ($(EXAMPLE),07-task-delay-timeout)
 EXAMPLE_DEFINES  += -DHR_CFG_PREEMPTION=0 -DHR_CFG_TIME_SLICING=0
 endif
-ifeq ($(EXAMPLE),hairtos)
+ifeq ($(EXAMPLE),16-diagnostics-stress-stabilization)
 EXAMPLE_DEFINES  += -DHR_CFG_PREEMPTION=1 -DHR_CFG_TIME_SLICING=1 \
                     -DHR_CFG_ENABLE_SOFTWARE_TIMER=1 \
                     -DHR_CFG_TIMER_TASK_PRIORITY=1 \
@@ -247,11 +247,11 @@ HOST_EXAMPLE_SOURCES := labs/memory-allocator/src/hr_heap_lab.c \
                         labs/memory-allocator/demo.c
 endif
 
-ifeq ($(EXAMPLE),hairtos)
+ifeq ($(EXAMPLE),16-diagnostics-stress-stabilization)
 HOST_EXAMPLE_SOURCES := kernel/src/hr_list.c \
                         kernel/src/hr_scheduler.c \
-                        tests/stress/scheduler_stress_core.c \
-                        tests/stress/scheduler_stress_main.c
+                        tests/stress/phase16_stress_core.c \
+                        tests/stress/phase16_stress_main.c
 endif
 
 HOST_FLAGS       := -std=c11 -O0 -g3 -Wall -Wextra -Werror -Wshadow -Wundef \
@@ -282,7 +282,7 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     labs/memory-allocator/src/hr_pool_lab.c \
                     benchmarks/kernel/src/hr_benchmark_stats.c \
                     kernel/src/hr_diagnostics.c \
-                    tests/stress/scheduler_stress_core.c \
+                    tests/stress/phase16_stress_core.c \
                     arch/arm/cortex-m3/hr_port_stack.c \
                     tests/mocks/mock_port.c \
                     tests/host/test_main.c \
@@ -301,7 +301,7 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     tests/host/test_haievent.c \
                     tests/host/test_benchmark.c \
                     tests/host/test_diagnostics.c \
-                    tests/stress/test_scheduler_stress.c \
+                    tests/stress/test_phase16_stress.c \
                     labs/memory-allocator/tests/test_heap_lab.c
 
 LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \

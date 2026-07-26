@@ -5,7 +5,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
-set(HAIRTOS_EXAMPLE "hairtos" CACHE STRING "Implemented target example")
+set(HAIRTOS_EXAMPLE "16-diagnostics-stress-stabilization" CACHE STRING "Implemented target example")
 set(HAIRTOS_TARGET_EXAMPLES
     01-baremetal-foundation
     03-static-task-stack
@@ -27,7 +27,7 @@ set(HAIRTOS_TARGET_EXAMPLES
     13-06-event-driven-demo
     14-memory-allocator-lab
     15-kernel-benchmark
-    hairtos
+    16-diagnostics-stress-stabilization
 )
 
 list(FIND HAIRTOS_TARGET_EXAMPLES "${HAIRTOS_EXAMPLE}" HAIRTOS_EXAMPLE_INDEX)
@@ -52,7 +52,7 @@ if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack" OR
    HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
    HAIRTOS_EXAMPLE MATCHES "^13-" OR
    HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark" OR
-   HAIRTOS_EXAMPLE STREQUAL "hairtos")
+   HAIRTOS_EXAMPLE STREQUAL "16-diagnostics-stress-stabilization")
     list(APPEND HAIRTOS_KERNEL_SOURCES
         kernel/src/hr_list.c
         kernel/src/hr_scheduler.c
@@ -76,7 +76,7 @@ if(HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
    HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
    HAIRTOS_EXAMPLE MATCHES "^13-" OR
    HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark" OR
-   HAIRTOS_EXAMPLE STREQUAL "hairtos")
+   HAIRTOS_EXAMPLE STREQUAL "16-diagnostics-stress-stabilization")
     list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_kernel.c)
     list(APPEND HAIRTOS_PORT_ASM arch/arm/cortex-m3/hr_portasm.S)
 endif()
@@ -130,7 +130,7 @@ if(HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark")
     )
 endif()
 
-if(HAIRTOS_EXAMPLE STREQUAL "hairtos")
+if(HAIRTOS_EXAMPLE STREQUAL "16-diagnostics-stress-stabilization")
     list(APPEND HAIRTOS_KERNEL_SOURCES
         kernel/src/hr_context.c
         kernel/src/hr_queue.c
@@ -161,7 +161,7 @@ if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
    HAIRTOS_EXAMPLE STREQUAL "12-software-timer" OR
    HAIRTOS_EXAMPLE MATCHES "^13-" OR
    HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark" OR
-   HAIRTOS_EXAMPLE STREQUAL "hairtos")
+   HAIRTOS_EXAMPLE STREQUAL "16-diagnostics-stress-stabilization")
     set(HAIRTOS_TICK_SOURCE kernel/src/hr_time.c)
 endif()
 
@@ -189,7 +189,7 @@ if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout")
     )
 endif()
 
-if(HAIRTOS_EXAMPLE STREQUAL "hairtos")
+if(HAIRTOS_EXAMPLE STREQUAL "16-diagnostics-stress-stabilization")
     target_compile_definitions(hairtos PRIVATE
         HR_CFG_PREEMPTION=1
         HR_CFG_TIME_SLICING=1

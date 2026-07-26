@@ -45,7 +45,7 @@ make EXAMPLE=<name> clean
 | `13-06-event-driven-demo` | Target | Integrated haievent demo | `make EXAMPLE=13-06-event-driven-demo run` |
 | `14-memory-allocator-lab` | Host + Target | Fixed-block pool and first-fit heap lab | Host: `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run`<br>Target: `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run` |
 | `15-kernel-benchmark` | Target | DWT/GPIO kernel benchmark | `make EXAMPLE=15-kernel-benchmark run` |
-| `hairtos` | Host + Target | Diagnostics and deterministic stress | Host: `make ENVIRONMENT=host EXAMPLE=hairtos run`<br>Target: `make ENVIRONMENT=target EXAMPLE=hairtos run` |
+| `16-diagnostics-stress-stabilization` | Host + Target | Diagnostics and deterministic stress | Host: `make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run`<br>Target: `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization run` |
 
 ## 4. Các lệnh chung
 
@@ -76,7 +76,7 @@ make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run
 
 ```bash
 make EXAMPLE=02-kernel-data-structures-host check
-make TOOLCHAIN=clang EXAMPLE=hairtos check
+make TOOLCHAIN=clang EXAMPLE=16-diagnostics-stress-stabilization check
 ```
 
 `check` chạy host tests bằng ASan/UBSan rồi build example đã chọn. Target cross-build thành công chỉ chứng minh compile/link; runtime, interrupt và timing vẫn phải xác nhận trên board.

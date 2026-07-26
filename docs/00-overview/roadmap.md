@@ -32,7 +32,7 @@
 
 ## 3. Trạng thái hiện tại
 
-Repository hiện là **hairtos mainline**. Bảng trên chỉ ghi lại lộ trình phát triển; tên phase không còn được dùng làm tên release, target tích hợp, stress test hoặc artifact chính. “Hoàn thành” nghĩa là source và validation hiện diện trong repository; không có nghĩa mọi example đã được chạy trên mọi Blue Pill clone hoặc mọi toolchain.
+Repository hiện là **hairtos mainline**. Bảng trên chỉ ghi lại lộ trình phát triển; tên phase không được dùng làm tên release hoặc artifact chính; riêng example tích hợp vẫn giữ tên lịch sử `16-diagnostics-stress-stabilization` để khớp roadmap. “Hoàn thành” nghĩa là source và validation hiện diện trong repository; không có nghĩa mọi example đã được chạy trên mọi Blue Pill clone hoặc mọi toolchain.
 
 ## 4. Lịch sử chi tiết
 

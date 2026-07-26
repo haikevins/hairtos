@@ -7,14 +7,14 @@ Tìm lỗi state/list hiếm bằng operation sequence dài và deterministic.
 ## 2. Host stress
 
 ```bash
-make ENVIRONMENT=host EXAMPLE=hairtos run
+make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run
 ```
 
 Stress ready-set/scheduler qua hàng trăm nghìn insert/remove/rotate/validate operations. Seed/sequence cố định giúp tái tạo lỗi.
 
 ## 3. Target stress
 
-Example `hairtos` chạy queue, semaphore, mutex, software timer, timeout, preemption và health monitor đồng thời.
+Example `16-diagnostics-stress-stabilization` chạy queue, semaphore, mutex, software timer, timeout, preemption và health monitor đồng thời.
 
 ## 4. Tiêu chí PASS
 

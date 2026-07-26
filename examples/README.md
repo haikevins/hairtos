@@ -1,6 +1,6 @@
 # hairtos examples
 
-Numbered examples follow the development roadmap. They remain educational snapshots. The unnumbered `hairtos` example is the current integrated product image.
+Numbered examples follow the development roadmap. They remain educational snapshots. The numbered `16-diagnostics-stress-stabilization` example is the current integrated diagnostics and stress image.
 
 ## Unified command layout
 
@@ -16,7 +16,7 @@ make EXAMPLE=<name> clean
 - For a **host** example, `run` executes the native binary.
 - For a **target** example, `run` builds, flashes, verifies, and resets the STM32.
 - `ENVIRONMENT=auto` is the default.
-- `14-memory-allocator-lab` and `hairtos` support both environments, so specify `ENVIRONMENT=host` for their native variants.
+- `14-memory-allocator-lab` and `16-diagnostics-stress-stabilization` support both environments, so specify `ENVIRONMENT=host` for their native variants.
 
 ## Example matrix
 
@@ -43,7 +43,7 @@ make EXAMPLE=<name> clean
 | `13-06-event-driven-demo` | 13 | Target | Integrated haievent demo | `make EXAMPLE=13-06-event-driven-demo run` |
 | `14-memory-allocator-lab` | 14 | Host + Target | Fixed-block pool and first-fit heap lab | Host: `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run`<br>Target: `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run` |
 | `15-kernel-benchmark` | 15 | Target | DWT/GPIO kernel benchmark | `make EXAMPLE=15-kernel-benchmark run` |
-| `hairtos` | Current | Host + Target | Integrated kernel diagnostics and deterministic scheduler stress | Host: `make ENVIRONMENT=host EXAMPLE=hairtos run`<br>Target: `make ENVIRONMENT=target EXAMPLE=hairtos run` |
+| `16-diagnostics-stress-stabilization` | 16 | Host + Target | Integrated kernel diagnostics and deterministic scheduler stress | Host: `make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run`<br>Target: `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization run` |
 
 ## Common commands
 
@@ -62,7 +62,7 @@ make EXAMPLE=08-preemption-round-robin build
 make EXAMPLE=08-preemption-round-robin run
 make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
 make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run
-make EXAMPLE=hairtos run
+make EXAMPLE=16-diagnostics-stress-stabilization run
 ```
 
 `check` runs the complete host sanitizer suite and builds the selected host or target example. A successful target build does not prove runtime behavior on physical hardware.

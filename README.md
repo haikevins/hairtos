@@ -6,7 +6,7 @@ optional event-driven framework implemented above the kernel.
 
 ## Current status
 
-The repository is the **hairtos mainline**, not a phase-specific package. It
+The repository is the **hairtos mainline**, while the integrated diagnostics image keeps the historical numbered example `16-diagnostics-stress-stabilization`. It
 contains the complete implementation developed through the roadmap milestones:
 
 - static task creation and Cortex-M3 initial stack frames;
@@ -18,7 +18,7 @@ contains the complete implementation developed through the roadmap milestones:
 - allocator laboratory, DWT benchmark, retained fault diagnostics and stress tests.
 
 The numbered examples remain as a learning path. The fully integrated image is
-selected with `EXAMPLE=hairtos`.
+selected with `EXAMPLE=16-diagnostics-stress-stabilization`.
 
 ## Unified Make commands
 
@@ -36,23 +36,23 @@ The default command builds the integrated target image:
 ```bash
 make build
 # equivalent to:
-make EXAMPLE=hairtos ENVIRONMENT=target build
+make EXAMPLE=16-diagnostics-stress-stabilization ENVIRONMENT=target build
 ```
 
 Common examples:
 
 ```bash
 # Integrated STM32 image: build, flash, verify and reset
-make EXAMPLE=hairtos run
+make EXAMPLE=16-diagnostics-stress-stabilization run
 
 # Native diagnostics/scheduler stress
-make ENVIRONMENT=host EXAMPLE=hairtos run
+make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run
 
 # Host-only kernel data-structure example
 make EXAMPLE=02-kernel-data-structures-host run
 
 # Full sanitizer suite plus selected build
-make TOOLCHAIN=clang EXAMPLE=hairtos check
+make TOOLCHAIN=clang EXAMPLE=16-diagnostics-stress-stabilization check
 ```
 
 Run `make help` for the compact command summary and `make list-examples` for the

@@ -10,7 +10,7 @@ Phân biệt host unit test, cross-build regression và hardware runtime validat
 make host-tests
 ```
 
-Build native với ASan/UBSan, kiểm tra intrusive lists, scheduler, TCB stack, queue, semaphore, mutex, timers, HairEvent, allocator, benchmark stats và diagnostics.
+Build native với ASan/UBSan, kiểm tra intrusive lists, scheduler, TCB stack, queue, semaphore, mutex, timers, haievent, allocator, benchmark stats và diagnostics.
 
 Chạy compiler khác:
 

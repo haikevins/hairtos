@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "hairevent/hairevent.h"
+#include "haievent/haievent.h"
 #include "hairtos/hr_queue.h"
 #include "hairtos/hr_task.h"
 #include "he_internal.h"
@@ -295,7 +295,7 @@ static void test_active_post_and_publish_subscribe_ownership(void)
     TEST_ASSERT_EQ_UINT(4U, he_event_pool_get_free_count(&pool));
 }
 
-void run_hairevent_tests(void)
+void run_haievent_tests(void)
 {
     RUN_TEST(test_event_pool_reference_counting);
     RUN_TEST(test_flat_state_machine_entry_exit_transition);

@@ -1,7 +1,7 @@
 # hairtos
 
 `hairtos` is a static-first educational real-time operating system for ARM Cortex-M.
-The current reference target is the STM32F103C8T6 Blue Pill. `HairEvent` is the
+The current reference target is the STM32F103C8T6 Blue Pill. `haievent` is the
 optional event-driven framework implemented above the kernel.
 
 ## Current status
@@ -14,7 +14,7 @@ contains the complete implementation developed through the roadmap milestones:
 - fixed-priority preemptive scheduling and equal-priority round-robin;
 - SysTick, delay, timeout, queue, semaphore, mutex and priority inheritance;
 - suspend/resume and task-context software timers;
-- HairEvent Active Objects, flat state machines, time events and publish/subscribe;
+- haievent Active Objects, flat state machines, time events and publish/subscribe;
 - allocator laboratory, DWT benchmark, retained fault diagnostics and stress tests.
 
 The numbered examples remain as a learning path. The fully integrated image is

@@ -2,7 +2,7 @@
 
 ## 1. Mục tiêu
 
-hairtos dùng compile-time configuration trong `config/hairtos_config.h`; HairEvent dùng `config/hairevent_config.h`. Một số example override macro bằng compiler definitions.
+hairtos dùng compile-time configuration trong `config/hairtos_config.h`; haievent dùng `config/haievent_config.h`. Một số example override macro bằng compiler definitions.
 
 ## 2. Kernel configuration
 
@@ -48,7 +48,7 @@ Nếu internal control block tăng kích thước vượt public storage, `_Stat
 
 `HR_WAIT_FOREVER` hợp lệ cho IPC blocking nhưng không hợp lệ cho `hr_task_delay()` và timer period.
 
-## 5. HairEvent configuration
+## 5. haievent configuration
 
 | Macro | Mặc định | Ý nghĩa |
 |---|---:|---|

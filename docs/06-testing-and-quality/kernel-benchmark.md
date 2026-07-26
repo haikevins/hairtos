@@ -6,7 +6,7 @@
 
 ## 2. Metrics
 
-SVC startup, critical section, scheduler selection, queue, semaphore, mutex, timer command, two-PendSV yield round trip, queue wake/preempt, HairEvent dispatch và timer jitter.
+SVC startup, critical section, scheduler selection, queue, semaphore, mutex, timer command, two-PendSV yield round trip, queue wake/preempt, haievent dispatch và timer jitter.
 
 ## 3. Statistics
 

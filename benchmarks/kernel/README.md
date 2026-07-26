@@ -12,7 +12,7 @@ firmware.
 - `src/hr_benchmark_gpio.c`: PB0 active-high timing marker for logic analyzers.
 
 The benchmark module is not included in ordinary hairtos applications and does
-not modify scheduler, queue, semaphore, mutex, timer, or HairEvent hot paths.
+not modify scheduler, queue, semaphore, mutex, timer, or haievent hot paths.
 
 Build the target:
 

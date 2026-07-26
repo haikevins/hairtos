@@ -12,11 +12,11 @@ hairtos/
 ├── benchmarks/            # Benchmark code chỉ dùng khi được chọn
 ├── boards/                # Board-specific clock, pin, linker
 ├── cmake/                 # Toolchain files
-├── config/                # hairtos và HairEvent configuration
+├── config/                # hairtos và haievent configuration
 ├── docs/                  # Tài liệu đã phân loại
 ├── drivers/               # GPIO, UART, hardware timer
 ├── examples/              # Host và target demonstrations
-├── hairevent/             # Event-driven framework
+├── haievent/             # Event-driven framework
 ├── kernel/                # Public API, internal headers, implementation
 ├── labs/                  # Các lab độc lập khỏi kernel runtime
 ├── soc/                   # STM32F1 register/startup/IRQ support
@@ -31,8 +31,8 @@ hairtos/
 | Public kernel API | `kernel/include/hairtos/` |
 | Kernel-only type/function | `kernel/internal/` |
 | Kernel implementation | `kernel/src/` |
-| Public HairEvent API | `hairevent/include/hairevent/` |
-| HairEvent internal layout | `hairevent/internal/` |
+| Public haievent API | `haievent/include/haievent/` |
+| haievent internal layout | `haievent/internal/` |
 | CPU port | `arch/<architecture>/` |
 | MCU family | `soc/<family>/` |
 | Board | `boards/<board>/` |
@@ -44,7 +44,7 @@ hairtos/
 
 ## 4. Public và private headers
 
-Application chỉ nên thêm include path `kernel/include` và `hairevent/include`. `kernel/internal` chỉ được dùng bởi kernel, port, host tests và benchmark cần kiểm tra internal policy.
+Application chỉ nên thêm include path `kernel/include` và `haievent/include`. `kernel/internal` chỉ được dùng bởi kernel, port, host tests và benchmark cần kiểm tra internal policy.
 
 Opaque public objects như `hr_task_t` hoặc `hr_queue_t` chứa static byte storage. Layout thật được giữ trong internal headers và được bảo vệ bằng `_Static_assert`.
 

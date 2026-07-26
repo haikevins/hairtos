@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "hairevent_config.h"
+#include "haievent_config.h"
 #include "hairtos/hr_types.h"
 
 typedef uint16_t he_signal_t;

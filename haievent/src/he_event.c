@@ -1,7 +1,7 @@
 #include <limits.h>
 #include <stdint.h>
 
-#include "hairevent/he_event.h"
+#include "haievent/he_event.h"
 #include "he_internal.h"
 #include "hairtos/hr_context.h"
 

@@ -1,5 +1,5 @@
-#ifndef HAIREVENT_CONFIG_H
-#define HAIREVENT_CONFIG_H
+#ifndef HAIEVENT_CONFIG_H
+#define HAIEVENT_CONFIG_H
 
 #define HE_CFG_ENABLED                         1
 #define HE_CFG_ENABLE_ACTIVE_OBJECT            1
@@ -26,4 +26,4 @@
 #define HE_CFG_TIME_EVENT_MAGIC                0x48455445UL
 #define HE_CFG_PUBSUB_MAGIC                    0x48455053UL
 
-#endif /* HAIREVENT_CONFIG_H */
+#endif /* HAIEVENT_CONFIG_H */

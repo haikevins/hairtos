@@ -7,7 +7,7 @@ Giữ kernel có thể kiểm thử trên host, ngăn application phụ thuộc 
 ## 2. Hướng dependency hợp lệ
 
 ```text
-Application -> HairEvent -> hairtos public API -> internal kernel -> port
+Application -> haievent -> hairtos public API -> internal kernel -> port
 Application ----------------^                       |
 Board/drivers --------------------------------------+
 ```
@@ -15,9 +15,9 @@ Board/drivers --------------------------------------+
 ## 3. Quy tắc bắt buộc
 
 1. Application không include file trong `kernel/internal/`.
-2. HairEvent không include `hr_port.h`; nó đi qua `hr_context.h`.
+2. haievent không include `hr_port.h`; nó đi qua `hr_context.h`.
 3. Kernel generic không đọc thanh ghi STM32 trực tiếp.
-4. Port không phụ thuộc vào application hoặc HairEvent.
+4. Port không phụ thuộc vào application hoặc haievent.
 5. Driver không gọi scheduler internals.
 6. Lab allocator không trở thành dependency của kernel runtime.
 7. Benchmark source chỉ được link khi chọn benchmark example.

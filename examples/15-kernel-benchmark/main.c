@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 #include "board.h"
-#include "hairevent/hairevent.h"
+#include "haievent/haievent.h"
 #include "hairtos/hairtos.h"
 #include "hr_benchmark.h"
 #include "hr_scheduler_internal.h"

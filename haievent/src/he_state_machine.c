@@ -1,6 +1,6 @@
 #include <stddef.h>
 
-#include "hairevent/he_state_machine.h"
+#include "haievent/he_state_machine.h"
 #include "he_internal.h"
 
 static void he_zero_bytes(void *memory, size_t size)

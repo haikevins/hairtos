@@ -1,6 +1,6 @@
 #include <stddef.h>
 
-#include "hairevent/he_pubsub.h"
+#include "haievent/he_pubsub.h"
 #include "he_internal.h"
 #include "hairtos/hr_context.h"
 

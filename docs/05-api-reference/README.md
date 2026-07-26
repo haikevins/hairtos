@@ -8,7 +8,7 @@
 
 ```c
 #include "hairtos/hairtos.h"
-#include "hairevent/hairevent.h"
+#include "haievent/haievent.h"
 ```
 
 ## Nội dung
@@ -21,4 +21,4 @@
 - [mutex-api.md](mutex-api.md)
 - [timer-api.md](timer-api.md)
 - [diagnostics-and-hooks-api.md](diagnostics-and-hooks-api.md)
-- [hairevent-api.md](hairevent-api.md)
+- [haievent-api.md](haievent-api.md)

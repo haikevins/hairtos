@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #include "board.h"
-#include "hairevent/hairevent.h"
+#include "haievent/haievent.h"
 #include "hairtos/hr_kernel.h"
 #include "hairtos/hr_time.h"
 

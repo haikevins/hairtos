@@ -7,7 +7,7 @@ Tài liệu này mô tả **hairtos mainline** trên STM32F103C8T6/Cortex-M3. Đ
 1. Đọc `00-overview/` để nắm kiến trúc, layout và cấu hình.
 2. Đọc `01-kernel-core/` theo thứ tự từ lifecycle đến interrupt model.
 3. Đọc `02-synchronization/` khi sử dụng queue, semaphore, mutex hoặc timer.
-4. Đọc `03-hairevent/` nếu xây dựng ứng dụng event-driven.
+4. Đọc `03-haievent/` nếu xây dựng ứng dụng event-driven.
 5. Dùng `05-api-reference/` như tài liệu tra cứu khi viết code.
 6. Dùng `06-testing-and-quality/` trước khi thay đổi kernel hoặc phát hành.
 7. Dùng `07-labs-and-examples/` để chọn đúng bài host hoặc target.
@@ -19,9 +19,9 @@ Tài liệu này mô tả **hairtos mainline** trên STM32F103C8T6/Cortex-M3. Đ
 | `00-overview/` | Kiến trúc, layout, cấu hình, coding standard và roadmap |
 | `01-kernel-core/` | TCB, scheduler, SVC/PendSV, SysTick, timeout và interrupt |
 | `02-synchronization/` | Queue, semaphore, mutex, suspend/resume và software timer |
-| `03-hairevent/` | Event model, state machine, Active Object, time event và pub/sub |
+| `03-haievent/` | Event model, state machine, Active Object, time event và pub/sub |
 | `04-platform/` | Cortex-M3 port, STM32F1, startup, linker, driver và porting |
-| `05-api-reference/` | API public của hairtos và HairEvent |
+| `05-api-reference/` | API public của hairtos và haievent |
 | `06-testing-and-quality/` | Testing, diagnostics, stress, benchmark, hygiene và release |
 | `07-labs-and-examples/` | Danh mục example, allocator lab và cách chạy host/target |
 | `08-appendices/` | Glossary và source map |

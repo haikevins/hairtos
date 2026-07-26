@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 #include "board.h"
-#include "hairevent/hairevent.h"
+#include "haievent/haievent.h"
 #include "hairtos/hr_kernel.h"
 #include "hairtos/hr_task.h"
 #include "hairtos/hr_time.h"
@@ -180,7 +180,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 13.6 - HairEvent integration demo");
+    board_uart_write_line("hairtos Phase 13.6 - haievent integration demo");
 
     (void)he_event_init_static(&g_start_event,
                                SIGNAL_START,

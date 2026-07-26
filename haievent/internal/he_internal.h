@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "hairevent/hairevent.h"
+#include "haievent/haievent.h"
 #include "hairtos/hr_queue.h"
 #include "hairtos/hr_timer.h"
 

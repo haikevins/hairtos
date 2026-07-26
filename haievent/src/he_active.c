@@ -1,6 +1,6 @@
 #include <stddef.h>
 
-#include "hairevent/he_active.h"
+#include "haievent/he_active.h"
 #include "hairtos/hr_queue.h"
 #include "he_internal.h"
 

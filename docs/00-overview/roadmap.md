@@ -17,7 +17,7 @@
 | 10 | Semaphore và mutex | ✅ Hoàn thành |
 | 11 | Suspend/resume | ✅ Hoàn thành |
 | 12 | Software timer | ✅ Hoàn thành |
-| 13 | HairEvent framework | ✅ Hoàn thành |
+| 13 | haievent framework | ✅ Hoàn thành |
 | 14 | Memory allocator lab | ✅ Hoàn thành |
 | 15 | Kernel benchmark | ✅ Hoàn thành |
 | 16 | Diagnostics và stabilization | ✅ Hoàn thành |

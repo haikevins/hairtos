@@ -16,8 +16,8 @@
                 "${workspaceFolder}/kernel/include",
                 "${workspaceFolder}/kernel/internal",
                 "${workspaceFolder}/arch/arm/cortex-m3/include",
-                "${workspaceFolder}/hairevent/include",
-                "${workspaceFolder}/hairevent/internal",
+                "${workspaceFolder}/haievent/include",
+                "${workspaceFolder}/haievent/internal",
                 "${workspaceFolder}/labs/memory-allocator/include",
                 "${workspaceFolder}/benchmarks/kernel/include"
             ],

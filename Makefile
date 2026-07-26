@@ -75,7 +75,7 @@ INCLUDES         := -Iconfig \
                     -Idrivers/timer/include \
                     -Ikernel/include -Ikernel/internal \
                     -Iarch/arm/cortex-m3/include \
-                    -Ihairevent/include -Ihairevent/internal \
+                    -Ihaievent/include -Ihaievent/internal \
                     -Ilabs/memory-allocator/include \
                     -Ibenchmarks/kernel/include
 
@@ -142,11 +142,11 @@ C_SOURCES        += kernel/src/hr_context.c \
                     kernel/src/hr_queue.c \
                     kernel/src/hr_semaphore.c \
                     kernel/src/hr_timer.c \
-                    hairevent/src/he_event.c \
-                    hairevent/src/he_state_machine.c \
-                    hairevent/src/he_active.c \
-                    hairevent/src/he_time_event.c \
-                    hairevent/src/he_pubsub.c
+                    haievent/src/he_event.c \
+                    haievent/src/he_state_machine.c \
+                    haievent/src/he_active.c \
+                    haievent/src/he_time_event.c \
+                    haievent/src/he_pubsub.c
 endif
 
 ifeq ($(EXAMPLE),15-kernel-benchmark)
@@ -155,9 +155,9 @@ C_SOURCES        += kernel/src/hr_context.c \
                     kernel/src/hr_semaphore.c \
                     kernel/src/hr_mutex.c \
                     kernel/src/hr_timer.c \
-                    hairevent/src/he_event.c \
-                    hairevent/src/he_state_machine.c \
-                    hairevent/src/he_active.c \
+                    haievent/src/he_event.c \
+                    haievent/src/he_state_machine.c \
+                    haievent/src/he_active.c \
                     benchmarks/kernel/src/hr_benchmark_stats.c \
                     benchmarks/kernel/src/hr_benchmark_dwt.c \
                     benchmarks/kernel/src/hr_benchmark_gpio.c
@@ -259,7 +259,7 @@ HOST_FLAGS       := -std=c11 -O0 -g3 -Wall -Wextra -Werror -Wshadow -Wundef \
                     -fsanitize=address,undefined -fno-omit-frame-pointer \
                     -DHR_CFG_ENABLE_DIAGNOSTICS=1 -DHR_CFG_ENABLE_RUNTIME_STATS=1
 HOST_INCLUDES    := -Iconfig -Ikernel/include -Ikernel/internal -Itests/host \
-                    -Iarch/arm/cortex-m3/include -Ihairevent/include -Ihairevent/internal \
+                    -Iarch/arm/cortex-m3/include -Ihaievent/include -Ihaievent/internal \
                     -Ilabs/memory-allocator/include -Ibenchmarks/kernel/include -Itests/stress
 HOST_SOURCES     := kernel/src/hr_list.c \
                     kernel/src/hr_scheduler.c \
@@ -273,11 +273,11 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     kernel/src/hr_mutex.c \
                     kernel/src/hr_timer.c \
                     kernel/src/hr_context.c \
-                    hairevent/src/he_event.c \
-                    hairevent/src/he_state_machine.c \
-                    hairevent/src/he_active.c \
-                    hairevent/src/he_time_event.c \
-                    hairevent/src/he_pubsub.c \
+                    haievent/src/he_event.c \
+                    haievent/src/he_state_machine.c \
+                    haievent/src/he_active.c \
+                    haievent/src/he_time_event.c \
+                    haievent/src/he_pubsub.c \
                     labs/memory-allocator/src/hr_heap_lab.c \
                     labs/memory-allocator/src/hr_pool_lab.c \
                     benchmarks/kernel/src/hr_benchmark_stats.c \
@@ -298,7 +298,7 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     tests/host/test_semaphore.c \
                     tests/host/test_mutex.c \
                     tests/host/test_timer.c \
-                    tests/host/test_hairevent.c \
+                    tests/host/test_haievent.c \
                     tests/host/test_benchmark.c \
                     tests/host/test_diagnostics.c \
                     tests/stress/test_scheduler_stress.c \

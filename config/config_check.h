@@ -1,7 +1,7 @@
 #ifndef HAIRTOS_CONFIG_CHECK_H
 #define HAIRTOS_CONFIG_CHECK_H
 #include "hairtos_config.h"
-#include "hairevent_config.h"
+#include "haievent_config.h"
 #if (HR_CFG_TICK_RATE_HZ == 0U)
 #error "HR_CFG_TICK_RATE_HZ must be greater than zero"
 #endif

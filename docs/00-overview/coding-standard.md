@@ -16,7 +16,7 @@ Quy tắc này ưu tiên tính xác định, khả năng audit và phát hiện 
 | Thành phần | Prefix |
 |---|---|
 | Public hairtos | `hr_` |
-| Public HairEvent | `he_` |
+| Public haievent | `he_` |
 | Configuration | `HR_CFG_`, `HE_CFG_` |
 | Internal hairtos | `hr_*_internal` hoặc internal header |
 | Board API | `board_` |

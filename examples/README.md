@@ -35,12 +35,12 @@ make EXAMPLE=<name> clean
 | `10-02-mutex-priority-inheritance` | 10 | Target | Mutex ownership and priority inheritance | `make EXAMPLE=10-02-mutex-priority-inheritance run` |
 | `11-task-suspend-resume` | 11 | Target | Suspend and resume | `make EXAMPLE=11-task-suspend-resume run` |
 | `12-software-timer` | 12 | Target | Software timer service | `make EXAMPLE=12-software-timer run` |
-| `13-01-event-post` | 13 | Target | Post HairEvent from ISR | `make EXAMPLE=13-01-event-post run` |
+| `13-01-event-post` | 13 | Target | Post haievent from ISR | `make EXAMPLE=13-01-event-post run` |
 | `13-02-active-object` | 13 | Target | Active Object dispatch | `make EXAMPLE=13-02-active-object run` |
 | `13-03-flat-state-machine` | 13 | Target | Flat state machine | `make EXAMPLE=13-03-flat-state-machine run` |
-| `13-04-time-event` | 13 | Target | HairEvent time event | `make EXAMPLE=13-04-time-event run` |
+| `13-04-time-event` | 13 | Target | haievent time event | `make EXAMPLE=13-04-time-event run` |
 | `13-05-publish-subscribe` | 13 | Target | Publish/subscribe ownership | `make EXAMPLE=13-05-publish-subscribe run` |
-| `13-06-event-driven-demo` | 13 | Target | Integrated HairEvent demo | `make EXAMPLE=13-06-event-driven-demo run` |
+| `13-06-event-driven-demo` | 13 | Target | Integrated haievent demo | `make EXAMPLE=13-06-event-driven-demo run` |
 | `14-memory-allocator-lab` | 14 | Host + Target | Fixed-block pool and first-fit heap lab | Host: `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run`<br>Target: `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run` |
 | `15-kernel-benchmark` | 15 | Target | DWT/GPIO kernel benchmark | `make EXAMPLE=15-kernel-benchmark run` |
 | `hairtos` | Current | Host + Target | Integrated kernel diagnostics and deterministic scheduler stress | Host: `make ENVIRONMENT=host EXAMPLE=hairtos run`<br>Target: `make ENVIRONMENT=target EXAMPLE=hairtos run` |

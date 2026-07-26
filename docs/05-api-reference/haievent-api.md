@@ -1,9 +1,9 @@
-# HairEvent API
+# haievent API
 
 ## 1. Header
 
 ```c
-#include "hairevent/hairevent.h"
+#include "haievent/haievent.h"
 ```
 
 ## 2. Event pool/event
@@ -47,4 +47,4 @@ Dynamic event phải được release đúng reference count. Không giữ stati
 
 ## 9. Lưu ý
 
-HairEvent yêu cầu queue, task và software timer tương ứng được link/configure.
+haievent yêu cầu queue, task và software timer tương ứng được link/configure.

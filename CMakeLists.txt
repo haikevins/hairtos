@@ -106,11 +106,11 @@ if(HAIRTOS_EXAMPLE MATCHES "^13-")
         kernel/src/hr_queue.c
         kernel/src/hr_semaphore.c
         kernel/src/hr_timer.c
-        hairevent/src/he_event.c
-        hairevent/src/he_state_machine.c
-        hairevent/src/he_active.c
-        hairevent/src/he_time_event.c
-        hairevent/src/he_pubsub.c
+        haievent/src/he_event.c
+        haievent/src/he_state_machine.c
+        haievent/src/he_active.c
+        haievent/src/he_time_event.c
+        haievent/src/he_pubsub.c
     )
 endif()
 
@@ -121,9 +121,9 @@ if(HAIRTOS_EXAMPLE STREQUAL "15-kernel-benchmark")
         kernel/src/hr_semaphore.c
         kernel/src/hr_mutex.c
         kernel/src/hr_timer.c
-        hairevent/src/he_event.c
-        hairevent/src/he_state_machine.c
-        hairevent/src/he_active.c
+        haievent/src/he_event.c
+        haievent/src/he_state_machine.c
+        haievent/src/he_active.c
         benchmarks/kernel/src/hr_benchmark_stats.c
         benchmarks/kernel/src/hr_benchmark_dwt.c
         benchmarks/kernel/src/hr_benchmark_gpio.c
@@ -226,8 +226,8 @@ target_include_directories(hairtos PRIVATE
     kernel/include
     kernel/internal
     arch/arm/cortex-m3/include
-    hairevent/include
-    hairevent/internal
+    haievent/include
+    haievent/internal
     labs/memory-allocator/include
     benchmarks/kernel/include
 )

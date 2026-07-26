@@ -15,7 +15,7 @@ void run_queue_tests(void);
 void run_semaphore_tests(void);
 void run_mutex_tests(void);
 void run_timer_tests(void);
-void run_hairevent_tests(void);
+void run_haievent_tests(void);
 void run_memory_allocator_lab_tests(void);
 void run_benchmark_tests(void);
 void run_diagnostics_tests(void);
@@ -29,7 +29,7 @@ int main(void)
     run_timeout_tests();
     run_port_stack_tests();
     run_task_tests();
-    run_hairevent_tests();
+    run_haievent_tests();
     run_memory_allocator_lab_tests();
     run_benchmark_tests();
     run_diagnostics_tests();

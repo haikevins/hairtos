@@ -1,5 +1,5 @@
-#ifndef HAIREVENT_H
-#define HAIREVENT_H
+#ifndef HAIEVENT_H
+#define HAIEVENT_H
 
 #include "he_types.h"
 #include "he_event.h"
@@ -8,4 +8,4 @@
 #include "he_time_event.h"
 #include "he_pubsub.h"
 
-#endif /* HAIREVENT_H */
+#endif /* HAIEVENT_H */

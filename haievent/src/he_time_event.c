@@ -1,6 +1,6 @@
 #include <stddef.h>
 
-#include "hairevent/he_time_event.h"
+#include "haievent/he_time_event.h"
 #include "hairtos/hr_timer.h"
 #include "he_internal.h"
 

@@ -16,7 +16,7 @@ Measured paths:
 - software-timer start/stop;
 - cooperative yield round trip through two PendSV switches;
 - queue wake/preempt round trip;
-- HairEvent post/dispatch round trip;
+- haievent post/dispatch round trip;
 - periodic software-timer interval and absolute jitter.
 
 PB0 is driven high around context-switch, queue wake, and event-dispatch samples

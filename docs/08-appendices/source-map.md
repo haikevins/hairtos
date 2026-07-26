@@ -11,7 +11,7 @@
 | Timer | `hr_timer.h` | `hr_timer.c`, internal header |
 | Diagnostics | `hr_diagnostics.h`, `hr_hooks.h` | `hr_diagnostics.c`, fault port |
 | Context wrapper | `hr_context.h` | `hr_context.c`, Cortex-M3 port |
-| HairEvent | `hairevent/*.h` | `hairevent/src`, `he_internal.h` |
+| haievent | `haievent/*.h` | `haievent/src`, `he_internal.h` |
 | Allocator lab | `hr_heap_lab.h`, `hr_pool_lab.h` | `labs/memory-allocator/src` |
 | Benchmark | `hr_benchmark.h` | `benchmarks/kernel/src` |
 

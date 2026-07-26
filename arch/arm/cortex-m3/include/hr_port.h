@@ -1,6 +1,7 @@
 #ifndef HR_PORT_H
 #define HR_PORT_H
 
+#include <stdbool.h>
 #include <stddef.h>
 
 #include "hairtos/hr_types.h"
@@ -11,8 +12,12 @@ hr_stack_t *hr_port_initialize_stack(hr_stack_t *stack_low,
                                      void *argument,
                                      void (*exit_handler)(void));
 
-/* Implemented in later phases. */
+void hr_port_configure_kernel_exceptions(void);
 void hr_port_start_first_task(void);
+void hr_port_wait_for_interrupt(void);
+bool hr_port_thread_uses_psp(void);
+
+/* Implemented in later phases. */
 void hr_port_request_context_switch(void);
 hr_irq_state_t hr_port_enter_critical(void);
 void hr_port_exit_critical(hr_irq_state_t state);

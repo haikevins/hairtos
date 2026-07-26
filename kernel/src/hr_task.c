@@ -4,6 +4,7 @@
 #include "hairtos_config.h"
 #include "hairtos/hr_task.h"
 #include "hr_port.h"
+#include "hr_kernel_internal.h"
 #include "hr_task_internal.h"
 
 #define HR_STACK_FILL_WORD 0xA5A5A5A5UL
@@ -65,6 +66,11 @@ hr_status_t hr_task_create_static(hr_task_t *task,
         return HR_ERROR_INVALID_ARGUMENT;
     }
 
+    if (hr_task_is_valid(task))
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
     if ((stack_words < HR_CFG_MIN_TASK_STACK_WORDS) ||
         (priority >= HR_CFG_PRIORITY_COUNT))
     {
@@ -108,6 +114,17 @@ hr_status_t hr_task_create_static(hr_task_t *task,
 
     control_block->magic = HR_CFG_TASK_MAGIC;
     return HR_OK;
+}
+
+
+hr_status_t hr_task_start(hr_task_t *task)
+{
+    if (!hr_task_is_valid(task))
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    return hr_kernel_register_task(task);
 }
 
 bool hr_task_is_valid(const hr_task_t *task)
@@ -182,4 +199,10 @@ bool hr_task_stack_guard_is_valid(const hr_task_t *task)
     return hr_task_is_valid(task) &&
            (control_block->stack_low != NULL) &&
            (control_block->stack_low[0] == HR_CFG_STACK_GUARD_VALUE);
+}
+
+
+hr_task_t *hr_task_current(void)
+{
+    return hr_kernel_current_task_internal();
 }

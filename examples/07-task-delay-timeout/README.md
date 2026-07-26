@@ -1,3 +1,3 @@
 # Phase 7 — SysTick, Delay, and Timeout
 
-Not implemented in Phase 3.
+Not implemented in the Phase 4 archive.

@@ -9,7 +9,7 @@ validation satisfy its Definition of Done.
 Current completed phase:
 
 ```text
-Phase 2 — Intrusive lists and kernel data structures
+Phase 4 — Start first task using SVC
 ```
 
 ## Phase 0 — Specification and principles
@@ -72,10 +72,6 @@ user-side activity.
 
 **Status: Complete.**
 
-### Status
-
-Complete.
-
 ### Goals
 
 Implement platform-independent structures before writing context-switch code.
@@ -134,6 +130,8 @@ Define static tasks and construct the initial Cortex-M exception frame.
 ---
 
 ## Phase 4 — Start first task using SVC
+
+**Status: Complete.**
 
 ### Goals
 

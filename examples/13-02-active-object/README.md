@@ -1,3 +1,3 @@
 # Phase 13.2 — Active Object
 
-Not implemented in Phase 3.
+Not implemented in the Phase 4 archive.

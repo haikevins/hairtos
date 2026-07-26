@@ -1,3 +1,38 @@
 # Phase 4 — Start First Task Using SVC
 
-Not implemented in Phase 3.
+This target example proves the first real task launch on STM32F103 Cortex-M3.
+
+## What it demonstrates
+
+- `hr_kernel_init()` creates and readies the internal idle task;
+- an application creates and registers one static task;
+- the ready set chooses the application task over idle by priority;
+- `hr_kernel_start()` invokes SVC;
+- `SVC_Handler` restores R4–R11 and the hardware exception frame;
+- Thread mode changes from MSP to PSP;
+- R0 carries the task argument;
+- the task entry runs and `main()` is abandoned.
+
+Phase 4 does **not** implement PendSV switching. The first task remains the only
+application task that can execute.
+
+## Build and flash
+
+```bash
+make EXAMPLE=04-start-first-task
+make EXAMPLE=04-start-first-task flash
+```
+
+## Expected UART output
+
+```text
+HairRTOS Phase 4
+Preparing idle task and first application task...
+Invoking SVC to leave main/MSP and enter task/PSP...
+First task entered through SVC.
+Current task: first-task
+PSP active: yes
+Task argument: valid
+Phase 4 first-task startup: PASS
+phase4 heartbeat=1
+```

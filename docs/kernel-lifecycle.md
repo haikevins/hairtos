@@ -1,15 +1,31 @@
 # Kernel Lifecycle
 
+## States
+
 ```text
-RESET -> INITIALIZING -> READY -> RUNNING -> PANIC
+RESET -> INITIALIZED -> RUNNING -> PANIC
 ```
 
-`hr_kernel_init()` initializes scheduler structures, timeout structures, the
-idle task, optional service tasks, guards, and statistics.
+## RESET
 
-`hr_kernel_start()` validates the port, selects the first task, and enters the
-SVC startup path. It must not return during normal operation.
+Only startup, board initialization, and static storage exist.
 
-A fatal invariant violation moves the system to PANIC and calls
-`hr_hook_kernel_panic()`. The default debug behavior should preserve state for
-GDB instead of silently restarting.
+## INITIALIZED
+
+`hr_kernel_init()` initializes the ready set and all-task list, creates the idle
+task, and registers idle as READY. Application tasks can then be created and
+registered with `hr_task_start()`.
+
+## RUNNING
+
+`hr_kernel_start()` selects the highest-priority READY task and invokes the SVC
+startup path. A successful call never returns. The selected task becomes RUNNING
+and executes on PSP.
+
+The first-task startup is implemented in Phase 4. PendSV switching between
+multiple tasks is not available until Phase 5.
+
+## PANIC
+
+A fatal initialization failure or an unexpected return from the architecture
+startup path places the kernel in PANIC.

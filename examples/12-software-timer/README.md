@@ -1,3 +1,3 @@
 # Phase 12 — Software Timer Service
 
-Not implemented in Phase 3.
+Not implemented in the Phase 4 archive.

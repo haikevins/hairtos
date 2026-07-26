@@ -5,11 +5,25 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
-set(HAIRTOS_EXAMPLE "01-baremetal-foundation" CACHE STRING "Example directory name")
+set(HAIRTOS_EXAMPLE "01-baremetal-foundation" CACHE STRING "Implemented target example")
+set(HAIRTOS_TARGET_EXAMPLES
+    01-baremetal-foundation
+    03-static-task-stack
+    04-start-first-task
+)
 
-set(HAIRTOS_PHASE3_SOURCES "")
-if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack")
-    list(APPEND HAIRTOS_PHASE3_SOURCES
+list(FIND HAIRTOS_TARGET_EXAMPLES "${HAIRTOS_EXAMPLE}" HAIRTOS_EXAMPLE_INDEX)
+if(HAIRTOS_EXAMPLE_INDEX EQUAL -1)
+    message(FATAL_ERROR
+        "${HAIRTOS_EXAMPLE} is not an implemented STM32 target example. "
+        "Run the Phase 2 host demo with 'make phase2-example'.")
+endif()
+
+set(HAIRTOS_KERNEL_SOURCES "")
+set(HAIRTOS_PORT_ASM "")
+if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack" OR
+   HAIRTOS_EXAMPLE STREQUAL "04-start-first-task")
+    list(APPEND HAIRTOS_KERNEL_SOURCES
         kernel/src/hr_list.c
         kernel/src/hr_scheduler.c
         kernel/src/hr_wait.c
@@ -18,6 +32,11 @@ if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack")
         arch/arm/cortex-m3/hr_port.c
         arch/arm/cortex-m3/hr_port_stack.c
     )
+endif()
+
+if(HAIRTOS_EXAMPLE STREQUAL "04-start-first-task")
+    list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_kernel.c)
+    list(APPEND HAIRTOS_PORT_ASM arch/arm/cortex-m3/hr_portasm.S)
 endif()
 
 add_executable(hairtos_baremetal
@@ -31,7 +50,8 @@ add_executable(hairtos_baremetal
     drivers/uart/src/hr_uart_stm32f1.c
     drivers/timer/src/hr_hw_timer_stm32f1.c
     examples/${HAIRTOS_EXAMPLE}/main.c
-    ${HAIRTOS_PHASE3_SOURCES}
+    ${HAIRTOS_KERNEL_SOURCES}
+    ${HAIRTOS_PORT_ASM}
 )
 
 target_include_directories(hairtos_baremetal PRIVATE

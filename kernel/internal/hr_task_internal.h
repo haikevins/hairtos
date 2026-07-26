@@ -41,6 +41,10 @@ typedef struct
     uint32_t magic;
 } hr_task_control_block_t;
 
+
+_Static_assert(offsetof(hr_task_control_block_t, stack_pointer) == 0U,
+               "The Cortex-M3 SVC handler requires stack_pointer at TCB offset zero");
+
 _Static_assert(sizeof(hr_task_control_block_t) <= sizeof(hr_task_t),
                "HR_CFG_TASK_STORAGE_BYTES is too small for the internal TCB");
 

@@ -1,35 +1,27 @@
 # RTOS Knowledge Coverage
 
-This matrix maps HairRTOS phases to the major topics expected from a
-self-developed RTOS project.
-
-| Knowledge area | Planned phase | Phase 1 state |
+| Knowledge area | Planned phase | Current state |
 |---|---:|---|
-| Startup, vector table, linker, memory sections | 1 | Implemented |
-| Clock, GPIO, UART, hardware time base | 1 | Implemented |
-| Intrusive kernel lists | 2 | Specification only |
-| TCB and independent stacks | 3 | Implemented |
-| SVC first-task startup | 4 | Specification only |
-| PendSV context switching | 5 | Specification only |
-| Priority scheduling | 6 | Specification only |
-| Delay and timeout | 7 | Specification only |
-| Preemption and round-robin | 8 | Specification only |
-| Queue and blocking IPC | 9 | Specification only |
-| Semaphore and mutex | 10 | Specification only |
-| Priority inheritance | 10 | Specification only |
-| Task suspend/resume | 11 | Added to roadmap |
-| Software timers | 12 | Specification only |
-| Event, Active Object, state machine | 13 | Specification only |
-| Dynamic event pools | 13 | Specification only |
-| First-fit allocator, split, coalesce | 14 | Added as isolated lab |
-| Context-switch and wake-up benchmarks | 15 | Added to roadmap |
-| Stack guards and runtime diagnostics | 16 | Specification only |
+| Specification and architecture rules | 0 | Implemented |
+| Startup, vector table, linker, clock, GPIO, UART | 1 | Implemented |
+| Intrusive lists, ready/wait/timeout structures | 2 | Implemented |
+| TCB and independent initial task stacks | 3 | Implemented |
+| SVC first-task startup and PSP transition | 4 | Implemented |
+| PendSV task-to-task context switching | 5 | Not started |
+| Fixed-priority scheduling integration | 6 | Not started |
+| Kernel SysTick, delay, and timeout | 7 | Not started |
+| Preemption and round-robin | 8 | Not started |
+| Queue and blocking IPC | 9 | Not started |
+| Semaphore, mutex, priority inheritance | 10 | Not started |
+| Task suspend/resume | 11 | Not started |
+| Software timers | 12 | Not started |
+| HairEvent Active Objects and state machines | 13 | Not started |
+| First-fit allocator lab | 14 | Not started |
+| Kernel latency benchmarks | 15 | Not started |
+| Diagnostics and stabilization | 16 | Not started |
 | Tickless idle | After v1.0 | Deferred |
 | MPU isolation | Future major version | Deferred |
 | SMP/multi-core | Out of v1.x scope | Deferred |
 
-## Important interpretation
-
-Phase 3 proves static TCB construction and the initial Cortex-M3 stack frame, but no task is started yet. Placeholder headers,
-source files, examples, labs, and benchmark directories do not mean those RTOS
-features have been implemented.
+Phase 4 proves the startup boundary between `main()` on MSP and the first task
+on PSP. It does not yet prove switching from one task to another.

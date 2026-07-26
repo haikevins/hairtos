@@ -1,3 +1,3 @@
 # Phase 13.1 — Event Post
 
-Not implemented in Phase 3.
+Not implemented in the Phase 4 archive.

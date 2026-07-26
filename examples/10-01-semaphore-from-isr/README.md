@@ -1,3 +1,3 @@
 # Phase 10.1 — Semaphore From ISR
 
-Not implemented in Phase 3.
+Not implemented in the Phase 4 archive.

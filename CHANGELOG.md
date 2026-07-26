@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added — Phase 4: Start first task using SVC
+
+- Added kernel lifecycle state and static idle task initialization.
+- Added `hr_task_start()` and first READY/RUNNING transitions.
+- Added first-task selection from the priority ready set.
+- Added Cortex-M3 SVC assembly startup and PSP exception return.
+- Added Phase 4 host tests, target example, documentation, and validation.
+- Added Makefile rejection for attempts to flash host-only examples.
+
 ### Documentation
 
 - Added the complete Phase 0-16 roadmap status table to the root README.

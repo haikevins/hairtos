@@ -3,6 +3,19 @@ EXAMPLE          ?= 01-baremetal-foundation
 BUILD_DIR        ?= build/$(EXAMPLE)
 TARGET           := $(BUILD_DIR)/$(PROJECT)
 
+TARGET_EXAMPLES  := 01-baremetal-foundation 03-static-task-stack 04-start-first-task
+HOST_EXAMPLES    := 02-kernel-data-structures-host
+FIRMWARE_GOALS   := all elf bin hex size flash gdb disasm
+REQUESTED_FW     := $(filter $(FIRMWARE_GOALS),$(MAKECMDGOALS))
+ifeq ($(strip $(MAKECMDGOALS)),)
+REQUESTED_FW     := all
+endif
+ifneq ($(strip $(REQUESTED_FW)),)
+ifeq ($(filter $(EXAMPLE),$(TARGET_EXAMPLES)),)
+$(error EXAMPLE=$(EXAMPLE) is not an implemented STM32 target example. Use 'make phase2-example' for the Phase 2 host demo)
+endif
+endif
+
 TOOLCHAIN        ?= gcc
 CROSS_COMPILE    ?= arm-none-eabi-
 OPENOCD          ?= openocd
@@ -28,28 +41,34 @@ INCLUDES         := -Iconfig \
 LINKER_SCRIPT    := boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld
 OPENOCD_CFG      := tools/openocd/bluepill_stlink.cfg
 
-C_SOURCES        := soc/stm32f1/system_stm32f1.c \
-                    soc/stm32f1/stm32f1_clock.c \
-                    soc/stm32f1/stm32f1_irq.c \
-                    boards/bluepill_f103c8/board.c \
-                    boards/bluepill_f103c8/board_clock.c \
-                    drivers/gpio/src/hr_gpio_stm32f1.c \
-                    drivers/uart/src/hr_uart_stm32f1.c \
-                    drivers/timer/src/hr_hw_timer_stm32f1.c \
-                    examples/$(EXAMPLE)/main.c
+PLATFORM_C_SOURCES := soc/stm32f1/system_stm32f1.c \
+                      soc/stm32f1/stm32f1_clock.c \
+                      soc/stm32f1/stm32f1_irq.c \
+                      boards/bluepill_f103c8/board.c \
+                      boards/bluepill_f103c8/board_clock.c \
+                      drivers/gpio/src/hr_gpio_stm32f1.c \
+                      drivers/uart/src/hr_uart_stm32f1.c \
+                      drivers/timer/src/hr_hw_timer_stm32f1.c
 
-
-ifeq ($(EXAMPLE),03-static-task-stack)
-C_SOURCES        += kernel/src/hr_list.c \
+PHASE3_C_SOURCES := kernel/src/hr_list.c \
                     kernel/src/hr_scheduler.c \
                     kernel/src/hr_wait.c \
                     kernel/src/hr_timeout.c \
                     kernel/src/hr_task.c \
                     arch/arm/cortex-m3/hr_port.c \
                     arch/arm/cortex-m3/hr_port_stack.c
+
+C_SOURCES        := $(PLATFORM_C_SOURCES) examples/$(EXAMPLE)/main.c
+ASM_SOURCES      := soc/stm32f1/startup_stm32f103.S
+
+ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task),)
+C_SOURCES        += $(PHASE3_C_SOURCES)
 endif
 
-ASM_SOURCES      := soc/stm32f1/startup_stm32f103.S
+ifeq ($(EXAMPLE),04-start-first-task)
+C_SOURCES        += kernel/src/hr_kernel.c
+ASM_SOURCES      += arch/arm/cortex-m3/hr_portasm.S
+endif
 
 C_OBJECTS        := $(addprefix $(BUILD_DIR)/,$(C_SOURCES:.c=.o))
 ASM_OBJECTS      := $(addprefix $(BUILD_DIR)/,$(ASM_SOURCES:.S=.o))
@@ -86,35 +105,38 @@ PHASE2_EXAMPLE   := $(HOST_BUILD_DIR)/02-kernel-data-structures-host
 HOST_FLAGS       := -std=c11 -O0 -g3 -Wall -Wextra -Werror -Wshadow -Wundef \
                     -Wconversion -Wsign-conversion -pedantic \
                     -fsanitize=address,undefined -fno-omit-frame-pointer
-HOST_INCLUDES    := -Iconfig -Ikernel/include -Ikernel/internal -Itests/host -Iarch/arm/cortex-m3/include
+HOST_INCLUDES    := -Iconfig -Ikernel/include -Ikernel/internal -Itests/host \
+                    -Iarch/arm/cortex-m3/include
 HOST_SOURCES     := kernel/src/hr_list.c \
                     kernel/src/hr_scheduler.c \
                     kernel/src/hr_wait.c \
                     kernel/src/hr_timeout.c \
+                    kernel/src/hr_task.c \
+                    kernel/src/hr_kernel.c \
+                    arch/arm/cortex-m3/hr_port_stack.c \
+                    tests/mocks/mock_port.c \
                     tests/host/test_main.c \
                     tests/host/test_list.c \
                     tests/host/test_ready_queue.c \
                     tests/host/test_wait_list.c \
                     tests/host/test_timeout.c \
-                    kernel/src/hr_task.c \
-                    arch/arm/cortex-m3/hr_port_stack.c \
-                    tests/mocks/mock_port.c \
                     tests/host/test_port_stack.c \
-                    tests/host/test_task.c
+                    tests/host/test_task.c \
+                    tests/host/test_kernel_start.c
 
 LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
                     -Wl,--gc-sections -Wl,-Map=$(TARGET).map \
                     -Wl,--cref -T$(LINKER_SCRIPT)
 
 .PHONY: all elf bin hex size flash erase debug-server gdb disasm \
-        phase0-check phase1-check roadmap-check example-layout-check phase2-check phase3-check host-tests phase2-example tree clean help
+        phase0-check phase1-check roadmap-check example-layout-check \
+        phase2-check phase3-check phase4-check host-tests phase2-example \
+        tree clean help
 
 all: elf bin hex size
 
 elf: $(TARGET).elf
-
 bin: $(TARGET).bin
-
 hex: $(TARGET).hex
 
 $(TARGET).elf: $(OBJECTS) $(LINKER_SCRIPT)
@@ -192,6 +214,9 @@ phase2-check:
 phase3-check:
 	python3 tools/scripts/phase3_check.py
 
+phase4-check:
+	python3 tools/scripts/phase4_check.py
+
 tree:
 	@find . -path './.git' -prune -o -path './build' -prune -o -print | sort
 
@@ -199,22 +224,16 @@ clean:
 	rm -rf build out
 
 help:
-	@echo "HairRTOS Phase 3 commands"
-	@echo "  make                         Build the bare-metal example with GCC"
-	@echo "  make TOOLCHAIN=clang         Build with Clang/LLD"
-	@echo "  make flash                   Build, verify, flash, and reset"
-	@echo "  make erase                   Mass erase STM32F1 flash"
-	@echo "  make debug-server            Start OpenOCD"
-	@echo "  make gdb                     Connect GDB to localhost:3333"
-	@echo "  make disasm                  Generate source/interleaved listing"
-	@echo "  make phase1-check            Validate and build Phase 1 files"
-	@echo "  make host-tests              Build and run Phase 2/3 host tests"
-	@echo "  make phase2-example          Run the Phase 2 host demonstration"
-	@echo "  make phase2-check            Validate Phase 2 data structures"
-	@echo "  make phase3-check            Validate TCB and initial task stack"
-	@echo "  make EXAMPLE=03-static-task-stack  Build the Phase 3 target example"
-	@echo "  make roadmap-check           Validate future roadmap specifications"
-	@echo "  make example-layout-check    Validate roadmap-aligned example names"
-	@echo "  make clean                   Remove build output"
+	@echo "HairRTOS Phase 4 commands"
+	@echo "  make EXAMPLE=01-baremetal-foundation       Build Phase 1 target"
+	@echo "  make phase2-example                         Run Phase 2 host demo"
+	@echo "  make EXAMPLE=03-static-task-stack           Build Phase 3 target"
+	@echo "  make EXAMPLE=04-start-first-task            Build Phase 4 target"
+	@echo "  make EXAMPLE=04-start-first-task flash      Flash Phase 4 target"
+	@echo "  make host-tests                              Run Phase 2–4 host tests"
+	@echo "  make phase4-check                            Validate completed phases"
+	@echo "  make roadmap-check                           Validate roadmap status"
+	@echo "  make example-layout-check                    Validate example matrix"
+	@echo "  make clean                                   Remove build output"
 
 -include $(DEPS)

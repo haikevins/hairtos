@@ -80,6 +80,9 @@ static void test_task_stack_guard_detects_corruption(void)
     TEST_ASSERT_EQ_UINT(HR_OK,
                         hr_task_create_static(&task, "guard", dummy_task, NULL,
                                               stack, 64U, 3U));
+    TEST_ASSERT_EQ_UINT(HR_ERROR_INVALID_STATE,
+                        hr_task_create_static(&task, "guard-again", dummy_task, NULL,
+                                              stack, 64U, 3U));
     TEST_ASSERT_TRUE(hr_task_stack_guard_is_valid(&task));
 
     stack[0] ^= 1U;

@@ -1,23 +1,53 @@
 {
   "project": "HairRTOS",
-  "completed_phase": "Phase 3 — TCB and initial task stack",
-  "example_layout": "Aligned to official Phase 1–16 roadmap",
+  "completed_phase": "Phase 4 — Start first task using SVC",
+  "target": "STM32F103C8T6 Blue Pill / ARM Cortex-M3",
   "implemented_examples": [
-    "01-baremetal-foundation",
-    "02-kernel-data-structures-host",
-    "03-static-task-stack"
+    {
+      "name": "01-baremetal-foundation",
+      "environment": "target"
+    },
+    {
+      "name": "02-kernel-data-structures-host",
+      "environment": "host"
+    },
+    {
+      "name": "03-static-task-stack",
+      "environment": "target"
+    },
+    {
+      "name": "04-start-first-task",
+      "environment": "target"
+    }
   ],
-  "future_examples_are_placeholders": true,
-  "legacy_example_names_present": false,
-  "file_count": 222,
+  "phase4_features": [
+    "kernel lifecycle",
+    "static idle task",
+    "CREATED-to-READY task registration",
+    "highest-priority first-task selection",
+    "SVC startup",
+    "MSP reset to linker _estack",
+    "PSP Thread-mode exception return",
+    "task argument restoration through R0"
+  ],
+  "validation": {
+    "host_tests": "23/23 PASS with Clang ASan/UBSan",
+    "target_build": "PASS with Clang/LLD",
+    "svc_symbols_and_disassembly": "PASS",
+    "physical_hardware": "not performed",
+    "image_size_bytes": {
+      "text": 4792,
+      "data": 8,
+      "bss": 1880
+    }
+  },
+  "file_count": 224,
   "files": [
     "CHANGELOG.md",
     "CMakeLists.txt",
     "LICENSE",
     "Makefile",
-    "PHASE2_VALIDATION.txt",
-    "PHASE3_MANIFEST.json",
-    "PHASE3_VALIDATION.txt",
+    "PHASE4_VALIDATION.txt",
     "README.md",
     "adapters/button_event/hr_button_event.c",
     "adapters/button_event/hr_button_event.h",
@@ -66,6 +96,7 @@
     "docs/phase1-validation.md",
     "docs/phase2-kernel-data-structures.md",
     "docs/phase3-tcb-initial-stack.md",
+    "docs/phase4-start-first-task-svc.md",
     "docs/porting-guide.md",
     "docs/requirements-coverage.md",
     "docs/roadmap.md",
@@ -195,6 +226,7 @@
     "tests/host/test_allocator_lab.c",
     "tests/host/test_delay_list.c",
     "tests/host/test_event_pool.c",
+    "tests/host/test_kernel_start.c",
     "tests/host/test_list.c",
     "tests/host/test_main.c",
     "tests/host/test_mutex.c",
@@ -229,10 +261,11 @@
     "tools/scripts/phase1_check.py",
     "tools/scripts/phase2_check.py",
     "tools/scripts/phase3_check.py",
+    "tools/scripts/phase4_check.py",
     "tools/scripts/roadmap_check.py",
     "tools/scripts/run_format_check.sh",
     "tools/scripts/run_host_tests.sh",
-    "tools/scripts/size_report.sh"
-  ],
-  "documentation_update": "Root roadmap table and examples host/target matrix added"
+    "tools/scripts/size_report.sh",
+    "PHASE4_MANIFEST.json"
+  ]
 }

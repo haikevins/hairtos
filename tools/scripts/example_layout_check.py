@@ -46,4 +46,4 @@ for name in actual:
 # documents that Phase 10 and 13 intentionally use sub-numbered examples.
 print("HairRTOS example layout check: PASS")
 print(f"Canonical example directories: {len(actual)}")
-print("Implemented examples: Phase 1, Phase 2 host, Phase 3")
+print("Implemented examples: Phase 1, Phase 2 host, Phase 3, Phase 4")

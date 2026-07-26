@@ -38,8 +38,8 @@ if missing_phases:
     sys.exit(1)
 
 readme = (ROOT / "README.md").read_text(encoding="utf-8")
-if "Current status: Phase 8 complete" not in readme:
-    print("README no longer identifies Phase 8 as the current completed phase")
+if "Current status: Phase 9 complete" not in readme:
+    print("README no longer identifies Phase 9 as the current completed phase")
     sys.exit(1)
 
 subprocess_required = ROOT / "tools/scripts/example_layout_check.py"
@@ -48,5 +48,5 @@ if not subprocess_required.is_file():
     sys.exit(1)
 
 print("HairRTOS roadmap check: PASS")
-print("Current implementation phase: Phase 8")
+print("Current implementation phase: Phase 9")
 print("Future roadmap additions: suspend/resume, allocator lab, benchmarks")

@@ -10,7 +10,7 @@
 | 6 | `06-priority-scheduler` | STM32 target | Complete |
 | 7 | `07-task-delay-timeout` | STM32 target | Complete |
 | 8 | `08-preemption-round-robin` | STM32 target | Complete |
-| 9 | `09-queue-blocking-ipc` | STM32 target | Placeholder |
+| 9 | `09-queue-blocking-ipc` | STM32 target | Complete |
 | 10 | `10-01-semaphore-from-isr`, `10-02-mutex-priority-inheritance` | STM32 target | Placeholder |
 | 11 | `11-task-suspend-resume` | STM32 target | Placeholder |
 | 12 | `12-software-timer` | STM32 target | Placeholder |

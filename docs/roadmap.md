@@ -243,6 +243,8 @@ priorities do not starve.
 
 ## Phase 9 — Queue and blocking IPC
 
+**Status: Complete.**
+
 ### Goals
 
 Implement fixed-size static queues for task-to-task and ISR-to-task transfer.
@@ -263,6 +265,13 @@ Implement fixed-size static queues for task-to-task and ISR-to-task transfer.
 - timeout races;
 - ISR wake-up;
 - equal-priority waiter FIFO behavior.
+
+### Definition of Done
+
+Queue payload order remains FIFO across ring-buffer wrap. Full senders and empty
+receivers leave the ready set, then return because of direct handoff, available
+capacity/data, or timeout. ISR operations never block and report whether a
+higher-priority waiter became READY.
 
 ---
 

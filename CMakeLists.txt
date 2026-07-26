@@ -14,6 +14,7 @@ set(HAIRTOS_TARGET_EXAMPLES
     06-priority-scheduler
     07-task-delay-timeout
     08-preemption-round-robin
+    09-queue-blocking-ipc
 )
 
 list(FIND HAIRTOS_TARGET_EXAMPLES "${HAIRTOS_EXAMPLE}" HAIRTOS_EXAMPLE_INDEX)
@@ -30,7 +31,8 @@ if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack" OR
    HAIRTOS_EXAMPLE STREQUAL "05-cooperative-context-switch" OR
    HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler" OR
    HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
-   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin")
+   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin" OR
+   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc")
     list(APPEND HAIRTOS_KERNEL_SOURCES
         kernel/src/hr_list.c
         kernel/src/hr_scheduler.c
@@ -46,14 +48,20 @@ if(HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
    HAIRTOS_EXAMPLE STREQUAL "05-cooperative-context-switch" OR
    HAIRTOS_EXAMPLE STREQUAL "06-priority-scheduler" OR
    HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
-   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin")
+   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin" OR
+   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc")
     list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_kernel.c)
     list(APPEND HAIRTOS_PORT_ASM arch/arm/cortex-m3/hr_portasm.S)
 endif()
 
+if(HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc")
+    list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_queue.c)
+endif()
+
 set(HAIRTOS_TICK_SOURCE drivers/timer/src/hr_systick_baremetal_irq.c)
 if(HAIRTOS_EXAMPLE STREQUAL "07-task-delay-timeout" OR
-   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin")
+   HAIRTOS_EXAMPLE STREQUAL "08-preemption-round-robin" OR
+   HAIRTOS_EXAMPLE STREQUAL "09-queue-blocking-ipc")
     set(HAIRTOS_TICK_SOURCE kernel/src/hr_time.c)
 endif()
 
@@ -99,11 +107,13 @@ target_compile_options(hairtos_baremetal PRIVATE
 )
 
 target_link_options(hairtos_baremetal PRIVATE
-    -mcpu=cortex-m3 -mthumb -nostdlib -nostartfiles
+    -mcpu=cortex-m3 -mthumb -nostdlib
     -Wl,--gc-sections
     -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/hairtos_baremetal.map
     -T${CMAKE_CURRENT_SOURCE_DIR}/boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld
 )
 
-target_link_libraries(hairtos_baremetal PRIVATE gcc)
+if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang")
+    target_link_libraries(hairtos_baremetal PRIVATE gcc)
+endif()
 set_target_properties(hairtos_baremetal PROPERTIES SUFFIX ".elf")

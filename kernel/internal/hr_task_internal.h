@@ -11,6 +11,14 @@
 #include "hr_timeout_internal.h"
 #include "hr_wait_internal.h"
 
+typedef enum
+{
+    HR_TASK_WAIT_NONE = 0,
+    HR_TASK_WAIT_DELAY,
+    HR_TASK_WAIT_QUEUE_SEND,
+    HR_TASK_WAIT_QUEUE_RECEIVE
+} hr_task_wait_kind_t;
+
 typedef struct
 {
     hr_stack_t *stack_pointer;
@@ -35,6 +43,10 @@ typedef struct
     hr_list_node_t all_task_node;
 
     void *waiting_object;
+    hr_wait_list_t *blocked_wait_list;
+    void *wait_buffer;
+    hr_status_t wait_result;
+    hr_task_wait_kind_t wait_kind;
     size_t stack_words;
     uint32_t critical_nesting;
     uint32_t runtime_counter;

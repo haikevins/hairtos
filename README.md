@@ -4,7 +4,7 @@ HairRTOS is an educational fixed-priority RTOS for ARM Cortex-M. The first
 target is the STM32F103C8T6 Blue Pill. HairEvent is an optional Event-Driven
 framework above the kernel.
 
-## Current status: Phase 8 complete
+## Current status: Phase 9 complete
 
 Implemented phases:
 
@@ -18,11 +18,14 @@ Implemented phases:
 - **Phase 7:** kernel SysTick, blocking task delay, periodic delay, and timeout
   wake-up;
 - **Phase 8:** strict higher-priority preemption and tick-driven round-robin
-  among equal-priority tasks.
+  among equal-priority tasks;
+- **Phase 9:** statically allocated FIFO queues, blocking send/receive, finite
+  timeout, wait forever, direct handoff, and ISR-safe non-blocking variants.
 
-Phase 8 makes a newly READY higher-priority task preempt the running task after
-exception return. CPU-bound equal-priority tasks rotate automatically after
-`HR_CFG_TIME_SLICE_TICKS` and no longer need to call `hr_task_yield()`.
+Phase 9 adds task-to-task and ISR-to-task message transfer. Queue wait lists are
+priority ordered and FIFO among equal priorities. A sender or receiver blocks
+without busy-waiting and is returned to READY by the matching operation or by a
+timeout.
 
 ## Roadmap
 
@@ -37,7 +40,7 @@ exception return. CPU-bound equal-priority tasks rotate automatically after
 | 6 | Priority scheduler | ✅ Complete |
 | 7 | SysTick and delay | ✅ Complete |
 | 8 | Preemption and round-robin | ✅ Complete |
-| 9 | Queue and blocking | ⬜ Not started |
+| 9 | Queue and blocking | ✅ Complete |
 | 10 | Semaphore and mutex | ⬜ Not started |
 | 11 | Suspend/resume | ⬜ Not started |
 | 12 | Software timer | ⬜ Not started |
@@ -48,16 +51,19 @@ exception return. CPU-bound equal-priority tasks rotate automatically after
 
 Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
 
-## Phase 8 components
+## Phase 9 components
 
-- strict fixed-priority preemption when a higher-priority task becomes READY;
-- deferred scheduling through PendSV;
-- equal-priority round-robin controlled by `HR_CFG_TIME_SLICE_TICKS`;
-- per-task remaining quantum;
-- idle preemption when an application task wakes;
-- the lowest configured priority reserved for the idle task;
-- atomic PendSV selector update with interrupts masked;
-- Phase 7 delay and timeout behavior retained; its example disables Phase 8 scheduling features at build time.
+- opaque statically allocated `hr_queue_t` control block;
+- caller-provided ring-buffer storage with fixed item size and capacity;
+- FIFO enqueue/dequeue with wrap-around indices;
+- non-blocking `HR_NO_WAIT`, finite timeout, and `HR_WAIT_FOREVER`;
+- priority-ordered blocked sender and receiver wait lists;
+- direct sender-to-receiver handoff when a receiver is already blocked;
+- atomic refill of a freed queue slot from the highest-priority blocked sender;
+- timeout removal from both the object wait list and global timeout list;
+- `hr_queue_send_from_isr()` and `hr_queue_receive_from_isr()` with a
+  higher-priority-task-woken result;
+- Phase 9 STM32 producer/consumer example and host sanitizer coverage.
 
 ## Examples: host versus target
 
@@ -80,6 +86,7 @@ make EXAMPLE=05-cooperative-context-switch flash
 make EXAMPLE=06-priority-scheduler flash
 make EXAMPLE=07-task-delay-timeout flash
 make EXAMPLE=08-preemption-round-robin flash
+make EXAMPLE=09-queue-blocking-ipc flash
 ```
 
 The `EXAMPLE` value must be passed in the same command used for `flash`.
@@ -98,6 +105,7 @@ make phase5-check
 make phase6-check
 make phase7-check
 make phase8-check
+make phase9-check
 ```
 
 Read:
@@ -110,6 +118,7 @@ Read:
 - `docs/phase6-priority-scheduler.md`
 - `docs/phase7-systick-delay.md`
 - `docs/phase8-preemption-round-robin.md`
+- `docs/phase9-queue-blocking-ipc.md`
 - `examples/README.md`
 
-The next implementation phase is **Phase 9 — Queue and blocking IPC**.
+The next implementation phase is **Phase 10 — Semaphore and mutex**.

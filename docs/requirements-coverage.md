@@ -11,7 +11,7 @@
 | Fixed-priority scheduling integration | 6 | Implemented |
 | Kernel SysTick, delay, periodic delay, timeout wake | 7 | Implemented |
 | General preemption and tick round-robin | 8 | Implemented |
-| Queue and blocking IPC | 9 | Not started |
+| Queue and blocking IPC | 9 | Implemented |
 | Semaphore, mutex, priority inheritance | 10 | Not started |
 | Task suspend/resume | 11 | Not started |
 | Software timers | 12 | Not started |
@@ -23,6 +23,6 @@
 | MPU isolation | Future major version | Deferred |
 | SMP/multi-core | Out of v1.x scope | Deferred |
 
-Phase 8 proves strict higher-priority preemption and equal-priority time slicing.
-Queue/object wake-up paths will reuse the same deferred PendSV mechanism beginning
-in Phase 9.
+Phase 9 reuses the deferred PendSV mechanism for queue wake-up and timeout.
+Blocked senders and receivers are ordered by effective priority and FIFO within
+the same priority. Queue ISR operations remain non-blocking.

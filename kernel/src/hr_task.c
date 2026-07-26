@@ -124,6 +124,10 @@ hr_status_t hr_task_create_static(hr_task_t *task,
     control_block->wake_tick = 0U;
     control_block->time_slice_remaining = HR_CFG_TIME_SLICE_TICKS;
     control_block->waiting_object = NULL;
+    control_block->blocked_wait_list = NULL;
+    control_block->wait_buffer = NULL;
+    control_block->wait_result = HR_OK;
+    control_block->wait_kind = HR_TASK_WAIT_NONE;
     control_block->stack_words = stack_words;
     control_block->critical_nesting = 0U;
     control_block->runtime_counter = 0U;

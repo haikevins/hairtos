@@ -1,0 +1,19 @@
+HairRTOS Phase 9 validation
+
+- Phase 0 specification check: PASS
+- Roadmap status check: PASS
+- Canonical example layout check: PASS
+- Completed host tests with Clang + ASan + UBSan: 34/34 PASS
+- Completed host tests with GCC + ASan + UBSan: 34/34 PASS
+- Phase 1/3/4/5/6/7/8 Cortex-M3 regression builds: PASS
+- Phase 9 Cortex-M3 queue/blocking build with Clang/LLD: PASS
+- Phase 9 CMake/Ninja build with Clang/LLD: PASS
+- Queue FIFO wrap/full/empty tests: PASS
+- Blocking sender/receiver direct-handoff tests: PASS
+- Finite timeout cleanup test: PASS
+- ISR wake-up and equal-priority waiter FIFO test: PASS
+- Host-only example flash rejection: PASS
+- Phase 9 image: text=9892, data=4, bss=3760 bytes
+- Physical STM32F103 flash/run validation: not performed in this environment
+- Current completed phase: Phase 9
+- Next phase: Phase 10 — Semaphore and mutex

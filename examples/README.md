@@ -23,7 +23,7 @@ Phase 0 has no runtime example because it contains specifications only.
 | `06-priority-scheduler` | 6 | Target | ✅ Implemented | `make EXAMPLE=06-priority-scheduler flash` |
 | `07-task-delay-timeout` | 7 | Target | ✅ Implemented | `make EXAMPLE=07-task-delay-timeout flash` |
 | `08-preemption-round-robin` | 8 | Target | ✅ Implemented | `make EXAMPLE=08-preemption-round-robin flash` |
-| `09-queue-blocking-ipc` | 9 | Target | ⬜ Placeholder | Not runnable yet |
+| `09-queue-blocking-ipc` | 9 | Target | ✅ Implemented | `make EXAMPLE=09-queue-blocking-ipc flash` |
 | `10-01-semaphore-from-isr` | 10 | Target | ⬜ Placeholder | Not runnable yet |
 | `10-02-mutex-priority-inheritance` | 10 | Target | ⬜ Placeholder | Not runnable yet |
 | `11-task-suspend-resume` | 11 | Target | ⬜ Placeholder | Not runnable yet |
@@ -73,6 +73,7 @@ make EXAMPLE=05-cooperative-context-switch flash
 make EXAMPLE=06-priority-scheduler flash
 make EXAMPLE=07-task-delay-timeout flash
 make EXAMPLE=08-preemption-round-robin flash
+make EXAMPLE=09-queue-blocking-ipc flash
 ```
 
 A previous build command does not make a later standalone `make flash` remember
@@ -92,6 +93,7 @@ Target:
   06-priority-scheduler
   07-task-delay-timeout
   08-preemption-round-robin
+  09-queue-blocking-ipc
 ```
 
-All other example directories are roadmap placeholders.
+All examples from Phase 10 onward are roadmap placeholders.

@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added — Phase 9: Queue and blocking IPC
+
+- Added opaque statically allocated fixed-size FIFO queues.
+- Added blocking and non-blocking send/receive with finite timeout and wait forever.
+- Added priority/FIFO sender and receiver wait lists with direct handoff.
+- Added ISR-safe non-blocking send and receive variants.
+- Added timeout cleanup across object and global timeout lists.
+- Added Phase 9 host tests, STM32 example, documentation, and validation.
+
 ### Added — Phase 8: Preemption and round-robin
 
 - Added strict higher-priority preemption after timeout wake-up.

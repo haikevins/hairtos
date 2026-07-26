@@ -18,7 +18,11 @@ typedef union hr_task
     unsigned char storage[HR_CFG_TASK_STORAGE_BYTES];
 } hr_task_t;
 
-typedef struct hr_queue hr_queue_t;
+typedef union hr_queue
+{
+    max_align_t alignment;
+    unsigned char storage[HR_CFG_QUEUE_STORAGE_BYTES];
+} hr_queue_t;
 typedef struct hr_semaphore hr_semaphore_t;
 typedef struct hr_mutex hr_mutex_t;
 typedef struct hr_timer hr_timer_t;

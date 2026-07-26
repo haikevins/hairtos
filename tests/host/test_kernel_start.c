@@ -1,7 +1,9 @@
 #include "hairtos/hr_kernel.h"
 #include "hairtos/hr_task.h"
 #include "hairtos/hr_time.h"
+#include "hairtos/hr_queue.h"
 #include "hr_kernel_internal.h"
+#include "hr_queue_internal.h"
 #include "hr_task_internal.h"
 #include "test_support.h"
 
@@ -152,6 +154,167 @@ static void test_kernel_preemption_round_robin_and_delay_race(void)
     g_mock_inside_isr = true;
     TEST_ASSERT_EQ_UINT(HR_ERROR_INVALID_STATE, hr_task_delay(1U));
     g_mock_inside_isr = false;
+
+    /* Phase 9: direct handoff to a blocked receiver. */
+    {
+        static hr_queue_t queue;
+        static uint32_t queue_storage[1];
+        hr_queue_control_block_t *queue_control_block;
+        hr_task_control_block_t *high_a_control_block;
+        hr_task_control_block_t *high_b_control_block;
+        uint32_t received = 0U;
+        uint32_t first = 41U;
+        uint32_t second = 42U;
+        unsigned int requests_before;
+
+        TEST_ASSERT_EQ_UINT(HR_OK,
+                            hr_queue_create_static(&queue,
+                                                   queue_storage,
+                                                   sizeof(queue_storage[0]),
+                                                   1U));
+        queue_control_block = hr_queue_control_block(&queue);
+        high_a_control_block = hr_task_control_block(&high_a);
+        high_b_control_block = hr_task_control_block(&high_b);
+
+        TEST_ASSERT_EQ_PTR(&high_a, hr_task_current());
+        TEST_ASSERT_EQ_UINT(
+            HR_OK,
+            hr_kernel_block_current_on_wait_list(
+                &queue_control_block->receive_waiters,
+                queue_control_block,
+                HR_TASK_WAIT_QUEUE_RECEIVE,
+                &received,
+                10U));
+        TEST_ASSERT_EQ_UINT(1U, hr_queue_get_waiting_receivers(&queue));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_b, hr_task_current());
+
+        requests_before = g_mock_context_switch_requests;
+        TEST_ASSERT_EQ_UINT(HR_OK,
+                            hr_queue_send(&queue, &first, HR_NO_WAIT));
+        TEST_ASSERT_EQ_UINT(first, received);
+        TEST_ASSERT_EQ_UINT(0U, hr_queue_get_count(&queue));
+        TEST_ASSERT_EQ_UINT(0U, hr_queue_get_waiting_receivers(&queue));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
+                            hr_task_get_state(&high_a));
+        TEST_ASSERT_EQ_UINT(requests_before,
+                            g_mock_context_switch_requests);
+
+        /* A full queue blocks a sender. A receive atomically fills the freed
+         * slot from that sender before waking it. */
+        TEST_ASSERT_EQ_UINT(HR_OK,
+                            hr_queue_send(&queue, &first, HR_NO_WAIT));
+        TEST_ASSERT_EQ_UINT(
+            HR_OK,
+            hr_kernel_block_current_on_wait_list(
+                &queue_control_block->send_waiters,
+                queue_control_block,
+                HR_TASK_WAIT_QUEUE_SEND,
+                &second,
+                HR_WAIT_FOREVER));
+        TEST_ASSERT_EQ_UINT(1U, hr_queue_get_waiting_senders(&queue));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_a, hr_task_current());
+
+        received = 0U;
+        TEST_ASSERT_EQ_UINT(HR_OK,
+                            hr_queue_receive(&queue, &received, HR_NO_WAIT));
+        TEST_ASSERT_EQ_UINT(first, received);
+        TEST_ASSERT_EQ_UINT(1U, hr_queue_get_count(&queue));
+        TEST_ASSERT_EQ_UINT(0U, hr_queue_get_waiting_senders(&queue));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
+                            hr_task_get_state(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_OK, high_b_control_block->wait_result);
+
+        received = 0U;
+        TEST_ASSERT_EQ_UINT(HR_OK,
+                            hr_queue_receive(&queue, &received, HR_NO_WAIT));
+        TEST_ASSERT_EQ_UINT(second, received);
+
+        /* Finite timeout removes the task from both timeout and queue wait
+         * structures, then returns it to READY with HR_ERROR_TIMEOUT. */
+        TEST_ASSERT_EQ_UINT(
+            HR_OK,
+            hr_kernel_block_current_on_wait_list(
+                &queue_control_block->receive_waiters,
+                queue_control_block,
+                HR_TASK_WAIT_QUEUE_RECEIVE,
+                &received,
+                2U));
+        TEST_ASSERT_EQ_UINT(1U, hr_queue_get_waiting_receivers(&queue));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_b, hr_task_current());
+        hr_kernel_tick_from_isr();
+        hr_kernel_tick_from_isr();
+        TEST_ASSERT_EQ_UINT(0U, hr_queue_get_waiting_receivers(&queue));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
+                            hr_task_get_state(&high_a));
+        TEST_ASSERT_EQ_UINT(HR_ERROR_TIMEOUT,
+                            high_a_control_block->wait_result);
+
+        /* Equal-priority receivers stay FIFO. ISR send wakes them in order and
+         * reports that a higher-priority task became READY. */
+        {
+            uint32_t high_b_received = 0U;
+            uint32_t high_a_received = 0U;
+            uint32_t isr_first = 71U;
+            uint32_t isr_second = 72U;
+            bool higher_priority_task_woken = false;
+
+            TEST_ASSERT_EQ_PTR(&high_b, hr_task_current());
+            TEST_ASSERT_EQ_UINT(
+                HR_OK,
+                hr_kernel_block_current_on_wait_list(
+                    &queue_control_block->receive_waiters,
+                    queue_control_block,
+                    HR_TASK_WAIT_QUEUE_RECEIVE,
+                    &high_b_received,
+                    HR_WAIT_FOREVER));
+            hr_kernel_select_next_from_pendsv();
+            TEST_ASSERT_EQ_PTR(&high_a, hr_task_current());
+
+            TEST_ASSERT_EQ_UINT(
+                HR_OK,
+                hr_kernel_block_current_on_wait_list(
+                    &queue_control_block->receive_waiters,
+                    queue_control_block,
+                    HR_TASK_WAIT_QUEUE_RECEIVE,
+                    &high_a_received,
+                    HR_WAIT_FOREVER));
+            TEST_ASSERT_EQ_UINT(2U,
+                                hr_queue_get_waiting_receivers(&queue));
+            hr_kernel_select_next_from_pendsv();
+            TEST_ASSERT_EQ_PTR(&low_task, hr_task_current());
+
+            g_mock_inside_isr = true;
+            TEST_ASSERT_EQ_UINT(
+                HR_OK,
+                hr_queue_send_from_isr(&queue,
+                                       &isr_first,
+                                       &higher_priority_task_woken));
+            TEST_ASSERT_TRUE(higher_priority_task_woken);
+            TEST_ASSERT_EQ_UINT(isr_first, high_b_received);
+
+            higher_priority_task_woken = false;
+            TEST_ASSERT_EQ_UINT(
+                HR_OK,
+                hr_queue_send_from_isr(&queue,
+                                       &isr_second,
+                                       &higher_priority_task_woken));
+            TEST_ASSERT_TRUE(higher_priority_task_woken);
+            TEST_ASSERT_EQ_UINT(isr_second, high_a_received);
+            g_mock_inside_isr = false;
+
+            TEST_ASSERT_EQ_UINT(0U,
+                                hr_queue_get_waiting_receivers(&queue));
+            TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
+                                hr_task_get_state(&high_b));
+            TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
+                                hr_task_get_state(&high_a));
+        }
+
+        TEST_ASSERT_TRUE(hr_queue_validate_internal(&queue));
+    }
 }
 
 void run_kernel_start_tests(void)

@@ -1,7 +1,17 @@
 {
   "project": "HairRTOS",
-  "completed_phase": "Phase 8 — Preemption and Round-Robin",
+  "completed_phase": "Phase 9 — Queue and blocking IPC",
   "target": "STM32F103C8T6 Blue Pill / ARM Cortex-M3",
+  "phase9_features": [
+    "opaque static queue control block",
+    "caller-provided fixed-size ring buffer",
+    "FIFO send and receive with wrap-around",
+    "HR_NO_WAIT, finite timeout, and HR_WAIT_FOREVER",
+    "priority-ordered sender and receiver wait lists",
+    "direct receiver handoff and blocked-sender slot refill",
+    "ISR-safe non-blocking send and receive variants",
+    "timeout cleanup across queue and global timeout lists"
+  ],
   "implemented_examples": [
     {
       "name": "01-baremetal-foundation",
@@ -29,44 +39,34 @@
     },
     {
       "name": "07-task-delay-timeout",
-      "environment": "target",
-      "phase8_features": "disabled at build time"
+      "environment": "target"
     },
     {
       "name": "08-preemption-round-robin",
-      "environment": "target",
-      "phase8_features": "enabled"
+      "environment": "target"
+    },
+    {
+      "name": "09-queue-blocking-ipc",
+      "environment": "target"
     }
-  ],
-  "phase8_features": [
-    "strict higher-priority preemption from SysTick wake-up",
-    "deferred PendSV scheduling",
-    "equal-priority round-robin time slicing",
-    "per-task remaining quantum",
-    "idle-priority reservation",
-    "atomic PendSV C selector",
-    "switch-reason tracking for yield, block, preemption, and time slice"
   ],
   "validation": {
-    "host_tests_clang": "30/30 PASS with ASan/UBSan",
-    "host_tests_gcc": "30/30 PASS with ASan/UBSan",
-    "target_regression": "Phase 1, 3, 4, 5, 6, 7, and 8 PASS with Clang/LLD",
-    "symbols_and_disassembly": "PASS",
-    "feature_configuration_matrix": "PASS",
+    "host_tests": "34/34 PASS with Clang and GCC ASan/UBSan",
+    "make_target_regression": "Phase 1/3/4/5/6/7/8/9 PASS with Clang/LLD",
+    "cmake_phase9": "PASS with Clang/LLD and Ninja",
     "physical_hardware": "not performed",
-    "phase8_image_size_bytes": {
-      "text": 7480,
+    "image_size_bytes": {
+      "text": 9892,
       "data": 4,
-      "bss": 4384
+      "bss": 3760
     }
   },
-  "file_count": 234,
   "files": [
     "CHANGELOG.md",
     "CMakeLists.txt",
     "LICENSE",
     "Makefile",
-    "PHASE8_VALIDATION.txt",
+    "PHASE9_VALIDATION.txt",
     "README.md",
     "adapters/button_event/hr_button_event.c",
     "adapters/button_event/hr_button_event.h",
@@ -95,6 +95,7 @@
     "boards/bluepill_f103c8/openocd.cfg",
     "cmake/hairtos_options.cmake",
     "cmake/hairtos_targets.cmake",
+    "cmake/toolchains/arm-none-eabi-clang.cmake",
     "cmake/toolchains/arm-none-eabi-gcc.cmake",
     "config/config_check.h",
     "config/hairevent_config.h",
@@ -120,6 +121,7 @@
     "docs/phase6-priority-scheduler.md",
     "docs/phase7-systick-delay.md",
     "docs/phase8-preemption-round-robin.md",
+    "docs/phase9-queue-blocking-ipc.md",
     "docs/porting-guide.md",
     "docs/requirements-coverage.md",
     "docs/roadmap.md",
@@ -215,6 +217,7 @@
     "kernel/internal/hr_kernel_internal.h",
     "kernel/internal/hr_list_internal.h",
     "kernel/internal/hr_object_internal.h",
+    "kernel/internal/hr_queue_internal.h",
     "kernel/internal/hr_scheduler_internal.h",
     "kernel/internal/hr_task_internal.h",
     "kernel/internal/hr_timeout_internal.h",
@@ -291,10 +294,11 @@
     "tools/scripts/phase6_check.py",
     "tools/scripts/phase7_check.py",
     "tools/scripts/phase8_check.py",
+    "tools/scripts/phase9_check.py",
     "tools/scripts/roadmap_check.py",
     "tools/scripts/run_format_check.sh",
     "tools/scripts/run_host_tests.sh",
     "tools/scripts/size_report.sh",
-    "PHASE8_MANIFEST.json"
+    "PHASE9_MANIFEST.json"
   ]
 }

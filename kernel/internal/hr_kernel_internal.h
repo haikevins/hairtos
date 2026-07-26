@@ -11,6 +11,14 @@ extern hr_task_control_block_t *g_hr_current_task_control_block;
 hr_status_t hr_kernel_register_task(hr_task_t *task);
 hr_status_t hr_kernel_prepare_start(void);
 hr_status_t hr_kernel_delay_current(hr_tick_t delay_ticks);
+hr_status_t hr_kernel_block_current_on_wait_list(hr_wait_list_t *wait_list,
+                                                 void *object,
+                                                 hr_task_wait_kind_t wait_kind,
+                                                 void *buffer,
+                                                 hr_tick_t timeout);
+hr_status_t hr_kernel_unblock_waiter(hr_wait_node_t *wait_node,
+                                     hr_status_t result,
+                                     bool *higher_priority_task_woken);
 void hr_kernel_request_yield(void);
 void hr_kernel_tick_from_isr(void);
 void hr_kernel_select_next_from_pendsv(void);

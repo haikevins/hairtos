@@ -271,9 +271,200 @@ hr_status_t hr_kernel_delay_current(hr_tick_t delay_ticks)
 
     control_block->wake_tick = g_kernel_tick + delay_ticks;
     control_block->waiting_object = &g_timeout_list;
+    control_block->blocked_wait_list = NULL;
+    control_block->wait_buffer = NULL;
+    control_block->wait_result = HR_OK;
+    control_block->wait_kind = HR_TASK_WAIT_DELAY;
     hr_kernel_reload_time_slice(control_block);
     hr_kernel_mark_switch_reason(HR_SWITCH_REASON_BLOCK);
     return HR_OK;
+}
+
+static hr_status_t hr_kernel_make_task_ready(
+    hr_task_control_block_t *control_block,
+    hr_status_t result,
+    bool *higher_priority_task_woken)
+{
+    hr_task_t *task;
+    hr_task_control_block_t *current_control_block;
+    hr_status_t status;
+
+    if ((control_block == NULL) ||
+        (control_block->state != HR_TASK_STATE_BLOCKED))
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
+    task = (hr_task_t *)hr_list_node_owner(&control_block->ready_node.node);
+    if (!hr_task_is_valid(task))
+    {
+        return HR_ERROR_INTERNAL;
+    }
+
+    if (control_block->blocked_wait_list != NULL)
+    {
+        status = hr_wait_list_remove(control_block->blocked_wait_list,
+                                     &control_block->wait_node);
+        if (status != HR_OK)
+        {
+            return status;
+        }
+    }
+
+    if (hr_list_node_is_linked(&control_block->timeout_node.node))
+    {
+        status = hr_timeout_list_remove(&g_timeout_list,
+                                        &control_block->timeout_node);
+        if (status != HR_OK)
+        {
+            return status;
+        }
+    }
+
+    status = hr_scheduler_add_ready(&g_scheduler, &control_block->ready_node);
+    if (status != HR_OK)
+    {
+        return status;
+    }
+
+    status = hr_task_transition_state(task,
+                                      HR_TASK_STATE_BLOCKED,
+                                      HR_TASK_STATE_READY);
+    if (status != HR_OK)
+    {
+        (void)hr_scheduler_remove_ready(&g_scheduler,
+                                        &control_block->ready_node);
+        return status;
+    }
+
+    control_block->waiting_object = NULL;
+    control_block->blocked_wait_list = NULL;
+    control_block->wait_buffer = NULL;
+    control_block->wait_result = result;
+    control_block->wait_kind = HR_TASK_WAIT_NONE;
+    hr_kernel_reload_time_slice(control_block);
+
+    if (higher_priority_task_woken != NULL)
+    {
+        *higher_priority_task_woken = false;
+        if ((g_current_task != NULL) && hr_task_is_valid(g_current_task))
+        {
+            current_control_block = hr_task_control_block(g_current_task);
+            *higher_priority_task_woken =
+                (current_control_block->state == HR_TASK_STATE_RUNNING) &&
+                (control_block->effective_priority <
+                 current_control_block->effective_priority);
+        }
+    }
+
+    return HR_OK;
+}
+
+hr_status_t hr_kernel_block_current_on_wait_list(hr_wait_list_t *wait_list,
+                                                 void *object,
+                                                 hr_task_wait_kind_t wait_kind,
+                                                 void *buffer,
+                                                 hr_tick_t timeout)
+{
+    hr_task_control_block_t *control_block;
+    hr_status_t status;
+
+    if ((g_kernel_state != HR_KERNEL_STATE_RUNNING) ||
+        (g_current_task == NULL) || (g_current_task == &g_idle_task) ||
+        (wait_list == NULL) || (object == NULL) || (buffer == NULL) ||
+        ((wait_kind != HR_TASK_WAIT_QUEUE_SEND) &&
+         (wait_kind != HR_TASK_WAIT_QUEUE_RECEIVE)) ||
+        (timeout == HR_NO_WAIT))
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    control_block = hr_task_control_block(g_current_task);
+    if ((control_block->state != HR_TASK_STATE_RUNNING) ||
+        !hr_list_node_is_linked(&control_block->ready_node.node) ||
+        hr_list_node_is_linked(&control_block->wait_node.node) ||
+        hr_list_node_is_linked(&control_block->timeout_node.node))
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
+    status = hr_scheduler_remove_ready(&g_scheduler,
+                                       &control_block->ready_node);
+    if (status != HR_OK)
+    {
+        return status;
+    }
+
+    status = hr_wait_list_insert(wait_list, &control_block->wait_node);
+    if (status != HR_OK)
+    {
+        (void)hr_scheduler_add_ready(&g_scheduler,
+                                     &control_block->ready_node);
+        return status;
+    }
+
+    if (timeout != HR_WAIT_FOREVER)
+    {
+        status = hr_timeout_list_insert(&g_timeout_list,
+                                        &control_block->timeout_node,
+                                        timeout);
+        if (status != HR_OK)
+        {
+            (void)hr_wait_list_remove(wait_list, &control_block->wait_node);
+            (void)hr_scheduler_add_ready(&g_scheduler,
+                                         &control_block->ready_node);
+            return status;
+        }
+    }
+
+    status = hr_task_transition_state(g_current_task,
+                                      HR_TASK_STATE_RUNNING,
+                                      HR_TASK_STATE_BLOCKED);
+    if (status != HR_OK)
+    {
+        if (hr_list_node_is_linked(&control_block->timeout_node.node))
+        {
+            (void)hr_timeout_list_remove(&g_timeout_list,
+                                         &control_block->timeout_node);
+        }
+        (void)hr_wait_list_remove(wait_list, &control_block->wait_node);
+        (void)hr_scheduler_add_ready(&g_scheduler,
+                                     &control_block->ready_node);
+        return status;
+    }
+
+    control_block->wake_tick =
+        (timeout == HR_WAIT_FOREVER) ? 0U : (g_kernel_tick + timeout);
+    control_block->waiting_object = object;
+    control_block->blocked_wait_list = wait_list;
+    control_block->wait_buffer = buffer;
+    control_block->wait_result = HR_ERROR_INTERNAL;
+    control_block->wait_kind = wait_kind;
+    hr_kernel_reload_time_slice(control_block);
+    hr_kernel_mark_switch_reason(HR_SWITCH_REASON_BLOCK);
+    return HR_OK;
+}
+
+hr_status_t hr_kernel_unblock_waiter(hr_wait_node_t *wait_node,
+                                     hr_status_t result,
+                                     bool *higher_priority_task_woken)
+{
+    hr_task_t *task;
+
+    if (wait_node == NULL)
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    task = (hr_task_t *)hr_list_node_owner(&wait_node->node);
+    if (!hr_task_is_valid(task))
+    {
+        return HR_ERROR_INTERNAL;
+    }
+
+    return hr_kernel_make_task_ready(hr_task_control_block(task),
+                                     result,
+                                     higher_priority_task_woken);
 }
 
 void hr_kernel_select_next_from_pendsv(void)
@@ -428,31 +619,52 @@ void hr_kernel_tick_from_isr(void)
         }
 
         control_block = hr_task_control_block(task);
-        if ((control_block->state != HR_TASK_STATE_BLOCKED) ||
-            (control_block->waiting_object != &g_timeout_list))
+        if (control_block->state != HR_TASK_STATE_BLOCKED)
         {
             hr_kernel_panic();
             return;
         }
 
-        if (hr_scheduler_add_ready(&g_scheduler, &control_block->ready_node) != HR_OK)
+        if (control_block->wait_kind == HR_TASK_WAIT_DELAY)
+        {
+            if (control_block->waiting_object != &g_timeout_list)
+            {
+                hr_kernel_panic();
+                return;
+            }
+
+            if (hr_kernel_make_task_ready(control_block,
+                                          HR_OK,
+                                          NULL) != HR_OK)
+            {
+                hr_kernel_panic();
+                return;
+            }
+        }
+        else if ((control_block->wait_kind == HR_TASK_WAIT_QUEUE_SEND) ||
+                 (control_block->wait_kind == HR_TASK_WAIT_QUEUE_RECEIVE))
+        {
+            if ((control_block->waiting_object == NULL) ||
+                (control_block->blocked_wait_list == NULL))
+            {
+                hr_kernel_panic();
+                return;
+            }
+
+            if (hr_kernel_make_task_ready(control_block,
+                                          HR_ERROR_TIMEOUT,
+                                          NULL) != HR_OK)
+            {
+                hr_kernel_panic();
+                return;
+            }
+        }
+        else
         {
             hr_kernel_panic();
             return;
         }
 
-        if (hr_task_transition_state(task,
-                                     HR_TASK_STATE_BLOCKED,
-                                     HR_TASK_STATE_READY) != HR_OK)
-        {
-            (void)hr_scheduler_remove_ready(&g_scheduler,
-                                            &control_block->ready_node);
-            hr_kernel_panic();
-            return;
-        }
-
-        control_block->waiting_object = NULL;
-        hr_kernel_reload_time_slice(control_block);
         node = hr_list_pop_front(&expired_nodes);
     }
 

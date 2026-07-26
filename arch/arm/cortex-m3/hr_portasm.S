@@ -3,6 +3,7 @@
 .thumb
 
 .extern g_hr_current_task_control_block
+.extern hr_kernel_select_next_from_pendsv
 .extern _estack
 
 .global hr_port_start_first_task
@@ -45,5 +46,37 @@ SVC_Handler:
     bkpt #0
     b 2b
 .size SVC_Handler, . - SVC_Handler
+
+.global PendSV_Handler
+.type PendSV_Handler, %function
+.thumb_func
+PendSV_Handler:
+    /* Hardware has already stacked R0-R3, R12, LR, PC, and xPSR on PSP. */
+    mrs r0, psp
+    ldr r3, =g_hr_current_task_control_block
+    ldr r2, [r3]
+    cbz r2, 3f
+
+    /* Save the software context and publish the new saved PSP in the TCB. */
+    stmdb r0!, {r4-r11}
+    str r0, [r2]
+
+    /* Keep MSP 8-byte aligned across the C call and preserve EXC_RETURN. */
+    push {r3, lr}
+    bl hr_kernel_select_next_from_pendsv
+    pop {r3, lr}
+
+    /* The C selector updates g_hr_current_task_control_block. */
+    ldr r2, [r3]
+    cbz r2, 3f
+    ldr r0, [r2]
+    ldmia r0!, {r4-r11}
+    msr psp, r0
+    bx lr
+
+3:
+    bkpt #0
+    b 3b
+.size PendSV_Handler, . - PendSV_Handler
 
 .section .note.GNU-stack,"",%progbits

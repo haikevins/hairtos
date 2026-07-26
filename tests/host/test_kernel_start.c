@@ -4,54 +4,76 @@
 #include "hr_task_internal.h"
 #include "test_support.h"
 
-static void phase4_dummy_task(void *argument)
+extern unsigned int g_mock_context_switch_requests;
+
+static void phase5_dummy_task(void *argument)
 {
     (void)argument;
 }
 
-static void test_kernel_initializes_idle_and_selects_highest_ready_task(void)
+static void test_kernel_starts_and_cooperatively_rotates_equal_priority_tasks(void)
 {
-    static hr_task_t application_task;
-    static hr_stack_t application_stack[64];
+    static hr_task_t task_a;
+    static hr_task_t task_b;
+    static hr_stack_t stack_a[64];
+    static hr_stack_t stack_b[64];
     const hr_task_control_block_t *control_block;
 
+    g_mock_context_switch_requests = 0U;
+    hr_task_yield();
+    TEST_ASSERT_EQ_UINT(0U, g_mock_context_switch_requests);
+
     TEST_ASSERT_EQ_UINT(HR_OK,
-                        hr_task_create_static(&application_task,
-                                              "phase4-app",
-                                              phase4_dummy_task,
+                        hr_task_create_static(&task_a,
+                                              "phase5-a",
+                                              phase5_dummy_task,
                                               NULL,
-                                              application_stack,
+                                              stack_a,
                                               64U,
                                               2U));
-    TEST_ASSERT_EQ_UINT(HR_ERROR_INVALID_STATE,
-                        hr_task_start(&application_task));
+    TEST_ASSERT_EQ_UINT(HR_OK,
+                        hr_task_create_static(&task_b,
+                                              "phase5-b",
+                                              phase5_dummy_task,
+                                              NULL,
+                                              stack_b,
+                                              64U,
+                                              2U));
 
+    TEST_ASSERT_EQ_UINT(HR_ERROR_INVALID_STATE, hr_task_start(&task_a));
     TEST_ASSERT_EQ_UINT(HR_OK, hr_kernel_init());
-    TEST_ASSERT_EQ_UINT(HR_KERNEL_STATE_INITIALIZED, hr_kernel_get_state());
     TEST_ASSERT_EQ_UINT(1U, hr_kernel_get_task_count());
-    TEST_ASSERT_TRUE(!hr_kernel_is_running());
-    TEST_ASSERT_EQ_PTR(NULL, hr_task_current());
 
-    TEST_ASSERT_EQ_UINT(HR_OK, hr_task_start(&application_task));
-    TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
-                        hr_task_get_state(&application_task));
-    TEST_ASSERT_EQ_UINT(2U, hr_kernel_get_task_count());
-
-    TEST_ASSERT_EQ_UINT(HR_ERROR_INVALID_STATE,
-                        hr_task_start(&application_task));
+    TEST_ASSERT_EQ_UINT(HR_OK, hr_task_start(&task_a));
+    TEST_ASSERT_EQ_UINT(HR_OK, hr_task_start(&task_b));
+    TEST_ASSERT_EQ_UINT(3U, hr_kernel_get_task_count());
 
     TEST_ASSERT_EQ_UINT(HR_OK, hr_kernel_prepare_start());
-    TEST_ASSERT_TRUE(hr_kernel_is_running());
-    TEST_ASSERT_EQ_UINT(HR_KERNEL_STATE_RUNNING, hr_kernel_get_state());
-    TEST_ASSERT_EQ_PTR(&application_task, hr_task_current());
-    TEST_ASSERT_EQ_UINT(HR_TASK_STATE_RUNNING,
-                        hr_task_get_state(&application_task));
+    TEST_ASSERT_EQ_PTR(&task_a, hr_task_current());
+    TEST_ASSERT_EQ_UINT(HR_TASK_STATE_RUNNING, hr_task_get_state(&task_a));
+    TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY, hr_task_get_state(&task_b));
 
-    control_block = hr_task_control_block_const(&application_task);
+    control_block = hr_task_control_block_const(&task_a);
     TEST_ASSERT_EQ_PTR(control_block, g_hr_current_task_control_block);
+
+    hr_task_yield();
+    TEST_ASSERT_EQ_UINT(1U, g_mock_context_switch_requests);
+    TEST_ASSERT_EQ_PTR(&task_a, hr_task_current());
+
+    hr_kernel_select_next_from_pendsv();
+    TEST_ASSERT_EQ_PTR(&task_b, hr_task_current());
+    TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY, hr_task_get_state(&task_a));
+    TEST_ASSERT_EQ_UINT(HR_TASK_STATE_RUNNING, hr_task_get_state(&task_b));
+    TEST_ASSERT_EQ_PTR(hr_task_control_block_const(&task_b),
+                       g_hr_current_task_control_block);
+
+    hr_kernel_select_next_from_pendsv();
+    TEST_ASSERT_EQ_PTR(&task_a, hr_task_current());
+    TEST_ASSERT_EQ_UINT(HR_TASK_STATE_RUNNING, hr_task_get_state(&task_a));
+    TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY, hr_task_get_state(&task_b));
 }
 
 void run_kernel_start_tests(void)
 {
-    RUN_TEST(test_kernel_initializes_idle_and_selects_highest_ready_task);
+    RUN_TEST(test_kernel_starts_and_cooperatively_rotates_equal_priority_tasks);
 }

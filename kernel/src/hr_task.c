@@ -202,6 +202,14 @@ bool hr_task_stack_guard_is_valid(const hr_task_t *task)
 }
 
 
+void hr_task_yield(void)
+{
+    if (hr_kernel_is_running())
+    {
+        hr_port_request_context_switch();
+    }
+}
+
 hr_task_t *hr_task_current(void)
 {
     return hr_kernel_current_task_internal();

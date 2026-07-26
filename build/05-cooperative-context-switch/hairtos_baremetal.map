@@ -1,0 +1,733 @@
+     VMA      LMA     Size Align Out     In      Symbol
+       0        0        0     1 _Min_Heap_Size = 0x000
+       0        0        0     1 _Min_Stack_Size = 0x400
+       0        0        0     1 _estack = ORIGIN ( RAM ) + LENGTH ( RAM )
+       0        0        0     1 _sstack = _estack - _Min_Stack_Size
+ 8000000  8000000       ec     1 .isr_vector
+ 8000000  8000000        0     1         . = ALIGN ( 4 )
+ 8000000  8000000       ec     1         build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o:(.isr_vector)
+ 8000000  8000000       ec     1                 g_pfnVectors
+ 80000ec  80000ec        0     1         . = ALIGN ( 4 )
+ 80000ec  80000ec     1400     4 .text
+ 80000ec  80000ec        0     1         . = ALIGN ( 4 )
+ 80000ec  80000ec       70     4         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_portasm.o:(.text)
+ 80000ec  80000ec        0     1                 $t.0
+ 80000ed  80000ed       16     1                 hr_port_start_first_task
+ 8000103  8000103       24     1                 SVC_Handler
+ 8000127  8000127       2e     1                 PendSV_Handler
+ 8000154  8000154        0     1                 $d.1
+ 800015c  800015c       68     4         build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o:(.text.SystemInit)
+ 800015c  800015c        0     1                 $t.0
+ 800015d  800015d       68     1                 SystemInit
+ 80001c4  80001c4       98     4         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o:(.text.stm32f1_clock_configure_hse_pll_72mhz)
+ 80001c4  80001c4        0     1                 $t.0
+ 80001c5  80001c5       98     1                 stm32f1_clock_configure_hse_pll_72mhz
+ 800025c  800025c       44     4         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o:(.text.stm32f1_clock_get_hclk_hz)
+ 800025c  800025c        0     1                 $t.1
+ 800025d  800025d       44     1                 stm32f1_clock_get_hclk_hz
+ 80002a0  80002a0       5c     4         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o:(.text.stm32f1_clock_get_pclk2_hz)
+ 80002a0  80002a0        0     1                 $t.3
+ 80002a1  80002a1       5c     1                 stm32f1_clock_get_pclk2_hz
+ 80002fc  80002fc        8     4         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o:(.text.HardFault_Handler)
+ 80002fc  80002fc        0     1                 $t.0
+ 80002fd  80002fd        8     1                 HardFault_Handler
+ 8000304  8000304        8     4         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o:(.text.MemManage_Handler)
+ 8000304  8000304        0     1                 $t.1
+ 8000305  8000305        8     1                 MemManage_Handler
+ 800030c  800030c        8     4         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o:(.text.BusFault_Handler)
+ 800030c  800030c        0     1                 $t.2
+ 800030d  800030d        8     1                 BusFault_Handler
+ 8000314  8000314        8     4         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o:(.text.UsageFault_Handler)
+ 8000314  8000314        0     1                 $t.3
+ 8000315  8000315        8     1                 UsageFault_Handler
+ 800031c  800031c      11c     4         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.text.board_init)
+ 800031c  800031c        0     1                 $t.0
+ 800031d  800031d      11c     1                 board_init
+ 8000438  8000438        8     4         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.text.board_led_toggle)
+ 8000438  8000438        0     1                 $t.3
+ 8000439  8000439        8     1                 board_led_toggle
+ 8000440  8000440        4     4         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.text.board_uart_write_string)
+ 8000440  8000440        0     1                 $t.5
+ 8000441  8000441        4     1                 board_uart_write_string
+ 8000444  8000444       5e     4         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.text.board_uart_write_u32)
+ 8000444  8000444        0     1                 $t.6
+ 8000445  8000445       5e     1                 board_uart_write_u32
+ 80004a4  80004a4       18     4         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.text.board_uart_write_line)
+ 80004a4  80004a4        0     1                 $t.7
+ 80004a5  80004a5       18     1                 board_uart_write_line
+ 80004bc  80004bc        4     4         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.text.board_delay_ms)
+ 80004bc  80004bc        0     1                 $t.9
+ 80004bd  80004bd        4     1                 board_delay_ms
+ 80004c0  80004c0       14     4         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.text.board_panic)
+ 80004c0  80004c0        0     1                 $t.10
+ 80004c1  80004c1       14     1                 board_panic
+ 80004d4  80004d4        c     4         build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o:(.text.board_get_core_clock_hz)
+ 80004d4  80004d4        0     1                 $t.0
+ 80004d5  80004d5        c     1                 board_get_core_clock_hz
+ 80004e0  80004e0       1c     4         build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o:(.text.board_clock_is_72mhz)
+ 80004e0  80004e0        0     1                 $t.1
+ 80004e1  80004e1       1c     1                 board_clock_is_72mhz
+ 80004fc  80004fc       22     4         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.text.hr_gpio_enable_port_clock)
+ 80004fc  80004fc        0     1                 $t.0
+ 80004fd  80004fd       22     1                 hr_gpio_enable_port_clock
+ 8000520  8000520       5c     4         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.text.hr_gpio_config_output_push_pull)
+ 8000520  8000520        0     1                 $t.1
+ 8000521  8000521       5c     1                 hr_gpio_config_output_push_pull
+ 800057c  800057c       60     4         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.text.hr_gpio_config_alternate_push_pull)
+ 800057c  800057c        0     1                 $t.2
+ 800057d  800057d       60     1                 hr_gpio_config_alternate_push_pull
+ 80005dc  80005dc       56     4         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.text.hr_gpio_config_input_floating)
+ 80005dc  80005dc        0     1                 $t.3
+ 80005dd  80005dd       56     1                 hr_gpio_config_input_floating
+ 8000634  8000634       3e     4         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.text.hr_gpio_write)
+ 8000634  8000634        0     1                 $t.4
+ 8000635  8000635       3e     1                 hr_gpio_write
+ 8000674  8000674       3e     4         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.text.hr_gpio_toggle)
+ 8000674  8000674        0     1                 $t.6
+ 8000675  8000675       3e     1                 hr_gpio_toggle
+ 80006b4  80006b4       64     4         build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o:(.text.hr_uart_init)
+ 80006b4  80006b4        0     1                 $t.0
+ 80006b5  80006b5       64     1                 hr_uart_init
+ 8000718  8000718       12     4         build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o:(.text.hr_uart_write_char)
+ 8000718  8000718        0     1                 $t.1
+ 8000719  8000719       12     1                 hr_uart_write_char
+ 800072c  800072c       26     4         build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o:(.text.hr_uart_write_string)
+ 800072c  800072c        0     1                 $t.2
+ 800072d  800072d       26     1                 hr_uart_write_string
+ 8000754  8000754       3c     4         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.text.hr_hw_timer_init_1khz)
+ 8000754  8000754        0     1                 $t.0
+ 8000755  8000755       3c     1                 hr_hw_timer_init_1khz
+ 8000790  8000790       1a     4         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.text.hr_hw_timer_delay_ms)
+ 8000790  8000790        0     1                 $t.2
+ 8000791  8000791       1a     1                 hr_hw_timer_delay_ms
+ 80007ac  80007ac       10     4         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.text.SysTick_Handler)
+ 80007ac  80007ac        0     1                 $t.3
+ 80007ad  80007ad       10     1                 SysTick_Handler
+ 80007bc  80007bc      11e     4         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.text.main)
+ 80007bc  80007bc        0     1                 $t.0
+ 80007bd  80007bd      11e     1                 main
+ 80008dc  80008dc       86     4         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.text.task_a)
+ 80008dc  80008dc        0     1                 $t.1
+ 80008dd  80008dd       86     1                 task_a
+ 8000964  8000964       86     4         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.text.task_b)
+ 8000964  8000964        0     1                 $t.2
+ 8000965  8000965       86     1                 task_b
+ 80009ec  80009ec       14     4         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.text.hr_list_init)
+ 80009ec  80009ec        0     1                 $t.0
+ 80009ed  80009ed       14     1                 hr_list_init
+ 8000a00  8000a00       10     4         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.text.hr_list_node_init)
+ 8000a00  8000a00        0     1                 $t.1
+ 8000a01  8000a01       10     1                 hr_list_node_init
+ 8000a10  8000a10       10     4         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.text.hr_list_is_empty)
+ 8000a10  8000a10        0     1                 $t.2
+ 8000a11  8000a11       10     1                 hr_list_is_empty
+ 8000a20  8000a20        a     4         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.text.hr_list_size)
+ 8000a20  8000a20        0     1                 $t.3
+ 8000a21  8000a21        a     1                 hr_list_size
+ 8000a2c  8000a2c       12     4         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.text.hr_list_node_is_linked)
+ 8000a2c  8000a2c        0     1                 $t.4
+ 8000a2d  8000a2d       12     1                 hr_list_node_is_linked
+ 8000a40  8000a40        a     4         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.text.hr_list_node_owner)
+ 8000a40  8000a40        0     1                 $t.5
+ 8000a41  8000a41        a     1                 hr_list_node_owner
+ 8000a4c  8000a4c       10     4         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.text.hr_list_front)
+ 8000a4c  8000a4c        0     1                 $t.6
+ 8000a4d  8000a4d       10     1                 hr_list_front
+ 8000a5c  8000a5c       30     4         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.text.hr_list_push_back)
+ 8000a5c  8000a5c        0     1                 $t.11
+ 8000a5d  8000a5d       30     1                 hr_list_push_back
+ 8000a8c  8000a8c       40     4         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.text.hr_list_remove)
+ 8000a8c  8000a8c        0     1                 $t.13
+ 8000a8d  8000a8d       40     1                 hr_list_remove
+ 8000acc  8000acc       54     4         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.text.hr_list_pop_front)
+ 8000acc  8000acc        0     1                 $t.14
+ 8000acd  8000acd       54     1                 hr_list_pop_front
+ 8000b20  8000b20       1a     4         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.text.hr_ready_node_init)
+ 8000b20  8000b20        0     1                 $t.0
+ 8000b21  8000b21       1a     1                 hr_ready_node_init
+ 8000b3c  8000b3c       28     4         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.text.hr_ready_set_init)
+ 8000b3c  8000b3c        0     1                 $t.1
+ 8000b3d  8000b3d       28     1                 hr_ready_set_init
+ 8000b64  8000b64       4e     4         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.text.hr_ready_set_insert)
+ 8000b64  8000b64        0     1                 $t.5
+ 8000b65  8000b65       4e     1                 hr_ready_set_insert
+ 8000bb4  8000bb4       74     4         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.text.hr_ready_set_remove)
+ 8000bb4  8000bb4        0     1                 $t.6
+ 8000bb5  8000bb5       74     1                 hr_ready_set_remove
+ 8000c28  8000c28       3a     4         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.text.hr_ready_set_peek_highest)
+ 8000c28  8000c28        0     1                 $t.7
+ 8000c29  8000c29       3a     1                 hr_ready_set_peek_highest
+ 8000c64  8000c64       66     4         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.text.hr_ready_set_rotate_highest)
+ 8000c64  8000c64        0     1                 $t.8
+ 8000c65  8000c65       66     1                 hr_ready_set_rotate_highest
+ 8000ccc  8000ccc       1a     4         build/05-cooperative-context-switch/kernel/src/hr_wait.o:(.text.hr_wait_node_init)
+ 8000ccc  8000ccc        0     1                 $t.0
+ 8000ccd  8000ccd       1a     1                 hr_wait_node_init
+ 8000ce8  8000ce8       1a     4         build/05-cooperative-context-switch/kernel/src/hr_timeout.o:(.text.hr_timeout_node_init)
+ 8000ce8  8000ce8        0     1                 $t.0
+ 8000ce9  8000ce9       1a     1                 hr_timeout_node_init
+ 8000d04  8000d04        2     4         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.text.hr_task_control_block)
+ 8000d04  8000d04        0     1                 $t.0
+ 8000d05  8000d05        2     1                 hr_task_control_block
+ 8000d08  8000d08        2     4         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.text.hr_task_exit_error)
+ 8000d08  8000d08        0     1                 $t.2
+ 8000d09  8000d09        2     1                 hr_task_exit_error
+ 8000d0c  8000d0c      104     4         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.text.hr_task_create_static)
+ 8000d0c  8000d0c        0     1                 $t.3
+ 8000d0d  8000d0d      104     1                 hr_task_create_static
+ 8000e10  8000e10       1e     4         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.text.hr_task_is_valid)
+ 8000e10  8000e10        0     1                 $t.4
+ 8000e11  8000e11       1e     1                 hr_task_is_valid
+ 8000e30  8000e30       1a     4         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.text.hr_task_start)
+ 8000e30  8000e30        0     1                 $t.5
+ 8000e31  8000e31       1a     1                 hr_task_start
+ 8000e4c  8000e4c       16     4         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.text.hr_task_yield)
+ 8000e4c  8000e4c        0     1                 $t.13
+ 8000e4d  8000e4d       16     1                 hr_task_yield
+ 8000e64  8000e64        4     4         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.text.hr_task_current)
+ 8000e64  8000e64        0     1                 $t.14
+ 8000e65  8000e65        4     1                 hr_task_current
+ 8000e68  8000e68        c     4         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.text.hr_port_initialize_stack)
+ 8000e68  8000e68        0     1                 $t.0
+ 8000e69  8000e69        c     1                 hr_port_initialize_stack
+ 8000e74  8000e74       26     4         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.text.hr_port_configure_kernel_exceptions)
+ 8000e74  8000e74        0     1                 $t.1
+ 8000e75  8000e75       26     1                 hr_port_configure_kernel_exceptions
+ 8000e9c  8000e9c       18     4         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.text.hr_port_request_context_switch)
+ 8000e9c  8000e9c        0     1                 $t.2
+ 8000e9d  8000e9d       18     1                 hr_port_request_context_switch
+ 8000eb4  8000eb4        4     4         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.text.hr_port_wait_for_interrupt)
+ 8000eb4  8000eb4        0     1                 $t.3
+ 8000eb5  8000eb5        4     1                 hr_port_wait_for_interrupt
+ 8000eb8  8000eb8        a     4         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.text.hr_port_thread_uses_psp)
+ 8000eb8  8000eb8        0     1                 $t.4
+ 8000eb9  8000eb9        a     1                 hr_port_thread_uses_psp
+ 8000ec4  8000ec4       9c     4         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port_stack.o:(.text.hr_port_initialize_stack_raw)
+ 8000ec4  8000ec4        0     1                 $t.0
+ 8000ec5  8000ec5       9c     1                 hr_port_initialize_stack_raw
+ 8000f60  8000f60       a6     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.text.hr_kernel_init)
+ 8000f60  8000f60        0     1                 $t.0
+ 8000f61  8000f61       a6     1                 hr_kernel_init
+ 8001008  8001008        a     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.text.hr_idle_task)
+ 8001008  8001008        0     1                 $t.1
+ 8001009  8001009        a     1                 hr_idle_task
+ 8001014  8001014       b4     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.text.hr_kernel_register_task)
+ 8001014  8001014        0     1                 $t.2
+ 8001015  8001015       b4     1                 hr_kernel_register_task
+ 80010c8  80010c8       b4     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.text.hr_kernel_select_next_from_pendsv)
+ 80010c8  80010c8        0     1                 $t.4
+ 80010c9  80010c9       b4     1                 hr_kernel_select_next_from_pendsv
+ 800117c  800117c       7c     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.text.hr_kernel_start)
+ 800117c  800117c        0     1                 $t.5
+ 800117d  800117d       7c     1                 hr_kernel_start
+ 80011f8  80011f8       14     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.text.hr_kernel_is_running)
+ 80011f8  80011f8        0     1                 $t.6
+ 80011f9  80011f9       14     1                 hr_kernel_is_running
+ 800120c  800120c        c     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.text.hr_kernel_current_task_internal)
+ 800120c  800120c        0     1                 $t.10
+ 800120d  800120d        c     1                 hr_kernel_current_task_internal
+ 8001218  8001218       44     4         build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o:(.text.Reset_Handler)
+ 8001218  8001218        0     1                 $t.0
+ 8001219  8001219       2e     1                 Reset_Handler
+ 8001248  8001248        0     1                 $d.2
+ 800125c  800125c        4     1         build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o:(.text.Default_Handler)
+ 800125c  800125c        0     1                 $t.1
+ 800125d  800125d        4     1                 Default_Handler
+ 800125d  800125d        4     1                 NMI_Handler
+ 800125d  800125d        4     1                 DebugMon_Handler
+ 800125d  800125d        4     1                 WWDG_IRQHandler
+ 800125d  800125d        4     1                 PVD_IRQHandler
+ 800125d  800125d        4     1                 TAMPER_IRQHandler
+ 800125d  800125d        4     1                 RTC_IRQHandler
+ 800125d  800125d        4     1                 FLASH_IRQHandler
+ 800125d  800125d        4     1                 RCC_IRQHandler
+ 800125d  800125d        4     1                 EXTI0_IRQHandler
+ 800125d  800125d        4     1                 EXTI1_IRQHandler
+ 800125d  800125d        4     1                 EXTI2_IRQHandler
+ 800125d  800125d        4     1                 EXTI3_IRQHandler
+ 800125d  800125d        4     1                 EXTI4_IRQHandler
+ 800125d  800125d        4     1                 DMA1_Channel1_IRQHandler
+ 800125d  800125d        4     1                 DMA1_Channel2_IRQHandler
+ 800125d  800125d        4     1                 DMA1_Channel3_IRQHandler
+ 800125d  800125d        4     1                 DMA1_Channel4_IRQHandler
+ 800125d  800125d        4     1                 DMA1_Channel5_IRQHandler
+ 800125d  800125d        4     1                 DMA1_Channel6_IRQHandler
+ 800125d  800125d        4     1                 DMA1_Channel7_IRQHandler
+ 800125d  800125d        4     1                 ADC1_2_IRQHandler
+ 800125d  800125d        4     1                 USB_HP_CAN1_TX_IRQHandler
+ 800125d  800125d        4     1                 USB_LP_CAN1_RX0_IRQHandler
+ 800125d  800125d        4     1                 CAN1_RX1_IRQHandler
+ 800125d  800125d        4     1                 CAN1_SCE_IRQHandler
+ 800125d  800125d        4     1                 EXTI9_5_IRQHandler
+ 800125d  800125d        4     1                 TIM1_BRK_IRQHandler
+ 800125d  800125d        4     1                 TIM1_UP_IRQHandler
+ 800125d  800125d        4     1                 TIM1_TRG_COM_IRQHandler
+ 800125d  800125d        4     1                 TIM1_CC_IRQHandler
+ 800125d  800125d        4     1                 TIM2_IRQHandler
+ 800125d  800125d        4     1                 TIM3_IRQHandler
+ 800125d  800125d        4     1                 TIM4_IRQHandler
+ 800125d  800125d        4     1                 I2C1_EV_IRQHandler
+ 800125d  800125d        4     1                 I2C1_ER_IRQHandler
+ 800125d  800125d        4     1                 I2C2_EV_IRQHandler
+ 800125d  800125d        4     1                 I2C2_ER_IRQHandler
+ 800125d  800125d        4     1                 SPI1_IRQHandler
+ 800125d  800125d        4     1                 SPI2_IRQHandler
+ 800125d  800125d        4     1                 USART1_IRQHandler
+ 800125d  800125d        4     1                 USART2_IRQHandler
+ 800125d  800125d        4     1                 USART3_IRQHandler
+ 800125d  800125d        4     1                 EXTI15_10_IRQHandler
+ 800125d  800125d        4     1                 RTCAlarm_IRQHandler
+ 800125d  800125d        4     1                 USBWakeUp_IRQHandler
+ 8001260  8001260       20     2         <internal>:(.rodata.cst32)
+ 8001280  8001280        8     1         <internal>:(.rodata.cst8)
+ 8001288  8001288      255     1         <internal>:(.rodata.str1.1)
+ 80014e0  80014e0        c     4         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.rodata..Lswitch.table.hr_gpio_enable_port_clock)
+ 80014e0  80014e0        c     1                 .Lswitch.table.hr_gpio_enable_port_clock
+ 80014ec  80014ec        0     1         . = ALIGN ( 4 )
+ 80014ec  80014ec        0     1         _etext = .
+ 80014ec  80014ec       10     4 .ARM.exidx
+ 80014ec  80014ec        0     1         __exidx_start = .
+ 80014ec  80014ec       10     4         <internal>:(.ARM.exidx)
+ 80014fc  80014fc        0     1         __exidx_end = .
+ 80014fc  80014fc        0     1 _sidata = LOADADDR ( .data )
+20000000  80014fc        4     4 .data
+20000000  80014fc        0     1         . = ALIGN ( 4 )
+20000000  80014fc        0     1         _sdata = .
+20000000  80014fc        4     4         build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o:(.data.SystemCoreClock)
+20000000  80014fc        4     1                 SystemCoreClock
+20000004  8001500        0     1         . = ALIGN ( 4 )
+20000004  8001500        0     1         _edata = .
+20000008 20000008      b98     8 .bss
+20000008 20000008        0     1         . = ALIGN ( 4 )
+20000008 20000008        0     1         _sbss = .
+20000008 20000008        0     1         __bss_start__ = .
+20000008 20000008        4     4         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.bss.g_millisecond_tick)
+20000008 20000008        4     1                 g_millisecond_tick
+20000010 20000010      140     8         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.bss.g_task_a)
+20000010 20000010      140     1                 g_task_a
+20000150 20000150      280     4         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.bss.g_task_a_stack)
+20000150 20000150      280     1                 g_task_a_stack
+200003d0 200003d0      140     8         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.bss.g_task_b)
+200003d0 200003d0      140     1                 g_task_b
+20000510 20000510      280     4         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.bss.g_task_b_stack)
+20000510 20000510      280     1                 g_task_b_stack
+20000790 20000790        4     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.bss.g_kernel_state)
+20000790 20000790        4     1                 g_kernel_state
+20000794 20000794       a8     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.bss.g_ready_set)
+20000794 20000794       a8     1                 g_ready_set
+2000083c 2000083c       14     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.bss.g_all_tasks)
+2000083c 2000083c       14     1                 g_all_tasks
+20000850 20000850        4     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.bss.g_current_task)
+20000850 20000850        4     1                 g_current_task
+20000854 20000854        4     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.bss.g_hr_current_task_control_block)
+20000854 20000854        4     1                 g_hr_current_task_control_block
+20000858 20000858        4     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.bss.g_task_count)
+20000858 20000858        4     1                 g_task_count
+20000860 20000860      140     8         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.bss.g_idle_task)
+20000860 20000860      140     1                 g_idle_task
+200009a0 200009a0      200     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.bss.g_idle_stack)
+200009a0 200009a0      200     1                 g_idle_stack
+20000ba0 20000ba0        0     1         . = ALIGN ( 4 )
+20000ba0 20000ba0        0     1         _ebss = .
+20000ba0 20000ba0        0     1         __bss_end__ = .
+20000ba0 20000ba0        0     1 .heap
+20000ba0 20000ba0        0     1         . = ALIGN ( 8 )
+20000ba0 20000ba0        0     1         __end__ = .
+20000ba0 20000ba0        0     1         end = __end__
+20000ba0 20000ba0        0     1         . = . + _Min_Heap_Size
+20000ba0 20000ba0        0     1         __heap_end__ = .
+20000ba0 20000ba0        0     1 
+       0        0     1564     1 .debug_abbrev
+       0        0       ec     1         build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o:(.debug_abbrev)
+      ec       ec      169     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o:(.debug_abbrev)
+     255      255       63     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o:(.debug_abbrev)
+     2b8      2b8      1b3     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.debug_abbrev)
+     46b      46b       4b     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o:(.debug_abbrev)
+     4b6      4b6      14e     1         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.debug_abbrev)
+     604      604      11d     1         build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o:(.debug_abbrev)
+     721      721      108     1         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.debug_abbrev)
+     829      829      156     1         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.debug_abbrev)
+     97f      97f      161     1         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.debug_abbrev)
+     ae0      ae0      19a     1         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.debug_abbrev)
+     c7a      c7a      13b     1         build/05-cooperative-context-switch/kernel/src/hr_wait.o:(.debug_abbrev)
+     db5      db5      152     1         build/05-cooperative-context-switch/kernel/src/hr_timeout.o:(.debug_abbrev)
+     f07      f07      239     1         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.debug_abbrev)
+    1140     1140      114     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.debug_abbrev)
+    1254     1254       c5     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port_stack.o:(.debug_abbrev)
+    1319     1319      20b     1         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.debug_abbrev)
+    1524     1524       1f     1         build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o:(.debug_abbrev)
+    1543     1543       21     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_portasm.o:(.debug_abbrev)
+       0        0     3383     1 .debug_info
+       0        0      1d2     1         build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o:(.debug_info)
+     1d2      1d2      3b9     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o:(.debug_info)
+     58b      58b      104     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o:(.debug_info)
+     68f      68f      4cf     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.debug_info)
+     b5e      b5e       56     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o:(.debug_info)
+     bb4      bb4      3a1     1         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.debug_info)
+     f55      f55      1bd     1         build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o:(.debug_info)
+    1112     1112       eb     1         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.debug_info)
+    11fd     11fd      332     1         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.debug_info)
+    152f     152f      413     1         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.debug_info)
+    1942     1942      3ba     1         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.debug_info)
+    1cfc     1cfc      315     1         build/05-cooperative-context-switch/kernel/src/hr_wait.o:(.debug_info)
+    2011     2011      3c6     1         build/05-cooperative-context-switch/kernel/src/hr_timeout.o:(.debug_info)
+    23d7     23d7      689     1         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.debug_info)
+    2a60     2a60      175     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.debug_info)
+    2bd5     2bd5       f1     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port_stack.o:(.debug_info)
+    2cc6     2cc6      512     1         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.debug_info)
+    31d8     31d8       c2     1         build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o:(.debug_info)
+    329a     329a       e9     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_portasm.o:(.debug_info)
+       0        0      386     1 .debug_rnglists
+       0        0       17     1         build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o:(.debug_rnglists)
+      17       17       38     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o:(.debug_rnglists)
+      4f       4f       1d     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o:(.debug_rnglists)
+      6c       6c       33     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.debug_rnglists)
+      9f       9f       17     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o:(.debug_rnglists)
+      b6       b6       7d     1         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.debug_rnglists)
+     133      133       1d     1         build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o:(.debug_rnglists)
+     150      150       1d     1         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.debug_rnglists)
+     16d      16d       1d     1         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.debug_rnglists)
+     18a      18a       71     1         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.debug_rnglists)
+     1fb      1fb       2f     1         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.debug_rnglists)
+     22a      22a       46     1         build/05-cooperative-context-switch/kernel/src/hr_wait.o:(.debug_rnglists)
+     270      270       5a     1         build/05-cooperative-context-switch/kernel/src/hr_timeout.o:(.debug_rnglists)
+     2ca      2ca       4e     1         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.debug_rnglists)
+     318      318       20     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.debug_rnglists)
+     338      338       35     1         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.debug_rnglists)
+     36d      36d       19     1         build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o:(.debug_rnglists)
+       0        0      d54     1 .debug_str_offsets
+       0        0       b0     1         build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o:(.debug_str_offsets)
+      b0       b0       d0     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o:(.debug_str_offsets)
+     180      180       30     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o:(.debug_str_offsets)
+     1b0      1b0       ac     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.debug_str_offsets)
+     25c      25c       28     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o:(.debug_str_offsets)
+     284      284       e0     1         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.debug_str_offsets)
+     364      364       b0     1         build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o:(.debug_str_offsets)
+     414      414       58     1         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.debug_str_offsets)
+     46c      46c       bc     1         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.debug_str_offsets)
+     528      528       cc     1         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.debug_str_offsets)
+     5f4      5f4       f8     1         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.debug_str_offsets)
+     6ec      6ec       e4     1         build/05-cooperative-context-switch/kernel/src/hr_wait.o:(.debug_str_offsets)
+     7d0      7d0      108     1         build/05-cooperative-context-switch/kernel/src/hr_timeout.o:(.debug_str_offsets)
+     8d8      8d8      1bc     1         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.debug_str_offsets)
+     a94      a94       78     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.debug_str_offsets)
+     b0c      b0c       60     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port_stack.o:(.debug_str_offsets)
+     b6c      b6c      1e8     1         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.debug_str_offsets)
+       0        0     1808     1 .debug_str
+       0        0     1808     1         <internal>:(.debug_str)
+       0        0      44c     1 .debug_addr
+       0        0       1c     1         build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o:(.debug_addr)
+      1c       1c       4c     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o:(.debug_addr)
+      68       68       28     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o:(.debug_addr)
+      90       90       c4     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.debug_addr)
+     154      154       10     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o:(.debug_addr)
+     164      164       30     1         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.debug_addr)
+     194      194       1c     1         build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o:(.debug_addr)
+     1b0      1b0       20     1         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.debug_addr)
+     1d0      1d0       74     1         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.debug_addr)
+     244      244       54     1         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.debug_addr)
+     298      298       4c     1         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.debug_addr)
+     2e4      2e4       48     1         build/05-cooperative-context-switch/kernel/src/hr_wait.o:(.debug_addr)
+     32c      32c       40     1         build/05-cooperative-context-switch/kernel/src/hr_timeout.o:(.debug_addr)
+     36c      36c       54     1         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.debug_addr)
+     3c0      3c0       20     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.debug_addr)
+     3e0      3e0       10     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port_stack.o:(.debug_addr)
+     3f0      3f0       5c     1         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.debug_addr)
+       0        0       41     1 .ARM.attributes
+       0        0       41     1         build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o:(.ARM.attributes)
+       0        0      b3c     4 .debug_frame
+       0        0       50     4         build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o:(.debug_frame)
+      50       50       54     4         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o:(.debug_frame)
+      a4       a4       54     4         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o:(.debug_frame)
+      f8       f8       fc     4         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.debug_frame)
+     1f4      1f4       34     4         build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o:(.debug_frame)
+     228      228       84     4         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.debug_frame)
+     2ac      2ac       68     4         build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o:(.debug_frame)
+     314      314       54     4         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.debug_frame)
+     368      368       6c     4         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.debug_frame)
+     3d4      3d4      14c     4         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.debug_frame)
+     520      520      124     4         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.debug_frame)
+     644      644       e0     4         build/05-cooperative-context-switch/kernel/src/hr_wait.o:(.debug_frame)
+     724      724      120     4         build/05-cooperative-context-switch/kernel/src/hr_timeout.o:(.debug_frame)
+     844      844      12c     4         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.debug_frame)
+     970      970       64     4         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.debug_frame)
+     9d4      9d4       3c     4         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port_stack.o:(.debug_frame)
+     a10      a10      12c     4         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.debug_frame)
+       0        0     278c     1 .debug_line
+       0        0       da     1         build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o:(.debug_line)
+      da       da      1c7     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o:(.debug_line)
+     2a1      2a1       cc     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o:(.debug_line)
+     36d      36d      280     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.debug_line)
+     5ed      5ed       8e     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o:(.debug_line)
+     67b      67b      2d3     1         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.debug_line)
+     94e      94e      168     1         build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o:(.debug_line)
+     ab6      ab6      116     1         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.debug_line)
+     bcc      bcc      16a     1         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.debug_line)
+     d36      d36      4e2     1         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.debug_line)
+    1218     1218      39f     1         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.debug_line)
+    15b7     15b7      274     1         build/05-cooperative-context-switch/kernel/src/hr_wait.o:(.debug_line)
+    182b     182b      3c7     1         build/05-cooperative-context-switch/kernel/src/hr_timeout.o:(.debug_line)
+    1bf2     1bf2      475     1         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.debug_line)
+    2067     2067      12c     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.debug_line)
+    2193     2193       f6     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port_stack.o:(.debug_line)
+    2289     2289      435     1         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.debug_line)
+    26be     26be       67     1         build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o:(.debug_line)
+    2725     2725       67     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_portasm.o:(.debug_line)
+       0        0      442     1 .debug_line_str
+       0        0      442     1         <internal>:(.debug_line_str)
+       0        0     14af     1 .debug_loclists
+       0        0      1a7     1         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o:(.debug_loclists)
+     1a7      1a7      14d     1         build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o:(.debug_loclists)
+     2f4      2f4      2d9     1         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o:(.debug_loclists)
+     5cd      5cd       4f     1         build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o:(.debug_loclists)
+     61c      61c       38     1         build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o:(.debug_loclists)
+     654      654       cb     1         build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o:(.debug_loclists)
+     71f      71f      30c     1         build/05-cooperative-context-switch/kernel/src/hr_list.o:(.debug_loclists)
+     a2b      a2b      245     1         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o:(.debug_loclists)
+     c70      c70      168     1         build/05-cooperative-context-switch/kernel/src/hr_wait.o:(.debug_loclists)
+     dd8      dd8      2fc     1         build/05-cooperative-context-switch/kernel/src/hr_timeout.o:(.debug_loclists)
+    10d4     10d4      1fc     1         build/05-cooperative-context-switch/kernel/src/hr_task.o:(.debug_loclists)
+    12d0     12d0       2a     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o:(.debug_loclists)
+    12fa     12fa       9f     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port_stack.o:(.debug_loclists)
+    1399     1399      116     1         build/05-cooperative-context-switch/kernel/src/hr_kernel.o:(.debug_loclists)
+       0        0       48     1 .debug_aranges
+       0        0       28     1         build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o:(.debug_aranges)
+      28       28       20     1         build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_portasm.o:(.debug_aranges)
+       0        0      f80     4 .symtab
+       0        0      f80     4         <internal>:(.symtab)
+       0        0       f5     1 .shstrtab
+       0        0       f5     1         <internal>:(.shstrtab)
+       0        0      d87     1 .strtab
+       0        0      d87     1         <internal>:(.strtab)
+
+Cross Reference Table
+
+Symbol                                            File
+SystemInit                                        build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+SystemCoreClock                                   build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o
+g_pfnVectors                                      build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o
+stm32f1_clock_configure_hse_pll_72mhz             build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o
+stm32f1_clock_get_hclk_hz                         build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/system_stm32f1.o
+stm32f1_clock_get_pclk2_hz                        build/05-cooperative-context-switch/soc/stm32f1/stm32f1_clock.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+HardFault_Handler                                 build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+MemManage_Handler                                 build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+BusFault_Handler                                  build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+UsageFault_Handler                                build/05-cooperative-context-switch/soc/stm32f1/stm32f1_irq.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+board_init                                        build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+hr_gpio_enable_port_clock                         build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+hr_gpio_config_output_push_pull                   build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+hr_gpio_write                                     build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+hr_uart_init                                      build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+hr_hw_timer_init_1khz                             build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+hr_uart_write_string                              build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+board_get_core_clock_hz                           build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+hr_uart_write_char                                build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+board_clock_is_72mhz                              build/05-cooperative-context-switch/boards/bluepill_f103c8/board_clock.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+board_led_toggle                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+hr_gpio_toggle                                    build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+board_uart_write_string                           build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+board_uart_write_u32                              build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+board_uart_write_line                             build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+board_delay_ms                                    build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+hr_hw_timer_delay_ms                              build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+board_panic                                       build/05-cooperative-context-switch/boards/bluepill_f103c8/board.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+hr_gpio_config_alternate_push_pull                build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o
+hr_gpio_config_input_floating                     build/05-cooperative-context-switch/drivers/gpio/src/hr_gpio_stm32f1.o
+                                                  build/05-cooperative-context-switch/drivers/uart/src/hr_uart_stm32f1.o
+SysTick_Handler                                   build/05-cooperative-context-switch/drivers/timer/src/hr_hw_timer_stm32f1.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+main                                              build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+hr_kernel_init                                    build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+hr_task_create_static                             build/05-cooperative-context-switch/kernel/src/hr_task.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_task_start                                     build/05-cooperative-context-switch/kernel/src/hr_task.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_kernel_start                                   build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+hr_task_yield                                     build/05-cooperative-context-switch/kernel/src/hr_task.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+hr_task_current                                   build/05-cooperative-context-switch/kernel/src/hr_task.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+hr_port_thread_uses_psp                           build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o
+                                                  build/05-cooperative-context-switch/examples/05-cooperative-context-switch/main.o
+hr_list_init                                      build/05-cooperative-context-switch/kernel/src/hr_list.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_wait.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_timeout.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_list_node_init                                 build/05-cooperative-context-switch/kernel/src/hr_list.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_wait.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_timeout.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_task.o
+hr_list_is_empty                                  build/05-cooperative-context-switch/kernel/src/hr_list.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_wait.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_timeout.o
+hr_list_size                                      build/05-cooperative-context-switch/kernel/src/hr_list.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_wait.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_timeout.o
+hr_list_node_is_linked                            build/05-cooperative-context-switch/kernel/src/hr_list.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_wait.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_timeout.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_list_node_owner                                build/05-cooperative-context-switch/kernel/src/hr_list.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_list_front                                     build/05-cooperative-context-switch/kernel/src/hr_list.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_wait.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_timeout.o
+hr_list_push_back                                 build/05-cooperative-context-switch/kernel/src/hr_list.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_wait.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_timeout.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_list_remove                                    build/05-cooperative-context-switch/kernel/src/hr_list.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_wait.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_timeout.o
+hr_list_pop_front                                 build/05-cooperative-context-switch/kernel/src/hr_list.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_wait.o
+hr_ready_node_init                                build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_task.o
+hr_ready_set_init                                 build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_ready_set_insert                               build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_ready_set_remove                               build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_ready_set_peek_highest                         build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_ready_set_rotate_highest                       build/05-cooperative-context-switch/kernel/src/hr_scheduler.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_wait_node_init                                 build/05-cooperative-context-switch/kernel/src/hr_wait.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_task.o
+hr_timeout_node_init                              build/05-cooperative-context-switch/kernel/src/hr_timeout.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_task.o
+hr_task_control_block                             build/05-cooperative-context-switch/kernel/src/hr_task.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_task_exit_error                                build/05-cooperative-context-switch/kernel/src/hr_task.o
+hr_port_initialize_stack                          build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_task.o
+hr_task_is_valid                                  build/05-cooperative-context-switch/kernel/src/hr_task.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_kernel_register_task                           build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_task.o
+hr_kernel_is_running                              build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_task.o
+hr_port_request_context_switch                    build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_task.o
+hr_kernel_current_task_internal                   build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_task.o
+hr_port_initialize_stack_raw                      build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port_stack.o
+                                                  build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o
+hr_port_configure_kernel_exceptions               build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+hr_port_wait_for_interrupt                        build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_port.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+g_hr_current_task_control_block                   build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+                                                  build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_portasm.o
+hr_kernel_select_next_from_pendsv                 build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+                                                  build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_portasm.o
+hr_port_start_first_task                          build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_portasm.o
+                                                  build/05-cooperative-context-switch/kernel/src/hr_kernel.o
+Reset_Handler                                     build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+_estack                                           boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld:11
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+                                                  build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_portasm.o
+NMI_Handler                                       build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+SVC_Handler                                       build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_portasm.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+DebugMon_Handler                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+PendSV_Handler                                    build/05-cooperative-context-switch/arch/arm/cortex-m3/hr_portasm.o
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+WWDG_IRQHandler                                   build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+PVD_IRQHandler                                    build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+TAMPER_IRQHandler                                 build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+RTC_IRQHandler                                    build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+FLASH_IRQHandler                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+RCC_IRQHandler                                    build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+EXTI0_IRQHandler                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+EXTI1_IRQHandler                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+EXTI2_IRQHandler                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+EXTI3_IRQHandler                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+EXTI4_IRQHandler                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel1_IRQHandler                          build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel2_IRQHandler                          build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel3_IRQHandler                          build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel4_IRQHandler                          build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel5_IRQHandler                          build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel6_IRQHandler                          build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+DMA1_Channel7_IRQHandler                          build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+ADC1_2_IRQHandler                                 build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+USB_HP_CAN1_TX_IRQHandler                         build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+USB_LP_CAN1_RX0_IRQHandler                        build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+CAN1_RX1_IRQHandler                               build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+CAN1_SCE_IRQHandler                               build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+EXTI9_5_IRQHandler                                build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+TIM1_BRK_IRQHandler                               build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+TIM1_UP_IRQHandler                                build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+TIM1_TRG_COM_IRQHandler                           build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+TIM1_CC_IRQHandler                                build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+TIM2_IRQHandler                                   build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+TIM3_IRQHandler                                   build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+TIM4_IRQHandler                                   build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+I2C1_EV_IRQHandler                                build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+I2C1_ER_IRQHandler                                build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+I2C2_EV_IRQHandler                                build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+I2C2_ER_IRQHandler                                build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+SPI1_IRQHandler                                   build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+SPI2_IRQHandler                                   build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+USART1_IRQHandler                                 build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+USART2_IRQHandler                                 build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+USART3_IRQHandler                                 build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+EXTI15_10_IRQHandler                              build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+RTCAlarm_IRQHandler                               build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+USBWakeUp_IRQHandler                              build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+_sidata                                           boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld:48
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+_sdata                                            boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld:53
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+_edata                                            boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld:57
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+_sbss                                             boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld:63
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o
+_ebss                                             boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld:69
+                                                  build/05-cooperative-context-switch/soc/stm32f1/startup_stm32f103.o

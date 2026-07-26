@@ -4,8 +4,10 @@
 #include "hr_port.h"
 #include "hr_portmacro.h"
 
+#define HR_PORT_SCB_ICSR_ADDRESS         0xE000ED04UL
 #define HR_PORT_SCB_CCR_ADDRESS          0xE000ED14UL
 #define HR_PORT_SCB_SHP_ADDRESS          0xE000ED18UL
+#define HR_PORT_SCB_ICSR_PENDSVSET       (UINT32_C(1) << 28U)
 #define HR_PORT_SCB_CCR_STKALIGN         (UINT32_C(1) << 9U)
 #define HR_PORT_SHP_SVC_INDEX            7U
 #define HR_PORT_SHP_PENDSV_INDEX         10U
@@ -43,6 +45,14 @@ void hr_port_configure_kernel_exceptions(void)
     priorities[HR_PORT_SHP_PENDSV_INDEX] = HR_PORT_PRIORITY_LOWEST;
     priorities[HR_PORT_SHP_SYSTICK_INDEX] = HR_PORT_PRIORITY_MEDIUM;
 
+    __asm volatile ("dsb" ::: "memory");
+    __asm volatile ("isb" ::: "memory");
+}
+
+
+void hr_port_request_context_switch(void)
+{
+    HR_PORT_REG32(HR_PORT_SCB_ICSR_ADDRESS) = HR_PORT_SCB_ICSR_PENDSVSET;
     __asm volatile ("dsb" ::: "memory");
     __asm volatile ("isb" ::: "memory");
 }

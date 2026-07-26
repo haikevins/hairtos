@@ -23,7 +23,7 @@ startup path. A successful call never returns. The selected task becomes RUNNING
 and executes on PSP.
 
 The first-task startup is implemented in Phase 4. PendSV switching between
-multiple tasks is not available until Phase 5.
+multiple tasks is available cooperatively from Phase 5; preemption remains later.
 
 ## PANIC
 

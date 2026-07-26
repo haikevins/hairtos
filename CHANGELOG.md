@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+
+### Added — Phase 5: Cooperative context switch
+
+- Added `hr_task_yield()` and Cortex-M PendSV request support.
+- Added PendSV R4-R11/PSP save and restore in GNU Assembly.
+- Added cooperative ready-queue rotation and current-task handoff.
+- Added two-task target example with independent local-state checks.
+- Added Phase 5 host tests, documentation, target build, and disassembly validation.
+
 ### Added — Phase 4: Start first task using SVC
 
 - Added kernel lifecycle state and static idle task initialization.

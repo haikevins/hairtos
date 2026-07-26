@@ -16,9 +16,9 @@ void hr_port_configure_kernel_exceptions(void);
 void hr_port_start_first_task(void);
 void hr_port_wait_for_interrupt(void);
 bool hr_port_thread_uses_psp(void);
+void hr_port_request_context_switch(void);
 
 /* Implemented in later phases. */
-void hr_port_request_context_switch(void);
 hr_irq_state_t hr_port_enter_critical(void);
 void hr_port_exit_critical(hr_irq_state_t state);
 bool hr_port_is_inside_isr(void);

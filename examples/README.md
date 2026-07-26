@@ -19,7 +19,7 @@ Phase 0 has no runtime example because it contains specifications only.
 | `02-kernel-data-structures-host` | 2 | Host | ✅ Implemented | `make phase2-example` |
 | `03-static-task-stack` | 3 | Target | ✅ Implemented | `make EXAMPLE=03-static-task-stack flash` |
 | `04-start-first-task` | 4 | Target | ✅ Implemented | `make EXAMPLE=04-start-first-task flash` |
-| `05-cooperative-context-switch` | 5 | Target | ⬜ Placeholder | Not runnable yet |
+| `05-cooperative-context-switch` | 5 | Target | ✅ Implemented | `make EXAMPLE=05-cooperative-context-switch flash` |
 | `06-priority-scheduler` | 6 | Target | ⬜ Placeholder | Not runnable yet |
 | `07-task-delay-timeout` | 7 | Target | ⬜ Placeholder | Not runnable yet |
 | `08-preemption-round-robin` | 8 | Target | ⬜ Placeholder | Not runnable yet |
@@ -72,6 +72,7 @@ flashing:
 make EXAMPLE=01-baremetal-foundation flash
 make EXAMPLE=03-static-task-stack flash
 make EXAMPLE=04-start-first-task flash
+make EXAMPLE=05-cooperative-context-switch flash
 ```
 
 A previous command such as `make EXAMPLE=03-static-task-stack` does not make the
@@ -80,7 +81,7 @@ uses its default target example.
 
 ## Current implemented examples
 
-At Phase 4, the runnable set is exactly:
+At Phase 5, the runnable set is exactly:
 
 ```text
 Host:
@@ -90,6 +91,7 @@ Target:
   01-baremetal-foundation
   03-static-task-stack
   04-start-first-task
+  05-cooperative-context-switch
 ```
 
 All other example directories are roadmap placeholders.

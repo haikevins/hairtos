@@ -6,7 +6,7 @@
 | 2 | `02-kernel-data-structures-host` | Ubuntu host | Complete |
 | 3 | `03-static-task-stack` | STM32 target | Complete |
 | 4 | `04-start-first-task` | STM32 target | Complete |
-| 5 | `05-cooperative-context-switch` | STM32 target | Placeholder |
+| 5 | `05-cooperative-context-switch` | STM32 target | Complete |
 | 6 | `06-priority-scheduler` | STM32 target | Placeholder |
 | 7 | `07-task-delay-timeout` | STM32 target | Placeholder |
 | 8 | `08-preemption-round-robin` | STM32 target | Placeholder |

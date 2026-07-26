@@ -1,6 +1,6 @@
 {
   "project": "HairRTOS",
-  "completed_phase": "Phase 4 — Start first task using SVC",
+  "completed_phase": "Phase 5 — PendSV cooperative context switch",
   "target": "STM32F103C8T6 Blue Pill / ARM Cortex-M3",
   "implemented_examples": [
     {
@@ -18,36 +18,39 @@
     {
       "name": "04-start-first-task",
       "environment": "target"
+    },
+    {
+      "name": "05-cooperative-context-switch",
+      "environment": "target"
     }
   ],
-  "phase4_features": [
-    "kernel lifecycle",
-    "static idle task",
-    "CREATED-to-READY task registration",
-    "highest-priority first-task selection",
-    "SVC startup",
-    "MSP reset to linker _estack",
-    "PSP Thread-mode exception return",
-    "task argument restoration through R0"
+  "phase5_features": [
+    "hr_task_yield API",
+    "PendSV request through SCB ICSR",
+    "R4-R11 and PSP context save",
+    "cooperative highest-ready-queue rotation",
+    "current and next TCB handoff",
+    "R4-R11 and PSP context restore",
+    "two equal-priority task target demo"
   ],
   "validation": {
     "host_tests": "23/23 PASS with Clang ASan/UBSan",
     "target_build": "PASS with Clang/LLD",
-    "svc_symbols_and_disassembly": "PASS",
+    "pendsv_symbols_and_disassembly": "PASS",
     "physical_hardware": "not performed",
     "image_size_bytes": {
-      "text": 4792,
-      "data": 8,
-      "bss": 1880
+      "text": 5372,
+      "data": 4,
+      "bss": 2968
     }
   },
-  "file_count": 224,
+  "file_count": 226,
   "files": [
     "CHANGELOG.md",
     "CMakeLists.txt",
     "LICENSE",
     "Makefile",
-    "PHASE4_VALIDATION.txt",
+    "PHASE5_VALIDATION.txt",
     "README.md",
     "adapters/button_event/hr_button_event.c",
     "adapters/button_event/hr_button_event.h",
@@ -97,6 +100,7 @@
     "docs/phase2-kernel-data-structures.md",
     "docs/phase3-tcb-initial-stack.md",
     "docs/phase4-start-first-task-svc.md",
+    "docs/phase5-cooperative-context-switch.md",
     "docs/porting-guide.md",
     "docs/requirements-coverage.md",
     "docs/roadmap.md",
@@ -262,10 +266,11 @@
     "tools/scripts/phase2_check.py",
     "tools/scripts/phase3_check.py",
     "tools/scripts/phase4_check.py",
+    "tools/scripts/phase5_check.py",
     "tools/scripts/roadmap_check.py",
     "tools/scripts/run_format_check.sh",
     "tools/scripts/run_host_tests.sh",
     "tools/scripts/size_report.sh",
-    "PHASE4_MANIFEST.json"
+    "PHASE5_MANIFEST.json"
   ]
 }

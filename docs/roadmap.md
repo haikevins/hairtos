@@ -9,7 +9,7 @@ validation satisfy its Definition of Done.
 Current completed phase:
 
 ```text
-Phase 4 — Start first task using SVC
+Phase 5 — PendSV cooperative context switch
 ```
 
 ## Phase 0 — Specification and principles
@@ -152,6 +152,8 @@ operation.
 ---
 
 ## Phase 5 — PendSV cooperative context switch
+
+**Status: Complete.**
 
 ### Goals
 

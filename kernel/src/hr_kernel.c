@@ -148,6 +148,73 @@ hr_status_t hr_kernel_prepare_start(void)
     return HR_OK;
 }
 
+
+void hr_kernel_select_next_from_pendsv(void)
+{
+    hr_ready_node_t *current_ready_node;
+    hr_ready_node_t *next_ready_node;
+    hr_task_t *next_task;
+    hr_task_control_block_t *current_control_block;
+    hr_task_control_block_t *next_control_block;
+    hr_status_t status;
+
+    if ((g_kernel_state != HR_KERNEL_STATE_RUNNING) ||
+        (g_current_task == NULL) ||
+        (g_hr_current_task_control_block == NULL))
+    {
+        g_kernel_state = HR_KERNEL_STATE_PANIC;
+        return;
+    }
+
+    current_ready_node = hr_ready_set_peek_highest(&g_ready_set);
+    if ((current_ready_node == NULL) ||
+        (hr_list_node_owner(&current_ready_node->node) != g_current_task))
+    {
+        g_kernel_state = HR_KERNEL_STATE_PANIC;
+        return;
+    }
+
+    status = hr_ready_set_rotate_highest(&g_ready_set);
+    if (status != HR_OK)
+    {
+        g_kernel_state = HR_KERNEL_STATE_PANIC;
+        return;
+    }
+
+    next_ready_node = hr_ready_set_peek_highest(&g_ready_set);
+    if (next_ready_node == NULL)
+    {
+        g_kernel_state = HR_KERNEL_STATE_PANIC;
+        return;
+    }
+
+    next_task = (hr_task_t *)hr_list_node_owner(&next_ready_node->node);
+    if (!hr_task_is_valid(next_task))
+    {
+        g_kernel_state = HR_KERNEL_STATE_PANIC;
+        return;
+    }
+
+    current_control_block = hr_task_control_block(g_current_task);
+    next_control_block = hr_task_control_block(next_task);
+
+    if (next_task != g_current_task)
+    {
+        if ((current_control_block->state != HR_TASK_STATE_RUNNING) ||
+            (next_control_block->state != HR_TASK_STATE_READY))
+        {
+            g_kernel_state = HR_KERNEL_STATE_PANIC;
+            return;
+        }
+
+        current_control_block->state = HR_TASK_STATE_READY;
+        next_control_block->state = HR_TASK_STATE_RUNNING;
+    }
+
+    g_current_task = next_task;
+    g_hr_current_task_control_block = next_control_block;
+}
+
 hr_status_t hr_kernel_start(void)
 {
     hr_status_t status;

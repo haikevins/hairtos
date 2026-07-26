@@ -4,7 +4,7 @@ HairRTOS is an educational fixed-priority preemptive RTOS for ARM Cortex-M.
 The first target is the STM32F103C8T6 Blue Pill. HairEvent is an optional
 Event-Driven framework above the kernel.
 
-## Current status: Phase 4 complete
+## Current status: Phase 5 complete
 
 Implemented phases:
 
@@ -12,11 +12,11 @@ Implemented phases:
 - **Phase 1:** register-level Blue Pill bare-metal foundation;
 - **Phase 2:** intrusive lists and host-tested kernel data structures;
 - **Phase 3:** opaque static TCB and Cortex-M3 initial task stack;
-- **Phase 4:** kernel initialization, idle task, first-task selection, and SVC
-  startup from MSP into Thread mode on PSP.
+- **Phase 4:** first-task startup through SVC from MSP to PSP;
+- **Phase 5:** cooperative task-to-task context switching through PendSV.
 
-Phase 4 starts one selected task. Task-to-task context switching through PendSV
-belongs to Phase 5.
+Phase 5 switches only when a running task explicitly calls `hr_task_yield()`.
+Timer-driven preemption, blocking delay, and time slicing are not implemented.
 
 ## Roadmap
 
@@ -27,7 +27,7 @@ belongs to Phase 5.
 | 2 | Intrusive list and kernel data structures | ✅ Complete |
 | 3 | TCB and initial task stack | ✅ Complete |
 | 4 | Start first task using SVC | ✅ Complete |
-| 5 | PendSV cooperative context switch | ⬜ Not started |
+| 5 | PendSV cooperative context switch | ✅ Complete |
 | 6 | Priority scheduler | ⬜ Not started |
 | 7 | SysTick and delay | ⬜ Not started |
 | 8 | Preemption and round-robin | ⬜ Not started |
@@ -42,22 +42,20 @@ belongs to Phase 5.
 
 Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
 
-## Phase 4 components
+## Phase 5 components
 
-- kernel lifecycle states RESET, INITIALIZED, RUNNING, and PANIC;
-- static idle task registered at the lowest priority;
-- `hr_task_start()` transition from CREATED to READY;
-- first-task choice using the Phase 2 priority ready set;
-- current task and selected TCB handoff to the architecture port;
-- strong Cortex-M3 `SVC_Handler`;
-- R4–R11 restore and hardware-frame exception return;
-- Thread mode PSP selection through `CONTROL.SPSEL`;
-- target runtime checks for PSP and R0 argument restoration;
-- host tests with ASan/UBSan and target disassembly validation.
+- `hr_task_yield()` pends PendSV rather than switching inside C code;
+- PendSV saves the current task R4-R11 and PSP into its TCB;
+- kernel cooperative selection rotates the highest ready queue;
+- current and next task states transition between RUNNING and READY;
+- PendSV restores the selected task R4-R11 and PSP;
+- Cortex-M exception return restores R0-R3, R12, LR, PC, and xPSR;
+- two equal-priority tasks preserve independent local state across switches;
+- host tests and target symbol/disassembly checks cover the switch path.
 
 ## Examples: host versus target
 
-See `examples/README.md` for the complete execution-environment matrix.
+See `examples/README.md` for the complete environment matrix.
 
 Run the host example and tests:
 
@@ -72,11 +70,10 @@ Build or flash implemented target examples:
 make EXAMPLE=01-baremetal-foundation flash
 make EXAMPLE=03-static-task-stack flash
 make EXAMPLE=04-start-first-task flash
+make EXAMPLE=05-cooperative-context-switch flash
 ```
 
 The `EXAMPLE` value must be passed in the same command used for `flash`.
-Attempting to flash the Phase 2 host example now stops immediately with a clear
-Makefile error.
 
 ## Validation
 
@@ -88,6 +85,7 @@ make example-layout-check
 make phase2-check
 make phase3-check
 make phase4-check
+make phase5-check
 ```
 
 Read:
@@ -96,7 +94,7 @@ Read:
 - `docs/phase2-kernel-data-structures.md`
 - `docs/phase3-tcb-initial-stack.md`
 - `docs/phase4-start-first-task-svc.md`
+- `docs/phase5-cooperative-context-switch.md`
 - `examples/README.md`
 
-The next implementation phase is **Phase 5 — PendSV cooperative context
-switch**.
+The next implementation phase is **Phase 6 — Priority scheduler**.

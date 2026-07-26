@@ -33,9 +33,9 @@ size_t hr_task_get_stack_words(const hr_task_t *task);
 size_t hr_task_get_stack_high_watermark(const hr_task_t *task);
 bool hr_task_stack_guard_is_valid(const hr_task_t *task);
 hr_task_t *hr_task_current(void);
+void hr_task_yield(void);
 
 /* Implemented in later phases. */
-void hr_task_yield(void);
 void hr_task_delay(hr_tick_t ticks);
 void hr_task_delay_until(hr_tick_t *last_wake_tick, hr_tick_t period);
 

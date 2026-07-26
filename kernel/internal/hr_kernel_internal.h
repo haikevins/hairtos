@@ -10,6 +10,7 @@ extern hr_task_control_block_t *g_hr_current_task_control_block;
 
 hr_status_t hr_kernel_register_task(hr_task_t *task);
 hr_status_t hr_kernel_prepare_start(void);
+void hr_kernel_select_next_from_pendsv(void);
 hr_task_t *hr_kernel_current_task_internal(void);
 
 #endif /* HR_KERNEL_INTERNAL_H */

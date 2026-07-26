@@ -4,6 +4,8 @@
 #include "hr_port.h"
 #include "hr_portmacro.h"
 
+unsigned int g_mock_context_switch_requests = 0U;
+
 hr_stack_t *hr_port_initialize_stack(hr_stack_t *stack_low,
                                      size_t stack_words,
                                      hr_task_entry_t entry,
@@ -27,6 +29,11 @@ void hr_port_configure_kernel_exceptions(void)
 
 void hr_port_start_first_task(void)
 {
+}
+
+void hr_port_request_context_switch(void)
+{
+    g_mock_context_switch_requests++;
 }
 
 void hr_port_wait_for_interrupt(void)

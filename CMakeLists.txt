@@ -10,6 +10,7 @@ set(HAIRTOS_TARGET_EXAMPLES
     01-baremetal-foundation
     03-static-task-stack
     04-start-first-task
+    05-cooperative-context-switch
 )
 
 list(FIND HAIRTOS_TARGET_EXAMPLES "${HAIRTOS_EXAMPLE}" HAIRTOS_EXAMPLE_INDEX)
@@ -22,7 +23,8 @@ endif()
 set(HAIRTOS_KERNEL_SOURCES "")
 set(HAIRTOS_PORT_ASM "")
 if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack" OR
-   HAIRTOS_EXAMPLE STREQUAL "04-start-first-task")
+   HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
+   HAIRTOS_EXAMPLE STREQUAL "05-cooperative-context-switch")
     list(APPEND HAIRTOS_KERNEL_SOURCES
         kernel/src/hr_list.c
         kernel/src/hr_scheduler.c
@@ -34,7 +36,8 @@ if(HAIRTOS_EXAMPLE STREQUAL "03-static-task-stack" OR
     )
 endif()
 
-if(HAIRTOS_EXAMPLE STREQUAL "04-start-first-task")
+if(HAIRTOS_EXAMPLE STREQUAL "04-start-first-task" OR
+   HAIRTOS_EXAMPLE STREQUAL "05-cooperative-context-switch")
     list(APPEND HAIRTOS_KERNEL_SOURCES kernel/src/hr_kernel.c)
     list(APPEND HAIRTOS_PORT_ASM arch/arm/cortex-m3/hr_portasm.S)
 endif()

@@ -5,31 +5,32 @@
 #include "board.h"
 #include "hairtos/hairtos.h"
 
-#ifndef HR_PHASE16_INJECT_USAGE_FAULT
-#define HR_PHASE16_INJECT_USAGE_FAULT 0
+#ifndef HR_DIAGNOSTICS_INJECT_USAGE_FAULT
+#define HR_DIAGNOSTICS_INJECT_USAGE_FAULT 0
 #endif
 
-#define PHASE16_QUEUE_CAPACITY     8U
-#define PHASE16_PRODUCER_STACK     144U
-#define PHASE16_CONSUMER_STACK     144U
-#define PHASE16_PULSE_STACK        128U
-#define PHASE16_MONITOR_STACK      224U
-#define PHASE16_REPORT_PERIOD      1000U
+#define MESSAGE_QUEUE_CAPACITY       8U
+#define PRODUCER_STACK_WORDS        144U
+#define CONSUMER_STACK_WORDS        144U
+#define PULSE_TASK_STACK_WORDS      128U
+#define HEALTH_MONITOR_STACK_WORDS  224U
+#define HEALTH_REPORT_PERIOD_TICKS 1000U
 
-static hr_queue_t g_queue;
-static uint32_t g_queue_storage[PHASE16_QUEUE_CAPACITY];
-static hr_semaphore_t g_pulse_semaphore;
-static hr_mutex_t g_statistics_mutex;
-static hr_timer_t g_pulse_timer;
+static hr_queue_t g_message_queue;
+static uint32_t g_message_storage[MESSAGE_QUEUE_CAPACITY];
+static hr_semaphore_t g_pulse_notification;
+static hr_mutex_t g_statistics_lock;
+static hr_timer_t g_diagnostic_timer;
 
 static hr_task_t g_producer_task;
 static hr_task_t g_consumer_task;
 static hr_task_t g_pulse_task;
-static hr_task_t g_monitor_task;
-static hr_stack_t g_producer_stack[PHASE16_PRODUCER_STACK];
-static hr_stack_t g_consumer_stack[PHASE16_CONSUMER_STACK];
-static hr_stack_t g_pulse_stack[PHASE16_PULSE_STACK];
-static hr_stack_t g_monitor_stack[PHASE16_MONITOR_STACK];
+static hr_task_t g_health_monitor_task;
+
+static hr_stack_t g_producer_stack[PRODUCER_STACK_WORDS];
+static hr_stack_t g_consumer_stack[CONSUMER_STACK_WORDS];
+static hr_stack_t g_pulse_stack[PULSE_TASK_STACK_WORDS];
+static hr_stack_t g_health_monitor_stack[HEALTH_MONITOR_STACK_WORDS];
 
 static uint32_t g_produced_count;
 static uint32_t g_consumed_count;
@@ -37,22 +38,23 @@ static uint32_t g_send_timeout_count;
 static uint32_t g_order_error_count;
 static uint32_t g_pulse_count;
 
-static void phase16_require(hr_status_t status)
+static void require_ok(hr_status_t status)
 {
     if (status != HR_OK)
     {
-        board_uart_write_string("Phase 16 setup failure status=");
+        board_uart_write_string("Diagnostics setup failure status=");
         board_uart_write_u32((uint32_t)status);
         board_uart_write_line("");
         board_panic();
     }
 }
 
-static void phase16_print_retained_panic(void)
+static void print_retained_panic(void)
 {
     hr_panic_record_t record;
 
     hr_diagnostics_initialize();
+
     if (!hr_diagnostics_get_last_panic(&record))
     {
         board_uart_write_line("retained panic: none");
@@ -83,27 +85,28 @@ static void phase16_print_retained_panic(void)
     hr_diagnostics_clear_last_panic();
 }
 
-static void phase16_lock_statistics(void)
+static void lock_statistics(void)
 {
-    phase16_require(hr_mutex_lock(&g_statistics_mutex, HR_WAIT_FOREVER));
+    require_ok(hr_mutex_lock(&g_statistics_lock, HR_WAIT_FOREVER));
 }
 
-static void phase16_unlock_statistics(void)
+static void unlock_statistics(void)
 {
-    phase16_require(hr_mutex_unlock(&g_statistics_mutex));
+    require_ok(hr_mutex_unlock(&g_statistics_lock));
 }
 
-static void phase16_timer_callback(void *argument)
+static void pulse_timer_callback(void *argument)
 {
     (void)argument;
 
-    if (hr_semaphore_give(&g_pulse_semaphore) == HR_ERROR_SEMAPHORE_FULL)
+    if (hr_semaphore_give(&g_pulse_notification) ==
+        HR_ERROR_SEMAPHORE_FULL)
     {
-        /* The pulse task deliberately tolerates coalesced timer notifications. */
+        /* Coalesced timer notifications are acceptable in this workload. */
     }
 }
 
-static void phase16_producer(void *argument)
+static void producer_task_entry(void *argument)
 {
     uint32_t sequence = 0U;
     (void)argument;
@@ -113,9 +116,10 @@ static void phase16_producer(void *argument)
         hr_status_t status;
 
         sequence++;
-        status = hr_queue_send(&g_queue, &sequence, 10U);
+        status = hr_queue_send(&g_message_queue, &sequence, 10U);
 
-        phase16_lock_statistics();
+        lock_statistics();
+
         if (status == HR_OK)
         {
             g_produced_count++;
@@ -126,16 +130,16 @@ static void phase16_producer(void *argument)
         }
         else
         {
-            phase16_unlock_statistics();
+            unlock_statistics();
             board_panic();
         }
-        phase16_unlock_statistics();
 
-        phase16_require(hr_task_delay(2U));
+        unlock_statistics();
+        require_ok(hr_task_delay(2U));
     }
 }
 
-static void phase16_consumer(void *argument)
+static void consumer_task_entry(void *argument)
 {
     uint32_t last_sequence = 0U;
     (void)argument;
@@ -144,44 +148,47 @@ static void phase16_consumer(void *argument)
     {
         uint32_t sequence;
 
-        phase16_require(hr_queue_receive(&g_queue,
-                                         &sequence,
-                                         HR_WAIT_FOREVER));
+        require_ok(hr_queue_receive(&g_message_queue,
+                                    &sequence,
+                                    HR_WAIT_FOREVER));
 
-        phase16_lock_statistics();
+        lock_statistics();
+
         if (sequence <= last_sequence)
         {
             g_order_error_count++;
         }
+
         last_sequence = sequence;
         g_consumed_count++;
-        phase16_unlock_statistics();
 
-        phase16_require(hr_task_delay(3U));
+        unlock_statistics();
+        require_ok(hr_task_delay(3U));
     }
 }
 
-static void phase16_pulse_worker(void *argument)
+static void pulse_task_entry(void *argument)
 {
     (void)argument;
 
     for (;;)
     {
-        phase16_require(hr_semaphore_take(&g_pulse_semaphore,
-                                          HR_WAIT_FOREVER));
-        phase16_lock_statistics();
+        require_ok(hr_semaphore_take(&g_pulse_notification,
+                                     HR_WAIT_FOREVER));
+
+        lock_statistics();
         g_pulse_count++;
-        phase16_unlock_statistics();
+        unlock_statistics();
     }
 }
 
-static void phase16_print_health(uint32_t report_index,
-                                 const hr_health_report_t *health,
-                                 const hr_runtime_statistics_t *runtime,
-                                 uint32_t produced,
-                                 uint32_t consumed,
-                                 uint32_t timeouts,
-                                 uint32_t pulses)
+static void print_health_report(uint32_t report_index,
+                                const hr_health_report_t *health,
+                                const hr_runtime_statistics_t *runtime,
+                                uint32_t produced,
+                                uint32_t consumed,
+                                uint32_t timeouts,
+                                uint32_t pulses)
 {
     board_uart_write_string("health report=");
     board_uart_write_u32(report_index);
@@ -218,11 +225,11 @@ static void phase16_print_health(uint32_t report_index,
     board_uart_write_line("");
 }
 
-static void phase16_monitor(void *argument)
+static void health_monitor_task_entry(void *argument)
 {
-    hr_tick_t release_tick = hr_time_now();
+    hr_tick_t next_report_tick = hr_time_now();
     uint32_t report_index = 0U;
-    uint32_t previous_consumed = 0U;
+    uint32_t previous_consumed_count = 0U;
     (void)argument;
 
     for (;;)
@@ -235,54 +242,60 @@ static void phase16_monitor(void *argument)
         uint32_t order_errors;
         uint32_t pulses;
 
-        phase16_require(hr_task_delay_until(&release_tick,
-                                            PHASE16_REPORT_PERIOD));
+        require_ok(hr_task_delay_until(&next_report_tick,
+                                       HEALTH_REPORT_PERIOD_TICKS));
         report_index++;
 
         if (hr_diagnostics_run_health_check(&health) != HR_OK)
         {
-            board_uart_write_line("Phase 16 health check: FAIL");
+            board_uart_write_line("Diagnostics health check: FAIL");
             board_panic();
         }
+
         hr_diagnostics_get_runtime_statistics(&runtime);
 
-        phase16_lock_statistics();
+        lock_statistics();
         produced = g_produced_count;
         consumed = g_consumed_count;
         timeouts = g_send_timeout_count;
         order_errors = g_order_error_count;
         pulses = g_pulse_count;
-        phase16_unlock_statistics();
+        unlock_statistics();
 
-        phase16_print_health(report_index,
-                             &health,
-                             &runtime,
-                             produced,
-                             consumed,
-                             timeouts,
-                             pulses);
+        print_health_report(report_index,
+                            &health,
+                            &runtime,
+                            produced,
+                            consumed,
+                            timeouts,
+                            pulses);
 
         if ((order_errors != 0U) ||
-            ((report_index > 1U) && (consumed == previous_consumed)) ||
+            ((report_index > 1U) &&
+             (consumed == previous_consumed_count)) ||
             !health.kernel_invariants_valid ||
             !health.all_stack_guards_valid)
         {
-            board_uart_write_line("Phase 16 stabilization invariant: FAIL");
+            board_uart_write_line(
+                "Diagnostics stabilization invariant: FAIL");
             board_panic();
         }
-        previous_consumed = consumed;
 
-#if (HR_PHASE16_INJECT_USAGE_FAULT == 1)
+        previous_consumed_count = consumed;
+
+#if (HR_DIAGNOSTICS_INJECT_USAGE_FAULT == 1)
         if (report_index == 5U)
         {
-            board_uart_write_line("Injecting UsageFault; reset to inspect record");
+            board_uart_write_line(
+                "Injecting UsageFault; reset to inspect record");
             __asm volatile ("udf #0");
         }
 #endif
 
         if (report_index == 10U)
         {
-            board_uart_write_line("Phase 16 diagnostics/stress: PASS (10 s checkpoint)");
+            board_uart_write_line(
+                "Diagnostics/stress: PASS (10 s checkpoint)");
         }
 
         board_led_toggle();
@@ -305,63 +318,66 @@ void hr_hook_stack_overflow(const hr_task_t *task, const char *task_name)
 int main(void)
 {
     board_init();
-    board_uart_write_line("hairtos Phase 16 - Diagnostics and stabilization");
-    board_uart_write_line("Retained faults, runtime counters, health checks, and stress workload.");
-    phase16_print_retained_panic();
+    board_uart_write_line("hairtos diagnostics and stabilization");
+    board_uart_write_line(
+        "Retained faults, runtime counters, health checks, and stress workload.");
+    print_retained_panic();
 
-    phase16_require(hr_kernel_init());
-    phase16_require(hr_queue_create_static(&g_queue,
-                                           g_queue_storage,
-                                           sizeof(g_queue_storage[0]),
-                                           PHASE16_QUEUE_CAPACITY));
-    phase16_require(hr_semaphore_create_counting(&g_pulse_semaphore,
-                                                 0U,
-                                                 16U));
-    phase16_require(hr_mutex_create(&g_statistics_mutex));
-    phase16_require(hr_timer_create_static(&g_pulse_timer,
-                                           "diagnostic-pulse",
-                                           10U,
-                                           true,
-                                           phase16_timer_callback,
-                                           NULL));
+    require_ok(hr_kernel_init());
+    require_ok(hr_queue_create_static(&g_message_queue,
+                                      g_message_storage,
+                                      sizeof(g_message_storage[0]),
+                                      MESSAGE_QUEUE_CAPACITY));
+    require_ok(hr_semaphore_create_counting(&g_pulse_notification,
+                                            0U,
+                                            16U));
+    require_ok(hr_mutex_create(&g_statistics_lock));
+    require_ok(hr_timer_create_static(&g_diagnostic_timer,
+                                      "diagnostic-pulse",
+                                      10U,
+                                      true,
+                                      pulse_timer_callback,
+                                      NULL));
 
-    phase16_require(hr_task_create_static(&g_monitor_task,
-                                          "health-monitor",
-                                          phase16_monitor,
-                                          NULL,
-                                          g_monitor_stack,
-                                          PHASE16_MONITOR_STACK,
-                                          1U));
-    phase16_require(hr_task_create_static(&g_consumer_task,
-                                          "queue-consumer",
-                                          phase16_consumer,
-                                          NULL,
-                                          g_consumer_stack,
-                                          PHASE16_CONSUMER_STACK,
-                                          2U));
-    phase16_require(hr_task_create_static(&g_pulse_task,
-                                          "timer-pulse",
-                                          phase16_pulse_worker,
-                                          NULL,
-                                          g_pulse_stack,
-                                          PHASE16_PULSE_STACK,
-                                          2U));
-    phase16_require(hr_task_create_static(&g_producer_task,
-                                          "queue-producer",
-                                          phase16_producer,
-                                          NULL,
-                                          g_producer_stack,
-                                          PHASE16_PRODUCER_STACK,
-                                          3U));
+    require_ok(hr_task_create_static(&g_health_monitor_task,
+                                     "health-monitor",
+                                     health_monitor_task_entry,
+                                     NULL,
+                                     g_health_monitor_stack,
+                                     HEALTH_MONITOR_STACK_WORDS,
+                                     1U));
+    require_ok(hr_task_create_static(&g_consumer_task,
+                                     "queue-consumer",
+                                     consumer_task_entry,
+                                     NULL,
+                                     g_consumer_stack,
+                                     CONSUMER_STACK_WORDS,
+                                     2U));
+    require_ok(hr_task_create_static(&g_pulse_task,
+                                     "timer-pulse",
+                                     pulse_task_entry,
+                                     NULL,
+                                     g_pulse_stack,
+                                     PULSE_TASK_STACK_WORDS,
+                                     2U));
+    require_ok(hr_task_create_static(&g_producer_task,
+                                     "queue-producer",
+                                     producer_task_entry,
+                                     NULL,
+                                     g_producer_stack,
+                                     PRODUCER_STACK_WORDS,
+                                     3U));
 
-    phase16_require(hr_task_start(&g_monitor_task));
-    phase16_require(hr_task_start(&g_consumer_task));
-    phase16_require(hr_task_start(&g_pulse_task));
-    phase16_require(hr_task_start(&g_producer_task));
-    phase16_require(hr_timer_start(&g_pulse_timer));
+    require_ok(hr_task_start(&g_health_monitor_task));
+    require_ok(hr_task_start(&g_consumer_task));
+    require_ok(hr_task_start(&g_pulse_task));
+    require_ok(hr_task_start(&g_producer_task));
+    require_ok(hr_timer_start(&g_diagnostic_timer));
 
-    board_uart_write_line("Starting long-duration stress workload through SVC...");
-    phase16_require(hr_kernel_start());
+    board_uart_write_line(
+        "Starting long-duration stress workload through SVC...");
+    require_ok(hr_kernel_start());
+
     board_panic();
     return 0;
 }

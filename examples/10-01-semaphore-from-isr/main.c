@@ -9,10 +9,10 @@
 #include "hr_port.h"
 #include "stm32f1.h"
 
-#define PHASE10_SEM_WAITER_PRIORITY       1U
-#define PHASE10_SEM_TRIGGER_PRIORITY      3U
-#define PHASE10_SEM_STACK_WORDS           192U
-#define PHASE10_SEM_PERIOD_TICKS          500U
+#define WAITER_TASK_PRIORITY       1U
+#define TRIGGER_TASK_PRIORITY      3U
+#define TASK_STACK_WORDS           192U
+#define TRIGGER_PERIOD_TICKS          500U
 
 #define STM32F1_EXTI_BASE                 0x40010400UL
 #define STM32F1_NVIC_ISER0                0xE000E100UL
@@ -26,19 +26,19 @@
 static hr_semaphore_t g_irq_semaphore;
 static hr_task_t g_waiter_task;
 static hr_task_t g_trigger_task;
-static hr_stack_t g_waiter_stack[PHASE10_SEM_STACK_WORDS];
-static hr_stack_t g_trigger_stack[PHASE10_SEM_STACK_WORDS];
+static hr_stack_t g_waiter_stack[TASK_STACK_WORDS];
+static hr_stack_t g_trigger_stack[TASK_STACK_WORDS];
 static volatile uint32_t g_irq_count;
 static volatile hr_status_t g_irq_status = HR_OK;
 
-static void phase10_sem_configure_software_irq(void)
+static void configure_software_interrupt(void)
 {
     STM32F1_EXTI_PR = STM32F1_EXTI_LINE0;
     STM32F1_EXTI_IMR |= STM32F1_EXTI_LINE0;
     STM32F1_NVIC_ISER0_REG = STM32F1_EXTI0_IRQ_BIT;
 }
 
-static void phase10_sem_trigger_irq(void)
+static void trigger_software_interrupt(void)
 {
     STM32F1_EXTI_SWIER = STM32F1_EXTI_LINE0;
 }
@@ -97,13 +97,13 @@ static void trigger_task(void *argument)
     for (;;)
     {
         if (hr_task_delay_until(&next_release,
-                                PHASE10_SEM_PERIOD_TICKS) != HR_OK)
+                                TRIGGER_PERIOD_TICKS) != HR_OK)
         {
             board_uart_write_line("ERROR: trigger delay failed.");
             board_panic();
         }
 
-        phase10_sem_trigger_irq();
+        trigger_software_interrupt();
     }
 }
 
@@ -112,7 +112,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 10.1");
+    board_uart_write_line("hairtos semaphore from ISR");
     board_uart_write_line("EXTI0 software interrupt gives a binary semaphore.");
     board_uart_write_line("The higher-priority waiter preempts after ISR return.");
 
@@ -123,7 +123,7 @@ int main(void)
         board_panic();
     }
 
-    phase10_sem_configure_software_irq();
+    configure_software_interrupt();
 
     status = hr_kernel_init();
     if (status != HR_OK)
@@ -137,23 +137,23 @@ int main(void)
                                waiter_task,
                                NULL,
                                g_waiter_stack,
-                               PHASE10_SEM_STACK_WORDS,
-                               PHASE10_SEM_WAITER_PRIORITY) != HR_OK) ||
+                               TASK_STACK_WORDS,
+                               WAITER_TASK_PRIORITY) != HR_OK) ||
         (hr_task_create_static(&g_trigger_task,
                                "irq-trigger",
                                trigger_task,
                                NULL,
                                g_trigger_stack,
-                               PHASE10_SEM_STACK_WORDS,
-                               PHASE10_SEM_TRIGGER_PRIORITY) != HR_OK) ||
+                               TASK_STACK_WORDS,
+                               TRIGGER_TASK_PRIORITY) != HR_OK) ||
         (hr_task_start(&g_trigger_task) != HR_OK) ||
         (hr_task_start(&g_waiter_task) != HR_OK))
     {
-        board_uart_write_line("Phase 10.1 task setup failed.");
+        board_uart_write_line("Semaphore task setup failed.");
         board_panic();
     }
 
-    board_uart_write_line("Starting Phase 10.1 scheduler through SVC...");
+    board_uart_write_line("Starting semaphore scheduler through SVC...");
     status = hr_kernel_start();
     board_uart_write_string("ERROR: hr_kernel_start returned status=");
     board_uart_write_u32((uint32_t)status);

@@ -46,7 +46,7 @@ int main(void)
     void *pool_block;
 
     board_init();
-    board_uart_write_line("hairtos Phase 14 - Memory allocator lab");
+    board_uart_write_line("hairtos memory allocator lab");
     board_uart_write_line("Allocator remains isolated from the kernel runtime.");
 
     if (hr_heap_lab_init(&heap, g_heap_arena, sizeof(g_heap_arena)) !=
@@ -114,7 +114,7 @@ int main(void)
     board_uart_write_string(" free=");
     board_uart_write_u32((uint32_t)pool_stats.free_blocks);
     board_uart_write_line("");
-    board_uart_write_line("Phase 14 memory allocator lab: PASS");
+    board_uart_write_line("Memory allocator lab: PASS");
 
     for (;;)
     {

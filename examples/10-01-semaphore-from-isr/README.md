@@ -1,4 +1,4 @@
-# Phase 10.1 — Semaphore From ISR
+# Semaphore From ISR
 
 This target example demonstrates an ISR-to-task synchronization path:
 

@@ -1,4 +1,4 @@
-# Phase 5 — Cooperative Context Switch
+# Cooperative Context Switch
 
 This target example starts two tasks at the same priority. Task A starts through
 SVC. Each task explicitly calls `hr_task_yield()`, which pends PendSV. PendSV:
@@ -21,7 +21,7 @@ make EXAMPLE=05-cooperative-context-switch run
 ## Expected UART pattern
 
 ```text
-hairtos Phase 5
+hairtos cooperative context switch
 Two equal-priority tasks switch cooperatively through PendSV.
 task=A local_counter=1 -> yield
 task=B local_counter=1010 -> yield
@@ -30,4 +30,4 @@ task=B local_counter=1020 -> yield
 ```
 
 `board_delay_ms()` remains a temporary busy wait in this example. True blocking
-kernel delay is intentionally deferred to Phase 7.
+kernel delay is demonstrated separately in `07-task-delay-timeout`.

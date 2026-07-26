@@ -1,4 +1,4 @@
-# Phase 13.2 — Active Object
+# Active Object
 
 Two Active Objects communicate only through immutable static events. Each
 Active Object owns one task, queue, state machine, stack, and private context.

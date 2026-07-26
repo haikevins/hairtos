@@ -101,7 +101,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 13.1 - ISR event post");
+    board_uart_write_line("hairtos ISR event post");
     board_uart_write_line("EXTI0 posts a static event; the AO dispatches after ISR return.");
 
     (void)he_event_init_static(&g_irq_event,

@@ -43,7 +43,7 @@ static he_state_result_t blinker_state(he_state_machine_t *machine,
             {
                 board_panic();
             }
-            board_uart_write_line("Phase 13.4 time event: PASS");
+            board_uart_write_line("Time event: PASS");
         }
         return HE_STATE_HANDLED;
     }
@@ -56,7 +56,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 13.4 - Time Event");
+    board_uart_write_line("hairtos time event");
     board_uart_write_line("Timer service posts events; the AO dispatches them in task context.");
 
     if (hr_kernel_init() != HR_OK)

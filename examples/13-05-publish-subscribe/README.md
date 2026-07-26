@@ -1,4 +1,4 @@
-# Phase 13.5 — Publish/Subscribe
+# Publish/Subscribe
 
 A publisher allocates one dynamic telemetry event and broadcasts it to two
 subscribers. haievent retains one reference per successful subscriber and

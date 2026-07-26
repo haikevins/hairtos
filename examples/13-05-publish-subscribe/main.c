@@ -112,7 +112,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 13.5 - Publish/Subscribe");
+    board_uart_write_line("hairtos publish/subscribe");
 
     if ((he_event_pool_init(&g_pool,
                             g_blocks,

@@ -1,11 +1,11 @@
-# Phase 9 — Queue and Blocking IPC
+# Queue and Blocking IPC
 
 This STM32 target example demonstrates a statically allocated fixed-size FIFO
 queue with blocking producer/consumer behavior.
 
 - Consumer priority: 1
 - Producer priority: 3
-- Queue capacity: two `phase9_message_t` items
+- Queue capacity: two `queue_message_t` items
 - Consumer receive timeout: `HR_WAIT_FOREVER`
 - Producer send timeout: 100 ticks
 - Consumer processing delay: 200 ticks
@@ -30,7 +30,7 @@ make EXAMPLE=09-queue-blocking-ipc run
 Expected UART pattern:
 
 ```text
-hairtos Phase 9
+hairtos queue and blocking IPC
 Static FIFO queue with blocking send/receive and timeout.
 ...
 consumer received seq=1 produced_at=0 now=0 queued=0 send_timeouts=0

@@ -23,7 +23,7 @@ typedef struct
     size_t count;
 } hr_ready_set_t;
 
-/* Phase 2 data-structure API. */
+/* Ready-set data-structure API. */
 void hr_ready_node_init(hr_ready_node_t *node, void *owner, hr_priority_t priority);
 void hr_ready_set_init(hr_ready_set_t *set);
 
@@ -38,7 +38,7 @@ hr_status_t hr_ready_set_rotate_highest(hr_ready_set_t *set);
 
 bool hr_ready_set_validate(const hr_ready_set_t *set);
 
-/* Phase 6 fixed-priority scheduler policy. */
+/* Fixed-priority scheduler policy. */
 typedef struct
 {
     hr_ready_set_t ready;

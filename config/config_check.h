@@ -56,6 +56,6 @@
 #endif
 
 #if (HR_CFG_SINGLE_CORE != 1)
-#error "Phase 0 specifies a single-core kernel"
+#error "hairtos supports a single-core kernel"
 #endif
 #endif

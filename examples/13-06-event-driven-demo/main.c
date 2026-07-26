@@ -180,7 +180,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 13.6 - haievent integration demo");
+    board_uart_write_line("hairtos haievent integration demo");
 
     (void)he_event_init_static(&g_start_event,
                                SIGNAL_START,

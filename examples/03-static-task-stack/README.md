@@ -1,8 +1,8 @@
-# Phase 3 Static Task Stack
+# Static Task Stack
 
 This example creates one static task object and prepares its Cortex-M3 initial
 stack frame. It deliberately does not start the task; SVC startup belongs to
-Phase 4.
+the `04-start-first-task` example.
 
 Build:
 

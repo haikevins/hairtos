@@ -1,4 +1,4 @@
-# Phase 11 — Task Suspend and Resume
+# Task Suspend and Resume
 
 Target-only STM32F103 demonstration of:
 

@@ -38,7 +38,7 @@ void hr_task_yield(void);
 hr_status_t hr_task_delay(hr_tick_t ticks);
 hr_status_t hr_task_delay_until(hr_tick_t *last_wake_tick, hr_tick_t period);
 
-/* Phase 11 administrative task control. */
+/* Administrative task control. */
 hr_status_t hr_task_suspend(hr_task_t *task);
 hr_status_t hr_task_resume(hr_task_t *task);
 

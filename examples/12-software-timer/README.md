@@ -1,4 +1,4 @@
-# Phase 12 — Software Timer
+# Software Timer
 
 **Environment:** STM32F103C8T6 target
 

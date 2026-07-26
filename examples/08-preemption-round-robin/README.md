@@ -1,6 +1,6 @@
-# Phase 8 — Preemption and Round-Robin
+# Preemption and Round-Robin
 
-This STM32F103 target example demonstrates both Phase 8 scheduling rules.
+This STM32F103 target example demonstrates preemption and round-robin scheduling.
 
 - `monitor`, priority 1, blocks for 250 ticks and preempts the workers as soon
   as its timeout expires;

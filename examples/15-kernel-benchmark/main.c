@@ -176,7 +176,7 @@ static void benchmark_print_report(void)
     hr_task_t *const event_task = he_active_get_task(&g_event_active);
 
     board_uart_write_line("");
-    board_uart_write_line("hairtos Phase 15 benchmark report");
+    board_uart_write_line("hairtos kernel benchmark report");
     board_uart_write_string("cpu,STM32F103C8T6 Cortex-M3,");
     board_uart_write_u32(board_get_core_clock_hz());
     board_uart_write_line(" Hz");
@@ -224,7 +224,7 @@ static void benchmark_print_report(void)
     benchmark_require(event_task != NULL);
     benchmark_print_stack("event-active", event_task);
     board_uart_write_line("gpio_marker,PB0 active-high around switch/wake samples");
-    board_uart_write_line("Phase 15 kernel benchmark: PASS");
+    board_uart_write_line("Kernel benchmark: PASS");
 }
 
 static he_state_result_t benchmark_event_state(he_state_machine_t *machine,
@@ -551,7 +551,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 15 - Kernel benchmark");
+    board_uart_write_line("hairtos kernel benchmark");
     board_uart_write_line("Collecting DWT samples; UART output is deferred.");
     board_uart_write_line("PB0 is the active-high external timing marker.");
 

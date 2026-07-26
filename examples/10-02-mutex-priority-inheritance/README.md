@@ -1,4 +1,4 @@
-# Phase 10.2 — Mutex and Priority Inheritance
+# Mutex and Priority Inheritance
 
 This target example reproduces classic priority inversion:
 

@@ -1,4 +1,4 @@
-# Phase 16 — Diagnostics and Stabilization
+# Diagnostics and Stress Stabilization
 
 This integrated target runs queue, semaphore, mutex, software timer,
 preemption, timeout, retained-fault diagnostics, runtime statistics, health
@@ -28,7 +28,7 @@ Build and flash an intentional UsageFault at the fifth health report:
 
 ```bash
 make EXAMPLE=16-diagnostics-stress-stabilization \
-  EXTRA_DEFINES=-DHR_PHASE16_INJECT_USAGE_FAULT=1 run
+  EXTRA_DEFINES=-DHR_DIAGNOSTICS_INJECT_USAGE_FAULT=1 run
 ```
 
 Reset the board after the fault. The next boot prints the retained PC, LR,

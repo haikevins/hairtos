@@ -1,4 +1,4 @@
-# Phase 15 — Kernel benchmark
+# Kernel Benchmark
 
 This STM32F103 target example measures hairtos with the Cortex-M3 DWT cycle
 counter. It stores all samples in static RAM and prints the CSV-like report only

@@ -1,7 +1,7 @@
-# Phase 2 — Kernel Data Structures Host Demo
+# Kernel Data Structures Host Demo
 
 This example runs on the development computer, not on STM32. It demonstrates
-Phase 2 ready-set and wait-list ordering without creating real tasks.
+This demo shows ready-set and wait-list ordering without creating real tasks.
 
 ```bash
 make EXAMPLE=02-kernel-data-structures-host run

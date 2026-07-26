@@ -1,4 +1,4 @@
-# Phase 6 — Priority Scheduler
+# Priority Scheduler
 
 This STM32 target example validates the fixed-priority scheduler policy.
 
@@ -31,7 +31,7 @@ make EXAMPLE=06-priority-scheduler run
 ## Expected UART pattern
 
 ```text
-hairtos Phase 6
+hairtos priority scheduler
 Fixed-priority scheduler: smaller number means higher priority.
 Low task is registered first but must never run while high tasks are READY.
 Starting scheduler through SVC...
@@ -40,6 +40,6 @@ selected=high-B priority=1 counter=1010 -> yield to equal-priority peer
 selected=high-A priority=1 counter=2 -> yield to equal-priority peer
 ```
 
-Phase 6 is still cooperative. A higher-priority task becoming READY at runtime
+This example is still cooperative. A higher-priority task becoming READY at runtime
 does not yet trigger automatic preemption; that behavior is introduced in
-Phase 8 after kernel delay/blocking exists.
+`08-preemption-round-robin` after kernel delay/blocking exists.

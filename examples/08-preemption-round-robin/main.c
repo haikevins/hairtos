@@ -6,22 +6,22 @@
 #include "hairtos/hr_time.h"
 #include "hr_port.h"
 
-#define PHASE8_MONITOR_PRIORITY      1U
-#define PHASE8_WORKER_PRIORITY       3U
-#define PHASE8_STACK_WORDS           192U
-#define PHASE8_MONITOR_PERIOD_TICKS  250U
+#define MONITOR_TASK_PRIORITY      1U
+#define WORKER_TASK_PRIORITY       3U
+#define TASK_STACK_WORDS           192U
+#define MONITOR_PERIOD_TICKS  250U
 
 static hr_task_t g_monitor_task;
 static hr_task_t g_worker_a_task;
 static hr_task_t g_worker_b_task;
-static hr_stack_t g_monitor_stack[PHASE8_STACK_WORDS];
-static hr_stack_t g_worker_a_stack[PHASE8_STACK_WORDS];
-static hr_stack_t g_worker_b_stack[PHASE8_STACK_WORDS];
+static hr_stack_t g_monitor_stack[TASK_STACK_WORDS];
+static hr_stack_t g_worker_a_stack[TASK_STACK_WORDS];
+static hr_stack_t g_worker_b_stack[TASK_STACK_WORDS];
 
 static volatile uint32_t g_worker_a_counter;
 static volatile uint32_t g_worker_b_counter;
 
-static void phase8_verify_context(const hr_task_t *expected)
+static void verify_current_task(const hr_task_t *expected)
 {
     if ((hr_task_current() != expected) || !hr_port_thread_uses_psp())
     {
@@ -64,7 +64,7 @@ static void monitor_task(void *argument)
         uint32_t snapshot_a;
         uint32_t snapshot_b;
 
-        phase8_verify_context(&g_monitor_task);
+        verify_current_task(&g_monitor_task);
         activation++;
         snapshot_a = g_worker_a_counter;
         snapshot_b = g_worker_b_counter;
@@ -89,7 +89,7 @@ static void monitor_task(void *argument)
         previous_b = snapshot_b;
 
         if (hr_task_delay_until(&release_tick,
-                                PHASE8_MONITOR_PERIOD_TICKS) != HR_OK)
+                                MONITOR_PERIOD_TICKS) != HR_OK)
         {
             board_uart_write_line("ERROR: monitor delay failed.");
             board_panic();
@@ -102,7 +102,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 8");
+    board_uart_write_line("hairtos preemption and round-robin");
     board_uart_write_line("Two CPU-bound equal-priority workers never call yield().");
     board_uart_write_line("SysTick round-robin shares CPU; monitor wake-up preempts them.");
 
@@ -118,8 +118,8 @@ int main(void)
                                    monitor_task,
                                    NULL,
                                    g_monitor_stack,
-                                   PHASE8_STACK_WORDS,
-                                   PHASE8_MONITOR_PRIORITY);
+                                   TASK_STACK_WORDS,
+                                   MONITOR_TASK_PRIORITY);
     if (status != HR_OK)
     {
         board_uart_write_line("Monitor task creation failed.");
@@ -131,8 +131,8 @@ int main(void)
                                    worker_a_task,
                                    NULL,
                                    g_worker_a_stack,
-                                   PHASE8_STACK_WORDS,
-                                   PHASE8_WORKER_PRIORITY);
+                                   TASK_STACK_WORDS,
+                                   WORKER_TASK_PRIORITY);
     if (status != HR_OK)
     {
         board_uart_write_line("Worker A creation failed.");
@@ -144,8 +144,8 @@ int main(void)
                                    worker_b_task,
                                    NULL,
                                    g_worker_b_stack,
-                                   PHASE8_STACK_WORDS,
-                                   PHASE8_WORKER_PRIORITY);
+                                   TASK_STACK_WORDS,
+                                   WORKER_TASK_PRIORITY);
     if (status != HR_OK)
     {
         board_uart_write_line("Worker B creation failed.");

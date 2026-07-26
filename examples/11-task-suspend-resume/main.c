@@ -6,17 +6,17 @@
 #include "hairtos/hr_time.h"
 #include "hr_port.h"
 
-#define PHASE11_WORKER_PRIORITY       1U
-#define PHASE11_SUPERVISOR_PRIORITY   2U
-#define PHASE11_BACKGROUND_PRIORITY   4U
-#define PHASE11_STACK_WORDS           224U
+#define WORKER_TASK_PRIORITY       1U
+#define SUPERVISOR_TASK_PRIORITY   2U
+#define BACKGROUND_TASK_PRIORITY   4U
+#define TASK_STACK_WORDS           224U
 
 static hr_task_t g_worker_task;
 static hr_task_t g_supervisor_task;
 static hr_task_t g_background_task;
-static hr_stack_t g_worker_stack[PHASE11_STACK_WORDS];
-static hr_stack_t g_supervisor_stack[PHASE11_STACK_WORDS];
-static hr_stack_t g_background_stack[PHASE11_STACK_WORDS];
+static hr_stack_t g_worker_stack[TASK_STACK_WORDS];
+static hr_stack_t g_supervisor_stack[TASK_STACK_WORDS];
+static hr_stack_t g_background_stack[TASK_STACK_WORDS];
 static volatile uint32_t g_background_counter;
 static volatile bool g_worker_reached_self_suspend;
 
@@ -24,7 +24,7 @@ static void verify_task_context(const hr_task_t *expected)
 {
     if ((hr_task_current() != expected) || !hr_port_thread_uses_psp())
     {
-        board_uart_write_line("ERROR: invalid Phase 11 task context.");
+        board_uart_write_line("ERROR: invalid suspend/resume task context.");
         board_panic();
     }
 }
@@ -144,7 +144,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 11");
+    board_uart_write_line("hairtos task suspend and resume");
     board_uart_write_line("Suspend/resume for READY, RUNNING, and BLOCKED tasks.");
     board_uart_write_line("A suspended timeout completes but cannot make the task READY.");
 
@@ -159,31 +159,31 @@ int main(void)
                                worker_task,
                                NULL,
                                g_worker_stack,
-                               PHASE11_STACK_WORDS,
-                               PHASE11_WORKER_PRIORITY) != HR_OK) ||
+                               TASK_STACK_WORDS,
+                               WORKER_TASK_PRIORITY) != HR_OK) ||
         (hr_task_create_static(&g_supervisor_task,
                                "supervisor",
                                supervisor_task,
                                NULL,
                                g_supervisor_stack,
-                               PHASE11_STACK_WORDS,
-                               PHASE11_SUPERVISOR_PRIORITY) != HR_OK) ||
+                               TASK_STACK_WORDS,
+                               SUPERVISOR_TASK_PRIORITY) != HR_OK) ||
         (hr_task_create_static(&g_background_task,
                                "background",
                                background_task,
                                NULL,
                                g_background_stack,
-                               PHASE11_STACK_WORDS,
-                               PHASE11_BACKGROUND_PRIORITY) != HR_OK) ||
+                               TASK_STACK_WORDS,
+                               BACKGROUND_TASK_PRIORITY) != HR_OK) ||
         (hr_task_start(&g_background_task) != HR_OK) ||
         (hr_task_start(&g_supervisor_task) != HR_OK) ||
         (hr_task_start(&g_worker_task) != HR_OK))
     {
-        board_uart_write_line("Phase 11 task setup failed.");
+        board_uart_write_line("Suspend/resume task setup failed.");
         board_panic();
     }
 
-    board_uart_write_line("Starting Phase 11 scheduler through SVC...");
+    board_uart_write_line("Starting suspend/resume scheduler through SVC...");
     status = hr_kernel_start();
     board_uart_write_u32((uint32_t)status);
     board_panic();

@@ -5,16 +5,16 @@
 #include "hairtos/hr_task.h"
 #include "hr_port.h"
 
-#define PHASE5_TASK_PRIORITY 2U
-#define PHASE5_STACK_WORDS   160U
-#define PHASE5_DELAY_MS      250U
+#define COOPERATIVE_TASK_PRIORITY 2U
+#define TASK_STACK_WORDS   160U
+#define TASK_PRINT_DELAY_MS      250U
 
 static hr_task_t g_task_a;
 static hr_task_t g_task_b;
-static hr_stack_t g_task_a_stack[PHASE5_STACK_WORDS];
-static hr_stack_t g_task_b_stack[PHASE5_STACK_WORDS];
+static hr_stack_t g_task_a_stack[TASK_STACK_WORDS];
+static hr_stack_t g_task_b_stack[TASK_STACK_WORDS];
 
-static void phase5_verify_current(const hr_task_t *expected, const char *label)
+static void verify_current_task(const hr_task_t *expected, const char *label)
 {
     if (hr_task_current() != expected)
     {
@@ -39,7 +39,7 @@ static void task_a(void *argument)
 
     for (;;)
     {
-        phase5_verify_current(&g_task_a, "task A");
+        verify_current_task(&g_task_a, "task A");
         if ((stack_cookie[0] != 0xA5A50001UL) ||
             (stack_cookie[1] != 0xA5A50002UL))
         {
@@ -53,8 +53,8 @@ static void task_a(void *argument)
         board_uart_write_u32(local_counter);
         board_uart_write_line(" -> yield");
 
-        /* Temporary Phase 1 busy wait; blocking delay arrives in Phase 7. */
-        board_delay_ms(PHASE5_DELAY_MS);
+        /* Temporary busy wait; blocking delay is demonstrated separately. */
+        board_delay_ms(TASK_PRINT_DELAY_MS);
         hr_task_yield();
     }
 }
@@ -68,7 +68,7 @@ static void task_b(void *argument)
 
     for (;;)
     {
-        phase5_verify_current(&g_task_b, "task B");
+        verify_current_task(&g_task_b, "task B");
         if ((stack_cookie[0] != 0xB5B50001UL) ||
             (stack_cookie[1] != 0xB5B50002UL))
         {
@@ -81,7 +81,7 @@ static void task_b(void *argument)
         board_uart_write_u32(local_counter);
         board_uart_write_line(" -> yield");
 
-        board_delay_ms(PHASE5_DELAY_MS);
+        board_delay_ms(TASK_PRINT_DELAY_MS);
         hr_task_yield();
     }
 }
@@ -91,7 +91,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 5");
+    board_uart_write_line("hairtos cooperative context switch");
     board_uart_write_line("Two equal-priority tasks switch cooperatively through PendSV.");
 
     status = hr_kernel_init();
@@ -106,8 +106,8 @@ int main(void)
                                    task_a,
                                    NULL,
                                    g_task_a_stack,
-                                   PHASE5_STACK_WORDS,
-                                   PHASE5_TASK_PRIORITY);
+                                   TASK_STACK_WORDS,
+                                   COOPERATIVE_TASK_PRIORITY);
     if (status != HR_OK)
     {
         board_uart_write_line("Task A creation failed.");
@@ -119,8 +119,8 @@ int main(void)
                                    task_b,
                                    NULL,
                                    g_task_b_stack,
-                                   PHASE5_STACK_WORDS,
-                                   PHASE5_TASK_PRIORITY);
+                                   TASK_STACK_WORDS,
+                                   COOPERATIVE_TASK_PRIORITY);
     if (status != HR_OK)
     {
         board_uart_write_line("Task B creation failed.");

@@ -93,7 +93,7 @@ PLATFORM_C_SOURCES := soc/stm32f1/system_stm32f1.c \
 
 BAREMETAL_TICK_SOURCE := drivers/timer/src/hr_systick_baremetal_irq.c
 
-PHASE3_C_SOURCES := kernel/src/hr_list.c \
+TASK_KERNEL_C_SOURCES := kernel/src/hr_list.c \
                     kernel/src/hr_scheduler.c \
                     kernel/src/hr_wait.c \
                     kernel/src/hr_timeout.c \
@@ -105,7 +105,7 @@ C_SOURCES        := $(PLATFORM_C_SOURCES) examples/$(EXAMPLE)/main.c
 ASM_SOURCES      := soc/stm32f1/startup_stm32f103.S
 
 ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark 16-diagnostics-stress-stabilization),)
-C_SOURCES        += $(PHASE3_C_SOURCES)
+C_SOURCES        += $(TASK_KERNEL_C_SOURCES)
 endif
 
 ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume 12-software-timer 13-01-event-post 13-02-active-object 13-03-flat-state-machine 13-04-time-event 13-05-publish-subscribe 13-06-event-driven-demo 15-kernel-benchmark 16-diagnostics-stress-stabilization),)
@@ -250,8 +250,8 @@ endif
 ifeq ($(EXAMPLE),16-diagnostics-stress-stabilization)
 HOST_EXAMPLE_SOURCES := kernel/src/hr_list.c \
                         kernel/src/hr_scheduler.c \
-                        tests/stress/phase16_stress_core.c \
-                        tests/stress/phase16_stress_main.c
+                        tests/stress/scheduler_stress_core.c \
+                        tests/stress/scheduler_stress_main.c
 endif
 
 HOST_FLAGS       := -std=c11 -O0 -g3 -Wall -Wextra -Werror -Wshadow -Wundef \
@@ -282,7 +282,7 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     labs/memory-allocator/src/hr_pool_lab.c \
                     benchmarks/kernel/src/hr_benchmark_stats.c \
                     kernel/src/hr_diagnostics.c \
-                    tests/stress/phase16_stress_core.c \
+                    tests/stress/scheduler_stress_core.c \
                     arch/arm/cortex-m3/hr_port_stack.c \
                     tests/mocks/mock_port.c \
                     tests/host/test_main.c \
@@ -301,7 +301,7 @@ HOST_SOURCES     := kernel/src/hr_list.c \
                     tests/host/test_haievent.c \
                     tests/host/test_benchmark.c \
                     tests/host/test_diagnostics.c \
-                    tests/stress/test_phase16_stress.c \
+                    tests/stress/test_scheduler_stress.c \
                     labs/memory-allocator/tests/test_heap_lab.c
 
 LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \

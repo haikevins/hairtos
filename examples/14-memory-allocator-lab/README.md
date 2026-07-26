@@ -1,4 +1,4 @@
-# Phase 14 — Memory Allocator Lab
+# Memory Allocator Lab
 
 This STM32 target demonstration uses two allocators implemented under
 `labs/memory-allocator/`:

@@ -1,4 +1,4 @@
-# Phase 7 — Task Delay and Timeout
+# Task Delay and Timeout
 
 This STM32F103 target example demonstrates the first kernel-owned SysTick time
 base and blocking delays.
@@ -15,5 +15,5 @@ Build and flash:
 make EXAMPLE=07-task-delay-timeout run
 ```
 
-Phase 7 does not yet implement general higher-priority preemption or equal-
-priority time slicing. Those belong to Phase 8.
+This example does not enable general higher-priority preemption or equal-
+priority time slicing. See `08-preemption-round-robin`.

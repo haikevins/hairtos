@@ -1,4 +1,4 @@
-# Phase 13.4 — Time Event
+# Time Event
 
 A periodic software timer posts a static event to an Active Object. The timer
 service never invokes the state handler directly; dispatch occurs in the

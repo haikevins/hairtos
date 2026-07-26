@@ -5,20 +5,20 @@
 #include "hairtos/hr_task.h"
 #include "hr_port.h"
 
-#define PHASE6_HIGH_PRIORITY  1U
-#define PHASE6_LOW_PRIORITY   5U
-#define PHASE6_STACK_WORDS    160U
-#define PHASE6_DELAY_MS       250U
+#define HIGH_TASK_PRIORITY  1U
+#define LOW_TASK_PRIORITY   5U
+#define TASK_STACK_WORDS    160U
+#define TASK_PRINT_DELAY_MS       250U
 
 static hr_task_t g_low_task;
 static hr_task_t g_high_task_a;
 static hr_task_t g_high_task_b;
 
-static hr_stack_t g_low_stack[PHASE6_STACK_WORDS];
-static hr_stack_t g_high_stack_a[PHASE6_STACK_WORDS];
-static hr_stack_t g_high_stack_b[PHASE6_STACK_WORDS];
+static hr_stack_t g_low_stack[TASK_STACK_WORDS];
+static hr_stack_t g_high_stack_a[TASK_STACK_WORDS];
+static hr_stack_t g_high_stack_b[TASK_STACK_WORDS];
 
-static void phase6_verify_current(const hr_task_t *expected, const char *label)
+static void verify_current_task(const hr_task_t *expected, const char *label)
 {
     if (hr_task_current() != expected)
     {
@@ -54,7 +54,7 @@ static void high_priority_task_a(void *argument)
 
     for (;;)
     {
-        phase6_verify_current(&g_high_task_a, "high task A");
+        verify_current_task(&g_high_task_a, "high task A");
         local_counter++;
 
         board_led_toggle();
@@ -64,7 +64,7 @@ static void high_priority_task_a(void *argument)
         board_uart_write_u32(local_counter);
         board_uart_write_line(" -> yield to equal-priority peer");
 
-        board_delay_ms(PHASE6_DELAY_MS);
+        board_delay_ms(TASK_PRINT_DELAY_MS);
         hr_task_yield();
     }
 }
@@ -77,7 +77,7 @@ static void high_priority_task_b(void *argument)
 
     for (;;)
     {
-        phase6_verify_current(&g_high_task_b, "high task B");
+        verify_current_task(&g_high_task_b, "high task B");
         local_counter += 10U;
 
         board_uart_write_string("selected=high-B priority=");
@@ -86,7 +86,7 @@ static void high_priority_task_b(void *argument)
         board_uart_write_u32(local_counter);
         board_uart_write_line(" -> yield to equal-priority peer");
 
-        board_delay_ms(PHASE6_DELAY_MS);
+        board_delay_ms(TASK_PRINT_DELAY_MS);
         hr_task_yield();
     }
 }
@@ -96,7 +96,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 6");
+    board_uart_write_line("hairtos priority scheduler");
     board_uart_write_line("Fixed-priority scheduler: smaller number means higher priority.");
     board_uart_write_line("Low task is registered first but must never run while high tasks are READY.");
 
@@ -112,8 +112,8 @@ int main(void)
                                    low_priority_task,
                                    NULL,
                                    g_low_stack,
-                                   PHASE6_STACK_WORDS,
-                                   PHASE6_LOW_PRIORITY);
+                                   TASK_STACK_WORDS,
+                                   LOW_TASK_PRIORITY);
     if (status != HR_OK)
     {
         board_uart_write_line("Low task creation failed.");
@@ -125,8 +125,8 @@ int main(void)
                                    high_priority_task_a,
                                    NULL,
                                    g_high_stack_a,
-                                   PHASE6_STACK_WORDS,
-                                   PHASE6_HIGH_PRIORITY);
+                                   TASK_STACK_WORDS,
+                                   HIGH_TASK_PRIORITY);
     if (status != HR_OK)
     {
         board_uart_write_line("High task A creation failed.");
@@ -138,8 +138,8 @@ int main(void)
                                    high_priority_task_b,
                                    NULL,
                                    g_high_stack_b,
-                                   PHASE6_STACK_WORDS,
-                                   PHASE6_HIGH_PRIORITY);
+                                   TASK_STACK_WORDS,
+                                   HIGH_TASK_PRIORITY);
     if (status != HR_OK)
     {
         board_uart_write_line("High task B creation failed.");

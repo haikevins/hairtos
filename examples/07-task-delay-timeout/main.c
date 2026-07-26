@@ -6,16 +6,16 @@
 #include "hairtos/hr_time.h"
 #include "hr_port.h"
 
-#define PHASE7_PERIODIC_PRIORITY  2U
-#define PHASE7_HEARTBEAT_PRIORITY 3U
-#define PHASE7_STACK_WORDS        160U
-#define PHASE7_PERIOD_TICKS       500U
-#define PHASE7_HEARTBEAT_TICKS    1000U
+#define PERIODIC_TASK_PRIORITY  2U
+#define HEARTBEAT_TASK_PRIORITY 3U
+#define TASK_STACK_WORDS        160U
+#define PERIODIC_INTERVAL_TICKS       500U
+#define HEARTBEAT_INTERVAL_TICKS    1000U
 
 static hr_task_t g_periodic_task;
 static hr_task_t g_heartbeat_task;
-static hr_stack_t g_periodic_stack[PHASE7_STACK_WORDS];
-static hr_stack_t g_heartbeat_stack[PHASE7_STACK_WORDS];
+static hr_stack_t g_periodic_stack[TASK_STACK_WORDS];
+static hr_stack_t g_heartbeat_stack[TASK_STACK_WORDS];
 
 static void verify_task_context(const hr_task_t *expected)
 {
@@ -44,7 +44,7 @@ static void periodic_task(void *argument)
         board_uart_write_u32(hr_time_now());
         board_uart_write_line(" -> delay_until +500");
 
-        if (hr_task_delay_until(&release_tick, PHASE7_PERIOD_TICKS) != HR_OK)
+        if (hr_task_delay_until(&release_tick, PERIODIC_INTERVAL_TICKS) != HR_OK)
         {
             board_uart_write_line("ERROR: periodic delay failed.");
             board_panic();
@@ -68,7 +68,7 @@ static void heartbeat_task(void *argument)
         board_uart_write_u32(hr_time_now());
         board_uart_write_line(" -> delay 1000");
 
-        if (hr_task_delay(PHASE7_HEARTBEAT_TICKS) != HR_OK)
+        if (hr_task_delay(HEARTBEAT_INTERVAL_TICKS) != HR_OK)
         {
             board_uart_write_line("ERROR: heartbeat delay failed.");
             board_panic();
@@ -81,7 +81,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 7");
+    board_uart_write_line("hairtos SysTick and task delay");
     board_uart_write_line("SysTick drives the kernel tick and blocking delays.");
     board_uart_write_line("Tasks block; idle runs until a timeout expires.");
 
@@ -97,8 +97,8 @@ int main(void)
                                    periodic_task,
                                    NULL,
                                    g_periodic_stack,
-                                   PHASE7_STACK_WORDS,
-                                   PHASE7_PERIODIC_PRIORITY);
+                                   TASK_STACK_WORDS,
+                                   PERIODIC_TASK_PRIORITY);
     if (status != HR_OK)
     {
         board_uart_write_line("Periodic task creation failed.");
@@ -110,8 +110,8 @@ int main(void)
                                    heartbeat_task,
                                    NULL,
                                    g_heartbeat_stack,
-                                   PHASE7_STACK_WORDS,
-                                   PHASE7_HEARTBEAT_PRIORITY);
+                                   TASK_STACK_WORDS,
+                                   HEARTBEAT_TASK_PRIORITY);
     if (status != HR_OK)
     {
         board_uart_write_line("Heartbeat task creation failed.");

@@ -15,7 +15,7 @@
 extern unsigned int g_mock_context_switch_requests;
 extern bool g_mock_inside_isr;
 
-static void phase8_dummy_task(void *argument)
+static void scheduler_dummy_task(void *argument)
 {
     (void)argument;
 }
@@ -44,24 +44,24 @@ static void test_kernel_preemption_round_robin_and_delay_race(void)
 
     TEST_ASSERT_EQ_UINT(HR_OK,
                         hr_task_create_static(&low_task,
-                                              "phase8-low",
-                                              phase8_dummy_task,
+                                              "scheduler-low",
+                                              scheduler_dummy_task,
                                               NULL,
                                               low_stack,
                                               64U,
                                               5U));
     TEST_ASSERT_EQ_UINT(HR_OK,
                         hr_task_create_static(&high_a,
-                                              "phase8-high-a",
-                                              phase8_dummy_task,
+                                              "scheduler-high-a",
+                                              scheduler_dummy_task,
                                               NULL,
                                               high_a_stack,
                                               64U,
                                               1U));
     TEST_ASSERT_EQ_UINT(HR_OK,
                         hr_task_create_static(&high_b,
-                                              "phase8-high-b",
-                                              phase8_dummy_task,
+                                              "scheduler-high-b",
+                                              scheduler_dummy_task,
                                               NULL,
                                               high_b_stack,
                                               64U,
@@ -70,7 +70,7 @@ static void test_kernel_preemption_round_robin_and_delay_race(void)
     TEST_ASSERT_EQ_UINT(HR_OK,
                         hr_task_create_static(&reserved_idle_priority_task,
                                               "reserved-idle-priority",
-                                              phase8_dummy_task,
+                                              scheduler_dummy_task,
                                               NULL,
                                               reserved_stack,
                                               64U,
@@ -162,7 +162,7 @@ static void test_kernel_preemption_round_robin_and_delay_race(void)
     TEST_ASSERT_EQ_UINT(HR_ERROR_INVALID_STATE, hr_task_delay(1U));
     g_mock_inside_isr = false;
 
-    /* Phase 9: direct handoff to a blocked receiver. */
+    /* Direct handoff to a blocked receiver. */
     {
         static hr_queue_t queue;
         static uint32_t queue_storage[1];
@@ -323,7 +323,7 @@ static void test_kernel_preemption_round_robin_and_delay_race(void)
         TEST_ASSERT_TRUE(hr_queue_validate_internal(&queue));
     }
 
-    /* Phase 10.1: a binary semaphore given from ISR wakes equal-priority
+    /* A binary semaphore given from ISR wakes equal-priority
      * waiters in FIFO order and reports higher-priority readiness. */
     {
         static hr_semaphore_t semaphore;
@@ -391,7 +391,7 @@ static void test_kernel_preemption_round_robin_and_delay_race(void)
         TEST_ASSERT_TRUE(hr_semaphore_validate_internal(&semaphore));
     }
 
-    /* Phase 10.2: inheritance remains active while any held mutex still has a
+    /* Inheritance remains active while any held mutex still has a
      * higher-priority waiter. Ownership is handed directly to each waiter. */
     {
         static hr_mutex_t mutex_a;
@@ -529,7 +529,7 @@ static void test_kernel_preemption_round_robin_and_delay_race(void)
         }
     }
 
-    /* Phase 11: READY, RUNNING, and BLOCKED suspension policies. */
+    /* READY, RUNNING, and BLOCKED suspension policies. */
     {
         hr_task_control_block_t *high_b_control_block =
             hr_task_control_block(&high_b);

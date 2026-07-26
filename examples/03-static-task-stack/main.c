@@ -22,7 +22,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 3");
+    board_uart_write_line("hairtos static task stack");
     board_uart_write_line("Creating a static TCB and Cortex-M3 initial stack frame...");
 
     status = hr_task_create_static(&g_demo_task,
@@ -37,7 +37,7 @@ int main(void)
     {
         board_uart_write_line("Task object: CREATED");
         board_uart_write_line("Initial stack frame: READY");
-        board_uart_write_line("Task execution starts in Phase 4 through SVC.");
+        board_uart_write_line("Task execution starts in the SVC startup example.");
     }
     else
     {

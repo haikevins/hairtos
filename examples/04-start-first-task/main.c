@@ -5,11 +5,11 @@
 #include "hairtos/hr_task.h"
 #include "hr_port.h"
 
-#define PHASE4_ARGUMENT_MAGIC 0x50483421UL
+#define FIRST_TASK_ARGUMENT_MAGIC 0x50483421UL
 
 static hr_task_t g_first_task;
 static hr_stack_t g_first_task_stack[128];
-static uint32_t g_first_task_argument = PHASE4_ARGUMENT_MAGIC;
+static uint32_t g_first_task_argument = FIRST_TASK_ARGUMENT_MAGIC;
 
 static void first_task(void *argument)
 {
@@ -26,7 +26,7 @@ static void first_task(void *argument)
         board_panic();
     }
 
-    if (received_magic != PHASE4_ARGUMENT_MAGIC)
+    if (received_magic != FIRST_TASK_ARGUMENT_MAGIC)
     {
         board_uart_write_line("ERROR: task argument was not restored in R0.");
         board_panic();
@@ -34,13 +34,13 @@ static void first_task(void *argument)
 
     board_uart_write_line("PSP active: yes");
     board_uart_write_line("Task argument: valid");
-    board_uart_write_line("Phase 4 first-task startup: PASS");
+    board_uart_write_line("First-task startup: PASS");
 
     for (;;)
     {
         heartbeat++;
         board_led_toggle();
-        board_uart_write_string("phase4 heartbeat=");
+        board_uart_write_string("first-task heartbeat=");
         board_uart_write_u32(heartbeat);
         board_uart_write_line("");
         board_delay_ms(500U);
@@ -52,7 +52,7 @@ int main(void)
     hr_status_t status;
 
     board_init();
-    board_uart_write_line("hairtos Phase 4");
+    board_uart_write_line("hairtos first-task startup");
     board_uart_write_line("Preparing idle task and first application task...");
 
     status = hr_kernel_init();

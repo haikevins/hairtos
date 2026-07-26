@@ -1,4 +1,4 @@
-# Phase 13.1 — Event Post
+# Event Post
 
 EXTI0 software interrupt posts an immutable static event through
 `he_active_post_from_isr()`. The Active Object wakes, dispatches the event

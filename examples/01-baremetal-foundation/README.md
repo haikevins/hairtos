@@ -1,6 +1,6 @@
 # 00 — Bare-metal blink
 
-This is the executable deliverable for hairtos Phase 1.
+This is the executable deliverable for the bare-metal foundation example.
 
 ## Hardware
 
@@ -53,7 +53,7 @@ software/system reset after programming.
 ## Expected UART output
 
 ```text
-hairtos Phase 1
+hairtos bare-metal foundation
 Board: Blue Pill STM32F103C8T6
 Core clock: 72000000 Hz
 Clock source: HSE 8 MHz -> PLL x9

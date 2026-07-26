@@ -1,4 +1,4 @@
-# Phase 4 — Start First Task Using SVC
+# Start First Task Using SVC
 
 This target example proves the first real task launch on STM32F103 Cortex-M3.
 
@@ -13,7 +13,7 @@ This target example proves the first real task launch on STM32F103 Cortex-M3.
 - R0 carries the task argument;
 - the task entry runs and `main()` is abandoned.
 
-Phase 4 does **not** implement PendSV switching. The first task remains the only
+This example does **not** implement PendSV switching. The first task remains the only
 application task that can execute.
 
 ## Build and flash
@@ -26,13 +26,13 @@ make EXAMPLE=04-start-first-task run
 ## Expected UART output
 
 ```text
-hairtos Phase 4
+hairtos first-task startup
 Preparing idle task and first application task...
 Invoking SVC to leave main/MSP and enter task/PSP...
 First task entered through SVC.
 Current task: first-task
 PSP active: yes
 Task argument: valid
-Phase 4 first-task startup: PASS
-phase4 heartbeat=1
+First-task startup: PASS
+first-task heartbeat=1
 ```

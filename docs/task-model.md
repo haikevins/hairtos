@@ -20,13 +20,13 @@ READY/RUNNING -> SUSPENDED
 SUSPENDED     -> READY
 ```
 
-The first suspend/resume implementation will reject direct suspension of a
-BLOCKED task to avoid simultaneous membership in wait, timeout, and suspended
-structures. See `task-suspend-resume.md`.
+Phase 11 permits suspension of a BLOCKED task without moving its wait or
+timeout nodes. The TCB records whether resume should restore BLOCKED or READY.
+See `task-suspend-resume.md`.
 
 ## TCB requirements
 
-The saved stack pointer is the first field. The Phase 8 TCB includes:
+The saved stack pointer is the first field. The Phase 11 TCB includes:
 
 - stack bounds;
 - name and state;

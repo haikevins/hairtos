@@ -525,6 +525,145 @@ static void test_kernel_preemption_round_robin_and_delay_race(void)
             TEST_ASSERT_TRUE(hr_mutex_validate_internal(&timeout_mutex));
         }
     }
+
+    /* Phase 11: READY, RUNNING, and BLOCKED suspension policies. */
+    {
+        hr_task_control_block_t *high_b_control_block =
+            hr_task_control_block(&high_b);
+        const unsigned int requests_before_ready_suspend =
+            g_mock_context_switch_requests;
+
+        TEST_ASSERT_EQ_PTR(&low_task, hr_task_current());
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
+                            hr_task_get_state(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_task_suspend(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_SUSPENDED,
+                            hr_task_get_state(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
+                            high_b_control_block->suspended_resume_state);
+        TEST_ASSERT_TRUE(!hr_list_node_is_linked(
+            &high_b_control_block->ready_node.node));
+        TEST_ASSERT_EQ_UINT(requests_before_ready_suspend,
+                            g_mock_context_switch_requests);
+
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_task_resume(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
+                            hr_task_get_state(&high_b));
+        TEST_ASSERT_TRUE(g_mock_context_switch_requests >
+                         requests_before_ready_suspend);
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_b, hr_task_current());
+        TEST_ASSERT_EQ_UINT(HR_ERROR_INVALID_STATE,
+                            hr_task_resume(&high_b));
+
+        {
+            const unsigned int requests_before_self_suspend =
+                g_mock_context_switch_requests;
+            TEST_ASSERT_EQ_UINT(HR_OK, hr_task_suspend(&high_b));
+            TEST_ASSERT_EQ_UINT(HR_TASK_STATE_SUSPENDED,
+                                hr_task_get_state(&high_b));
+            TEST_ASSERT_TRUE(g_mock_context_switch_requests >
+                             requests_before_self_suspend);
+        }
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&low_task, hr_task_current());
+
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_task_resume(&high_b));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_b, hr_task_current());
+
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_task_delay(2U));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&low_task, hr_task_current());
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_BLOCKED,
+                            hr_task_get_state(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_task_suspend(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_SUSPENDED,
+                            hr_task_get_state(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_BLOCKED,
+                            high_b_control_block->suspended_resume_state);
+        TEST_ASSERT_TRUE(hr_list_node_is_linked(
+            &high_b_control_block->timeout_node.node));
+
+        /* Resume before completion restores the original BLOCKED wait. */
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_task_resume(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_BLOCKED,
+                            hr_task_get_state(&high_b));
+        TEST_ASSERT_TRUE(hr_list_node_is_linked(
+            &high_b_control_block->timeout_node.node));
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_task_suspend(&high_b));
+
+        hr_kernel_tick_from_isr();
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_SUSPENDED,
+                            hr_task_get_state(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_BLOCKED,
+                            high_b_control_block->suspended_resume_state);
+
+        hr_kernel_tick_from_isr();
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_SUSPENDED,
+                            hr_task_get_state(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
+                            high_b_control_block->suspended_resume_state);
+        TEST_ASSERT_EQ_UINT(HR_TASK_WAIT_NONE,
+                            high_b_control_block->wait_kind);
+        TEST_ASSERT_TRUE(!hr_list_node_is_linked(
+            &high_b_control_block->timeout_node.node));
+        TEST_ASSERT_TRUE(!hr_list_node_is_linked(
+            &high_b_control_block->ready_node.node));
+
+        TEST_ASSERT_EQ_UINT(HR_OK, hr_task_resume(&high_b));
+        TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
+                            hr_task_get_state(&high_b));
+        hr_kernel_select_next_from_pendsv();
+        TEST_ASSERT_EQ_PTR(&high_b, hr_task_current());
+
+        /* Synchronization completion is recorded but cannot ready a
+         * suspended waiter until an explicit resume. */
+        {
+            static hr_semaphore_t suspend_semaphore;
+            hr_semaphore_control_block_t *semaphore_control_block;
+
+            TEST_ASSERT_EQ_UINT(HR_OK,
+                                hr_semaphore_create_binary(
+                                    &suspend_semaphore, false));
+            semaphore_control_block =
+                hr_semaphore_control_block(&suspend_semaphore);
+            TEST_ASSERT_EQ_UINT(
+                HR_OK,
+                hr_kernel_block_current_on_wait_list_ex(
+                    &semaphore_control_block->waiters,
+                    semaphore_control_block,
+                    HR_TASK_WAIT_SEMAPHORE_TAKE,
+                    NULL,
+                    HR_WAIT_FOREVER,
+                    NULL));
+            hr_kernel_select_next_from_pendsv();
+            TEST_ASSERT_EQ_PTR(&low_task, hr_task_current());
+            TEST_ASSERT_EQ_UINT(HR_OK, hr_task_suspend(&high_b));
+            TEST_ASSERT_EQ_UINT(HR_OK,
+                                hr_semaphore_give(&suspend_semaphore));
+            TEST_ASSERT_EQ_UINT(HR_TASK_STATE_SUSPENDED,
+                                hr_task_get_state(&high_b));
+            TEST_ASSERT_EQ_UINT(HR_TASK_STATE_READY,
+                                high_b_control_block->suspended_resume_state);
+            TEST_ASSERT_EQ_UINT(HR_OK, high_b_control_block->wait_result);
+            TEST_ASSERT_EQ_UINT(0U,
+                                hr_semaphore_get_waiting_tasks(
+                                    &suspend_semaphore));
+            TEST_ASSERT_EQ_UINT(0U,
+                                hr_semaphore_get_count(&suspend_semaphore));
+            TEST_ASSERT_EQ_UINT(HR_OK, hr_task_resume(&high_b));
+            hr_kernel_select_next_from_pendsv();
+            TEST_ASSERT_EQ_PTR(&high_b, hr_task_current());
+        }
+
+        g_mock_inside_isr = true;
+        TEST_ASSERT_EQ_UINT(HR_ERROR_FROM_ISR,
+                            hr_task_suspend(&low_task));
+        TEST_ASSERT_EQ_UINT(HR_ERROR_FROM_ISR,
+                            hr_task_resume(&low_task));
+        g_mock_inside_isr = false;
+    }
 }
 
 void run_kernel_start_tests(void)

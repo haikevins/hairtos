@@ -1,62 +1,46 @@
-# Task Suspend and Resume Plan
+# Task Suspend and Resume Policy
 
-## Purpose
+Phase 11 separates administrative suspension from synchronization blocking.
 
-Suspend/resume is an administrative task-control mechanism and is not the same
-as blocking on a queue, semaphore, mutex, delay, or timeout.
-
-## Planned API
+## Public API
 
 ```c
 hr_status_t hr_task_suspend(hr_task_t *task);
 hr_status_t hr_task_resume(hr_task_t *task);
-hr_status_t hr_task_resume_from_isr(hr_task_t *task,
-                                    bool *higher_priority_task_woken);
 ```
 
-The exact ISR API remains optional until the interrupt contract is implemented
-and tested.
+Both functions are task-context APIs. ISR calls return `HR_ERROR_FROM_ISR`.
+The idle task cannot be suspended. Suspension is not nestable.
 
-## Planned state
+## READY and RUNNING tasks
+
+A READY task is removed from its ready queue and enters `SUSPENDED`. A running
+task may suspend itself; PendSV then selects the next ready task. Resuming either
+case inserts the task at the back of its effective-priority ready queue. A
+resumed task preempts the current task only when it has strictly higher priority.
+
+## BLOCKED tasks
+
+HairRTOS preserves the original wait-list and timeout membership. The task state
+becomes `SUSPENDED`, while the TCB records that its underlying state is BLOCKED.
+
+- Resume before completion restores `BLOCKED`; the original wait continues.
+- Event or timeout completion removes the original wait and records its result,
+  but the task remains `SUSPENDED`.
+- A later resume changes it to `READY`.
+
+This policy preserves synchronization results, but an event handed directly to
+a suspended waiter is reserved for that task until it is resumed. Applications
+should therefore avoid indefinitely suspending a task that owns a mutex or is
+first in an object wait list.
+
+## State model
 
 ```text
-CREATED
-READY
-RUNNING
-BLOCKED
-SUSPENDED
+READY   --suspend--> SUSPENDED(READY) --resume--> READY
+RUNNING --suspend--> SUSPENDED(READY) --resume--> READY
+BLOCKED --suspend--> SUSPENDED(BLOCKED)
+SUSPENDED(BLOCKED) --resume before event--> BLOCKED
+SUSPENDED(BLOCKED) --event/timeout--> SUSPENDED(READY)
+SUSPENDED(READY)   --resume--> READY
 ```
-
-## Core semantics
-
-- Suspending a READY task removes it from the ready queue.
-- Self-suspending the RUNNING task requests a context switch.
-- A SUSPENDED task does not wake because a previous timeout expires.
-- Resume changes a valid SUSPENDED task to READY.
-- Resume requests preemption if the resumed task has higher effective priority.
-- Suspending the idle task is forbidden.
-- Suspending an invalid or already suspended task returns an explicit status or
-  triggers a debug assertion according to the final API contract.
-
-## Blocked-task policy
-
-The first implementation should use the simpler policy:
-
-```text
-A BLOCKED task cannot be suspended directly.
-```
-
-This avoids a task belonging simultaneously to a wait object, timeout structure,
-and suspended set. Supporting suspended-blocked combinations may be considered
-only after the basic state machine is proven.
-
-## Required tests
-
-- suspend READY task;
-- self-suspend RUNNING task;
-- resume task;
-- resume higher-priority task and preempt;
-- suspend idle task rejected;
-- repeated suspend/resume rejected;
-- blocked-task suspension policy enforced;
-- resume from ISR, if implemented.

@@ -249,7 +249,9 @@ static hr_status_t hr_mutex_recompute_task_priority(
         return status;
     }
 
-    if ((task->state == HR_TASK_STATE_BLOCKED) &&
+    if (((task->state == HR_TASK_STATE_BLOCKED) ||
+         ((task->state == HR_TASK_STATE_SUSPENDED) &&
+          (task->suspended_resume_state == HR_TASK_STATE_BLOCKED))) &&
         (task->wait_kind == HR_TASK_WAIT_MUTEX_LOCK) &&
         (task->waiting_object != NULL))
     {

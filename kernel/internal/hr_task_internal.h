@@ -36,6 +36,7 @@ typedef struct hr_task_control_block
     void *argument;
 
     hr_task_state_t state;
+    hr_task_state_t suspended_resume_state;
     hr_priority_t base_priority;
     hr_priority_t effective_priority;
     uint16_t reserved;

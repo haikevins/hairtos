@@ -280,6 +280,189 @@ hr_status_t hr_kernel_delay_current(hr_tick_t delay_ticks)
     return HR_OK;
 }
 
+hr_status_t hr_kernel_suspend_task(hr_task_t *task, bool *switch_required)
+{
+    hr_task_control_block_t *control_block;
+    hr_status_t status;
+
+    if (switch_required != NULL)
+    {
+        *switch_required = false;
+    }
+
+    if ((g_kernel_state != HR_KERNEL_STATE_RUNNING) ||
+        !hr_task_is_valid(task) || (task == &g_idle_task))
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
+    control_block = hr_task_control_block(task);
+    switch (control_block->state)
+    {
+        case HR_TASK_STATE_READY:
+            if (!hr_list_node_is_linked(&control_block->ready_node.node))
+            {
+                return HR_ERROR_INTERNAL;
+            }
+
+            status = hr_scheduler_remove_ready(&g_scheduler,
+                                               &control_block->ready_node);
+            if (status != HR_OK)
+            {
+                return status;
+            }
+
+            status = hr_task_transition_state(task,
+                                              HR_TASK_STATE_READY,
+                                              HR_TASK_STATE_SUSPENDED);
+            if (status != HR_OK)
+            {
+                (void)hr_scheduler_add_ready(&g_scheduler,
+                                             &control_block->ready_node);
+                return status;
+            }
+            control_block->suspended_resume_state = HR_TASK_STATE_READY;
+            return HR_OK;
+
+        case HR_TASK_STATE_RUNNING:
+            if ((task != g_current_task) ||
+                !hr_list_node_is_linked(&control_block->ready_node.node))
+            {
+                return HR_ERROR_INVALID_STATE;
+            }
+
+            status = hr_scheduler_remove_ready(&g_scheduler,
+                                               &control_block->ready_node);
+            if (status != HR_OK)
+            {
+                return status;
+            }
+
+            status = hr_task_transition_state(task,
+                                              HR_TASK_STATE_RUNNING,
+                                              HR_TASK_STATE_SUSPENDED);
+            if (status != HR_OK)
+            {
+                (void)hr_scheduler_add_ready(&g_scheduler,
+                                             &control_block->ready_node);
+                return status;
+            }
+
+            control_block->suspended_resume_state = HR_TASK_STATE_READY;
+            hr_kernel_reload_time_slice(control_block);
+            hr_kernel_mark_switch_reason(HR_SWITCH_REASON_BLOCK);
+            if (switch_required != NULL)
+            {
+                *switch_required = true;
+            }
+            return HR_OK;
+
+        case HR_TASK_STATE_BLOCKED:
+            if ((control_block->wait_kind == HR_TASK_WAIT_NONE) ||
+                (control_block->waiting_object == NULL) ||
+                hr_list_node_is_linked(&control_block->ready_node.node))
+            {
+                return HR_ERROR_INTERNAL;
+            }
+
+            status = hr_task_transition_state(task,
+                                              HR_TASK_STATE_BLOCKED,
+                                              HR_TASK_STATE_SUSPENDED);
+            if (status != HR_OK)
+            {
+                return status;
+            }
+            control_block->suspended_resume_state = HR_TASK_STATE_BLOCKED;
+            return HR_OK;
+
+        default:
+            return HR_ERROR_INVALID_STATE;
+    }
+}
+
+hr_status_t hr_kernel_resume_task(hr_task_t *task, bool *switch_required)
+{
+    hr_task_control_block_t *control_block;
+    hr_task_control_block_t *current_control_block;
+    hr_task_state_t resume_state;
+    hr_status_t status;
+
+    if (switch_required != NULL)
+    {
+        *switch_required = false;
+    }
+
+    if ((g_kernel_state != HR_KERNEL_STATE_RUNNING) ||
+        !hr_task_is_valid(task) || (task == &g_idle_task))
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
+    control_block = hr_task_control_block(task);
+    if (control_block->state != HR_TASK_STATE_SUSPENDED)
+    {
+        return HR_ERROR_INVALID_STATE;
+    }
+
+    resume_state = control_block->suspended_resume_state;
+    if (resume_state == HR_TASK_STATE_BLOCKED)
+    {
+        status = hr_task_transition_state(task,
+                                          HR_TASK_STATE_SUSPENDED,
+                                          HR_TASK_STATE_BLOCKED);
+        if (status == HR_OK)
+        {
+            control_block->suspended_resume_state = HR_TASK_STATE_INVALID;
+        }
+        return status;
+    }
+
+    if (resume_state != HR_TASK_STATE_READY)
+    {
+        return HR_ERROR_INTERNAL;
+    }
+
+    status = hr_scheduler_add_ready(&g_scheduler, &control_block->ready_node);
+    if (status != HR_OK)
+    {
+        return status;
+    }
+
+    status = hr_task_transition_state(task,
+                                      HR_TASK_STATE_SUSPENDED,
+                                      HR_TASK_STATE_READY);
+    if (status != HR_OK)
+    {
+        (void)hr_scheduler_remove_ready(&g_scheduler,
+                                        &control_block->ready_node);
+        return status;
+    }
+
+    control_block->suspended_resume_state = HR_TASK_STATE_INVALID;
+    hr_kernel_reload_time_slice(control_block);
+
+    if ((g_current_task != NULL) && hr_task_is_valid(g_current_task))
+    {
+        current_control_block = hr_task_control_block(g_current_task);
+#if (HR_CFG_PREEMPTION == 1)
+        if ((current_control_block->state == HR_TASK_STATE_RUNNING) &&
+            (control_block->effective_priority <
+             current_control_block->effective_priority))
+        {
+            hr_kernel_mark_switch_reason(HR_SWITCH_REASON_PREEMPT);
+            if (switch_required != NULL)
+            {
+                *switch_required = true;
+            }
+        }
+#else
+        (void)current_control_block;
+#endif
+    }
+
+    return HR_OK;
+}
+
 static hr_status_t hr_kernel_make_task_ready(
     hr_task_control_block_t *control_block,
     hr_status_t result,
@@ -289,9 +472,13 @@ static hr_status_t hr_kernel_make_task_ready(
     hr_task_control_block_t *current_control_block;
     hr_task_wait_cleanup_t cleanup;
     hr_status_t status;
+    const bool suspended_wait =
+        (control_block != NULL) &&
+        (control_block->state == HR_TASK_STATE_SUSPENDED) &&
+        (control_block->suspended_resume_state == HR_TASK_STATE_BLOCKED);
 
     if ((control_block == NULL) ||
-        (control_block->state != HR_TASK_STATE_BLOCKED))
+        ((control_block->state != HR_TASK_STATE_BLOCKED) && !suspended_wait))
     {
         return HR_ERROR_INVALID_STATE;
     }
@@ -329,6 +516,25 @@ static hr_status_t hr_kernel_make_task_ready(
         cleanup(control_block, result);
     }
 
+    control_block->waiting_object = NULL;
+    control_block->blocked_wait_list = NULL;
+    control_block->wait_buffer = NULL;
+    control_block->wait_cleanup = NULL;
+    control_block->wait_result = result;
+    control_block->wait_kind = HR_TASK_WAIT_NONE;
+    hr_kernel_reload_time_slice(control_block);
+
+    if (suspended_wait)
+    {
+        /* The wait completed, but administrative suspension wins. */
+        control_block->suspended_resume_state = HR_TASK_STATE_READY;
+        if (higher_priority_task_woken != NULL)
+        {
+            *higher_priority_task_woken = false;
+        }
+        return HR_OK;
+    }
+
     status = hr_scheduler_add_ready(&g_scheduler, &control_block->ready_node);
     if (status != HR_OK)
     {
@@ -344,14 +550,6 @@ static hr_status_t hr_kernel_make_task_ready(
                                         &control_block->ready_node);
         return status;
     }
-
-    control_block->waiting_object = NULL;
-    control_block->blocked_wait_list = NULL;
-    control_block->wait_buffer = NULL;
-    control_block->wait_cleanup = NULL;
-    control_block->wait_result = result;
-    control_block->wait_kind = HR_TASK_WAIT_NONE;
-    hr_kernel_reload_time_slice(control_block);
 
     if (higher_priority_task_woken != NULL)
     {
@@ -554,7 +752,8 @@ void hr_kernel_select_next_from_pendsv(void)
          * still active. The normal highest-ready selection resolves the race.
          */
     }
-    else if (current_control_block->state != HR_TASK_STATE_BLOCKED)
+    else if ((current_control_block->state != HR_TASK_STATE_BLOCKED) &&
+             (current_control_block->state != HR_TASK_STATE_SUSPENDED))
     {
         hr_kernel_panic();
         return;
@@ -649,7 +848,10 @@ void hr_kernel_tick_from_isr(void)
         }
 
         control_block = hr_task_control_block(task);
-        if (control_block->state != HR_TASK_STATE_BLOCKED)
+        if ((control_block->state != HR_TASK_STATE_BLOCKED) &&
+            !((control_block->state == HR_TASK_STATE_SUSPENDED) &&
+              (control_block->suspended_resume_state ==
+               HR_TASK_STATE_BLOCKED)))
         {
             hr_kernel_panic();
             return;

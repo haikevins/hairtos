@@ -3,7 +3,7 @@ EXAMPLE          ?= 01-baremetal-foundation
 BUILD_DIR        ?= build/$(EXAMPLE)
 TARGET           := $(BUILD_DIR)/$(PROJECT)
 
-TARGET_EXAMPLES  := 01-baremetal-foundation 03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance
+TARGET_EXAMPLES  := 01-baremetal-foundation 03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume
 HOST_EXAMPLES    := 02-kernel-data-structures-host
 FIRMWARE_GOALS   := all elf bin hex size flash gdb disasm
 REQUESTED_FW     := $(filter $(FIRMWARE_GOALS),$(MAKECMDGOALS))
@@ -63,11 +63,11 @@ PHASE3_C_SOURCES := kernel/src/hr_list.c \
 C_SOURCES        := $(PLATFORM_C_SOURCES) examples/$(EXAMPLE)/main.c
 ASM_SOURCES      := soc/stm32f1/startup_stm32f103.S
 
-ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance),)
+ifneq ($(filter $(EXAMPLE),03-static-task-stack 04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume),)
 C_SOURCES        += $(PHASE3_C_SOURCES)
 endif
 
-ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance),)
+ifneq ($(filter $(EXAMPLE),04-start-first-task 05-cooperative-context-switch 06-priority-scheduler 07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume),)
 C_SOURCES        += kernel/src/hr_kernel.c
 ASM_SOURCES      += arch/arm/cortex-m3/hr_portasm.S
 endif
@@ -76,7 +76,7 @@ ifneq ($(filter $(EXAMPLE),01-baremetal-foundation 03-static-task-stack 04-start
 C_SOURCES        += $(BAREMETAL_TICK_SOURCE)
 endif
 
-ifneq ($(filter $(EXAMPLE),07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance),)
+ifneq ($(filter $(EXAMPLE),07-task-delay-timeout 08-preemption-round-robin 09-queue-blocking-ipc 10-01-semaphore-from-isr 10-02-mutex-priority-inheritance 11-task-suspend-resume),)
 C_SOURCES        += kernel/src/hr_time.c
 endif
 
@@ -165,7 +165,7 @@ LDFLAGS          := $(LD_DRIVER_FLAGS) $(CPU_FLAGS) -nostdlib \
 
 .PHONY: all elf bin hex size flash erase debug-server gdb disasm \
         phase0-check phase1-check roadmap-check example-layout-check \
-        phase2-check phase3-check phase4-check phase5-check phase6-check phase7-check phase8-check phase9-check phase10-check host-tests phase2-example \
+        phase2-check phase3-check phase4-check phase5-check phase6-check phase7-check phase8-check phase9-check phase10-check phase11-check host-tests phase2-example \
         tree clean help
 
 all: elf bin hex size
@@ -270,6 +270,9 @@ phase9-check:
 phase10-check:
 	python3 tools/scripts/phase10_check.py
 
+phase11-check:
+	python3 tools/scripts/phase11_check.py
+
 tree:
 	@find . -path './.git' -prune -o -path './build' -prune -o -print | sort
 
@@ -277,7 +280,7 @@ clean:
 	rm -rf build out
 
 help:
-	@echo "HairRTOS Phase 10 commands"
+	@echo "HairRTOS Phase 11 commands"
 	@echo "  make EXAMPLE=01-baremetal-foundation       Build Phase 1 target"
 	@echo "  make phase2-example                         Run Phase 2 host demo"
 	@echo "  make EXAMPLE=03-static-task-stack           Build Phase 3 target"
@@ -297,8 +300,10 @@ help:
 	@echo "  make EXAMPLE=10-01-semaphore-from-isr flash  Flash Phase 10 ISR semaphore target"
 	@echo "  make EXAMPLE=10-02-mutex-priority-inheritance  Build Phase 10 mutex target"
 	@echo "  make EXAMPLE=10-02-mutex-priority-inheritance flash  Flash Phase 10 mutex target"
-	@echo "  make host-tests                              Run Phase 2–10 host tests"
-	@echo "  make phase10-check                           Validate completed phases"
+	@echo "  make EXAMPLE=11-task-suspend-resume          Build Phase 11 target"
+	@echo "  make EXAMPLE=11-task-suspend-resume flash    Flash Phase 11 target"
+	@echo "  make host-tests                              Run Phase 2–11 host tests"
+	@echo "  make phase11-check                           Validate completed phases"
 	@echo "  make roadmap-check                           Validate roadmap status"
 	@echo "  make example-layout-check                    Validate example matrix"
 	@echo "  make clean                                   Remove build output"

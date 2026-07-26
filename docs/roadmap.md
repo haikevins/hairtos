@@ -309,7 +309,7 @@ Add an explicit administrative state separate from waiting on an object.
 - `SUSPENDED` task state;
 - `hr_task_suspend()`;
 - `hr_task_resume()`;
-- optional `hr_task_resume_from_isr()`;
+- task-context-only resume;
 - behavior for self-suspend;
 - invalid-state protection.
 
@@ -321,8 +321,8 @@ back to READY.
 
 ### Definition of Done
 
-Suspend/resume works for READY, RUNNING, and selected BLOCKED-state policies
-defined in `docs/task-suspend-resume.md`.
+Suspend/resume works for READY, RUNNING, and BLOCKED tasks according to
+`docs/task-suspend-resume.md`, including deferred readiness after wait completion.
 
 ---
 

@@ -27,3 +27,5 @@ Phase 10 reuses the generic object wait/timeout path for semaphores and mutexes.
 Semaphore waiters are priority/FIFO ordered. Mutex ownership is explicit, and
 effective priority is recalculated from all held mutexes so restoration remains
 correct when a task owns more than one contended mutex.
+
+Phase 11 adds administrative suspension while preserving ready/wait/timeout invariants.

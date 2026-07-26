@@ -38,6 +38,8 @@ static void test_task_create_initializes_tcb_and_stack(void)
     TEST_ASSERT_TRUE(control_block->stack_pointer != NULL);
     TEST_ASSERT_EQ_PTR(stack, control_block->stack_low);
     TEST_ASSERT_EQ_PTR(&stack[63], control_block->stack_high);
+    TEST_ASSERT_EQ_UINT(HR_TASK_STATE_INVALID,
+                        control_block->suspended_resume_state);
     TEST_ASSERT_EQ_PTR(&task, hr_list_node_owner(&control_block->ready_node.node));
     TEST_ASSERT_EQ_PTR(&task, hr_list_node_owner(&control_block->wait_node.node));
     TEST_ASSERT_EQ_PTR(&task, hr_list_node_owner(&control_block->timeout_node.node));

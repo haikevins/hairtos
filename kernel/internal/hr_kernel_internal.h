@@ -11,6 +11,8 @@ extern hr_task_control_block_t *g_hr_current_task_control_block;
 hr_status_t hr_kernel_register_task(hr_task_t *task);
 hr_status_t hr_kernel_prepare_start(void);
 hr_status_t hr_kernel_delay_current(hr_tick_t delay_ticks);
+hr_status_t hr_kernel_suspend_task(hr_task_t *task, bool *switch_required);
+hr_status_t hr_kernel_resume_task(hr_task_t *task, bool *switch_required);
 hr_status_t hr_kernel_block_current_on_wait_list(hr_wait_list_t *wait_list,
                                                  void *object,
                                                  hr_task_wait_kind_t wait_kind,

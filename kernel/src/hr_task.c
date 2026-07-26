@@ -119,6 +119,7 @@ hr_status_t hr_task_create_static(hr_task_t *task,
     control_block->entry = entry;
     control_block->argument = argument;
     control_block->state = HR_TASK_STATE_CREATED;
+    control_block->suspended_resume_state = HR_TASK_STATE_INVALID;
     control_block->base_priority = priority;
     control_block->effective_priority = priority;
     control_block->wake_tick = 0U;
@@ -316,6 +317,65 @@ hr_status_t hr_task_delay_until(hr_tick_t *last_wake_tick, hr_tick_t period)
     hr_port_exit_critical(irq_state);
 
     if ((status == HR_OK) && should_block)
+    {
+        hr_port_request_context_switch();
+    }
+
+    return status;
+}
+
+
+hr_status_t hr_task_suspend(hr_task_t *task)
+{
+    hr_irq_state_t irq_state;
+    hr_status_t status;
+    bool switch_required = false;
+
+    if (!hr_task_is_valid(task))
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    if (!hr_kernel_is_running() || hr_port_is_inside_isr())
+    {
+        return hr_port_is_inside_isr() ? HR_ERROR_FROM_ISR :
+                                         HR_ERROR_INVALID_STATE;
+    }
+
+    irq_state = hr_port_enter_critical();
+    status = hr_kernel_suspend_task(task, &switch_required);
+    hr_port_exit_critical(irq_state);
+
+    if ((status == HR_OK) && switch_required)
+    {
+        hr_port_request_context_switch();
+    }
+
+    return status;
+}
+
+hr_status_t hr_task_resume(hr_task_t *task)
+{
+    hr_irq_state_t irq_state;
+    hr_status_t status;
+    bool switch_required = false;
+
+    if (!hr_task_is_valid(task))
+    {
+        return HR_ERROR_INVALID_ARGUMENT;
+    }
+
+    if (!hr_kernel_is_running() || hr_port_is_inside_isr())
+    {
+        return hr_port_is_inside_isr() ? HR_ERROR_FROM_ISR :
+                                         HR_ERROR_INVALID_STATE;
+    }
+
+    irq_state = hr_port_enter_critical();
+    status = hr_kernel_resume_task(task, &switch_required);
+    hr_port_exit_critical(irq_state);
+
+    if ((status == HR_OK) && switch_required)
     {
         hr_port_request_context_switch();
     }

@@ -4,7 +4,7 @@ HairRTOS is an educational fixed-priority RTOS for ARM Cortex-M. The first
 target is the STM32F103C8T6 Blue Pill. HairEvent is an optional Event-Driven
 framework above the kernel.
 
-## Current status: Phase 10 complete
+## Current status: Phase 11 complete
 
 Implemented phases:
 
@@ -15,19 +15,15 @@ Implemented phases:
 - **Phase 4:** first-task startup through SVC from MSP to PSP;
 - **Phase 5:** cooperative task-to-task context switching through PendSV;
 - **Phase 6:** fixed-priority scheduler with FIFO queues for equal priorities;
-- **Phase 7:** kernel SysTick, blocking task delay, periodic delay, and timeout
-  wake-up;
-- **Phase 8:** strict higher-priority preemption and tick-driven round-robin
-  among equal-priority tasks;
-- **Phase 9:** statically allocated FIFO queues, blocking send/receive, finite
-  timeout, wait forever, direct handoff, and ISR-safe non-blocking variants;
-- **Phase 10:** binary/counting semaphores, ISR semaphore give, mutex ownership,
-  direct handoff, and priority inheritance across multiple held mutexes.
+- **Phase 7:** kernel SysTick, blocking delay, periodic delay, and timeout wake-up;
+- **Phase 8:** strict higher-priority preemption and tick-driven round-robin;
+- **Phase 9:** static FIFO queues with blocking, timeout, direct handoff, and ISR API;
+- **Phase 10:** semaphores, mutex ownership, and priority inheritance;
+- **Phase 11:** administrative suspend/resume for READY, RUNNING, and BLOCKED tasks.
 
-Phase 10 adds synchronization without hiding ownership. Semaphore waiters are
-priority ordered and FIFO among equals. Mutex owners inherit the highest urgency
-required by every mutex they hold, and their effective priority is recalculated
-when a waiter wakes, times out, or ownership changes.
+Phase 11 keeps suspension separate from object waiting. A suspended task never
+enters the ready queue because a timeout or synchronization event completed; an
+explicit `hr_task_resume()` is required.
 
 ## Roadmap
 
@@ -44,7 +40,7 @@ when a waiter wakes, times out, or ownership changes.
 | 8 | Preemption and round-robin | ✅ Complete |
 | 9 | Queue and blocking | ✅ Complete |
 | 10 | Semaphore and mutex | ✅ Complete |
-| 11 | Suspend/resume | ⬜ Not started |
+| 11 | Suspend/resume | ✅ Complete |
 | 12 | Software timer | ⬜ Not started |
 | 13 | HairEvent framework | ⬜ Not started |
 | 14 | Memory allocator lab | ⬜ Not started |
@@ -53,79 +49,53 @@ when a waiter wakes, times out, or ownership changes.
 
 Detailed deliverables and Definition of Done are in `docs/roadmap.md`.
 
-## Phase 10 components
+## Phase 11 components
 
-- opaque statically allocated `hr_semaphore_t` and `hr_mutex_t` objects;
-- binary and counting semaphore creation;
-- non-blocking, finite-timeout, and wait-forever semaphore take;
-- task-context give and ISR-safe `hr_semaphore_give_from_isr()`;
-- non-recursive mutex with owner validation and optional recursive creation;
-- direct mutex ownership transfer to the highest-priority waiter;
-- per-task intrusive list of held mutexes;
-- effective-priority recalculation across multiple held mutexes;
-- chained inheritance when a boosted owner is blocked on another mutex;
-- timeout cleanup that removes a waiter's inheritance contribution;
-- Phase 10 ISR semaphore and priority-inversion STM32 examples;
-- host sanitizer and target build/disassembly validation.
+- `hr_task_suspend()` and `hr_task_resume()` task-context APIs;
+- self-suspend of the currently running task through PendSV;
+- removal and reinsertion of READY tasks from the priority ready queues;
+- preservation of BLOCKED task wait-list and timeout state;
+- deferred readiness when a suspended wait completes;
+- immediate preemption after resuming a strictly higher-priority task;
+- idle-task, duplicate-state, and ISR-context protection;
+- STM32 target example and host sanitizer validation.
 
 ## Examples: host versus target
 
-See `examples/README.md` for the complete environment matrix.
+See `examples/README.md` for the complete matrix.
 
-Run the host example and completed host tests:
+Run the host demo/tests:
 
 ```bash
 make phase2-example
 make host-tests
 ```
 
-Build or flash implemented target examples:
+Build or flash the Phase 11 target example:
 
 ```bash
-make EXAMPLE=01-baremetal-foundation flash
-make EXAMPLE=03-static-task-stack flash
-make EXAMPLE=04-start-first-task flash
-make EXAMPLE=05-cooperative-context-switch flash
-make EXAMPLE=06-priority-scheduler flash
-make EXAMPLE=07-task-delay-timeout flash
-make EXAMPLE=08-preemption-round-robin flash
-make EXAMPLE=09-queue-blocking-ipc flash
-make EXAMPLE=10-01-semaphore-from-isr flash
-make EXAMPLE=10-02-mutex-priority-inheritance flash
+make EXAMPLE=11-task-suspend-resume
+make EXAMPLE=11-task-suspend-resume flash
 ```
 
-The `EXAMPLE` value must be passed in the same command used for `flash`.
+The `EXAMPLE` value must be passed in the same invocation used for `flash`.
 
 ## Validation
 
 ```bash
 make phase0-check
-make phase1-check
 make roadmap-check
 make example-layout-check
-make phase2-check
-make phase3-check
-make phase4-check
-make phase5-check
-make phase6-check
-make phase7-check
-make phase8-check
-make phase9-check
-make phase10-check
+make host-tests
+make phase11-check
 ```
 
 Read:
 
-- `docs/phase1-baremetal-foundation.md`
-- `docs/phase2-kernel-data-structures.md`
-- `docs/phase3-tcb-initial-stack.md`
-- `docs/phase4-start-first-task-svc.md`
-- `docs/phase5-cooperative-context-switch.md`
-- `docs/phase6-priority-scheduler.md`
-- `docs/phase7-systick-delay.md`
-- `docs/phase8-preemption-round-robin.md`
-- `docs/phase9-queue-blocking-ipc.md`
-- `docs/phase10-semaphore-mutex.md`
+- `docs/roadmap.md`
+- `docs/task-model.md`
+- `docs/task-suspend-resume.md`
+- `docs/phase11-suspend-resume.md`
 - `examples/README.md`
 
-The next implementation phase is **Phase 11 — Suspend/resume**.
+The next implementation phase is **Phase 12 — Software timer**.

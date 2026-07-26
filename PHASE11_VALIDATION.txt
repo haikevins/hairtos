@@ -1,0 +1,22 @@
+HairRTOS Phase 11 validation
+
+- Phase 0 specification check: PASS
+- Roadmap status check: PASS
+- Canonical example layout check: PASS
+- Completed host tests with Clang + ASan + UBSan: 39/39 PASS
+- Completed host tests with GCC + ASan + UBSan: 39/39 PASS
+- Phase 1-10 Cortex-M3 regression builds: PASS
+- Phase 11 Cortex-M3 target build with Clang/LLD: PASS
+- Phase 11 CMake/Ninja target build: PASS
+- hr_task_suspend/hr_task_resume target symbols: PASS
+- SysTick_Handler/PendSV_Handler strong symbols: PASS
+- READY task suspend/resume tests: PASS
+- RUNNING self-suspend tests: PASS
+- BLOCKED timeout preservation tests: PASS
+- Suspended synchronization completion tests: PASS
+- Resume higher-priority preemption tests: PASS
+- ISR-context rejection tests: PASS
+- Phase 11 image: text=9112, data=4, bss=5024 bytes
+- Physical STM32F103 flash/runtime validation: not performed in this environment
+- Current completed phase: Phase 11
+- Next phase: Phase 12 — Software timer

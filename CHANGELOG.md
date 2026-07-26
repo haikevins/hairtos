@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added — Phase 11: Task suspend and resume
+
+- Added `hr_task_suspend()` and `hr_task_resume()`.
+- Added READY, RUNNING/self-suspend, and BLOCKED suspension policies.
+- Preserved wait-list and timeout state while administratively suspended.
+- Added deferred readiness and resume-triggered higher-priority preemption.
+- Added Phase 11 target example, documentation, build integration, and validation.
+
+
 ### Added — Phase 10: Semaphore, mutex, and priority inheritance
 
 - Added opaque binary/counting semaphores with blocking take and ISR-safe give.

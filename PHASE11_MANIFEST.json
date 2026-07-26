@@ -1,7 +1,15 @@
 {
   "project": "HairRTOS",
-  "completed_phase": "Phase 10 — Semaphore and mutex",
+  "completed_phase": "Phase 11 — Suspend/resume",
   "target": "STM32F103C8T6 Blue Pill / ARM Cortex-M3",
+  "phase11_features": [
+    "suspend READY task",
+    "self-suspend RUNNING task",
+    "suspend BLOCKED task while preserving wait and timeout state",
+    "deferred readiness when a suspended wait completes",
+    "resume-triggered strict higher-priority preemption",
+    "idle-task, duplicate-state, and ISR-context protection"
+  ],
   "implemented_examples": [
     {
       "name": "01-baremetal-foundation",
@@ -46,48 +54,30 @@
     {
       "name": "10-02-mutex-priority-inheritance",
       "environment": "target"
+    },
+    {
+      "name": "11-task-suspend-resume",
+      "environment": "target"
     }
-  ],
-  "phase10_features": [
-    "binary and counting semaphores",
-    "blocking semaphore take with timeout or wait forever",
-    "task-context semaphore give",
-    "ISR-safe semaphore give with higher-priority wake reporting",
-    "non-recursive mutex with owner validation",
-    "optional recursive mutex creation",
-    "direct mutex ownership handoff",
-    "priority-ordered wait lists with FIFO among equals",
-    "priority inheritance across multiple held mutexes",
-    "chained inheritance propagation",
-    "priority restoration after unlock or timeout"
   ],
   "validation": {
-    "host_tests_clang": "39/39 PASS with ASan/UBSan",
-    "host_tests_gcc": "39/39 PASS with ASan/UBSan",
-    "target_regression": "Phase 1,3,4,5,6,7,8,9 PASS",
-    "phase10_target_builds": "Semaphore and mutex PASS",
-    "cmake_ninja": "PASS",
+    "host_tests": "39/39 PASS with Clang and GCC ASan/UBSan",
+    "target_regression": "Phase 1-10 PASS",
+    "phase11_target": "PASS with Clang/LLD and CMake/Ninja",
     "physical_hardware": "not performed",
-    "image_sizes_bytes": {
-      "10-01-semaphore-from-isr": {
-        "text": 8604,
-        "data": 4,
-        "bss": 3584
-      },
-      "10-02-mutex-priority-inheritance": {
-        "text": 10504,
-        "data": 4,
-        "bss": 5184
-      }
+    "image_size_bytes": {
+      "text": 9112,
+      "data": 4,
+      "bss": 5024
     }
   },
-  "file_count": 244,
+  "file_count": 246,
   "files": [
     "CHANGELOG.md",
     "CMakeLists.txt",
     "LICENSE",
     "Makefile",
-    "PHASE10_VALIDATION.txt",
+    "PHASE11_VALIDATION.txt",
     "README.md",
     "adapters/button_event/hr_button_event.c",
     "adapters/button_event/hr_button_event.h",
@@ -136,6 +126,7 @@
     "docs/phase1-baremetal-foundation.md",
     "docs/phase1-validation.md",
     "docs/phase10-semaphore-mutex.md",
+    "docs/phase11-suspend-resume.md",
     "docs/phase2-kernel-data-structures.md",
     "docs/phase3-tcb-initial-stack.md",
     "docs/phase4-start-first-task-svc.md",
@@ -313,6 +304,7 @@
     "tools/scripts/example_layout_check.py",
     "tools/scripts/phase0_check.py",
     "tools/scripts/phase10_check.py",
+    "tools/scripts/phase11_check.py",
     "tools/scripts/phase1_check.py",
     "tools/scripts/phase2_check.py",
     "tools/scripts/phase3_check.py",
@@ -326,6 +318,6 @@
     "tools/scripts/run_format_check.sh",
     "tools/scripts/run_host_tests.sh",
     "tools/scripts/size_report.sh",
-    "PHASE10_MANIFEST.json"
+    "PHASE11_MANIFEST.json"
   ]
 }

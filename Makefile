@@ -177,6 +177,7 @@ endif
 
 clean-all:
 	@rm -rf $(BUILD_ROOT) out compile_commands.json
+	@echo "Cleaned all generated files"
 
 list-examples:
 	@cmake -P cmake/print_examples.cmake

@@ -1,6 +1,6 @@
 # `06-priority-scheduler` — Bộ lập lịch ưu tiên cố định
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/06-priority-scheduler/main.c`  
 > **Mục đích:** Kiểm chứng scheduler luôn chọn priority cao nhất, không phụ thuộc thứ tự đăng ký, và chỉ round-robin trong cùng priority khi yield.
 
@@ -40,6 +40,10 @@
 | Expected run order | high-a ↔ high-b |
 | Preemption runtime | Chưa bật |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Tạo và đăng ký low trước.
@@ -74,15 +78,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=06-priority-scheduler build` |
-| Flash và chạy | `make EXAMPLE=06-priority-scheduler run` |
-| Kiểm tra | `make EXAMPLE=06-priority-scheduler check` |
-| Dọn build riêng | `make EXAMPLE=06-priority-scheduler clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=06-priority-scheduler build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=06-priority-scheduler run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=06-priority-scheduler check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=06-priority-scheduler clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=06-priority-scheduler build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=06-priority-scheduler build
 ```
 
 ## 7. Kết quả mong đợi
@@ -114,8 +118,8 @@ selected=high-B priority=1 counter=1010 -> yield to equal-priority peer
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=06-priority-scheduler clean
-make EXAMPLE=06-priority-scheduler build
+make TARGET=bluepill_f103c8 EXAMPLE=06-priority-scheduler clean
+make TARGET=bluepill_f103c8 EXAMPLE=06-priority-scheduler build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -124,6 +128,8 @@ make EXAMPLE=06-priority-scheduler build
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Task priority cao mới READY chưa tự preempt task đang chạy.
 - Chưa có blocking delay của kernel.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

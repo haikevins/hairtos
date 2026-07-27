@@ -1,6 +1,6 @@
 # `14-memory-allocator-lab` — Bài thực hành bộ cấp phát bộ nhớ
 
-> **Môi trường:** Host + Target  
+> **Môi trường:** Host hoặc Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/14-memory-allocator-lab/main.c`  
 > **Mục đích:** Lab độc lập gồm fixed-block pool và first-fit heap có split/coalesce; allocator không được kernel runtime sử dụng.
 
@@ -37,6 +37,10 @@
 | Kernel dependency | Không |
 | Vòng lặp target sau PASS | LED toggle 500 ms |
 | Environment selection | Phải chỉ rõ host/target khi cần |
+
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
 
 ## 4. Luồng thực thi
 
@@ -75,17 +79,17 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch trên host | `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab build` |
-| Chạy trên host | `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run` |
-| Biên dịch target | `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab build` |
-| Flash/chạy target | `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run` |
-| Kiểm tra | `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab check` |
-| Dọn build | `make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab clean` |
+| Biên dịch trên host | `make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab build` |
+| Chạy trên host | `make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run` |
+| Biên dịch target | `make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab build` |
+| Flash/chạy target | `make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab check` |
+| Dọn build | `make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab clean` |
 
 Biến thể target có thể cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab build
 ```
 
 ## 7. Kết quả mong đợi
@@ -126,8 +130,8 @@ Memory allocator lab: PASS
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=14-memory-allocator-lab clean
-make EXAMPLE=14-memory-allocator-lab build
+make TARGET=bluepill_f103c8 EXAMPLE=14-memory-allocator-lab clean
+make TARGET=bluepill_f103c8 EXAMPLE=14-memory-allocator-lab build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -135,6 +139,8 @@ make EXAMPLE=14-memory-allocator-lab build
 - Allocator chỉ phục vụ học tập; không thread-safe và không tích hợp kernel.
 - Không gọi allocator trong ISR hoặc scheduler hot path.
 - Biên dịch target không thay thế kiểm thử sanitizer trên host.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

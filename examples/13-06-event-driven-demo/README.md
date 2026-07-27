@@ -1,6 +1,6 @@
 # `13-06-event-driven-demo` — Demo haievent tích hợp
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/13-06-event-driven-demo/main.c`  
 > **Mục đích:** Demo tích hợp controller state machine, heartbeat time event, dynamic status event, publish–subscribe và observer AO.
 
@@ -42,6 +42,10 @@
 | Subscriber cho STATUS | Observer duy nhất |
 | Publish mode | `HR_NO_WAIT`, yêu cầu delivered=1 |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Controller start ở IDLE và tắt LED.
@@ -81,15 +85,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=13-06-event-driven-demo build` |
-| Flash và chạy | `make EXAMPLE=13-06-event-driven-demo run` |
-| Kiểm tra | `make EXAMPLE=13-06-event-driven-demo check` |
-| Dọn build riêng | `make EXAMPLE=13-06-event-driven-demo clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=13-06-event-driven-demo build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=13-06-event-driven-demo run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=13-06-event-driven-demo check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=13-06-event-driven-demo clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=13-06-event-driven-demo build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=13-06-event-driven-demo build
 ```
 
 ## 7. Kết quả mong đợi
@@ -125,8 +129,8 @@ controller: IDLE
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=13-06-event-driven-demo clean
-make EXAMPLE=13-06-event-driven-demo build
+make TARGET=bluepill_f103c8 EXAMPLE=13-06-event-driven-demo clean
+make TARGET=bluepill_f103c8 EXAMPLE=13-06-event-driven-demo build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -135,6 +139,8 @@ make EXAMPLE=13-06-event-driven-demo build
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - State machine vẫn là flat, không hierarchical.
 - Script chỉ chạy một chu kỳ START/STOP.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

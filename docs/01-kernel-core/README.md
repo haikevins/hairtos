@@ -1,16 +1,32 @@
 # 01 — Lõi kernel
 
+## 1. Mục tiêu
 
-> **Bố cục chuẩn của nhóm:** Mục tiêu → Thành phần → Mô hình dữ liệu → Luồng thực thi → Bất biến → API/cấu hình → Kiểm thử → Giới hạn.
+Nhóm này mô tả dữ liệu và luồng cốt lõi của kernel, độc lập board/SoC ở mức C generic.
 
+## 2. Nội dung
 
-## Thứ tự đọc
+- [memory-model.md](memory-model.md)
+- [intrusive-data-structures.md](intrusive-data-structures.md)
+- [task-model.md](task-model.md)
+- [scheduler.md](scheduler.md)
+- [kernel-lifecycle.md](kernel-lifecycle.md)
+- [context-switch.md](context-switch.md)
+- [interrupt-model.md](interrupt-model.md)
+- [time-and-timeout.md](time-and-timeout.md)
 
-1. [kernel-lifecycle.md](kernel-lifecycle.md)
-2. [memory-model.md](memory-model.md)
-3. [intrusive-data-structures.md](intrusive-data-structures.md)
-4. [task-model.md](task-model.md)
-5. [scheduler.md](scheduler.md)
-6. [context-switch.md](context-switch.md)
-7. [time-and-timeout.md](time-and-timeout.md)
-8. [interrupt-model.md](interrupt-model.md)
+## 3. Thứ tự đọc
+
+Bắt đầu từ memory/data structures, tiếp theo task/scheduler/lifecycle, rồi context/interrupt/time.
+
+## 4. Ranh giới port
+
+Task state, ready/wait/timeout policy và IPC state machine thuộc kernel generic. Initial stack frame, critical section, ISR detection, first-task start và context switch thuộc architecture port qua `hr_port_*`.
+
+## 5. Cấu hình port
+
+`hr_port_config.h` cung cấp minimum stack, alignment, FPU-context capability và MPU capability. Kernel configuration kiểm tra dựa trên contract này thay vì giả định Cortex-M3 cố định.
+
+## 6. Kiểm thử
+
+Các thuật toán C được kiểm thử trên host; context switch/exception/tick cần cross-build và runtime validation trên target.

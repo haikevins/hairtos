@@ -1,6 +1,6 @@
 # `08-preemption-round-robin` — Chiếm quyền và Round-Robin
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/08-preemption-round-robin/main.c`  
 > **Mục đích:** Hai worker CPU-bound không gọi yield vẫn chia sẻ CPU; monitor priority cao được đánh thức định kỳ và preempt ngay.
 
@@ -41,6 +41,10 @@
 | Preemption | Bật |
 | Time slicing | Bật |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Monitor chạy, chụp counters rồi block đến release tiếp theo.
@@ -73,15 +77,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=08-preemption-round-robin build` |
-| Flash và chạy | `make EXAMPLE=08-preemption-round-robin run` |
-| Kiểm tra | `make EXAMPLE=08-preemption-round-robin check` |
-| Dọn build riêng | `make EXAMPLE=08-preemption-round-robin clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=08-preemption-round-robin build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=08-preemption-round-robin build
 ```
 
 ## 7. Kết quả mong đợi
@@ -113,8 +117,8 @@ monitor preempted workers at tick=250 worker-a=<tăng> worker-b=<tăng>
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=08-preemption-round-robin clean
-make EXAMPLE=08-preemption-round-robin build
+make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin clean
+make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -122,6 +126,8 @@ make EXAMPLE=08-preemption-round-robin build
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Không kiểm soát chính xác tỷ lệ CPU bằng UART log; dùng benchmark/logic analyzer cho phép đo định lượng.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

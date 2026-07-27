@@ -1,6 +1,6 @@
 # `11-task-suspend-resume` — Tạm dừng và tiếp tục tác vụ
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/11-task-suspend-resume/main.c`  
 > **Mục đích:** Suspend/resume task READY, RUNNING hoặc BLOCKED, đồng thời bảo toàn wait/timeout state và preempt khi resume high task.
 
@@ -40,6 +40,10 @@
 | Resume lần 1 | Tick khoảng 250 |
 | Resume lần 2 | Sau 100 ticks |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Worker gọi delay 100 và chuyển BLOCKED.
@@ -76,15 +80,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=11-task-suspend-resume build` |
-| Flash và chạy | `make EXAMPLE=11-task-suspend-resume run` |
-| Kiểm tra | `make EXAMPLE=11-task-suspend-resume check` |
-| Dọn build riêng | `make EXAMPLE=11-task-suspend-resume clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=11-task-suspend-resume build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=11-task-suspend-resume run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=11-task-suspend-resume check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=11-task-suspend-resume clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=11-task-suspend-resume build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=11-task-suspend-resume build
 ```
 
 ## 7. Kết quả mong đợi
@@ -119,8 +123,8 @@ worker: self-resume PASS at tick=<...>
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=11-task-suspend-resume clean
-make EXAMPLE=11-task-suspend-resume build
+make TARGET=bluepill_f103c8 EXAMPLE=11-task-suspend-resume clean
+make TARGET=bluepill_f103c8 EXAMPLE=11-task-suspend-resume build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -128,6 +132,8 @@ make EXAMPLE=11-task-suspend-resume build
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Không có public resume-from-ISR trong example này.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

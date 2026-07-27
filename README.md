@@ -1,74 +1,74 @@
 # hairtos
 
-`hairtos` là một hệ điều hành thời gian thực mang tính giáo dục, ưu tiên cấp phát tĩnh, được viết cho ARM Cortex-M. Target tham chiếu hiện tại là STM32F103C8T6 Blue Pill; `haievent` là framework event-driven tùy chọn chạy phía trên public API của kernel.
+`hairtos` là một RTOS mang tính giáo dục, ưu tiên cấp phát tĩnh, được tổ chức để có thể kiểm thử trên host và port sang nhiều MCU thông qua kiến trúc `TARGET` manifest. `haievent` là framework event-driven tùy chọn chạy phía trên public API của kernel.
 
 Phiên bản hiện tại: **`1.0.0-rc1`**. Xem [`VERSION`](VERSION) và [`CHANGELOG.md`](CHANGELOG.md) để theo dõi phiên bản và thay đổi.
 
 ## 1. Mục tiêu dự án
 
-Project được xây dựng với ba mục tiêu chính:
+Project hướng đến ba mục tiêu:
 
-- giải thích từng thành phần cốt lõi của RTOS bằng source code nhỏ, có thể đọc và kiểm thử;
-- cung cấp một kernel Cortex-M3 chạy được với task, scheduling, IPC, timer và diagnostics;
-- giữ ranh giới rõ giữa application, `haievent`, public kernel API, kernel internal, port, SoC, board và driver.
+- giải thích các thành phần RTOS bằng source code nhỏ, có thể đọc, build và kiểm thử;
+- cung cấp kernel static-first với task, scheduler, IPC, timer, diagnostics và fault retention;
+- giữ ranh giới rõ giữa application, framework, kernel, architecture port, SoC, board và driver để việc thêm MCU mới không yêu cầu sửa kernel generic.
 
-`hairtos` không nhằm thay thế ngay một RTOS production đã trưởng thành. Đây là codebase học tập có kiểm thử, có build host/target và có lộ trình mở rộng rõ ràng.
+`hairtos` là codebase học tập có kiểm thử và quy trình port rõ ràng; nó chưa thay thế một RTOS production đã trưởng thành.
 
 ## 2. Tính năng hiện có
 
-Kernel hiện hỗ trợ:
+Kernel hỗ trợ:
 
-- tạo task tĩnh và khởi tạo initial Cortex-M3 stack frame;
-- khởi chạy task đầu tiên bằng SVC;
+- tạo task tĩnh và dựng initial stack frame qua architecture port;
+- khởi chạy task đầu tiên bằng SVC trên port Cortex-M3 hiện tại;
 - context switch bằng PendSV và PSP;
-- bộ lập lịch chiếm quyền với ưu tiên cố định;
+- fixed-priority preemptive scheduling;
 - FIFO round-robin giữa các task cùng priority;
-- SysTick 1 kHz, delay, periodic delay và timeout có xử lý tick wrap;
+- tick, delay, periodic delay và timeout có xử lý wrap;
 - queue blocking, direct handoff và API từ ISR;
-- counting/binary semaphore và give từ ISR;
-- mutex ownership, recursive mutex và chained priority inheritance;
-- suspend/resume cho task READY, RUNNING và BLOCKED;
-- software timer chạy callback trong timer-service task;
+- binary/counting semaphore và give từ ISR;
+- recursive mutex và chained priority inheritance;
+- suspend/resume cho task READY, RUNNING hoặc BLOCKED;
+- software timer với timer-service task;
 - retained panic/fault record, runtime statistics và kernel health check.
 
-Framework `haievent` hiện hỗ trợ:
+Framework `haievent` hỗ trợ:
 
 - static event và dynamic event từ fixed-block pool;
 - reference counting và ownership rules;
 - flat state machine với ENTRY, EXIT và INIT;
-- Active Object với event queue riêng;
+- Active Object với queue riêng;
 - time event dựa trên software timer;
 - publish/subscribe nhiều subscriber.
 
-Các phần nghiên cứu riêng gồm allocator lab, DWT benchmark và deterministic scheduler stress.
+Các phần nghiên cứu riêng gồm allocator lab, benchmark clock backend theo target và deterministic scheduler stress.
 
-## 3. Nền tảng và công cụ
+## 3. Hệ thống target
 
-### Target tham chiếu
+Build target được chọn bằng biến:
 
-| Thành phần | Cấu hình |
-|---|---|
+```bash
+make TARGET=<target> EXAMPLE=<name> build
+```
+
+Target tham chiếu hiện tại:
+
+| Thuộc tính | Giá trị |
+| --- | --- |
+| Target | `bluepill_f103c8` |
 | MCU | STM32F103C8T6 |
 | Board | Blue Pill |
 | CPU | ARM Cortex-M3 |
-| Clock | 72 MHz từ HSE 8 MHz và PLL x9 |
-| Flash/RAM model | 64 KiB Flash / 20 KiB SRAM |
-| Debug probe | ST-Link V2 |
-| Debug protocol | SWD |
-| UART | USART1, PA9 TX, PA10 RX, 115200 8-N-1 |
+| Clock danh định | 72 MHz |
+| Debug | ST-Link V2, SWD, OpenOCD |
+| UART tham chiếu | USART1, PA9/PA10, 115200 8-N-1 |
 
-### Công cụ build
+Xem target được hỗ trợ:
 
-Target build hỗ trợ:
+```bash
+make list-targets
+```
 
-- GNU Arm Embedded Toolchain: `arm-none-eabi-gcc`;
-- Clang/LLD cross-build;
-- CMake 3.20 trở lên;
-- Ninja;
-- OpenOCD;
-- `arm-none-eabi-gdb` hoặc `gdb-multiarch`.
-
-Host build dùng GCC hoặc Clang native cùng AddressSanitizer và UndefinedBehaviorSanitizer.
+Mỗi target có một manifest trong `cmake/targets/<target>.cmake`. Manifest cung cấp CPU flags, compile definitions, include path, startup, linker script, architecture port, tick adapter, fault backend, driver implementation, benchmark clock và OpenOCD configuration.
 
 ## 4. Kiến trúc phụ thuộc
 
@@ -83,52 +83,53 @@ Application / examples
                          |
                          +--> kernel internals
                                   |
-                                  +--> Cortex-M3 port
+                                  +--> architecture port
                                            |
                                            +--> SoC / board / drivers
 ```
 
-Nguyên tắc chính:
+Nguyên tắc:
 
-- application không include `kernel/internal` hoặc `haievent/internal`;
+- application bình thường không include `kernel/internal` hoặc `haievent/internal`;
 - `haievent` chỉ phụ thuộc public API của `hairtos`;
-- code kernel thuần C không phụ thuộc trực tiếp board;
-- assembly context switch và fault entry nằm trong `arch/arm/cortex-m3`;
-- startup, clock và register map nằm trong `soc/stm32f1`;
-- pin mapping và linker script thuộc board;
-- allocator lab và benchmark không trở thành dependency ẩn của kernel bình thường.
-
-CMake áp dụng include scope riêng cho từng object target để compiler thực sự bảo vệ ranh giới public/internal.
+- kernel C generic không phụ thuộc trực tiếp STM32F1 hoặc Blue Pill;
+- exception entry, context switch, tick IRQ adapter và benchmark clock thuộc `arch/`;
+- startup, clock và register map thuộc `soc/`;
+- pin mapping, board service và linker script thuộc `boards/`;
+- peripheral interface chung nằm trong `drivers/include`, còn encoding/instance cụ thể nằm trong `drivers/<soc>/include`;
+- CMake cấp include scope theo từng object target để compiler bảo vệ ranh giới public/internal.
 
 ## 5. Cấu trúc repository
 
 ```text
 hairtos/
-├── arch/                  # Cortex-M3 port, context switch và fault entry
-├── benchmarks/kernel/     # DWT cycle counter, statistics và GPIO marker
-├── boards/                # Board API, pin mapping và linker script
-├── cmake/                 # Example/module mapping và toolchain files
-├── config/                # Cấu hình hairtos và haievent
-├── docs/                  # Tài liệu kiến trúc, API, testing và labs
-├── drivers/               # Driver API chung và implementation theo SoC
-├── examples/              # Lộ trình 01–16, mỗi bài có main.c và README.md
-├── haievent/              # Event framework public/internal/source
-├── kernel/                # Kernel public API, internal model và implementation
-├── labs/memory-allocator/ # Fixed-block pool và first-fit heap lab
-├── soc/                   # STM32F1 startup, clock, IRQ và register definitions
-├── tests/                 # Host tests, mocks, portability và stress
-├── tools/                 # GDB và OpenOCD configuration
+├── arch/                         # Port CPU, exception, tick và benchmark clock
+├── benchmarks/kernel/            # Thống kê benchmark độc lập phần cứng
+├── boards/<board>/                # Board API, pin mapping và linker script
+├── cmake/
+│   ├── hairtos_examples.cmake     # Example → module/feature
+│   ├── hairtos_modules.cmake      # Module → source
+│   ├── hairtos_targets.cmake      # Phát hiện và kiểm tra target
+│   └── targets/                   # Manifest cho từng hardware target
+├── config/                        # Cấu hình kernel và haievent
+├── docs/                          # Tài liệu kiến trúc, API, test và port
+├── drivers/
+│   ├── include/                   # Public peripheral API
+│   └── <soc>/                     # Implementation và identifier theo SoC
+├── examples/                      # Lộ trình 01–16
+├── haievent/                      # Event framework
+├── kernel/                        # Public API, internal model và implementation
+├── labs/memory-allocator/         # Allocator lab độc lập
+├── soc/<soc>/                     # Startup, clock, IRQ và register definitions
+├── tests/                         # Host, mock, portability và stress tests
+├── tools/                         # GDB/OpenOCD configuration
 ├── CMakeLists.txt
 ├── Makefile
 ├── VERSION
 └── CHANGELOG.md
 ```
 
-Chi tiết từng thư mục được mô tả trong [`docs/00-overview/project-layout.md`](docs/00-overview/project-layout.md).
-
 ## 6. Bắt đầu nhanh
-
-### Xem lệnh và danh sách example
 
 ```bash
 make help
@@ -136,77 +137,147 @@ make list-targets
 make list-examples
 ```
 
-### Build image tích hợp mặc định
+Build image tích hợp mặc định:
 
 ```bash
 make build
 ```
 
-Lệnh mặc định tương đương:
+Tương đương:
 
 ```bash
-make TARGET=bluepill_f103c8 EXAMPLE=16-diagnostics-stress-stabilization \
+make TARGET=bluepill_f103c8 \
      ENVIRONMENT=target \
+     EXAMPLE=16-diagnostics-stress-stabilization \
      build
 ```
 
-### Flash target
+Flash target tham chiếu:
 
 ```bash
-make TARGET=bluepill_f103c8 EXAMPLE=16-diagnostics-stress-stabilization run
+make TARGET=bluepill_f103c8 \
+     EXAMPLE=16-diagnostics-stress-stabilization \
+     run
 ```
 
-`run` trong target mode thực hiện build, OpenOCD program, verify và reset.
-
-### Chạy host example
+Chạy host example:
 
 ```bash
-make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host run
+make TARGET=bluepill_f103c8 \
+     ENVIRONMENT=host \
+     EXAMPLE=02-kernel-data-structures-host \
+     run
 ```
 
-### Chạy toàn bộ host tests
+Chạy toàn bộ host tests:
 
 ```bash
-make host-tests
+make TARGET=bluepill_f103c8 host-tests
 ```
 
-## 7. Giao diện Make thống nhất
-
-Host và target dùng cùng bố cục:
+## 7. Giao diện Make
 
 ```bash
-make TARGET=bluepill_f103c8 EXAMPLE=<name> build [ENVIRONMENT=host|target]
-make TARGET=bluepill_f103c8 EXAMPLE=<name> run   [ENVIRONMENT=host|target]
-make TARGET=bluepill_f103c8 EXAMPLE=<name> check [ENVIRONMENT=host|target]
-make TARGET=bluepill_f103c8 EXAMPLE=<name> clean [ENVIRONMENT=host|target]
+make TARGET=<target> EXAMPLE=<name> build [ENVIRONMENT=host|target]
+make TARGET=<target> EXAMPLE=<name> run   [ENVIRONMENT=host|target]
+make TARGET=<target> EXAMPLE=<name> check [ENVIRONMENT=host|target]
+make TARGET=<target> EXAMPLE=<name> clean [ENVIRONMENT=host|target]
 ```
-
-Ý nghĩa:
 
 | Action | Host | Target |
-|---|---|---|
+| --- | --- | --- |
 | `build` | Compile executable native | Build `hairtos.elf`, `.bin`, `.hex` và size |
-| `run` | Chạy executable với sanitizer | Flash, verify và reset board |
+| `run` | Chạy executable với sanitizer | Flash, verify và reset qua OpenOCD |
 | `check` | Chạy host tests rồi build example | Chạy host tests rồi cross-build firmware |
-| `clean` | Xóa build của example | Xóa build của example |
+| `clean` | Xóa build của example | Xóa build theo target/example |
 
-Các lệnh bổ sung:
+Lệnh bổ sung:
 
 ```bash
-make TARGET=bluepill_f103c8 EXAMPLE=<name> intellisense [ENVIRONMENT=host|target]
-make TARGET=bluepill_f103c8 EXAMPLE=<name> size
-make TARGET=bluepill_f103c8 EXAMPLE=<name> disasm
-make TARGET=bluepill_f103c8 EXAMPLE=<name> gdb
-make erase
-make debug-server
+make list-targets
+make list-examples
+make TARGET=<target> EXAMPLE=<name> intellisense
+make TARGET=<target> EXAMPLE=<name> size
+make TARGET=<target> EXAMPLE=<name> disasm
+make TARGET=<target> EXAMPLE=<name> gdb
+make TARGET=<target> erase
+make TARGET=<target> debug-server
 make clean-all
 ```
 
-CMake là nguồn duy nhất quản lý example, module, source và compile definition. Makefile chỉ là command wrapper ổn định cho người dùng.
+CMake là nguồn dữ liệu duy nhất cho target, example, module, source và compile definition. Makefile chỉ là command wrapper.
 
-## 8. Ví dụ trên host và target
+## 8. Build trực tiếp bằng CMake
 
-Phân loại đầy đủ nằm trong [`examples/README.md`](examples/README.md). Một số ví dụ thường dùng:
+Target với GNU Arm:
+
+```bash
+cmake -S . -B build/manual-target \
+  -G Ninja \
+  -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/arm-none-eabi-gcc.cmake \
+  -DHAIRTOS_ENVIRONMENT=target \
+  -DHAIRTOS_TARGET=bluepill_f103c8 \
+  -DHAIRTOS_EXAMPLE=09-queue-blocking-ipc
+
+cmake --build build/manual-target
+```
+
+Host allocator lab:
+
+```bash
+cmake -S . -B build/manual-host \
+  -G Ninja \
+  -DHAIRTOS_ENVIRONMENT=host \
+  -DHAIRTOS_TARGET=bluepill_f103c8 \
+  -DHAIRTOS_EXAMPLE=14-memory-allocator-lab
+
+cmake --build build/manual-host
+```
+
+## 9. Thiết kế phục vụ port
+
+Các phần được giữ generic khi thêm MCU mới:
+
+```text
+kernel/
+haievent/
+benchmarks/kernel/src/hr_benchmark_stats.c
+labs/memory-allocator/
+phần lớn tests/host/
+```
+
+Các phần target mới phải cung cấp:
+
+```text
+arch/<architecture>/
+soc/<soc>/
+boards/<board>/
+drivers/<soc>/
+tools/openocd/<target>.cfg
+cmake/targets/<target>.cmake
+```
+
+`hr_port_config.h` mô tả capability của port, gồm minimum stack, alignment, FPU context và MPU support. Điều này ngăn cấu hình kernel giả định cứng Cortex-M3.
+
+GPIO pin và UART instance là opaque identifier. Public API không yêu cầu application biết GPIO port number hoặc peripheral clock. Board layer cung cấp LED, UART, benchmark marker, memory footprint và tên CPU.
+
+## 10. Thêm target MCU mới
+
+1. Sao chép `cmake/targets/target_template.cmake.example`.
+2. Tạo architecture port hoặc dùng lại port hiện có.
+3. Thêm SoC startup, clock, IRQ và register definitions.
+4. Thêm board API, linker script và pin mapping.
+5. Thêm driver implementation theo SoC.
+6. Thêm OpenOCD configuration.
+7. Điền target manifest và chạy `make list-targets`.
+8. Cross-build các example từ đơn giản đến tích hợp.
+9. Chạy trên hardware và kiểm tra startup, tick, context switch, fault, UART và benchmark clock.
+
+Hướng dẫn chi tiết: [`docs/04-platform/porting-new-target.md`](docs/04-platform/porting-new-target.md).
+
+## 11. Examples
+
+Phân loại đầy đủ nằm trong [`examples/README.md`](examples/README.md).
 
 ```bash
 # Host-only intrusive structures
@@ -216,143 +287,56 @@ make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host run
 make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin run
 
 # Allocator lab trên host
-make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
+make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
 
-# Allocator lab trên STM32
-make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run
+# Allocator lab trên target
+make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run
 
-# Kernel benchmark trên STM32
+# Kernel benchmark
 make TARGET=bluepill_f103c8 EXAMPLE=15-kernel-benchmark run
 
 # Diagnostics stress trên host
-make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run
+make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run
 ```
 
-## 9. Build trực tiếp bằng CMake
-
-Ví dụ target Clang/LLD:
+## 12. Kiểm thử và chất lượng
 
 ```bash
-cmake -S . -B build/manual-target \
-  -G Ninja \
-  -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/arm-none-eabi-clang.cmake \
-  -DHAIRTOS_ENVIRONMENT=target \
-  -DHAIRTOS_EXAMPLE=09-queue-blocking-ipc
-
-cmake --build build/manual-target
+make TARGET=bluepill_f103c8 host-tests
 ```
 
-Ví dụ host allocator lab:
+Bộ test bao phủ intrusive list, scheduler, timeout, task, queue, semaphore, mutex, timer, `haievent`, allocator, benchmark statistics, diagnostics và scheduler stress.
+
+Build target chỉ xác nhận compile/link. Các thuộc tính thời gian thực, interrupt priority, reset retention, GPIO marker và clock phải được kiểm chứng trên MCU vật lý.
+
+## 13. VS Code và IntelliSense
+
+Tạo compile database cho target/example đang làm:
 
 ```bash
-cmake -S . -B build/manual-host \
-  -G Ninja \
-  -DHAIRTOS_ENVIRONMENT=host \
-  -DHAIRTOS_EXAMPLE=14-memory-allocator-lab
-
-cmake --build build/manual-host
-```
-
-Danh sách source và feature của từng example nằm trong:
-
-```text
-cmake/hairtos_examples.cmake
-cmake/hairtos_modules.cmake
-```
-
-Không nên tạo danh sách source thứ hai trong Makefile.
-
-## 10. Kiểm thử và chất lượng
-
-Host suite bao phủ:
-
-- intrusive list, ready queue, wait list và timeout list;
-- TCB, initial stack và task-state transition;
-- scheduler, delay, preemption và time slice;
-- queue, semaphore, mutex và priority inheritance;
-- suspend/resume và software timer;
-- `haievent` ownership, state machine và publish/subscribe;
-- allocator statistics, split/coalesce và invalid free;
-- benchmark statistics;
-- diagnostics và deterministic stress invariants.
-
-Chạy:
-
-```bash
-make host-tests
-```
-
-`check` kết hợp host suite với build của example được chọn:
-
-```bash
-make TOOLCHAIN=clang \
+make TARGET=bluepill_f103c8 \
      EXAMPLE=16-diagnostics-stress-stabilization \
-     check
-```
-
-Cross-build thành công không thay thế runtime validation trên phần cứng. Timing, fault retention qua reset, UART output và stress dài hạn vẫn phải được xác nhận trên Blue Pill thật.
-
-## 11. VS Code và IntelliSense
-
-Project cung cấp cấu hình trong [`.vscode/README.md`](.vscode/README.md).
-
-Cách nhanh nhất để duyệt toàn source:
-
-1. mở đúng thư mục gốc chứa `Makefile`;
-2. chọn cấu hình **`hairtos - All Sources`**;
-3. chạy `C/C++: Reset IntelliSense Database`;
-4. reload VS Code.
-
-Để dùng compile flags chính xác của một example:
-
-```bash
-make TARGET=bluepill_f103c8 EXAMPLE=16-diagnostics-stress-stabilization \
-     ENVIRONMENT=target \
      intellisense
 ```
 
-Sau đó chọn **`hairtos - Active CMake Build`**.
+Sau đó chọn cấu hình `hairtos - Active CMake Build`. Xem [`.vscode/README.md`](.vscode/README.md).
 
-## 12. Tài liệu
+## 14. Tài liệu
 
-Điểm bắt đầu đề xuất:
+Bắt đầu tại [`docs/README.md`](docs/README.md). Những tài liệu quan trọng cho portability:
 
-- [`docs/README.md`](docs/README.md): chỉ mục tài liệu;
-- [`docs/00-overview/architecture.md`](docs/00-overview/architecture.md): kiến trúc tổng thể;
-- [`docs/01-kernel-core/README.md`](docs/01-kernel-core/README.md): task, scheduler và context switch;
-- [`docs/02-synchronization/README.md`](docs/02-synchronization/README.md): queue, semaphore, mutex và timer;
-- [`docs/03-haievent/README.md`](docs/03-haievent/README.md): framework sự kiện;
-- [`docs/05-api-reference/README.md`](docs/05-api-reference/README.md): public API;
-- [`docs/06-testing-and-quality/testing-guide.md`](docs/06-testing-and-quality/testing-guide.md): quy trình kiểm thử;
-- [`examples/README.md`](examples/README.md): lộ trình example.
+- [`docs/00-overview/dependency-rules.md`](docs/00-overview/dependency-rules.md);
+- [`docs/04-platform/cortex-m3-port.md`](docs/04-platform/cortex-m3-port.md);
+- [`docs/04-platform/startup-and-linker.md`](docs/04-platform/startup-and-linker.md);
+- [`docs/04-platform/drivers.md`](docs/04-platform/drivers.md);
+- [`docs/04-platform/porting-new-target.md`](docs/04-platform/porting-new-target.md).
 
-## 13. Giới hạn hiện tại
+## 15. Giới hạn và giấy phép
 
-- Chỉ có port context-switch hoàn chỉnh cho ARM Cortex-M3.
-- Target tham chiếu duy nhất là STM32F103C8T6 Blue Pill.
-- Driver hiện là polling-oriented và chưa có DMA abstraction.
-- Kernel không dùng dynamic allocation; allocator chỉ là lab độc lập.
-- State machine của `haievent` là flat state machine, chưa phải hierarchical state machine.
-- Chưa có SMP, MPU process isolation, tickless idle hoặc userspace/kernelspace separation.
-- Các con số benchmark phải được đo lại trên phần cứng cụ thể.
+- Hiện repository mới có một target hoàn chỉnh: `bluepill_f103c8`.
+- Port Cortex-M3 đã chạy trên thiết kế STM32F103; target mới vẫn cần hardware validation.
+- Cortex-M4F cần port lưu FPU context trước khi bật `HR_CFG_USE_FPU`.
+- Cortex-M0/M0+ hoặc kiến trúc khác cần assembly context switch và exception backend riêng.
+- Driver hiện là polling/minimal; chưa có DMA hoặc generic asynchronous peripheral framework.
 
-## 14. Đóng góp và giấy phép
-
-Khi sửa code:
-
-- giữ quy tắc dependency trong `docs/00-overview/dependency-rules.md`;
-- không đưa internal include vào application bình thường;
-- cập nhật `cmake/hairtos_examples.cmake` hoặc `cmake/hairtos_modules.cmake` khi thêm module/example;
-- thêm host test cho logic độc lập phần cứng;
-- build ít nhất một target example liên quan;
-- cập nhật `CHANGELOG.md` cho thay đổi đáng chú ý.
-
-Project được phát hành theo giấy phép MIT. Xem [`LICENSE`](LICENSE).
-
-
-## Port sang MCU mới
-
-Mỗi phần cứng được mô tả bằng một target manifest trong `cmake/targets/`.
-CMake và Makefile không chứa source STM32F1 hoặc Blue Pill cố định. Xem
-[`docs/04-platform/porting-new-target.md`](docs/04-platform/porting-new-target.md)
-để biết contract của architecture, SoC, board, driver và linker script.
+Project được phát hành theo giấy phép trong [`LICENSE`](LICENSE).

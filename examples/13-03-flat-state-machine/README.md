@@ -1,6 +1,6 @@
 # `13-03-flat-state-machine` — Máy trạng thái phẳng
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/13-03-flat-state-machine/main.c`  
 > **Mục đích:** Active Object điều khiển LED qua hai state OFF/ON và chuyển state theo static TOGGLE event.
 
@@ -40,6 +40,10 @@
 | Chu kỳ | 400 ticks |
 | Các trạng thái | `state_off`, `state_on` |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. AO start ở OFF và xử lý ENTRY: tắt LED.
@@ -73,15 +77,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=13-03-flat-state-machine build` |
-| Flash và chạy | `make EXAMPLE=13-03-flat-state-machine run` |
-| Kiểm tra | `make EXAMPLE=13-03-flat-state-machine check` |
-| Dọn build riêng | `make EXAMPLE=13-03-flat-state-machine clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=13-03-flat-state-machine build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=13-03-flat-state-machine run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=13-03-flat-state-machine check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=13-03-flat-state-machine clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=13-03-flat-state-machine build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=13-03-flat-state-machine build
 ```
 
 ## 7. Kết quả mong đợi
@@ -116,8 +120,8 @@ Flat state-machine ENTRY/EXIT transition demo: PASS
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=13-03-flat-state-machine clean
-make EXAMPLE=13-03-flat-state-machine build
+make TARGET=bluepill_f103c8 EXAMPLE=13-03-flat-state-machine clean
+make TARGET=bluepill_f103c8 EXAMPLE=13-03-flat-state-machine build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -125,6 +129,8 @@ make EXAMPLE=13-03-flat-state-machine build
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Chỉ flat state machine; không có hierarchical state, history hoặc guard/action riêng.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

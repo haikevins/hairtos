@@ -1,8 +1,8 @@
 # `15-kernel-benchmark` — Benchmark kernel
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/15-kernel-benchmark/main.c`  
-> **Mục đích:** Đo các đường đi quan trọng của kernel bằng DWT_CYCCNT, giữ sample trong RAM tĩnh và in report sau khi thu thập.
+> **Mục đích:** Đo các đường đi quan trọng của kernel bằng benchmark clock backend do target cung cấp, giữ sample trong RAM tĩnh và in report sau khi thu thập.
 
 ## 1. Mục tiêu học tập
 
@@ -10,11 +10,11 @@
 - Trừ measurement overhead.
 - Tính min, p50, mean, p95 và max.
 - Đo stack high-water mark, Flash và static RAM.
-- Đối chiếu một số đường đi bằng marker PB0.
+- Đối chiếu một số đường đi bằng marker do board cung cấp.
 
 ## 2. Kiến thức trọng tâm
 
-- DWT CYCCNT 32-bit trên Cortex-M3.
+- Benchmark clock 32-bit; target tham chiếu dùng DWT CYCCNT trên ARM Cortex-M3.
 - Benchmark perturbation và deferred UART output.
 - Startup probe priority 0.
 - Round-trip measurement cho yield/wake/event.
@@ -30,7 +30,7 @@
 | Nạp/debug | ST-Link V2 qua SWD | Dùng OpenOCD để flash, verify và reset. |
 | UART | USART1, PA9 TX / PA10 RX, 115200 8-N-1 | Theo dõi log và trạng thái PASS/FAIL. |
 | LED | PC13, active-low | Hiển thị heartbeat hoặc trạng thái quan sát. |
-| PB0 | Active-high marker | Bao quanh switch/wake/event samples cho logic analyzer. |
+| Board marker | Do `board_benchmark_marker_*()` cung cấp | Bao quanh switch/wake/event samples cho logic analyzer. |
 | `startup-probe` | Priority 0, stack 128 | Đo SVC đến instruction đầu tiên. |
 | `benchmark-receiver` | Priority 2, stack 192 | Đánh thức qua queue và chiếm quyền. |
 | AO sự kiện | Priority 3, stack 224 | Một vòng dispatch của haievent. |
@@ -47,9 +47,13 @@
 | Preemption | Bật |
 | Time slicing | Tắt để giảm nhiễu benchmark |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
-1. Khởi tạo DWT và PB0.
+1. Khởi tạo benchmark clock backend và board marker.
 2. Tạo primitive queue, wake queue, semaphore, mutex, timer và event AO.
 3. Ghi timestamp trước `hr_kernel_start()`.
 4. Startup probe ghi timestamp đầu task rồi suspend.
@@ -86,15 +90,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=15-kernel-benchmark build` |
-| Flash và chạy | `make EXAMPLE=15-kernel-benchmark run` |
-| Kiểm tra | `make EXAMPLE=15-kernel-benchmark check` |
-| Dọn build riêng | `make EXAMPLE=15-kernel-benchmark clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=15-kernel-benchmark build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=15-kernel-benchmark run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=15-kernel-benchmark check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=15-kernel-benchmark clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=15-kernel-benchmark build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=15-kernel-benchmark build
 ```
 
 ## 7. Kết quả mong đợi
@@ -103,11 +107,11 @@ Output dưới đây là mẫu. Các giá trị tick, counter, địa chỉ ho�
 
 ```text
 hairtos kernel benchmark
-Collecting DWT samples; UART output is deferred.
-PB0 is the active-high external timing marker.
+Collecting benchmark samples; UART output is deferred.
+marker,<board-provided description>
 
 hairtos kernel benchmark report
-cpu,STM32F103C8T6 Cortex-M3,72000000 Hz
+cpu,<board-provided CPU name>,<core clock> Hz
 metric,count,min,p50,mean,p95,max,mean_ns
 svc_startup,...
 critical_section,...
@@ -119,32 +123,34 @@ Kernel benchmark: PASS
 
 ### Tiêu chí PASS
 
-- DWT available và report kết thúc bằng PASS.
+- Benchmark clock backend khởi tạo thành công và report kết thúc bằng PASS.
 - Mỗi metric có count hợp lệ.
 - p50/p95 nằm giữa min/max.
 - Flash/RAM và stack rows được in.
-- PB0 có pulse tại các phép đo được đánh dấu.
+- Board marker có pulse tại các phép đo được đánh dấu nếu target hỗ trợ marker.
 
 ### Lỗi thường gặp
 
-- `DWT CYCCNT unavailable`: debugger/core config chặn DWT.
+- `benchmark clock unavailable`: backend không được target hỗ trợ hoặc debugger/core configuration chặn DWT trên target tham chiếu.
 - Metric count 0: handshake task hoặc timer không hoàn tất.
 - Số đo cực lớn/không ổn định: UART/interrupt/debugger gây nhiễu hoặc counter wrap quanh sample.
 
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=15-kernel-benchmark clean
-make EXAMPLE=15-kernel-benchmark build
+make TARGET=bluepill_f103c8 EXAMPLE=15-kernel-benchmark clean
+make TARGET=bluepill_f103c8 EXAMPLE=15-kernel-benchmark build
 ```
 
 ## 9. Giới hạn của ví dụ
 
-- Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
+- Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên target vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Không coi số liệu là guarantee cho board/compiler khác.
 - Build mặc định `-Og`; muốn so sánh optimization phải ghi rõ toolchain/flags.
 - Benchmark được phép include internal scheduler API, không phải mẫu application bình thường.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

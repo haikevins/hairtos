@@ -1,6 +1,6 @@
 # `03-static-task-stack` — TCB tĩnh và ngăn xếp khởi tạo của tác vụ
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/03-static-task-stack/main.c`  
 > **Mục đích:** Tạo một task hoàn toàn tĩnh và dựng initial exception frame Cortex-M3, nhưng chưa khởi chạy scheduler.
 
@@ -40,6 +40,10 @@
 | Kernel start | Không gọi |
 | Delay LED | 500 ms bare-metal |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Khởi tạo board.
@@ -72,15 +76,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=03-static-task-stack build` |
-| Flash và chạy | `make EXAMPLE=03-static-task-stack run` |
-| Kiểm tra | `make EXAMPLE=03-static-task-stack check` |
-| Dọn build riêng | `make EXAMPLE=03-static-task-stack clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=03-static-task-stack build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=03-static-task-stack run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=03-static-task-stack check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=03-static-task-stack clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=03-static-task-stack build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=03-static-task-stack build
 ```
 
 ## 7. Kết quả mong đợi
@@ -112,8 +116,8 @@ Task execution starts in the SVC startup example.
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=03-static-task-stack clean
-make EXAMPLE=03-static-task-stack build
+make TARGET=bluepill_f103c8 EXAMPLE=03-static-task-stack clean
+make TARGET=bluepill_f103c8 EXAMPLE=03-static-task-stack build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -121,6 +125,8 @@ make EXAMPLE=03-static-task-stack build
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Chưa có `hr_kernel_init()`, idle task, SVC hoặc PSP Thread mode.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

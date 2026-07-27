@@ -1,6 +1,6 @@
 # `09-queue-blocking-ipc` — Queue và IPC chặn
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/09-queue-blocking-ipc/main.c`  
 > **Mục đích:** Producer và consumer trao đổi message qua queue FIFO tĩnh, có blocking, timeout, direct handoff và preemption.
 
@@ -42,6 +42,10 @@
 | Độ trễ consumer | 200 ticks |
 | Timeout nhận | `HR_WAIT_FOREVER` |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Consumer priority cao chạy trước và block vì queue rỗng.
@@ -78,15 +82,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=09-queue-blocking-ipc build` |
-| Flash và chạy | `make EXAMPLE=09-queue-blocking-ipc run` |
-| Kiểm tra | `make EXAMPLE=09-queue-blocking-ipc check` |
-| Dọn build riêng | `make EXAMPLE=09-queue-blocking-ipc clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=09-queue-blocking-ipc build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=09-queue-blocking-ipc run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=09-queue-blocking-ipc check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=09-queue-blocking-ipc clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=09-queue-blocking-ipc build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=09-queue-blocking-ipc build
 ```
 
 ## 7. Kết quả mong đợi
@@ -117,8 +121,8 @@ consumer received seq=<tăng> produced_at=<tick> now=<tick> queued=<0..2> send_t
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=09-queue-blocking-ipc clean
-make EXAMPLE=09-queue-blocking-ipc build
+make TARGET=bluepill_f103c8 EXAMPLE=09-queue-blocking-ipc clean
+make TARGET=bluepill_f103c8 EXAMPLE=09-queue-blocking-ipc build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -126,6 +130,8 @@ make EXAMPLE=09-queue-blocking-ipc build
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Một producer và một consumer; nhiều waiter được unit-test ở host nhưng không trình diễn tại đây.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

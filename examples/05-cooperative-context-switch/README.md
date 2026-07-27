@@ -1,6 +1,6 @@
 # `05-cooperative-context-switch` — Chuyển ngữ cảnh hợp tác
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/05-cooperative-context-switch/main.c`  
 > **Mục đích:** Hai task cùng priority chủ động nhường CPU bằng `hr_task_yield()`, còn PendSV thực hiện save/restore context.
 
@@ -40,6 +40,10 @@
 | Khoảng in | Busy-wait 250 ms |
 | Preemption | Không; chỉ yield |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Task A bắt đầu qua SVC.
@@ -75,15 +79,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=05-cooperative-context-switch build` |
-| Flash và chạy | `make EXAMPLE=05-cooperative-context-switch run` |
-| Kiểm tra | `make EXAMPLE=05-cooperative-context-switch check` |
-| Dọn build riêng | `make EXAMPLE=05-cooperative-context-switch clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=05-cooperative-context-switch build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=05-cooperative-context-switch run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=05-cooperative-context-switch check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=05-cooperative-context-switch clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=05-cooperative-context-switch build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=05-cooperative-context-switch build
 ```
 
 ## 7. Kết quả mong đợi
@@ -117,8 +121,8 @@ task=B local_counter=1020 -> yield
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=05-cooperative-context-switch clean
-make EXAMPLE=05-cooperative-context-switch build
+make TARGET=bluepill_f103c8 EXAMPLE=05-cooperative-context-switch clean
+make TARGET=bluepill_f103c8 EXAMPLE=05-cooperative-context-switch build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -127,6 +131,8 @@ make EXAMPLE=05-cooperative-context-switch build
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Busy-wait trong task vẫn chiếm CPU.
 - Không tự preempt task nếu task quên gọi yield.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

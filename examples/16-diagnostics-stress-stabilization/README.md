@@ -1,6 +1,6 @@
 # `16-diagnostics-stress-stabilization` — Chẩn đoán và ổn định bằng stress test
 
-> **Môi trường:** Host + Target  
+> **Môi trường:** Host hoặc Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/16-diagnostics-stress-stabilization/main.c`  
 > **Mục đích:** Image tích hợp kiểm tra retained fault, runtime statistics, health invariants, stack guards và workload queue/semaphore/mutex/timer kéo dài.
 
@@ -18,7 +18,7 @@
 - Panic record được giữ lại qua reset.
 - Tác vụ giám sát sức khỏe có priority cao.
 - Queue producer/consumer, semaphore pulse, mutex-protected counters và periodic timer.
-- Fault injection bằng `udf #0`.
+- Fault injection qua instruction/backend phù hợp architecture; target Cortex-M3 tham chiếu dùng `udf #0`.
 
 ## 3. Thành phần và cấu hình
 
@@ -45,6 +45,10 @@
 | PASS checkpoint | Report 10, khoảng 10 giây |
 | Macro tiêm lỗi | `HR_DIAGNOSTICS_INJECT_USAGE_FAULT=1` |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Boot gọi `hr_diagnostics_initialize()` và in retained panic nếu có.
@@ -54,7 +58,7 @@
 5. Health monitor mỗi giây chạy full health check, lấy runtime counters và snapshot workload.
 6. Nếu invariant, stack guard hoặc message order sai thì panic.
 7. Tại report 10 in PASS checkpoint.
-8. Khi bật injection, report 5 chạy `udf #0`; reset sau fault để đọc record.
+8. Khi bật injection, report 5 kích hoạt usage fault qua backend của port; reset sau fault để đọc record.
 
 ## 5. API và mã nguồn liên quan
 
@@ -85,18 +89,18 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch target | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization build` |
-| Flash/chạy target | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization run` |
-| Biên dịch stress trên host | `make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization build` |
-| Chạy stress trên host | `make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run` |
-| Kiểm tra target | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization check` |
-| Tiêm lỗi | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization EXTRA_DEFINES=-DHR_DIAGNOSTICS_INJECT_USAGE_FAULT=1 run` |
-| Dọn build | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization clean` |
+| Biên dịch target | `make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization build` |
+| Flash/chạy target | `make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization run` |
+| Biên dịch stress trên host | `make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization build` |
+| Chạy stress trên host | `make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run` |
+| Kiểm tra target | `make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization check` |
+| Tiêm lỗi | `make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization EXTRA_DEFINES=-DHR_DIAGNOSTICS_INJECT_USAGE_FAULT=1 run` |
+| Dọn build | `make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization clean` |
 
 Biến thể target có thể cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization build
 ```
 
 ## 7. Kết quả mong đợi
@@ -141,8 +145,8 @@ iterations=500000 insertions=<...> removals=<...> rotations=<...> validations=50
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=16-diagnostics-stress-stabilization clean
-make EXAMPLE=16-diagnostics-stress-stabilization build
+make TARGET=bluepill_f103c8 EXAMPLE=16-diagnostics-stress-stabilization clean
+make TARGET=bluepill_f103c8 EXAMPLE=16-diagnostics-stress-stabilization build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -151,6 +155,8 @@ make EXAMPLE=16-diagnostics-stress-stabilization build
 - Fault injection phải tắt trong image bình thường.
 - Runtime UART report làm tăng tải và có thể ảnh hưởng timing.
 - Physical reset/power-cycle behavior của `.noinit` phụ thuộc loại reset và startup/linker thực tế.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

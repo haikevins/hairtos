@@ -1,6 +1,6 @@
 # `02-kernel-data-structures-host` — Cấu trúc dữ liệu kernel — Demo trên host
 
-> **Môi trường:** Host — máy phát triển Linux/macOS  
+> **Môi trường:** Host; không cần phần cứng. `TARGET` mặc định chỉ cung cấp architecture/target contract cho CMake và compile configuration.  
 > **Vị trí mã nguồn:** `examples/02-kernel-data-structures-host/main.c`  
 > **Mục đích:** Minh họa ready set và wait list bằng các node intrusive mà chưa cần tạo task thật hoặc chạy trên Cortex-M3.
 
@@ -37,6 +37,10 @@
 | Môi trường | Native host compiler |
 | Phần cứng | Không cần |
 | Internal API | Có chủ đích để học cấu trúc kernel |
+
+### Target và khả năng port
+
+Example chạy hoàn toàn trên host và không dùng board/driver. Khi thêm MCU mới, source của example không đổi; chỉ host test configuration có thể dùng target contract để compile phần stack-port tương ứng.
 
 ## 4. Luồng thực thi
 
@@ -75,10 +79,10 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=02-kernel-data-structures-host build` |
-| Chạy | `make EXAMPLE=02-kernel-data-structures-host run` |
-| Kiểm tra | `make EXAMPLE=02-kernel-data-structures-host check` |
-| Dọn build | `make EXAMPLE=02-kernel-data-structures-host clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host build` |
+| Chạy | `make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host check` |
+| Dọn build | `make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host clean` |
 
 Host example dùng compiler native do CMake phát hiện. Có thể đặt `CC=clang` hoặc cấu hình CMake host riêng khi cần so sánh compiler.
 
@@ -107,11 +111,11 @@ first-waiter: communication
 - Rotate không đổi node đầu: kiểm tra FIFO queue có ít nhất hai node cùng priority.
 - Sanitizer báo lỗi: kiểm tra double insertion/removal và owner pointer.
 
-Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
+Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=02-kernel-data-structures-host clean
-make EXAMPLE=02-kernel-data-structures-host build
+make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host clean
+make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -119,6 +123,8 @@ make EXAMPLE=02-kernel-data-structures-host build
 - Không tạo TCB thật.
 - Không mô phỏng Cortex-M3 exception frame.
 - Không chứng minh concurrency hoặc interrupt safety.
+
+- Example không kiểm chứng startup, interrupt, tick hoặc context switch của target mới; các phần đó phải được xác nhận bằng target examples.
 
 ## 10. Liên hệ với lộ trình
 

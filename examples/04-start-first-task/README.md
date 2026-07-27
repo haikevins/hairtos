@@ -1,6 +1,6 @@
 # `04-start-first-task` — Khởi chạy tác vụ đầu tiên bằng SVC
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/04-start-first-task/main.c`  
 > **Mục đích:** Chuyển từ `main()` chạy bằng MSP sang task đầu tiên chạy ở Thread mode bằng PSP thông qua SVC.
 
@@ -40,6 +40,10 @@
 | Cơ chế khởi chạy | SVC |
 | Ngăn xếp Thread mode | PSP |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. `hr_kernel_init()` tạo scheduler và idle task.
@@ -78,15 +82,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=04-start-first-task build` |
-| Flash và chạy | `make EXAMPLE=04-start-first-task run` |
-| Kiểm tra | `make EXAMPLE=04-start-first-task check` |
-| Dọn build riêng | `make EXAMPLE=04-start-first-task clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=04-start-first-task build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=04-start-first-task run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=04-start-first-task check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=04-start-first-task clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=04-start-first-task build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=04-start-first-task build
 ```
 
 ## 7. Kết quả mong đợi
@@ -122,8 +126,8 @@ first-task heartbeat=1
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=04-start-first-task clean
-make EXAMPLE=04-start-first-task build
+make TARGET=bluepill_f103c8 EXAMPLE=04-start-first-task clean
+make TARGET=bluepill_f103c8 EXAMPLE=04-start-first-task build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -131,6 +135,8 @@ make EXAMPLE=04-start-first-task build
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Chỉ một application task; chưa save context hiện tại để chuyển sang task khác.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

@@ -1,6 +1,6 @@
 # `13-04-time-event` — Sự kiện thời gian haievent
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/13-04-time-event/main.c`  
 > **Mục đích:** Periodic time event dựa trên software timer post `SIGNAL_TICK` vào AO; state handler chạy trong AO task.
 
@@ -40,6 +40,10 @@
 | Số event trước disarm | 6 |
 | Tín hiệu | `SIGNAL_TICK` |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Tạo AO và time event.
@@ -73,15 +77,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=13-04-time-event build` |
-| Flash và chạy | `make EXAMPLE=13-04-time-event run` |
-| Kiểm tra | `make EXAMPLE=13-04-time-event check` |
-| Dọn build riêng | `make EXAMPLE=13-04-time-event clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=13-04-time-event build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=13-04-time-event build
 ```
 
 ## 7. Kết quả mong đợi
@@ -115,8 +119,8 @@ Time event: PASS
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=13-04-time-event clean
-make EXAMPLE=13-04-time-event build
+make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event clean
+make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -124,6 +128,8 @@ make EXAMPLE=13-04-time-event build
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Không minh họa rearm hoặc đổi chu kỳ của time event; ví dụ software timer đã bao phủ thao tác đó.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

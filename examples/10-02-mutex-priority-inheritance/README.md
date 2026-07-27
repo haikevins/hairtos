@@ -1,6 +1,6 @@
 # `10-02-mutex-priority-inheritance` — Mutex và kế thừa ưu tiên
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/10-02-mutex-priority-inheritance/main.c`  
 > **Mục đích:** Tái tạo priority inversion High–Medium–Low và chứng minh mutex boost effective priority của owner thấp.
 
@@ -41,6 +41,10 @@
 | Thời điểm đánh thức Medium | Tick 20 |
 | Deadline công việc của Low | Tick 120 |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Low chạy đầu tiên và lock mutex.
@@ -79,15 +83,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=10-02-mutex-priority-inheritance build` |
-| Flash và chạy | `make EXAMPLE=10-02-mutex-priority-inheritance run` |
-| Kiểm tra | `make EXAMPLE=10-02-mutex-priority-inheritance check` |
-| Dọn build riêng | `make EXAMPLE=10-02-mutex-priority-inheritance clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=10-02-mutex-priority-inheritance build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=10-02-mutex-priority-inheritance run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=10-02-mutex-priority-inheritance check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=10-02-mutex-priority-inheritance clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=10-02-mutex-priority-inheritance build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=10-02-mutex-priority-inheritance build
 ```
 
 ## 7. Kết quả mong đợi
@@ -122,8 +126,8 @@ high: acquired at tick=<...> medium_work=<...> PASS
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=10-02-mutex-priority-inheritance clean
-make EXAMPLE=10-02-mutex-priority-inheritance build
+make TARGET=bluepill_f103c8 EXAMPLE=10-02-mutex-priority-inheritance clean
+make TARGET=bluepill_f103c8 EXAMPLE=10-02-mutex-priority-inheritance build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -132,6 +136,8 @@ make EXAMPLE=10-02-mutex-priority-inheritance build
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Deadlock detection không thuộc example.
 - Chained inheritance có unit test nhưng scenario target này chỉ dùng một mutex.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

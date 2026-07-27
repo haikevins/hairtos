@@ -1,86 +1,85 @@
 # Các ví dụ của hairtos
 
-Thư mục `examples/` chứa các bài thực hành theo thứ tự phát triển từ nền tảng bare-metal đến diagnostics/stress tích hợp. Mỗi thư mục có một `main.c` độc lập và một README dùng chung bố cục 10 mục:
+## 1. Mục đích
 
-1. Mục tiêu học tập.
-2. Kiến thức trọng tâm.
-3. Thành phần và cấu hình.
-4. Luồng thực thi.
-5. API và mã nguồn liên quan.
-6. Biên dịch, chạy và kiểm tra.
-7. Kết quả mong đợi.
-8. Tiêu chí PASS và xử lý lỗi.
-9. Giới hạn của ví dụ.
-10. Liên hệ với lộ trình.
+`examples/` là lộ trình thực hành từ nền tảng bare-metal đến kernel tích hợp, benchmark và diagnostics. Mỗi thư mục có `main.c` và README theo cùng bố cục mười phần.
 
-## Quy ước môi trường
+## 2. Quy ước môi trường
 
-- **Host:** chạy chương trình native trên máy phát triển; không flash STM32.
-- **Target:** biên dịch chéo và chạy trên STM32F103C8T6 Blue Pill.
-- **Host + Target:** phải chọn `ENVIRONMENT=host` hoặc `ENVIRONMENT=target` để chỉ rõ môi trường.
-- `run` trên host chạy file thực thi; `run` trên target biên dịch, flash, xác minh và reset qua OpenOCD.
+- **Host-only:** chạy bằng compiler native và sanitizer; không cần board.
+- **Target-only:** cross-build cho target manifest được chọn và chạy trên MCU.
+- **Dual:** cùng một chủ đề có biến thể host và target.
 
-## Lệnh chung
+CMake tự suy luận môi trường khi example chỉ hỗ trợ một loại. Với dual example, nên ghi rõ `ENVIRONMENT=host` hoặc `ENVIRONMENT=target`.
+
+## 3. Quy ước target
 
 ```bash
-make help
-make list-examples
-make EXAMPLE=<name> build
-make EXAMPLE=<name> run
-make EXAMPLE=<name> check
-make EXAMPLE=<name> clean
-make host-tests
-make clean-all
+make list-targets
+make TARGET=<target> EXAMPLE=<name> build
 ```
 
-Với example hỗ trợ hai môi trường:
+Target mặc định là `bluepill_f103c8`. Các chi tiết như clock, UART, LED, marker, startup, linker script và OpenOCD được lấy từ target manifest/board implementation; chúng không phải contract chung cho mọi MCU.
+
+## 4. Lệnh chung
 
 ```bash
-make ENVIRONMENT=host   EXAMPLE=14-memory-allocator-lab run
-make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run
+make TARGET=bluepill_f103c8 EXAMPLE=<name> build
+make TARGET=bluepill_f103c8 EXAMPLE=<name> run
+make TARGET=bluepill_f103c8 EXAMPLE=<name> check
+make TARGET=bluepill_f103c8 EXAMPLE=<name> clean
+make TARGET=bluepill_f103c8 EXAMPLE=<name> intellisense
 ```
 
-## Phần cứng chung cho target
+Dual example:
 
-| Thành phần | Kết nối / cấu hình |
-|---|---|
-| Board | STM32F103C8T6 Blue Pill |
-| Debugger | ST-Link V2: SWDIO, SWCLK, GND, 3.3 V reference |
-| UART log | USART1 PA9 TX → USB-UART RX, PA10 RX ← USB-UART TX, GND chung |
-| Terminal | 115200 baud, 8 data bits, no parity, 1 stop bit |
-| LED | PC13, active-low |
+```bash
+make TARGET=bluepill_f103c8 ENVIRONMENT=host   EXAMPLE=<name> run
+make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=<name> run
+```
 
-## Danh sách ví dụ
+## 5. Danh sách ví dụ
 
-| Ví dụ | Môi trường | Nội dung | Lệnh chạy chính |
-| --- | --- | --- | --- |
-| [`01-baremetal-foundation`](01-baremetal-foundation/README.md) | Target | Nền tảng bare-metal | `make EXAMPLE=01-baremetal-foundation run` |
-| [`02-kernel-data-structures-host`](02-kernel-data-structures-host/README.md) | Host | Cấu trúc dữ liệu kernel — Demo trên host | `make EXAMPLE=02-kernel-data-structures-host run` |
-| [`03-static-task-stack`](03-static-task-stack/README.md) | Target | TCB tĩnh và ngăn xếp khởi tạo của tác vụ | `make EXAMPLE=03-static-task-stack run` |
-| [`04-start-first-task`](04-start-first-task/README.md) | Target | Khởi chạy tác vụ đầu tiên bằng SVC | `make EXAMPLE=04-start-first-task run` |
-| [`05-cooperative-context-switch`](05-cooperative-context-switch/README.md) | Target | Chuyển ngữ cảnh hợp tác | `make EXAMPLE=05-cooperative-context-switch run` |
-| [`06-priority-scheduler`](06-priority-scheduler/README.md) | Target | Bộ lập lịch ưu tiên cố định | `make EXAMPLE=06-priority-scheduler run` |
-| [`07-task-delay-timeout`](07-task-delay-timeout/README.md) | Target | SysTick, trì hoãn tác vụ và timeout | `make EXAMPLE=07-task-delay-timeout run` |
-| [`08-preemption-round-robin`](08-preemption-round-robin/README.md) | Target | Chiếm quyền và Round-Robin | `make EXAMPLE=08-preemption-round-robin run` |
-| [`09-queue-blocking-ipc`](09-queue-blocking-ipc/README.md) | Target | Queue và IPC chặn | `make EXAMPLE=09-queue-blocking-ipc run` |
-| [`10-01-semaphore-from-isr`](10-01-semaphore-from-isr/README.md) | Target | Trao semaphore từ ISR | `make EXAMPLE=10-01-semaphore-from-isr run` |
-| [`10-02-mutex-priority-inheritance`](10-02-mutex-priority-inheritance/README.md) | Target | Mutex và kế thừa ưu tiên | `make EXAMPLE=10-02-mutex-priority-inheritance run` |
-| [`11-task-suspend-resume`](11-task-suspend-resume/README.md) | Target | Tạm dừng và tiếp tục tác vụ | `make EXAMPLE=11-task-suspend-resume run` |
-| [`12-software-timer`](12-software-timer/README.md) | Target | Dịch vụ bộ định thời phần mềm | `make EXAMPLE=12-software-timer run` |
-| [`13-01-event-post`](13-01-event-post/README.md) | Target | Đăng sự kiện haievent từ ISR | `make EXAMPLE=13-01-event-post run` |
-| [`13-02-active-object`](13-02-active-object/README.md) | Target | Active Object Ping–Pong | `make EXAMPLE=13-02-active-object run` |
-| [`13-03-flat-state-machine`](13-03-flat-state-machine/README.md) | Target | Máy trạng thái phẳng | `make EXAMPLE=13-03-flat-state-machine run` |
-| [`13-04-time-event`](13-04-time-event/README.md) | Target | Sự kiện thời gian haievent | `make EXAMPLE=13-04-time-event run` |
-| [`13-05-publish-subscribe`](13-05-publish-subscribe/README.md) | Target | Publish–Subscribe và quyền sở hữu sự kiện động | `make EXAMPLE=13-05-publish-subscribe run` |
-| [`13-06-event-driven-demo`](13-06-event-driven-demo/README.md) | Target | Demo haievent tích hợp | `make EXAMPLE=13-06-event-driven-demo run` |
-| [`14-memory-allocator-lab`](14-memory-allocator-lab/README.md) | Host + Target | Bài thực hành bộ cấp phát bộ nhớ | `make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run` |
-| [`15-kernel-benchmark`](15-kernel-benchmark/README.md) | Target | Benchmark kernel | `make EXAMPLE=15-kernel-benchmark run` |
-| [`16-diagnostics-stress-stabilization`](16-diagnostics-stress-stabilization/README.md) | Host + Target | Chẩn đoán và ổn định bằng stress test | `make ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-stabilization run` |
+| Example | Môi trường | Nội dung chính |
+| --- | --- | --- |
+| [`01-baremetal-foundation`](01-baremetal-foundation/README.md) | Target | Board clock, GPIO, UART và bare-metal tick |
+| [`02-kernel-data-structures-host`](02-kernel-data-structures-host/README.md) | Host | Intrusive list, ready set và wait list |
+| [`03-static-task-stack`](03-static-task-stack/README.md) | Target | TCB tĩnh và initial stack frame |
+| [`04-start-first-task`](04-start-first-task/README.md) | Target | Khởi chạy task đầu tiên qua port |
+| [`05-cooperative-context-switch`](05-cooperative-context-switch/README.md) | Target | Yield và context switch hợp tác |
+| [`06-priority-scheduler`](06-priority-scheduler/README.md) | Target | Fixed-priority scheduler |
+| [`07-task-delay-timeout`](07-task-delay-timeout/README.md) | Target | Tick, delay và timeout |
+| [`08-preemption-round-robin`](08-preemption-round-robin/README.md) | Target | Preemption và time slicing |
+| [`09-queue-blocking-ipc`](09-queue-blocking-ipc/README.md) | Target | Queue và blocking IPC |
+| [`10-01-semaphore-from-isr`](10-01-semaphore-from-isr/README.md) | Target | Semaphore wakeup từ ISR |
+| [`10-02-mutex-priority-inheritance`](10-02-mutex-priority-inheritance/README.md) | Target | Mutex và priority inheritance |
+| [`11-task-suspend-resume`](11-task-suspend-resume/README.md) | Target | Suspend/resume task |
+| [`12-software-timer`](12-software-timer/README.md) | Target | Software timer service |
+| [`13-01-event-post`](13-01-event-post/README.md) | Target | Event posting |
+| [`13-02-active-object`](13-02-active-object/README.md) | Target | Active Object |
+| [`13-03-flat-state-machine`](13-03-flat-state-machine/README.md) | Target | Flat state machine |
+| [`13-04-time-event`](13-04-time-event/README.md) | Target | Time event |
+| [`13-05-publish-subscribe`](13-05-publish-subscribe/README.md) | Target | Publish/subscribe |
+| [`13-06-event-driven-demo`](13-06-event-driven-demo/README.md) | Target | Demo `haievent` tích hợp |
+| [`14-memory-allocator-lab`](14-memory-allocator-lab/README.md) | Host + Target | Fixed pool và first-fit heap |
+| [`15-kernel-benchmark`](15-kernel-benchmark/README.md) | Target | Benchmark backend và footprint |
+| [`16-diagnostics-stress-stabilization`](16-diagnostics-stress-stabilization/README.md) | Host + Target | Diagnostics, fault và scheduler stress |
 
-## Cách đọc kết quả
+## 6. Trình tự dùng khi port target mới
 
-- Một target **biên dịch PASS** chưa chứng minh runtime trên bo mạch PASS.
-- Dòng `PASS` trong UART là checkpoint do chính example kiểm tra các invariant chính.
-- Giá trị tick/counter có thể khác đôi chút; thứ tự sự kiện và quan hệ priority mới là tiêu chí quan trọng.
-- Khi có `board_panic()`, giữ lại UART log, map file và fault record trước khi thay đổi code.
-- Kiểm thử host với ASan/UBSan bổ sung kiểm tra bộ nhớ và bất biến, nhưng không thay thế kiểm thử timing trên Cortex-M3.
+1. Example 01: clock, board, UART, GPIO và tick bare-metal.
+2. Example 03: initial stack frame.
+3. Example 04–06: first task và context switch.
+4. Example 07–08: tick, preemption và round-robin.
+5. Example 09–12: IPC và timer.
+6. Example 13: framework event-driven.
+7. Example 15: benchmark clock/marker/footprint.
+8. Example 16: diagnostics, fault retention và soak workload.
+
+## 7. Cách đọc kết quả
+
+- Output trong README là mẫu, không phải giá trị timing cố định.
+- Pin/clock/CPU name thay đổi theo target.
+- Build PASS chỉ xác nhận compile/link.
+- Runtime PASS cần UART/LED/debugger hoặc measurement trên board.
+- Host sanitizer PASS không chứng minh exception/context backend của target.

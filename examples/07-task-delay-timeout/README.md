@@ -1,6 +1,6 @@
 # `07-task-delay-timeout` — SysTick, trì hoãn tác vụ và timeout
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/07-task-delay-timeout/main.c`  
 > **Mục đích:** SysTick trở thành kernel tick 1 kHz; task delay chuyển sang BLOCKED và được đánh thức từ timeout list.
 
@@ -41,6 +41,10 @@
 | Chu kỳ heartbeat | 1000 ticks |
 | Preemption/time slicing | Tắt trong cấu hình example |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Periodic task chạy và lưu release tick.
@@ -75,15 +79,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=07-task-delay-timeout build` |
-| Flash và chạy | `make EXAMPLE=07-task-delay-timeout run` |
-| Kiểm tra | `make EXAMPLE=07-task-delay-timeout check` |
-| Dọn build riêng | `make EXAMPLE=07-task-delay-timeout clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=07-task-delay-timeout build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=07-task-delay-timeout build
 ```
 
 ## 7. Kết quả mong đợi
@@ -116,8 +120,8 @@ heartbeat activation=2 tick=1000 -> delay 1000
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=07-task-delay-timeout clean
-make EXAMPLE=07-task-delay-timeout build
+make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout clean
+make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -126,6 +130,8 @@ make EXAMPLE=07-task-delay-timeout build
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Chưa chứng minh CPU-bound tasks cùng priority được time slice.
 - Chưa preempt general low task khi high task thức dậy trong mọi trường hợp.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

@@ -1,6 +1,6 @@
 # `12-software-timer` — Dịch vụ bộ định thời phần mềm
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/12-software-timer/main.c`  
 > **Mục đích:** One-shot và periodic software timer được quản lý bằng kernel tick; callback chạy trong timer-service task context.
 
@@ -42,6 +42,10 @@
 | One-shot | 1000 ticks |
 | Đối số one-shot | 120012 |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Control task start cả hai timer.
@@ -80,15 +84,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=12-software-timer build` |
-| Flash và chạy | `make EXAMPLE=12-software-timer run` |
-| Kiểm tra | `make EXAMPLE=12-software-timer check` |
-| Dọn build riêng | `make EXAMPLE=12-software-timer clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=12-software-timer build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=12-software-timer run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=12-software-timer check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=12-software-timer clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=12-software-timer build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=12-software-timer build
 ```
 
 ## 7. Kết quả mong đợi
@@ -122,8 +126,8 @@ Software timer service: PASS
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=12-software-timer clean
-make EXAMPLE=12-software-timer build
+make TARGET=bluepill_f103c8 EXAMPLE=12-software-timer clean
+make TARGET=bluepill_f103c8 EXAMPLE=12-software-timer build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -131,6 +135,8 @@ make EXAMPLE=12-software-timer build
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Không có timer command API từ ISR trong example.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

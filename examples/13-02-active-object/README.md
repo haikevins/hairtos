@@ -1,6 +1,6 @@
 # `13-02-active-object` — Active Object Ping–Pong
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/13-02-active-object/main.c`  
 > **Mục đích:** Hai Active Object sở hữu task/queue/state riêng và trao đổi PING/PONG bằng static events.
 
@@ -40,6 +40,10 @@
 | Event memory | Static |
 | Dispatch | Run-to-completion |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. Kernel start tạo hai AO tasks.
@@ -73,15 +77,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=13-02-active-object build` |
-| Flash và chạy | `make EXAMPLE=13-02-active-object run` |
-| Kiểm tra | `make EXAMPLE=13-02-active-object check` |
-| Dọn build riêng | `make EXAMPLE=13-02-active-object clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=13-02-active-object build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=13-02-active-object run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=13-02-active-object check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=13-02-active-object clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=13-02-active-object build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=13-02-active-object build
 ```
 
 ## 7. Kết quả mong đợi
@@ -115,8 +119,8 @@ ping-AO: handled event count=2
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=13-02-active-object clean
-make EXAMPLE=13-02-active-object build
+make TARGET=bluepill_f103c8 EXAMPLE=13-02-active-object clean
+make TARGET=bluepill_f103c8 EXAMPLE=13-02-active-object build
 ```
 
 ## 9. Giới hạn của ví dụ
@@ -124,6 +128,8 @@ make EXAMPLE=13-02-active-object build
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
 - Demo ping-pong không có delay sau kickoff nên UART traffic cao; đây không phải pattern production tối ưu.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

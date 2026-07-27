@@ -1,6 +1,6 @@
 # `01-baremetal-foundation` — Nền tảng bare-metal
 
-> **Môi trường:** Target — STM32F103C8T6  
+> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
 > **Vị trí mã nguồn:** `examples/01-baremetal-foundation/main.c`  
 > **Mục đích:** Thiết lập nền tảng bare-metal trước khi đưa kernel vào hệ thống: clock, GPIO, UART, SysTick tạm thời và vòng lặp chính.
 
@@ -9,7 +9,7 @@
 - Khởi tạo Blue Pill và xác nhận clock hệ thống hoạt động.
 - Điều khiển LED PC13 bằng API board.
 - Gửi log qua USART1 và theo dõi thời gian bằng bộ đếm millisecond bare-metal.
-- Hiểu vòng lặp super-loop và giới hạn của busy-wait trước khi có scheduler.
+- Hiểu vòng lặp super-loop và giới hạn của blocking delay trước khi có scheduler.
 
 ## 2. Kiến thức trọng tâm
 
@@ -29,7 +29,7 @@
 | UART | USART1, PA9 TX / PA10 RX, 115200 8-N-1 | Theo dõi log và trạng thái PASS/FAIL. |
 | LED | PC13, active-low | Hiển thị heartbeat hoặc trạng thái quan sát. |
 | Main loop | `heartbeat` và `board_millis()` | Toggle LED, tăng bộ đếm và delay 500 ms. |
-| Tick source | `drivers/common/hr_systick_baremetal_irq.c` | Cung cấp millisecond counter trước khi SysTick thuộc quyền kernel. |
+| Tick source | `arch/arm/cortex-m3/hr_baremetal_tick_irq.c` | Cung cấp millisecond counter trước khi tick IRQ adapter thuộc architecture port. |
 
 ### Tham số quan trọng
 
@@ -39,12 +39,16 @@
 | Clock mục tiêu | 72 MHz khi HSE hoạt động |
 | Kernel | Không sử dụng |
 
+### Target và khả năng port
+
+Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
+
 ## 4. Luồng thực thi
 
 1. `board_init()` cấu hình clock, GPIO, UART và tick bare-metal.
 2. Vòng lặp toggle LED PC13.
 3. Tăng `heartbeat` và in cùng `board_millis()`.
-4. `board_delay_ms(500)` tạo khoảng chờ bận.
+4. `board_delay_ms(500)` chờ theo tick/WFI của board implementation.
 5. Quay lại đầu vòng lặp.
 
 ## 5. API và mã nguồn liên quan
@@ -72,15 +76,15 @@ Chạy các lệnh từ thư mục gốc chứa `Makefile`:
 
 | Thao tác | Lệnh |
 | --- | --- |
-| Biên dịch | `make EXAMPLE=01-baremetal-foundation build` |
-| Flash và chạy | `make EXAMPLE=01-baremetal-foundation run` |
-| Kiểm tra | `make EXAMPLE=01-baremetal-foundation check` |
-| Dọn build riêng | `make EXAMPLE=01-baremetal-foundation clean` |
+| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation build` |
+| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation run` |
+| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation check` |
+| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation clean` |
 
 Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
 
 ```bash
-make TOOLCHAIN=clang EXAMPLE=01-baremetal-foundation build
+make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=01-baremetal-foundation build
 ```
 
 ## 7. Kết quả mong đợi
@@ -112,15 +116,17 @@ heartbeat=3 uptime_ms=1000
 Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
 
 ```bash
-make EXAMPLE=01-baremetal-foundation clean
-make EXAMPLE=01-baremetal-foundation build
+make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation clean
+make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation build
 ```
 
 ## 9. Giới hạn của ví dụ
 
 - Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
 - UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
-- Delay vẫn là busy-wait; CPU không thể chạy công việc khác trong thời gian chờ.
+- Delay bare-metal dùng tick/WFI theo board implementation; vẫn không có scheduler để chạy task khác.
+
+- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
 
 ## 10. Liên hệ với lộ trình
 

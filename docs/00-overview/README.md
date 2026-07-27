@@ -1,16 +1,26 @@
 # 00 — Tổng quan
 
-Nhóm này trả lời các câu hỏi: hairtos là gì, các lớp phụ thuộc ra sao, source được tổ chức thế nào, cấu hình nào điều khiển hành vi và quy tắc code nào phải được giữ khi mở rộng.
+## 1. Mục tiêu
 
-## Thứ tự đọc
+Nhóm tài liệu này thiết lập phạm vi của project, dependency rules, cấu hình, coding standard, repository layout và roadmap.
 
-1. [architecture.md](architecture.md)
-2. [project-layout.md](project-layout.md)
-3. [configuration.md](configuration.md)
-4. [dependency-rules.md](dependency-rules.md)
-5. [coding-standard.md](coding-standard.md)
-6. [roadmap.md](roadmap.md)
+## 2. Nội dung
 
-## Bố cục chung
+- [architecture.md](architecture.md)
+- [dependency-rules.md](dependency-rules.md)
+- [project-layout.md](project-layout.md)
+- [configuration.md](configuration.md)
+- [coding-standard.md](coding-standard.md)
+- [roadmap.md](roadmap.md)
 
-Mỗi tài liệu gồm: mục tiêu, quyết định thiết kế, cấu trúc/luồng, quy tắc bắt buộc, liên hệ source và giới hạn.
+## 3. Thứ tự đọc
+
+Đọc `architecture.md` và `dependency-rules.md` trước; sau đó xem `project-layout.md` và `configuration.md`. `coding-standard.md` áp dụng khi chỉnh source, còn `roadmap.md` mô tả hướng phát triển.
+
+## 4. Liên hệ với portability
+
+Target manifest không làm thay đổi dependency direction. Kernel/framework không được phụ thuộc ngược vào `arch/`, `soc/`, `boards/` hoặc driver implementation. CMake chỉ binding các layer tại build time.
+
+## 5. Kiểm tra
+
+Khi thêm target mới, xác nhận layout, target discovery và include boundary vẫn đúng; application không được nhận internal include ngoài các example có chủ đích.

@@ -1,44 +1,46 @@
 # Tài liệu hairtos
 
-Tài liệu này mô tả **hairtos mainline** trên STM32F103C8T6/Cortex-M3. Đây là tài liệu của sản phẩm hiện hành, không phải gói tài liệu riêng cho một phase. Bộ tài liệu được tổ chức theo subsystem và chỉ giữ những nội dung cần để hiểu kiến trúc, sử dụng API, kiểm thử và bảo trì project.
+## 1. Mục đích
 
-## Cách đọc đề xuất
+Thư mục `docs/` mô tả kiến trúc, contract, API, kiểm thử, example và quy trình port của `hairtos`. Tài liệu được tổ chức theo dependency từ tổng quan đến platform-specific implementation.
 
-1. Đọc `00-overview/` để nắm kiến trúc, layout và cấu hình.
-2. Đọc `01-kernel-core/` theo thứ tự từ lifecycle đến interrupt model.
-3. Đọc `02-synchronization/` khi sử dụng queue, semaphore, mutex hoặc timer.
-4. Đọc `03-haievent/` nếu xây dựng ứng dụng event-driven.
-5. Dùng `05-api-reference/` như tài liệu tra cứu khi viết code.
-6. Dùng `06-testing-and-quality/` trước khi thay đổi kernel hoặc phát hành.
-7. Dùng `07-labs-and-examples/` để chọn đúng bài host hoặc target.
+## 2. Cách đọc đề xuất
 
-## Cấu trúc
+1. [`00-overview/`](00-overview/README.md): mục tiêu, dependency, cấu hình và roadmap.
+2. [`01-kernel-core/`](01-kernel-core/README.md): task, scheduler, context, time và memory model.
+3. [`02-synchronization/`](02-synchronization/README.md): queue, semaphore, mutex, timer và suspend/resume.
+4. [`03-haievent/`](03-haievent/README.md): event, state machine, Active Object và publish/subscribe.
+5. [`04-platform/`](04-platform/README.md): architecture port, SoC, board, driver, startup/linker và target manifest.
+6. [`05-api-reference/`](05-api-reference/README.md): public API.
+7. [`06-testing-and-quality/`](06-testing-and-quality/README.md): test, diagnostics, stress và benchmark.
+8. [`07-labs-and-examples/`](07-labs-and-examples/README.md): lộ trình thực hành.
+9. [`08-appendices/`](08-appendices/README.md): glossary và source map.
 
-| Thư mục | Nội dung |
-|---|---|
-| `00-overview/` | Kiến trúc, layout, cấu hình, coding standard và roadmap |
-| `01-kernel-core/` | TCB, scheduler, SVC/PendSV, SysTick, timeout và interrupt |
-| `02-synchronization/` | Queue, semaphore, mutex, suspend/resume và software timer |
-| `03-haievent/` | Event model, state machine, Active Object, time event và pub/sub |
-| `04-platform/` | Cortex-M3 port, STM32F1, startup, linker, driver và porting |
-| `05-api-reference/` | API public của hairtos và haievent |
-| `06-testing-and-quality/` | Testing, diagnostics, stress, benchmark, hygiene và release |
-| `07-labs-and-examples/` | Danh mục example, allocator lab và cách chạy host/target |
-| `08-appendices/` | Glossary và source map |
+## 3. Quy ước kiến trúc
 
-## Quy ước
+- `kernel/` và `haievent/` là phần generic.
+- `arch/` chứa CPU/ISA exception và context contract.
+- `soc/` chứa register, startup và clock/IRQ support.
+- `boards/` chứa board service, pin mapping và linker script.
+- `drivers/` chia public API và implementation theo SoC.
+- `cmake/targets/<target>.cmake` là binding duy nhất giữa build và phần cứng.
 
-- Tên API, macro, register và symbol giữ nguyên tiếng Anh.
-- Priority số nhỏ hơn có mức ưu tiên cao hơn.
-- `Host` là chương trình chạy bằng compiler native trên máy phát triển.
-- `Target` là firmware cross-compile cho STM32F103/Cortex-M3.
-- Build target chỉ xác nhận compile/link/ABI; runtime cần flash lên phần cứng.
-- Số liệu benchmark chỉ so sánh được khi giữ cùng board, clock, compiler và cấu hình.
+## 4. Quy ước tài liệu
 
-## Tài liệu đã loại khỏi bản rút gọn
+- API, macro, file path và command được giữ nguyên bằng tiếng Anh kỹ thuật.
+- Priority 0 là mức ưu tiên cao nhất.
+- Tick mặc định là 1 kHz ở target tham chiếu nhưng backend do target quyết định.
+- Build thành công không đồng nghĩa runtime đã được xác nhận trên hardware.
+- Các ví dụ target mặc định dùng `TARGET=bluepill_f103c8`.
 
-- Nhật ký riêng cho từng Phase 0–16: roadmap và source hiện hành đã thay thế.
-- Tài liệu migration từ cấu trúc docs cũ.
-- Cortex-M0 compile proof và requirements coverage: chỉ là phụ lục tùy chọn.
-- Tài liệu benchmark lab riêng: đã được gộp vào kernel benchmark và example index.
-- Tài liệu host-vs-target riêng: đã được gộp vào example index.
+## 5. Tài liệu port quan trọng
+
+- [`04-platform/porting-new-target.md`](04-platform/porting-new-target.md)
+- [`04-platform/cortex-m3-port.md`](04-platform/cortex-m3-port.md)
+- [`04-platform/startup-and-linker.md`](04-platform/startup-and-linker.md)
+- [`04-platform/drivers.md`](04-platform/drivers.md)
+- [`00-overview/dependency-rules.md`](00-overview/dependency-rules.md)
+
+## 6. Kiểm tra tài liệu
+
+Khi đổi target, API hoặc module mapping, cần cập nhật README tương ứng, tài liệu platform/API và example liên quan. Relative Markdown links phải tiếp tục phân giải được trong repository.

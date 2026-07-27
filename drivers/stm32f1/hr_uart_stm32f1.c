@@ -1,31 +1,54 @@
+
 #include "hr_uart.h"
+#include "hr_uart_stm32f1.h"
 #include "hr_gpio.h"
 #include "stm32f1.h"
 
-#define UART1_TX_PIN 9UL
-#define UART1_RX_PIN 10UL
-
-void hr_uart_init(uint32_t baud_rate, uint32_t peripheral_clock_hz)
+bool hr_uart_init(const hr_uart_config_t *config)
 {
-    if ((baud_rate == 0UL) || (peripheral_clock_hz == 0UL))
+    static const hr_gpio_config_t tx_config =
     {
-        return;
+        .mode = HR_GPIO_MODE_ALTERNATE_PUSH_PULL,
+        .pull = HR_GPIO_PULL_NONE,
+        .drive = HR_GPIO_DRIVE_HIGH
+    };
+    static const hr_gpio_config_t rx_config =
+    {
+        .mode = HR_GPIO_MODE_INPUT,
+        .pull = HR_GPIO_PULL_NONE,
+        .drive = HR_GPIO_DRIVE_LOW
+    };
+    uint32_t peripheral_clock_hz;
+
+    if ((config == (const hr_uart_config_t *)0) ||
+        (config->instance != HR_STM32F1_UART1) ||
+        (config->baud_rate == 0UL))
+    {
+        return false;
     }
 
-    STM32F1_RCC->APB2ENR |= RCC_APB2ENR_AFIOEN |
-                            RCC_APB2ENR_IOPAEN |
-                            RCC_APB2ENR_USART1EN;
+    STM32F1_RCC->APB2ENR |= RCC_APB2ENR_AFIOEN | RCC_APB2ENR_USART1EN;
 
-    hr_gpio_config_alternate_push_pull(HR_GPIO_PORT_A,
-                                       UART1_TX_PIN,
-                                       HR_GPIO_SPEED_50MHZ);
-    hr_gpio_config_input_floating(HR_GPIO_PORT_A, UART1_RX_PIN);
+    if (!hr_gpio_configure(config->tx_pin, &tx_config) ||
+        !hr_gpio_configure(config->rx_pin, &rx_config))
+    {
+        return false;
+    }
+
+    peripheral_clock_hz = stm32f1_clock_get_pclk2_hz();
+    if (peripheral_clock_hz == 0UL)
+    {
+        return false;
+    }
 
     STM32F1_USART1->CR1 = 0UL;
     STM32F1_USART1->CR2 = 0UL;
     STM32F1_USART1->CR3 = 0UL;
-    STM32F1_USART1->BRR = (peripheral_clock_hz + (baud_rate / 2UL)) / baud_rate;
+    STM32F1_USART1->BRR =
+        (peripheral_clock_hz + (config->baud_rate / 2UL)) /
+        config->baud_rate;
     STM32F1_USART1->CR1 = USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
+    return true;
 }
 
 void hr_uart_write_char(char character)

@@ -8,6 +8,8 @@ MEMORY
 
 _Min_Heap_Size = 0x000;
 _Min_Stack_Size = 0x400;
+__flash_start__ = ORIGIN(FLASH);
+__ram_start__ = ORIGIN(RAM);
 _estack = ORIGIN(RAM) + LENGTH(RAM);
 _sstack = _estack - _Min_Stack_Size;
 
@@ -46,6 +48,7 @@ SECTIONS
     } > FLASH
 
     _sidata = LOADADDR(.data);
+    __flash_image_end__ = LOADADDR(.data) + SIZEOF(.data);
 
     .data :
     {
@@ -68,6 +71,7 @@ SECTIONS
         . = ALIGN(4);
         _ebss = .;
         __bss_end__ = .;
+        __static_ram_end__ = .;
     } > RAM
 
     .noinit (NOLOAD) :

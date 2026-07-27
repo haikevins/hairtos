@@ -1,0 +1,6 @@
+include("${CMAKE_CURRENT_LIST_DIR}/hairtos_targets.cmake")
+execute_process(COMMAND "${CMAKE_COMMAND}" -E echo "Supported hairtos targets:")
+foreach(_target IN LISTS HAIRTOS_SUPPORTED_TARGETS)
+    include("${CMAKE_CURRENT_LIST_DIR}/targets/${_target}.cmake")
+    execute_process(COMMAND "${CMAKE_COMMAND}" -E echo "  ${_target} - ${HAIRTOS_TARGET_DESCRIPTION}")
+endforeach()

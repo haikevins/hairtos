@@ -1,0 +1,56 @@
+# Copy this file to cmake/targets/<target>.cmake and add <target> to
+# HAIRTOS_SUPPORTED_TARGETS in cmake/hairtos_targets.cmake.
+
+set(HAIRTOS_TARGET_MANIFEST_VERSION 1)
+set(HAIRTOS_TARGET_NAME "replace_me")
+set(HAIRTOS_TARGET_DESCRIPTION "Board / MCU / architecture")
+set(HAIRTOS_TARGET_ARCH "architecture")
+set(HAIRTOS_TARGET_SOC "soc")
+set(HAIRTOS_TARGET_BOARD "board")
+
+set(HAIRTOS_TARGET_CPU_FLAGS
+    -mcpu=<cpu>
+    -mthumb)
+
+set(HAIRTOS_TARGET_COMPILE_DEFINITIONS
+    <device-definition>)
+
+set(HAIRTOS_TARGET_PUBLIC_INCLUDES
+    soc/<soc>/include
+    boards/<board>/include
+    drivers/<soc>/include
+    arch/<architecture>/include)
+
+set(HAIRTOS_TARGET_PLATFORM_C
+    soc/<soc>/system.c
+    boards/<board>/board.c
+    drivers/<soc>/hr_gpio_<soc>.c
+    drivers/<soc>/hr_uart_<soc>.c
+    drivers/<soc>/hr_hw_timer_<soc>.c)
+set(HAIRTOS_TARGET_PLATFORM_ASM
+    soc/<soc>/startup.S)
+
+set(HAIRTOS_TARGET_PORT_C
+    arch/<architecture>/hr_port.c
+    arch/<architecture>/hr_port_stack.c)
+set(HAIRTOS_TARGET_PORT_STACK_C
+    arch/<architecture>/hr_port_stack.c)
+set(HAIRTOS_TARGET_PORT_ASM
+    arch/<architecture>/hr_portasm.S)
+set(HAIRTOS_TARGET_KERNEL_TICK_C
+    arch/<architecture>/hr_kernel_tick_irq.c)
+set(HAIRTOS_TARGET_BAREMETAL_TICK_C
+    arch/<architecture>/<baremetal-tick-adapter>.c)
+set(HAIRTOS_TARGET_FAULT_C
+    arch/<architecture>/hr_fault.c)
+set(HAIRTOS_TARGET_FAULT_ASM
+    arch/<architecture>/hr_faultasm.S)
+set(HAIRTOS_TARGET_BENCHMARK_CLOCK_C
+    arch/<architecture>/<benchmark-clock>.c)
+
+set(HAIRTOS_TARGET_LINKER_SCRIPT
+    boards/<board>/<linker-script>.ld)
+set(HAIRTOS_TARGET_OPENOCD_CONFIG
+    tools/openocd/<board>.cfg)
+set(HAIRTOS_TARGET_OPENOCD_ERASE_COMMAND
+    "<openocd erase command>")

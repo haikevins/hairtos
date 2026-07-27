@@ -35,9 +35,7 @@ uint32_t hr_benchmark_cycles_to_nanoseconds(uint32_t cycles,
 bool hr_benchmark_clock_init(uint32_t core_clock_hz);
 uint32_t hr_benchmark_clock_now(void);
 uint32_t hr_benchmark_clock_frequency_hz(void);
+const char *hr_benchmark_clock_name(void);
 
-void hr_benchmark_gpio_init(void);
-void hr_benchmark_gpio_mark_begin(void);
-void hr_benchmark_gpio_mark_end(void);
 
 #endif /* HR_BENCHMARK_H */

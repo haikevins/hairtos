@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.20)
 project(hairtos LANGUAGES C ASM)
 
@@ -6,18 +7,26 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+include(cmake/hairtos_targets.cmake)
 include(cmake/hairtos_examples.cmake)
-include(cmake/hairtos_modules.cmake)
 
 set(HAIRTOS_ENVIRONMENT "target" CACHE STRING "Build environment: auto, host or target")
 set_property(CACHE HAIRTOS_ENVIRONMENT PROPERTY STRINGS auto host target)
+set(HAIRTOS_TARGET "${HAIRTOS_DEFAULT_TARGET}" CACHE STRING "Hardware target")
+set_property(CACHE HAIRTOS_TARGET PROPERTY STRINGS ${HAIRTOS_SUPPORTED_TARGETS})
 set(HAIRTOS_EXAMPLE "${HAIRTOS_DEFAULT_EXAMPLE}" CACHE STRING "Example name")
 set(HAIRTOS_BUILD_TESTS OFF CACHE BOOL "Build native host tests")
 set(HAIRTOS_EXTRA_C_FLAGS "" CACHE STRING "Additional compiler flags")
 
+hairtos_validate_target("${HAIRTOS_TARGET}")
+include(cmake/targets/${HAIRTOS_TARGET}.cmake)
+hairtos_validate_target_manifest()
+include(cmake/hairtos_modules.cmake)
+
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" HAIRTOS_VERSION_RAW)
 string(STRIP "${HAIRTOS_VERSION_RAW}" HAIRTOS_VERSION)
 message(STATUS "hairtos version: ${HAIRTOS_VERSION}")
+message(STATUS "hairtos target: ${HAIRTOS_TARGET} (${HAIRTOS_TARGET_DESCRIPTION})")
 
 if(HAIRTOS_ENVIRONMENT STREQUAL "auto")
     list(FIND HAIRTOS_HOST_ONLY_EXAMPLES "${HAIRTOS_EXAMPLE}" _host_only_index)
@@ -32,12 +41,12 @@ hairtos_validate_example("${HAIRTOS_ENVIRONMENT}" "${HAIRTOS_EXAMPLE}")
 
 set(HAIRTOS_PUBLIC_INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/config
-    ${CMAKE_CURRENT_SOURCE_DIR}/soc/stm32f1/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/boards/bluepill_f103c8/include
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/include
     ${CMAKE_CURRENT_SOURCE_DIR}/kernel/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/arch/arm/cortex-m3/include
     ${CMAKE_CURRENT_SOURCE_DIR}/haievent/include)
+foreach(_include IN LISTS HAIRTOS_TARGET_PUBLIC_INCLUDES)
+    list(APPEND HAIRTOS_PUBLIC_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/${_include})
+endforeach()
 
 set(HAIRTOS_INTERNAL_INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/kernel/internal
@@ -51,7 +60,8 @@ endif()
 
 function(hairtos_apply_target_warnings target)
     target_compile_options(${target} PRIVATE
-        -mcpu=cortex-m3 -mthumb -Og -g3
+        ${HAIRTOS_TARGET_CPU_FLAGS}
+        -Og -g3
         -ffreestanding -fno-common -fno-builtin
         -fno-unwind-tables -fno-asynchronous-unwind-tables
         -ffunction-sections -fdata-sections
@@ -68,6 +78,12 @@ function(hairtos_apply_host_warnings target)
         ${HAIRTOS_EXTRA_C_FLAGS_LIST})
     target_link_options(${target} PRIVATE
         -fsanitize=address,undefined -fno-omit-frame-pointer)
+endfunction()
+
+function(hairtos_apply_target_definitions target)
+    target_compile_definitions(${target} PRIVATE
+        ${HAIRTOS_TARGET_COMPILE_DEFINITIONS}
+        ${HAIRTOS_EXAMPLE_DEFINITIONS})
 endfunction()
 
 if(HAIRTOS_ENVIRONMENT STREQUAL "target")
@@ -89,7 +105,7 @@ if(HAIRTOS_ENVIRONMENT STREQUAL "target")
     if(HAIRTOS_PUBLIC_C OR HAIRTOS_PUBLIC_ASM)
         add_library(hairtos_platform_objects OBJECT ${HAIRTOS_PUBLIC_C} ${HAIRTOS_PUBLIC_ASM})
         target_include_directories(hairtos_platform_objects PRIVATE ${HAIRTOS_PUBLIC_INCLUDES})
-        target_compile_definitions(hairtos_platform_objects PRIVATE ${HAIRTOS_EXAMPLE_DEFINITIONS})
+        hairtos_apply_target_definitions(hairtos_platform_objects)
         hairtos_apply_target_warnings(hairtos_platform_objects)
     endif()
 
@@ -98,7 +114,7 @@ if(HAIRTOS_ENVIRONMENT STREQUAL "target")
         target_include_directories(hairtos_internal_objects PRIVATE
             ${HAIRTOS_PUBLIC_INCLUDES}
             ${HAIRTOS_INTERNAL_INCLUDES})
-        target_compile_definitions(hairtos_internal_objects PRIVATE ${HAIRTOS_EXAMPLE_DEFINITIONS})
+        hairtos_apply_target_definitions(hairtos_internal_objects)
         hairtos_apply_target_warnings(hairtos_internal_objects)
     endif()
 
@@ -107,7 +123,7 @@ if(HAIRTOS_ENVIRONMENT STREQUAL "target")
         target_include_directories(hairtos_allocator_objects PRIVATE
             ${HAIRTOS_PUBLIC_INCLUDES}
             ${CMAKE_CURRENT_SOURCE_DIR}/labs/memory-allocator/include)
-        target_compile_definitions(hairtos_allocator_objects PRIVATE ${HAIRTOS_EXAMPLE_DEFINITIONS})
+        hairtos_apply_target_definitions(hairtos_allocator_objects)
         hairtos_apply_target_warnings(hairtos_allocator_objects)
     endif()
 
@@ -116,7 +132,7 @@ if(HAIRTOS_ENVIRONMENT STREQUAL "target")
         target_include_directories(hairtos_benchmark_objects PRIVATE
             ${HAIRTOS_PUBLIC_INCLUDES}
             ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/kernel/include)
-        target_compile_definitions(hairtos_benchmark_objects PRIVATE ${HAIRTOS_EXAMPLE_DEFINITIONS})
+        hairtos_apply_target_definitions(hairtos_benchmark_objects)
         hairtos_apply_target_warnings(hairtos_benchmark_objects)
     endif()
 
@@ -133,7 +149,7 @@ if(HAIRTOS_ENVIRONMENT STREQUAL "target")
         target_include_directories(hairtos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/kernel/internal)
     endif()
 
-    target_compile_definitions(hairtos PRIVATE ${HAIRTOS_EXAMPLE_DEFINITIONS})
+    hairtos_apply_target_definitions(hairtos)
     hairtos_apply_target_warnings(hairtos)
 
     foreach(object_target
@@ -147,11 +163,12 @@ if(HAIRTOS_ENVIRONMENT STREQUAL "target")
     endforeach()
 
     target_link_options(hairtos PRIVATE
-        -mcpu=cortex-m3 -mthumb -nostdlib
+        ${HAIRTOS_TARGET_CPU_FLAGS}
+        -nostdlib
         -Wl,--gc-sections
         -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/hairtos.map
         -Wl,--cref
-        -T${CMAKE_CURRENT_SOURCE_DIR}/boards/bluepill_f103c8/STM32F103C8Tx_FLASH.ld)
+        -T${CMAKE_CURRENT_SOURCE_DIR}/${HAIRTOS_TARGET_LINKER_SCRIPT})
 
     if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang")
         target_link_libraries(hairtos PRIVATE gcc)
@@ -206,7 +223,7 @@ elseif(HAIRTOS_ENVIRONMENT STREQUAL "host")
             labs/memory-allocator/src/hr_pool_lab.c
             benchmarks/kernel/src/hr_benchmark_stats.c
             tests/stress/scheduler_stress_core.c
-            arch/arm/cortex-m3/hr_port_stack.c
+            ${HAIRTOS_TARGET_PORT_STACK_C}
             tests/mocks/mock_port.c
             tests/host/test_main.c
             tests/host/test_list.c
@@ -234,6 +251,7 @@ elseif(HAIRTOS_ENVIRONMENT STREQUAL "host")
             ${CMAKE_CURRENT_SOURCE_DIR}/labs/memory-allocator/include
             ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/kernel/include)
         target_compile_definitions(hairtos_tests PRIVATE
+            ${HAIRTOS_TARGET_COMPILE_DEFINITIONS}
             HR_CFG_ENABLE_DIAGNOSTICS=1
             HR_CFG_ENABLE_RUNTIME_STATS=1)
         hairtos_apply_host_warnings(hairtos_tests)
@@ -255,6 +273,7 @@ elseif(HAIRTOS_ENVIRONMENT STREQUAL "host")
             target_include_directories(hairtos_host PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/kernel/internal)
         endif()
         target_compile_definitions(hairtos_host PRIVATE
+            ${HAIRTOS_TARGET_COMPILE_DEFINITIONS}
             HR_CFG_ENABLE_DIAGNOSTICS=1
             HR_CFG_ENABLE_RUNTIME_STATS=1)
         hairtos_apply_host_warnings(hairtos_host)

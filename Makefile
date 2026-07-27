@@ -1,6 +1,13 @@
+
 .DEFAULT_GOAL := build
 
 PROJECT       := hairtos
+DEFAULT_TARGET := $(strip $(shell cmake -P cmake/print_default_target.cmake 2>/dev/null))
+ifeq ($(origin TARGET),command line)
+HAIRTOS_TARGET := $(TARGET)
+else
+HAIRTOS_TARGET ?= $(DEFAULT_TARGET)
+endif
 EXAMPLE       ?= $(strip $(shell cmake -P cmake/print_default_example.cmake 2>/dev/null))
 ENVIRONMENT   ?= auto
 BUILD_ROOT    ?= build
@@ -17,11 +24,34 @@ ifeq ($(RESOLVED_ENVIRONMENT),)
 $(error Invalid EXAMPLE or ENVIRONMENT. Run 'make list-examples')
 endif
 
-BUILD_DIR := $(BUILD_ROOT)/$(RESOLVED_ENVIRONMENT)/$(EXAMPLE)
+TARGET_DESCRIPTION := $(strip $(shell cmake \
+    -DHAIRTOS_TARGET=$(HAIRTOS_TARGET) \
+    -DHAIRTOS_PROPERTY=DESCRIPTION \
+    -P cmake/print_target_property.cmake 2>/dev/null))
+OPENOCD_CFG := $(strip $(shell cmake \
+    -DHAIRTOS_TARGET=$(HAIRTOS_TARGET) \
+    -DHAIRTOS_PROPERTY=OPENOCD_CONFIG \
+    -P cmake/print_target_property.cmake 2>/dev/null))
+OPENOCD_ERASE_COMMAND := $(strip $(shell cmake \
+    -DHAIRTOS_TARGET=$(HAIRTOS_TARGET) \
+    -DHAIRTOS_PROPERTY=OPENOCD_ERASE_COMMAND \
+    -P cmake/print_target_property.cmake 2>/dev/null))
+
+ifeq ($(TARGET_DESCRIPTION),)
+$(error Invalid TARGET '$(HAIRTOS_TARGET)'. Run 'make list-targets')
+endif
+
+ifeq ($(RESOLVED_ENVIRONMENT),target)
+BUILD_DIR := $(BUILD_ROOT)/target/$(HAIRTOS_TARGET)/$(EXAMPLE)
+INTELLISENSE_DIR := $(BUILD_ROOT)/intellisense/target/$(HAIRTOS_TARGET)/$(EXAMPLE)
+else
+BUILD_DIR := $(BUILD_ROOT)/host/$(EXAMPLE)
+INTELLISENSE_DIR := $(BUILD_ROOT)/intellisense/host/$(EXAMPLE)
+endif
+
 TARGET_ELF := $(BUILD_DIR)/$(PROJECT).elf
 HOST_BINARY := $(BUILD_DIR)/$(EXAMPLE)
 HOST_TEST_DIR := $(BUILD_ROOT)/host/tests
-OPENOCD_CFG := tools/openocd/bluepill_stlink.cfg
 
 ifeq ($(TOOLCHAIN),clang)
 TOOLCHAIN_FILE := cmake/toolchains/arm-none-eabi-clang.cmake
@@ -36,25 +66,27 @@ endif
 TARGET_CONFIGURE = cmake -S . -B $(BUILD_DIR) -G Ninja \
     -DCMAKE_TOOLCHAIN_FILE=$(TOOLCHAIN_FILE) \
     -DHAIRTOS_ENVIRONMENT=target \
+    -DHAIRTOS_TARGET=$(HAIRTOS_TARGET) \
     -DHAIRTOS_EXAMPLE=$(EXAMPLE) \
     -DHAIRTOS_EXTRA_C_FLAGS="$(EXTRA_DEFINES)"
 
 HOST_CONFIGURE = cmake -S . -B $(BUILD_DIR) -G Ninja \
     -DHAIRTOS_ENVIRONMENT=host \
+    -DHAIRTOS_TARGET=$(HAIRTOS_TARGET) \
     -DHAIRTOS_EXAMPLE=$(EXAMPLE) \
     -DHAIRTOS_BUILD_TESTS=OFF \
     -DHAIRTOS_EXTRA_C_FLAGS="$(EXTRA_DEFINES)"
 
 HOST_TEST_CONFIGURE = cmake -S . -B $(HOST_TEST_DIR) -G Ninja \
     -DHAIRTOS_ENVIRONMENT=host \
+    -DHAIRTOS_TARGET=$(HAIRTOS_TARGET) \
     -DHAIRTOS_EXAMPLE=16-diagnostics-stress-stabilization \
     -DHAIRTOS_BUILD_TESTS=ON
-
-INTELLISENSE_DIR := $(BUILD_ROOT)/intellisense/$(RESOLVED_ENVIRONMENT)/$(EXAMPLE)
 
 ifeq ($(RESOLVED_ENVIRONMENT),host)
 INTELLISENSE_CONFIGURE = cmake -S . -B $(INTELLISENSE_DIR) -G Ninja \
     -DHAIRTOS_ENVIRONMENT=host \
+    -DHAIRTOS_TARGET=$(HAIRTOS_TARGET) \
     -DHAIRTOS_EXAMPLE=$(EXAMPLE) \
     -DHAIRTOS_BUILD_TESTS=OFF \
     -DHAIRTOS_EXTRA_C_FLAGS="$(EXTRA_DEFINES)"
@@ -62,11 +94,12 @@ else
 INTELLISENSE_CONFIGURE = cmake -S . -B $(INTELLISENSE_DIR) -G Ninja \
     -DCMAKE_TOOLCHAIN_FILE=$(TOOLCHAIN_FILE) \
     -DHAIRTOS_ENVIRONMENT=target \
+    -DHAIRTOS_TARGET=$(HAIRTOS_TARGET) \
     -DHAIRTOS_EXAMPLE=$(EXAMPLE) \
     -DHAIRTOS_EXTRA_C_FLAGS="$(EXTRA_DEFINES)"
 endif
 
-.PHONY: all build run check clean clean-all help list-examples tree \
+.PHONY: all build run check clean clean-all help list-examples list-targets tree \
         target-build target-run host-build host-run host-tests \
         size flash erase debug-server gdb disasm intellisense
 
@@ -82,8 +115,6 @@ endif
 
 check: host-tests build
 
-# CMake owns every example/module/source/definition mapping. The Makefile is
-# intentionally only a stable user-facing command wrapper.
 target-build:
 	@$(TARGET_CONFIGURE)
 	@ln -sfn $(abspath $(BUILD_DIR))/compile_commands.json compile_commands.json
@@ -112,7 +143,7 @@ intellisense:
 	@$(INTELLISENSE_CONFIGURE)
 	@ln -sfn $(abspath $(INTELLISENSE_DIR))/compile_commands.json compile_commands.json
 	@echo "IntelliSense database: compile_commands.json"
-	@echo "VS Code configuration: hairtos - Active CMake Build"
+	@echo "Target: $(HAIRTOS_TARGET) - $(TARGET_DESCRIPTION)"
 
 size:
 	@$(TARGET_CONFIGURE)
@@ -127,7 +158,7 @@ disasm:
 
 erase:
 	$(OPENOCD) -f $(OPENOCD_CFG) \
-		-c "init" -c "reset halt" -c "stm32f1x mass_erase 0" -c "shutdown"
+		-c "init" -c "reset halt" -c "$(OPENOCD_ERASE_COMMAND)" -c "shutdown"
 
 debug-server:
 	$(OPENOCD) -f $(OPENOCD_CFG)
@@ -150,14 +181,17 @@ clean-all:
 list-examples:
 	@cmake -P cmake/print_examples.cmake
 
+list-targets:
+	@cmake -P cmake/print_targets.cmake
+
 tree:
 	@find . -path './.git' -prune -o -path './build' -prune -o -print | sort
 
 help:
 	@echo "hairtos"
-	@echo "  make EXAMPLE=<name> build [ENVIRONMENT=host|target]"
-	@echo "  make EXAMPLE=<name> run   [ENVIRONMENT=host|target]"
-	@echo "  make EXAMPLE=<name> check [ENVIRONMENT=host|target]"
-	@echo "  make EXAMPLE=<name> clean [ENVIRONMENT=host|target]"
-	@echo "  make EXAMPLE=<name> intellisense [ENVIRONMENT=host|target]"
-	@echo "  make host-tests | list-examples | clean-all"
+	@echo "  make TARGET=<target> EXAMPLE=<name> build [ENVIRONMENT=host|target]"
+	@echo "  make TARGET=<target> EXAMPLE=<name> run   [ENVIRONMENT=host|target]"
+	@echo "  make TARGET=<target> EXAMPLE=<name> check [ENVIRONMENT=host|target]"
+	@echo "  make TARGET=<target> EXAMPLE=<name> clean [ENVIRONMENT=host|target]"
+	@echo "  make TARGET=<target> EXAMPLE=<name> intellisense"
+	@echo "  make host-tests | list-targets | list-examples | clean-all"

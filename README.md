@@ -132,6 +132,7 @@ Chi tiết từng thư mục được mô tả trong [`docs/00-overview/project-
 
 ```bash
 make help
+make list-targets
 make list-examples
 ```
 
@@ -144,7 +145,7 @@ make build
 Lệnh mặc định tương đương:
 
 ```bash
-make EXAMPLE=16-diagnostics-stress-stabilization \
+make TARGET=bluepill_f103c8 EXAMPLE=16-diagnostics-stress-stabilization \
      ENVIRONMENT=target \
      build
 ```
@@ -152,7 +153,7 @@ make EXAMPLE=16-diagnostics-stress-stabilization \
 ### Flash target
 
 ```bash
-make EXAMPLE=16-diagnostics-stress-stabilization run
+make TARGET=bluepill_f103c8 EXAMPLE=16-diagnostics-stress-stabilization run
 ```
 
 `run` trong target mode thực hiện build, OpenOCD program, verify và reset.
@@ -160,7 +161,7 @@ make EXAMPLE=16-diagnostics-stress-stabilization run
 ### Chạy host example
 
 ```bash
-make EXAMPLE=02-kernel-data-structures-host run
+make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host run
 ```
 
 ### Chạy toàn bộ host tests
@@ -174,10 +175,10 @@ make host-tests
 Host và target dùng cùng bố cục:
 
 ```bash
-make EXAMPLE=<name> build [ENVIRONMENT=host|target]
-make EXAMPLE=<name> run   [ENVIRONMENT=host|target]
-make EXAMPLE=<name> check [ENVIRONMENT=host|target]
-make EXAMPLE=<name> clean [ENVIRONMENT=host|target]
+make TARGET=bluepill_f103c8 EXAMPLE=<name> build [ENVIRONMENT=host|target]
+make TARGET=bluepill_f103c8 EXAMPLE=<name> run   [ENVIRONMENT=host|target]
+make TARGET=bluepill_f103c8 EXAMPLE=<name> check [ENVIRONMENT=host|target]
+make TARGET=bluepill_f103c8 EXAMPLE=<name> clean [ENVIRONMENT=host|target]
 ```
 
 Ý nghĩa:
@@ -192,10 +193,10 @@ make EXAMPLE=<name> clean [ENVIRONMENT=host|target]
 Các lệnh bổ sung:
 
 ```bash
-make EXAMPLE=<name> intellisense [ENVIRONMENT=host|target]
-make EXAMPLE=<name> size
-make EXAMPLE=<name> disasm
-make EXAMPLE=<name> gdb
+make TARGET=bluepill_f103c8 EXAMPLE=<name> intellisense [ENVIRONMENT=host|target]
+make TARGET=bluepill_f103c8 EXAMPLE=<name> size
+make TARGET=bluepill_f103c8 EXAMPLE=<name> disasm
+make TARGET=bluepill_f103c8 EXAMPLE=<name> gdb
 make erase
 make debug-server
 make clean-all
@@ -209,10 +210,10 @@ Phân loại đầy đủ nằm trong [`examples/README.md`](examples/README.md)
 
 ```bash
 # Host-only intrusive structures
-make EXAMPLE=02-kernel-data-structures-host run
+make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host run
 
 # Target scheduler và round-robin
-make EXAMPLE=08-preemption-round-robin run
+make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin run
 
 # Allocator lab trên host
 make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
@@ -221,7 +222,7 @@ make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
 make ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run
 
 # Kernel benchmark trên STM32
-make EXAMPLE=15-kernel-benchmark run
+make TARGET=bluepill_f103c8 EXAMPLE=15-kernel-benchmark run
 
 # Diagnostics stress trên host
 make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run
@@ -305,7 +306,7 @@ Cách nhanh nhất để duyệt toàn source:
 Để dùng compile flags chính xác của một example:
 
 ```bash
-make EXAMPLE=16-diagnostics-stress-stabilization \
+make TARGET=bluepill_f103c8 EXAMPLE=16-diagnostics-stress-stabilization \
      ENVIRONMENT=target \
      intellisense
 ```
@@ -347,3 +348,11 @@ Khi sửa code:
 - cập nhật `CHANGELOG.md` cho thay đổi đáng chú ý.
 
 Project được phát hành theo giấy phép MIT. Xem [`LICENSE`](LICENSE).
+
+
+## Port sang MCU mới
+
+Mỗi phần cứng được mô tả bằng một target manifest trong `cmake/targets/`.
+CMake và Makefile không chứa source STM32F1 hoặc Blue Pill cố định. Xem
+[`docs/04-platform/porting-new-target.md`](docs/04-platform/porting-new-target.md)
+để biết contract của architecture, SoC, board, driver và linker script.

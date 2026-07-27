@@ -31,7 +31,7 @@ UART không được dùng trong benchmark critical path hoặc ISR dài.
 ## 5. Hardware timer và SysTick
 
 `drivers/stm32f1/hr_hw_timer_stm32f1.c` cung cấp millisecond base.
-`drivers/common/hr_systick_baremetal_irq.c` nối SysTick vào driver cho các
+`arch/arm/cortex-m3/hr_baremetal_tick_irq.c` nối SysTick vào driver cho các
 example bare-metal. Từ example 07, kernel sở hữu strong SysTick handler qua
 `kernel/src/hr_time.c`.
 

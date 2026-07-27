@@ -65,3 +65,8 @@ uint32_t hr_benchmark_clock_frequency_hz(void)
 {
     return g_benchmark_core_clock_hz;
 }
+
+const char *hr_benchmark_clock_name(void)
+{
+    return "DWT CYCCNT";
+}

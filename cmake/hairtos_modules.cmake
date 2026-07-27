@@ -1,18 +1,12 @@
-# Source ownership by module. Example selection lives in hairtos_examples.cmake.
 
-set(HAIRTOS_MODULE_platform_C
-    soc/stm32f1/system_stm32f1.c
-    soc/stm32f1/stm32f1_clock.c
-    soc/stm32f1/stm32f1_irq.c
-    boards/bluepill_f103c8/board.c
-    boards/bluepill_f103c8/board_clock.c
-    drivers/stm32f1/hr_gpio_stm32f1.c
-    drivers/stm32f1/hr_uart_stm32f1.c
-    drivers/stm32f1/hr_hw_timer_stm32f1.c)
-set(HAIRTOS_MODULE_platform_ASM soc/stm32f1/startup_stm32f103.S)
+# Source ownership by module. Example selection lives in hairtos_examples.cmake.
+# Hardware binding comes from cmake/targets/<target>.cmake.
+
+set(HAIRTOS_MODULE_platform_C ${HAIRTOS_TARGET_PLATFORM_C})
+set(HAIRTOS_MODULE_platform_ASM ${HAIRTOS_TARGET_PLATFORM_ASM})
 set(HAIRTOS_MODULE_platform_KIND public)
 
-set(HAIRTOS_MODULE_baremetal_tick_C drivers/common/hr_systick_baremetal_irq.c)
+set(HAIRTOS_MODULE_baremetal_tick_C ${HAIRTOS_TARGET_BAREMETAL_TICK_C})
 set(HAIRTOS_MODULE_baremetal_tick_KIND public)
 
 set(HAIRTOS_MODULE_task_kernel_C
@@ -21,15 +15,16 @@ set(HAIRTOS_MODULE_task_kernel_C
     kernel/src/hr_wait.c
     kernel/src/hr_timeout.c
     kernel/src/hr_task.c
-    arch/arm/cortex-m3/hr_port.c
-    arch/arm/cortex-m3/hr_port_stack.c)
+    ${HAIRTOS_TARGET_PORT_C})
 set(HAIRTOS_MODULE_task_kernel_KIND internal)
 
 set(HAIRTOS_MODULE_kernel_runtime_C kernel/src/hr_kernel.c)
-set(HAIRTOS_MODULE_kernel_runtime_ASM arch/arm/cortex-m3/hr_portasm.S)
+set(HAIRTOS_MODULE_kernel_runtime_ASM ${HAIRTOS_TARGET_PORT_ASM})
 set(HAIRTOS_MODULE_kernel_runtime_KIND internal)
 
-set(HAIRTOS_MODULE_kernel_time_C kernel/src/hr_time.c)
+set(HAIRTOS_MODULE_kernel_time_C
+    kernel/src/hr_time.c
+    ${HAIRTOS_TARGET_KERNEL_TICK_C})
 set(HAIRTOS_MODULE_kernel_time_KIND internal)
 set(HAIRTOS_MODULE_context_C kernel/src/hr_context.c)
 set(HAIRTOS_MODULE_context_KIND internal)
@@ -43,8 +38,8 @@ set(HAIRTOS_MODULE_timer_C kernel/src/hr_timer.c)
 set(HAIRTOS_MODULE_timer_KIND internal)
 set(HAIRTOS_MODULE_diagnostics_C kernel/src/hr_diagnostics.c)
 set(HAIRTOS_MODULE_diagnostics_KIND internal)
-set(HAIRTOS_MODULE_fault_C arch/arm/cortex-m3/hr_fault.c)
-set(HAIRTOS_MODULE_fault_ASM arch/arm/cortex-m3/hr_faultasm.S)
+set(HAIRTOS_MODULE_fault_C ${HAIRTOS_TARGET_FAULT_C})
+set(HAIRTOS_MODULE_fault_ASM ${HAIRTOS_TARGET_FAULT_ASM})
 set(HAIRTOS_MODULE_fault_KIND internal)
 
 set(HAIRTOS_MODULE_haievent_C
@@ -68,8 +63,7 @@ set(HAIRTOS_MODULE_allocator_KIND allocator)
 
 set(HAIRTOS_MODULE_benchmark_C
     benchmarks/kernel/src/hr_benchmark_stats.c
-    benchmarks/kernel/src/hr_benchmark_dwt.c
-    benchmarks/kernel/src/hr_benchmark_gpio.c)
+    ${HAIRTOS_TARGET_BENCHMARK_CLOCK_C})
 set(HAIRTOS_MODULE_benchmark_KIND benchmark)
 
 function(hairtos_collect_modules modules out_public_c out_public_asm out_internal_c out_internal_asm out_allocator_c out_benchmark_c)

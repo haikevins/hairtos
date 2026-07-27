@@ -2,6 +2,7 @@
 #define HAIRTOS_CONFIG_CHECK_H
 #include "hairtos_config.h"
 #include "haievent_config.h"
+#include "hr_port_config.h"
 #if (HR_CFG_TICK_RATE_HZ == 0U)
 #error "HR_CFG_TICK_RATE_HZ must be greater than zero"
 #endif
@@ -27,8 +28,8 @@
 #error "HR_CFG_MUTEX_STORAGE_BYTES is too small"
 #endif
 
-#if (HR_CFG_MIN_TASK_STACK_WORDS < 18U)
-#error "HR_CFG_MIN_TASK_STACK_WORDS is too small for Cortex-M3"
+#if (HR_CFG_MIN_TASK_STACK_WORDS < HR_PORT_MIN_TASK_STACK_WORDS)
+#error "HR_CFG_MIN_TASK_STACK_WORDS is too small for the selected architecture port"
 #endif
 
 #if (HR_CFG_PREEMPTION != 0) && (HR_CFG_PREEMPTION != 1)
@@ -53,6 +54,13 @@
 #endif
 #if (HE_CFG_ACTIVE_STORAGE_BYTES < 512U)
 #error "HE_CFG_ACTIVE_STORAGE_BYTES is too small"
+#endif
+
+#if (HR_CFG_USE_FPU == 1) && (HR_PORT_SUPPORTS_FPU_CONTEXT != 1)
+#error "The selected architecture port does not save FPU context"
+#endif
+#if (HR_CFG_USE_MPU == 1) && (HR_PORT_SUPPORTS_MPU != 1)
+#error "The selected architecture port does not support MPU configuration"
 #endif
 
 #if (HR_CFG_SINGLE_CORE != 1)

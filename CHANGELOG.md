@@ -8,6 +8,12 @@ Tài liệu được trình bày theo định dạng Keep a Changelog và projec
 
 ### Thay đổi
 
+- Bổ sung cơ chế `TARGET` và manifest `cmake/targets/` để port MCU mới mà không sửa Makefile hoặc CMakeLists.txt.
+- Chuyển SysTick kernel adapter khỏi `kernel/` sang architecture port.
+- Tổng quát hóa GPIO, UART và hardware timer API; clock ngoại vi và pin mapping được xử lý trong target implementation.
+- Chuyển giới hạn stack, FPU và MPU capability sang `hr_port_config.h`.
+- Chuyển metadata bộ nhớ và benchmark marker sang board abstraction.
+
 - Viết lại các file README tại thư mục gốc, cấu hình VS Code, driver, kernel benchmark và memory allocator bằng tiếng Việt với bố cục đầy đủ, phù hợp với vai trò của từng thành phần; giữ nguyên nội dung tài liệu hiện có trong `examples/` và `docs/`.
 - Viết lại toàn bộ `examples/*/README.md` bằng tiếng Việt theo một bố cục thống nhất gồm mười phần, trình bày mục tiêu, cấu hình, luồng thực thi, API, lệnh build, kết quả mong đợi, tiêu chí PASS, xử lý lỗi và phạm vi của từng example.
 - Xây dựng lại `examples/README.md` thành tài liệu chỉ mục trung tâm, phân loại rõ các example chạy trên host và target.

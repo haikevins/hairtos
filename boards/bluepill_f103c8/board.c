@@ -1,3 +1,4 @@
+
 #include "board.h"
 #include "board_pins.h"
 #include "hr_gpio.h"
@@ -6,17 +7,26 @@
 #include "stm32f1.h"
 
 #define BOARD_UART_BAUD_RATE 115200UL
+#define BOARD_TIMER_RATE_HZ   1000UL
+
+extern unsigned char __flash_start__;
+extern unsigned char __flash_image_end__;
+extern unsigned char __ram_start__;
+extern unsigned char __static_ram_end__;
 
 static void board_print_boot_banner(void)
 {
     board_uart_write_line("");
     board_uart_write_line("hairtos platform boot");
-    board_uart_write_line("Board: Blue Pill STM32F103C8T6");
+    board_uart_write_string("Board: ");
+    board_uart_write_line(board_get_name());
+    board_uart_write_string("CPU: ");
+    board_uart_write_line(board_get_cpu_name());
     board_uart_write_string("Core clock: ");
     board_uart_write_u32(board_get_core_clock_hz());
     board_uart_write_line(" Hz");
 
-    if (board_clock_is_72mhz())
+    if (board_clock_is_nominal())
     {
         board_uart_write_line("Clock source: HSE 8 MHz -> PLL x9");
     }
@@ -28,37 +38,69 @@ static void board_print_boot_banner(void)
 
 void board_init(void)
 {
-    hr_gpio_enable_port_clock(BOARD_LED_PORT);
-    hr_gpio_config_output_push_pull(BOARD_LED_PORT, BOARD_LED_PIN, HR_GPIO_SPEED_2MHZ);
+    static const hr_gpio_config_t led_config =
+    {
+        .mode = HR_GPIO_MODE_OUTPUT_PUSH_PULL,
+        .pull = HR_GPIO_PULL_NONE,
+        .drive = HR_GPIO_DRIVE_LOW
+    };
+    const hr_uart_config_t uart_config =
+    {
+        .instance = BOARD_UART_INSTANCE,
+        .baud_rate = BOARD_UART_BAUD_RATE,
+        .tx_pin = BOARD_UART_TX_PIN,
+        .rx_pin = BOARD_UART_RX_PIN
+    };
+
+    if (!hr_gpio_configure(BOARD_LED_PIN, &led_config))
+    {
+        board_panic();
+    }
     board_led_off();
 
-    hr_uart_init(BOARD_UART_BAUD_RATE, stm32f1_clock_get_pclk2_hz());
-    hr_hw_timer_init_1khz(SystemCoreClock);
+    if (!hr_uart_init(&uart_config))
+    {
+        board_panic();
+    }
+    if (!hr_hw_timer_init(BOARD_TIMER_RATE_HZ))
+    {
+        board_panic();
+    }
 
     board_print_boot_banner();
+}
+
+const char *board_get_name(void)
+{
+    return "Blue Pill STM32F103C8T6";
+}
+
+const char *board_get_cpu_name(void)
+{
+    return "STM32F103C8T6 ARM Cortex-M3";
 }
 
 void board_led_on(void)
 {
 #if BOARD_LED_ACTIVE_LOW
-    hr_gpio_write(BOARD_LED_PORT, BOARD_LED_PIN, false);
+    hr_gpio_write(BOARD_LED_PIN, false);
 #else
-    hr_gpio_write(BOARD_LED_PORT, BOARD_LED_PIN, true);
+    hr_gpio_write(BOARD_LED_PIN, true);
 #endif
 }
 
 void board_led_off(void)
 {
 #if BOARD_LED_ACTIVE_LOW
-    hr_gpio_write(BOARD_LED_PORT, BOARD_LED_PIN, true);
+    hr_gpio_write(BOARD_LED_PIN, true);
 #else
-    hr_gpio_write(BOARD_LED_PORT, BOARD_LED_PIN, false);
+    hr_gpio_write(BOARD_LED_PIN, false);
 #endif
 }
 
 void board_led_toggle(void)
 {
-    hr_gpio_toggle(BOARD_LED_PORT, BOARD_LED_PIN);
+    hr_gpio_toggle(BOARD_LED_PIN);
 }
 
 void board_uart_write_char(char character)
@@ -122,6 +164,50 @@ uint32_t board_millis(void)
 void board_delay_ms(uint32_t milliseconds)
 {
     hr_hw_timer_delay_ms(milliseconds);
+}
+
+uint32_t board_get_flash_image_bytes(void)
+{
+    return (uint32_t)((uintptr_t)&__flash_image_end__ -
+                      (uintptr_t)&__flash_start__);
+}
+
+uint32_t board_get_static_ram_bytes(void)
+{
+    return (uint32_t)((uintptr_t)&__static_ram_end__ -
+                      (uintptr_t)&__ram_start__);
+}
+
+bool board_benchmark_marker_init(void)
+{
+    static const hr_gpio_config_t marker_config =
+    {
+        .mode = HR_GPIO_MODE_OUTPUT_PUSH_PULL,
+        .pull = HR_GPIO_PULL_NONE,
+        .drive = HR_GPIO_DRIVE_HIGH
+    };
+
+    if (!hr_gpio_configure(BOARD_BENCHMARK_MARKER_PIN, &marker_config))
+    {
+        return false;
+    }
+    hr_gpio_write(BOARD_BENCHMARK_MARKER_PIN, false);
+    return true;
+}
+
+void board_benchmark_marker_begin(void)
+{
+    hr_gpio_write(BOARD_BENCHMARK_MARKER_PIN, true);
+}
+
+void board_benchmark_marker_end(void)
+{
+    hr_gpio_write(BOARD_BENCHMARK_MARKER_PIN, false);
+}
+
+const char *board_benchmark_marker_description(void)
+{
+    return "PB0 active-high around switch/wake samples";
 }
 
 void board_panic(void)

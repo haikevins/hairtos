@@ -11,7 +11,7 @@ Mục tiêu:
 - tính min, max, mean và percentile;
 - trừ measurement overhead;
 - chuyển cycle sang nanosecond;
-- tạo marker PB0 cho logic analyzer.
+- tạo marker marker do board cung cấp cho logic analyzer.
 
 ## 2. Phạm vi và trách nhiệm
 
@@ -46,7 +46,7 @@ benchmarks/kernel/
 
 - `hr_benchmark.h`: public interface của benchmark module;
 - `hr_benchmark_dwt.c`: khởi tạo và đọc DWT_CYCCNT;
-- `hr_benchmark_gpio.c`: PB0 active-high timing marker;
+- `hr_benchmark_gpio.c`: marker do board cung cấp active-high timing marker;
 - `hr_benchmark_stats.c`: sample buffer và thống kê.
 
 ## 4. Thành phần triển khai
@@ -85,11 +85,11 @@ Percentile dùng nearest-rank sau khi copy và insertion-sort tối đa 64 mẫu
 
 ### Tín hiệu đánh dấu GPIO
 
-PB0 được cấu hình output push-pull 50 MHz:
+marker do board cung cấp được cấu hình output push-pull 50 MHz:
 
 ```text
-mark_begin() → PB0 high
-mark_end()   → PB0 low
+mark_begin() → marker do board cung cấp high
+mark_end()   → marker do board cung cấp low
 ```
 
 Marker cho phép so sánh DWT result với logic analyzer hoặc oscilloscope.
@@ -127,15 +127,15 @@ bool hr_benchmark_clock_init(uint32_t core_clock_hz);
 uint32_t hr_benchmark_clock_now(void);
 uint32_t hr_benchmark_clock_frequency_hz(void);
 
-void hr_benchmark_gpio_init(void);
-void hr_benchmark_gpio_mark_begin(void);
-void hr_benchmark_gpio_mark_end(void);
+bool board_benchmark_marker_init(void);
+void board_benchmark_marker_begin(void);
+void board_benchmark_marker_end(void);
 ```
 
 ## 6. Luồng hoạt động
 
 ```text
-Khởi tạo DWT và PB0
+Khởi tạo DWT và marker do board cung cấp
         |
         +--> đo read overhead
         |
@@ -144,9 +144,9 @@ Khởi tạo DWT và PB0
         +--> lặp N mẫu
                 |
                 +--> timestamp start
-                +--> PB0 high nếu cần
+                +--> marker do board cung cấp high nếu cần
                 +--> workload
-                +--> PB0 low
+                +--> marker do board cung cấp low
                 +--> timestamp end
                 +--> elapsed - overhead
                 +--> record statistics
@@ -174,8 +174,8 @@ Mã nguồn module:
 
 ```text
 benchmarks/kernel/src/hr_benchmark_stats.c
-benchmarks/kernel/src/hr_benchmark_dwt.c
-benchmarks/kernel/src/hr_benchmark_gpio.c
+arch/arm/cortex-m3/hr_benchmark_clock_dwt.c
+boards/<board>/board.c
 ```
 
 Include path bổ sung:
@@ -226,7 +226,7 @@ Host test liên quan:
 tests/host/test_benchmark.c
 ```
 
-Kết nối UART để đọc report và PB0/GND tới logic analyzer khi cần xác nhận marker.
+Kết nối UART để đọc report và marker do board cung cấp/GND tới logic analyzer khi cần xác nhận marker.
 
 ## 9. Bất biến và giới hạn
 
@@ -238,7 +238,7 @@ Kết nối UART để đọc report và PB0/GND tới logic analyzer khi cần 
 - Cycle-to-nanosecond là integer conversion và có rounding xuống.
 - Kết quả phụ thuộc clock, compiler, toolchain, optimization, flash wait-state và interrupt load.
 - Không nên in UART hoặc gọi API chậm bên trong vùng đo.
-- PB0 phải không bị application khác sử dụng đồng thời.
+- marker do board cung cấp phải không bị application khác sử dụng đồng thời.
 - Benchmark code không phải production telemetry subsystem.
 
 ## 10. Mở rộng và tài liệu liên quan

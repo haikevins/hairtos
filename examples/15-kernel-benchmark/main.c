@@ -23,16 +23,10 @@
 #define EVENT_TASK_PRIORITY        3U
 #define BENCHMARK_TASK_PRIORITY    4U
 
-#define FLASH_BASE_ADDRESS         0x08000000UL
-#define RAM_BASE_ADDRESS           0x20000000UL
-
 enum
 {
     BENCHMARK_EVENT_SIGNAL = HE_SIG_USER
 };
-
-extern unsigned char _sidata;
-extern unsigned char _ebss;
 
 static hr_task_t g_startup_task;
 static hr_task_t g_benchmark_task;
@@ -169,20 +163,22 @@ static void benchmark_print_stack(const char *name, const hr_task_t *task)
 
 static void benchmark_print_report(void)
 {
-    const uintptr_t flash_bytes =
-        (uintptr_t)&_sidata - (uintptr_t)FLASH_BASE_ADDRESS;
-    const uintptr_t ram_static_bytes =
-        (uintptr_t)&_ebss - (uintptr_t)RAM_BASE_ADDRESS;
+    const uint32_t flash_bytes = board_get_flash_image_bytes();
+    const uint32_t ram_static_bytes = board_get_static_ram_bytes();
     hr_task_t *const event_task = he_active_get_task(&g_event_active);
 
     board_uart_write_line("");
     board_uart_write_line("hairtos kernel benchmark report");
-    board_uart_write_string("cpu,STM32F103C8T6 Cortex-M3,");
+    board_uart_write_string("cpu,");
+    board_uart_write_string(board_get_cpu_name());
+    board_uart_write_char(',');
     board_uart_write_u32(board_get_core_clock_hz());
     board_uart_write_line(" Hz");
     board_uart_write_string("compiler,");
     board_uart_write_line(__VERSION__);
     board_uart_write_line("optimization,-Og");
+    board_uart_write_string("benchmark_clock,");
+    board_uart_write_line(hr_benchmark_clock_name());
     board_uart_write_string("tick_rate_hz,");
     board_uart_write_u32(HR_CFG_TICK_RATE_HZ);
     board_uart_write_line("");
@@ -212,10 +208,10 @@ static void benchmark_print_report(void)
     benchmark_print_metric("timer_period_abs_jitter", &g_timer_jitter_stats);
 
     board_uart_write_string("flash_image_bytes,");
-    board_uart_write_u32((uint32_t)flash_bytes);
+    board_uart_write_u32(flash_bytes);
     board_uart_write_line("");
     board_uart_write_string("static_ram_bytes,");
-    board_uart_write_u32((uint32_t)ram_static_bytes);
+    board_uart_write_u32(ram_static_bytes);
     board_uart_write_line("");
     benchmark_print_stack("startup-probe", &g_startup_task);
     benchmark_print_stack("benchmark", &g_benchmark_task);
@@ -223,7 +219,8 @@ static void benchmark_print_report(void)
     benchmark_print_stack("receiver", &g_receiver_task);
     benchmark_require(event_task != NULL);
     benchmark_print_stack("event-active", event_task);
-    board_uart_write_line("gpio_marker,PB0 active-high around switch/wake samples");
+    board_uart_write_string("gpio_marker,");
+    board_uart_write_line(board_benchmark_marker_description());
     board_uart_write_line("Kernel benchmark: PASS");
 }
 
@@ -444,11 +441,11 @@ static void benchmark_measure_yield_roundtrip(void)
         uint32_t end;
 
         g_yield_request = sequence;
-        hr_benchmark_gpio_mark_begin();
+        board_benchmark_marker_begin();
         start = hr_benchmark_clock_now();
         hr_task_yield();
         end = hr_benchmark_clock_now();
-        hr_benchmark_gpio_mark_end();
+        board_benchmark_marker_end();
 
         benchmark_require(g_yield_ack == sequence);
         benchmark_record_adjusted(&g_yield_roundtrip_stats, start, end);
@@ -465,13 +462,13 @@ static void benchmark_measure_queue_wakeup(void)
         uint32_t start;
         uint32_t end;
 
-        hr_benchmark_gpio_mark_begin();
+        board_benchmark_marker_begin();
         start = hr_benchmark_clock_now();
         benchmark_require_status(hr_queue_send(&g_wake_queue,
                                                &sequence,
                                                HR_NO_WAIT));
         end = hr_benchmark_clock_now();
-        hr_benchmark_gpio_mark_end();
+        board_benchmark_marker_end();
 
         benchmark_require(g_wake_ack == sequence);
         benchmark_record_adjusted(&g_queue_wake_stats, start, end);
@@ -489,13 +486,13 @@ static void benchmark_measure_event_dispatch(void)
         uint32_t end;
 
         g_event_request = sequence;
-        hr_benchmark_gpio_mark_begin();
+        board_benchmark_marker_begin();
         start = hr_benchmark_clock_now();
         benchmark_require_status(he_active_post(&g_event_active,
                                                 &g_benchmark_event,
                                                 HR_NO_WAIT));
         end = hr_benchmark_clock_now();
-        hr_benchmark_gpio_mark_end();
+        board_benchmark_marker_end();
 
         benchmark_require(g_event_ack == sequence);
         benchmark_record_adjusted(&g_event_dispatch_stats, start, end);
@@ -552,15 +549,19 @@ int main(void)
 
     board_init();
     board_uart_write_line("hairtos kernel benchmark");
-    board_uart_write_line("Collecting DWT samples; UART output is deferred.");
-    board_uart_write_line("PB0 is the active-high external timing marker.");
+    board_uart_write_string("Collecting samples with ");
+    board_uart_write_string(hr_benchmark_clock_name());
+    board_uart_write_line("; UART output is deferred.");
+    board_uart_write_string("External timing marker: ");
+    board_uart_write_line(board_benchmark_marker_description());
 
     if (!hr_benchmark_clock_init(board_get_core_clock_hz()))
     {
-        board_uart_write_line("DWT CYCCNT unavailable");
+        board_uart_write_string(hr_benchmark_clock_name());
+        board_uart_write_line(" unavailable");
         board_panic();
     }
-    hr_benchmark_gpio_init();
+    benchmark_require(board_benchmark_marker_init());
     benchmark_reset_all_stats();
     benchmark_prepare_scheduler_sets();
 

@@ -58,7 +58,7 @@ Quy ước:
 
 ### GPIO
 
-`drivers/stm32f1/hr_gpio_stm32f1.c` ánh xạ `hr_gpio_port_t` sang GPIOA/B/C và cấu hình nibble trong CRL/CRH.
+`drivers/stm32f1/hr_gpio_stm32f1.c` ánh xạ `hr_gpio_pin_t` sang GPIOA/B/C và cấu hình nibble trong CRL/CRH.
 
 Hỗ trợ:
 
@@ -92,23 +92,21 @@ BRR được tính từ peripheral clock và baud rate do caller cung cấp.
 ### GPIO
 
 ```c
-void hr_gpio_enable_port_clock(hr_gpio_port_t port);
-void hr_gpio_config_output_push_pull(hr_gpio_port_t port,
+void hr_gpio_configure(hr_gpio_pin_t port);
+void hr_gpio_configure(hr_gpio_pin_t port,
                                      uint32_t pin,
-                                     hr_gpio_speed_t speed);
-void hr_gpio_config_alternate_push_pull(hr_gpio_port_t port,
-                                        uint32_t pin,
-                                        hr_gpio_speed_t speed);
-void hr_gpio_config_input_floating(hr_gpio_port_t port, uint32_t pin);
-void hr_gpio_write(hr_gpio_port_t port, uint32_t pin, bool high);
-bool hr_gpio_read(hr_gpio_port_t port, uint32_t pin);
-void hr_gpio_toggle(hr_gpio_port_t port, uint32_t pin);
+                                     hr_gpio_drive_t speed);
+bool hr_gpio_configure(hr_gpio_pin_t pin,
+                       const hr_gpio_config_t *config);
+void hr_gpio_write(hr_gpio_pin_t port, uint32_t pin, bool high);
+bool hr_gpio_read(hr_gpio_pin_t port, uint32_t pin);
+void hr_gpio_toggle(hr_gpio_pin_t port, uint32_t pin);
 ```
 
 ### UART
 
 ```c
-void hr_uart_init(uint32_t baud_rate, uint32_t peripheral_clock_hz);
+void hr_uart_init(const hr_uart_config_t *config);
 void hr_uart_write_char(char character);
 void hr_uart_write_string(const char *text);
 bool hr_uart_try_read_char(char *character);
@@ -117,7 +115,7 @@ bool hr_uart_try_read_char(char *character);
 ### Bộ định thời bare-metal
 
 ```c
-void hr_hw_timer_init_1khz(uint32_t core_clock_hz);
+void hr_hw_timer_init(uint32_t tick_rate_hz);
 uint32_t hr_hw_timer_millis(void);
 void hr_hw_timer_delay_ms(uint32_t milliseconds);
 void hr_hw_timer_tick_isr(void);
@@ -132,7 +130,7 @@ Các API hiện dùng `void` cho nhiều thao tác cấu hình. Input không h�
 ```text
 board_init()
     |
-    +--> hr_hw_timer_init_1khz(core_clock)
+    +--> hr_hw_timer_init(tick_rate_hz)
               |
               +--> SysTick reload và enable interrupt
                           |
@@ -250,3 +248,7 @@ Tài liệu liên quan:
 - `docs/04-platform/drivers.md`;
 - `docs/04-platform/stm32f103-platform.md`;
 - `docs/04-platform/porting-guide.md`.
+
+## Khả năng port
+
+Pin GPIO và UART instance là identifier opaque do target định nghĩa. Public API không yêu cầu application biết port A/B/C hoặc peripheral clock của SoC.

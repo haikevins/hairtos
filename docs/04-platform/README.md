@@ -11,3 +11,7 @@
 - [startup-and-linker.md](startup-and-linker.md)
 - [drivers.md](drivers.md)
 - [porting-guide.md](porting-guide.md)
+
+## Port target mới
+
+- [Port một target MCU mới](porting-new-target.md)

@@ -5,11 +5,11 @@
 #include <stdint.h>
 
 #include "hairtos/hr_types.h"
+#include "hr_port_config.h"
 
 #define HR_PORT_INITIAL_XPSR              0x01000000UL
 #define HR_PORT_THUMB_ADDRESS_BIT         0x00000001UL
 #define HR_PORT_ADDRESS_MASK              0xFFFFFFFEUL
-#define HR_PORT_STACK_ALIGNMENT_BYTES     8U
 #define HR_PORT_INITIAL_FRAME_WORDS        16U
 
 #define HR_PORT_FRAME_R4_INDEX             0U

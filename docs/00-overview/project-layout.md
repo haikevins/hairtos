@@ -37,7 +37,7 @@ hairtos/
 | MCU family | `soc/<family>/` |
 | Board | `boards/<board>/` |
 | Public driver API | `drivers/include/` |
-| Common driver code | `drivers/common/` |
+| Architecture tick adapters | `arch/<architecture>/` |
 | SoC driver implementation | `drivers/<soc>/` |
 | Independent experiment | `labs/<name>/` |
 | User-facing demo | `examples/<number-name>/` |

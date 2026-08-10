@@ -136,3 +136,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=09-queue-blocking-ipc build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`10-01-semaphore-from-isr`](../10-01-semaphore-from-isr/README.md). Bài tiếp theo đồng bộ ISR → task bằng semaphore.
+
+### Liên hệ Version 2
+
+Queue direct-handoff và blocking contract là invariant cần giữ; Version 2 có thể tăng diagnostics chứ không đổi ownership âm thầm.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

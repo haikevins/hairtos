@@ -1,33 +1,44 @@
-# Suspend và resume task
+# Suspend và resume
 
-## 1. Mục tiêu
+## Mục tiêu
 
-Cho phép task context tạm dừng task READY, RUNNING hoặc BLOCKED mà không xóa TCB.
+Suspend là administrative control, độc lập với lý do task đang chờ.
 
-## 2. Suspend READY
+## READY
 
-Task bị remove khỏi ready queue và chuyển `SUSPENDED`, lưu resume state là READY.
+Suspend remove task khỏi ready queue và set SUSPENDED với resume state READY.
 
-## 3. Self-suspend RUNNING
+## RUNNING
 
-Current task chuyển SUSPENDED, bị remove khỏi ready queue và pend PendSV. Khi được resume, nó tiếp tục sau lời gọi suspend.
+Self/current suspend remove current READY membership, set SUSPENDED và request context switch.
 
-## 4. Suspend BLOCKED
+## BLOCKED
 
-Task giữ wait-list/timeout membership và lưu resume state BLOCKED. Event hoặc timeout vẫn có thể hoàn tất trong lúc suspended; khi đó task trở thành logic `SUSPENDED(READY)` nhưng chưa vào ready queue.
+Task vẫn có thể giữ object wait node và timeout node. Suspend chỉ phủ lên scheduling state.
 
-## 5. Resume
+Nếu event/timeout complete khi suspended:
 
-- Resume state READY: insert ready queue.
-- Resume state BLOCKED: tiếp tục chờ object/timeout.
-- Nếu operation đã hoàn tất khi suspended: insert ready queue và trả kết quả khi task chạy lại.
+```text
+SUSPENDED(BLOCKED)
+  -> logical SUSPENDED(READY)
+```
 
-Resume task priority cao hơn có thể yêu cầu preemption.
+Task chưa vào ready queue cho tới resume.
 
-## 6. Bảo vệ
+## Resume
 
-Không suspend idle, task CREATED, task đã SUSPENDED hoặc gọi từ ISR. Resume task không suspended trả invalid state.
+Nếu underlying operation chưa complete -> tiếp tục BLOCKED.
 
-## 7. Giới hạn
+Nếu đã complete -> READY; nếu priority cao hơn current thì preemption có thể xảy ra.
 
-Không có `resume_from_isr()` và không có suspend-all scheduler API.
+## Cấm
+
+Idle task không được suspend. CREATED/invalid state không dùng runtime suspend semantics.
+
+## Invariant
+
+Suspend không được gây leak wait/timeout membership và không được làm mất wait result.
+
+## V2
+
+Nếu sau này có cancellation/task termination, cần tách rõ "administrative suspend", "cancel wait", "terminate task"; không overload một API.

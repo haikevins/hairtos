@@ -1,46 +1,80 @@
 # Kernel lifecycle
 
-## 1. Mục tiêu
-
-Định nghĩa trình tự hợp lệ từ reset đến task execution và trạng thái panic.
-
-## 2. State machine
+## State
 
 ```text
 RESET --hr_kernel_init()--> INITIALIZED --hr_kernel_start()--> RUNNING
-  \-----------------------------------------------------------> PANIC
+  \                                                             |
+   +-------------------------- PANIC <---------------------------+
 ```
 
-- `RESET`: global kernel chưa được khởi tạo.
-- `INITIALIZED`: scheduler, all-task list, timeout list và idle task đã sẵn sàng.
-- `RUNNING`: current task đã được chọn và CPU đã chuyển sang PSP.
-- `PANIC`: kernel phát hiện lỗi không thể tiếp tục an toàn.
+`PANIC` là terminal logical state; không có API reset kernel trong cùng boot.
 
-## 3. `hr_kernel_init()`
+## RESET
 
-Hàm khởi tạo scheduler, timeout list, diagnostics tùy cấu hình, reset timer system và tạo idle task tĩnh. Idle task có priority `HR_CFG_IDLE_PRIORITY`, chạy vòng lặp `WFI`.
+Global kernel state mới reset. Chưa có scheduler/idle task registry hợp lệ cho application API.
 
-Chỉ được gọi một lần khi state là `RESET`.
+## `hr_kernel_init()`
 
-## 4. Task registration
+Initialization thực hiện:
 
-`hr_task_start()` gọi internal registration khi kernel đang `INITIALIZED`. Task chuyển `CREATED -> READY`, được thêm vào ready queue và all-task list. Application không được dùng idle priority.
+- initialize scheduler ready queues/bitmap;
+- initialize all-task list;
+- initialize timeout system;
+- reset current task;
+- reset task count/tick/switch state;
+- create static idle task;
+- start/register idle task;
+- reset timer system nếu feature được link;
+- chuyển state thành INITIALIZED.
 
-## 5. `hr_kernel_start()`
+Application task nên được create/start sau `hr_kernel_init()` và trước `hr_kernel_start()`.
 
-Kernel chọn ready task priority cao nhất, chuyển nó sang `RUNNING`, cập nhật global current TCB và gọi port startup. Hàm không trở lại `main()` khi thành công.
+## INITIALIZED
 
-## 6. Invariants
+Task có thể được register vào scheduler nhưng chưa chạy. Timer object có thể được create trong giai đoạn này.
 
-- Luôn có idle task READY hoặc RUNNING.
-- Chỉ có tối đa một task RUNNING.
-- `g_hr_current_task_control_block` phải trỏ đúng TCB của task hiện hành.
-- Task count không vượt `HR_CFG_MAX_TASKS`.
+`hr_kernel_start()`:
 
-## 7. Kiểm thử
+1. kiểm tra lifecycle;
+2. chọn task READY priority cao nhất;
+3. set task đó RUNNING/current;
+4. gọi `hr_port_start_first_task()`;
+5. trên target thành công, control không quay lại caller.
 
-Host test kiểm tra init/start state và first-task selection. Target Phase 4 kiểm tra SVC startup thật.
+Nếu port start quay lại không hợp lệ, đó là lỗi.
 
-## 8. Giới hạn
+## RUNNING
 
-Không hỗ trợ deinitialize hoặc restart kernel trong cùng boot.
+Các API scheduling/blocking mới có ý nghĩa runtime. Tick ISR update timeouts và scheduling decisions.
+
+## Idle task
+
+Idle task là fallback luôn tồn tại. Nó dùng priority `HR_CFG_IDLE_PRIORITY` và static stack riêng. Port target có thể dùng wait-for-interrupt trong idle loop.
+
+Không được suspend idle task.
+
+## PANIC
+
+Diagnostics hoặc invariant failure có thể record panic. Fault handlers ghi retained record rồi halt theo port/board policy.
+
+## Invariants lifecycle
+
+- task count không vượt `HR_CFG_MAX_TASKS`;
+- current task NULL trước RUNNING;
+- RUNNING phải có đúng một current task;
+- idle task phải valid;
+- kernel start không được gọi hai lần.
+
+## Source
+
+```text
+kernel/src/hr_kernel.c
+kernel/internal/hr_kernel_internal.h
+kernel/src/hr_task.c
+arch/<port>/
+```
+
+## Test
+
+Host tests kiểm tra lifecycle và selector policy. Target example 04 kiểm tra first-task startup thật.

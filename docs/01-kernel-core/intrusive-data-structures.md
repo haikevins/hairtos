@@ -1,50 +1,72 @@
 # Intrusive data structures
 
-## 1. Mục tiêu
+## Vì sao intrusive?
 
-Cho phép một task tham gia nhiều cấu trúc kernel mà không cấp phát node động.
+RTOS cần move task giữa ready/wait/timeout lists nhưng không muốn cấp phát list node động. Node nằm trực tiếp trong TCB.
 
-## 2. Circular doubly linked list
+## List
 
-`hr_list_t` chứa sentinel root và size. `hr_list_node_t` chứa `previous`, `next`, pointer tới list và `owner`.
+`hr_list_t` là circular doubly-linked list có sentinel root và size. `hr_list_node_t` biết:
 
 ```text
-root <-> node A <-> node B <-> root
+previous
+next
+list
+owner
 ```
 
-Node biết object sở hữu thông qua `owner`, vì vậy scheduler có thể chuyển từ ready node về TCB.
+`owner` đưa scheduler từ node về TCB/object.
 
-## 3. Node trong TCB
+## Membership rule
 
-Mỗi task có node riêng cho:
+Một node chỉ được nằm trong một list tại một thời điểm. Vì task cần nhiều membership đồng thời, TCB có node riêng cho ready, wait, timeout và all-task.
 
-- ready queue;
-- wait list;
-- timeout list;
-- all-task list.
+## Ready set
 
-Một node không thể được insert vào hai list cùng lúc. API trả `HR_ERROR_INVALID_STATE` khi double insert/remove.
+Một FIFO list cho mỗi priority + bitmap:
 
-## 4. Ready set
+```text
+P0 -> ...
+P1 -> A -> B
+P2 -> ...
+...
+```
 
-`hr_ready_set_t` có một FIFO list cho mỗi priority và bitmap đánh dấu queue không rỗng. Priority nhỏ nhất có bit tương ứng và được chọn trước.
+Bitmap chỉ ra priority có member. Highest selection chọn priority số nhỏ nhất.
 
-## 5. Wait list
+## Wait list
 
-Waiter được insert theo effective priority; cùng priority giữ FIFO. Queue, semaphore và mutex dùng cùng cấu trúc này.
+Waiters được insert theo effective priority. Cùng priority giữ FIFO.
 
-## 6. Timeout list
+Điều này dùng chung cho queue/semaphore/mutex.
 
-Dùng hai ordered lists: current epoch và overflow epoch. Khi tick wrap, hai list đổi vai trò. Node cùng deadline giữ thứ tự FIFO.
+## Timeout lists
 
-## 7. Invariants
+Timeout system có current list và overflow list. Node được ordered theo absolute wake tick trong epoch tương ứng.
 
-- `node->list` khớp list chứa node.
-- Liên kết trước/sau đối xứng.
-- `size` khớp số node thực.
-- Ready bitmap khớp queue state.
-- Timeout count bằng tổng hai list.
+## Validate
 
-## 8. Kiểm thử
+List/scheduler/wait/timeout có validate functions để check:
 
-Host tests dùng ASan/UBSan và validate sau insert/remove/rotate/wrap. Đây là nền tảng cho mọi subsystem blocking.
+- backlink symmetry;
+- owner/list pointer;
+- size;
+- bitmap/list consistency;
+- ordering.
+
+## Failure modes cần tránh
+
+- double insert;
+- remove node không linked;
+- move node nhưng quên update bitmap;
+- effective priority đổi nhưng wait node không reinsert;
+- timeout completion nhưng wait node còn linked.
+
+## Source
+
+```text
+kernel/src/hr_list.c
+kernel/src/hr_scheduler.c
+kernel/src/hr_wait.c
+kernel/src/hr_timeout.c
+```

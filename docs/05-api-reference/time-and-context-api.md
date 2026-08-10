@@ -1,60 +1,56 @@
-# Time và context API
+# Time và Context API
 
-## 1. Header
-
-```c
-#include "hairtos/hr_time.h"
-#include "hairtos/hr_context.h"
-```
-
-## 2. Time
+## Time
 
 ```c
 hr_tick_t hr_time_now(void);
 ```
 
-Trả tick snapshot. Dùng subtraction unsigned để tính elapsed qua wrap:
+Lấy snapshot current kernel tick. Không bảo đảm wall-clock hoặc milliseconds nếu target config đổi tick rate.
+
+Elapsed wrap-safe phổ biến:
 
 ```c
 hr_tick_t elapsed = hr_time_now() - start;
 ```
 
-## 3. Critical section
+## Critical section
 
 ```c
-hr_irq_state_t hr_critical_enter(void);
-void hr_critical_exit(hr_irq_state_t state);
+hr_irq_state_t state = hr_critical_enter();
+/* short atomic section */
+hr_critical_exit(state);
 ```
 
-Luôn exit bằng state trả về từ lần enter tương ứng.
+Phải exit bằng state tương ứng. Không giữ critical section qua UART/blocking/callback dài.
 
-## 4. Context detection
+## ISR detection
 
 ```c
 bool hr_is_inside_isr(void);
 ```
 
-Dùng để reject API không an toàn trong ISR; không dùng làm cơ chế synchronization.
+Dùng để validate context; không dùng thay synchronization.
 
-## 5. Deferred switch
+## Deferred yield
 
 ```c
-void hr_yield_from_isr(bool switch_required);
+hr_yield_from_isr(switch_required);
 ```
 
-Nếu true, port pend PendSV. Hàm không switch ngay trong ISR.
+Nếu true, port request deferred context switch.
 
-## 6. Ví dụ ISR
+## Example ISR pattern
 
 ```c
-void EXTI0_IRQHandler(void)
+bool wake = false;
+hr_status_t status = hr_semaphore_give_from_isr(&sem, &wake);
+if (status == HR_OK)
 {
-    bool wake = false;
-    (void)hr_semaphore_give_from_isr(&sem, &wake);
     hr_yield_from_isr(wake);
 }
 ```
 
-## 7. Lưu ý
+## Portability
 
-Critical section dùng PRIMASK nên phải ngắn. Không gọi UART hoặc callback dài khi interrupt đang mask.
+Public context API không expose PRIMASK/PendSV. Architecture backend có thể thay mechanism mà application không đổi.

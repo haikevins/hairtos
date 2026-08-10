@@ -1,29 +1,36 @@
-# 07 — Bài thực hành và ví dụ
+# 07 — Labs và examples
 
-## 1. Mục tiêu
+Examples là executable specification cho từng capability. Chúng không thay host unit tests, nhưng giúp quan sát behavior thật theo lộ trình.
 
-Nhóm này liên kết lộ trình example 01–16 với allocator lab và các mục tiêu kiểm chứng tương ứng.
+## Thứ tự
 
-## 2. Nội dung
+Xem [example-index.md](example-index.md) và [`../../examples/README.md`](../../examples/README.md).
 
-- [example-index.md](example-index.md)
-- [memory-allocator-lab.md](memory-allocator-lab.md)
-- [`../../examples/README.md`](../../examples/README.md)
+Lộ trình chính:
 
-## 3. Bố cục chung
-
-Mỗi example README có mười phần: mục tiêu, kiến thức, cấu hình, luồng, API/source, build/run, output, PASS/troubleshooting, giới hạn và liên hệ lộ trình.
-
-## 4. Target selection
-
-Target examples dùng:
-
-```bash
-make TARGET=<target> EXAMPLE=<name> build
+```text
+bare metal
+ -> data structures
+ -> task stack/start
+ -> context switch
+ -> scheduler
+ -> tick/time
+ -> IPC/sync
+ -> timer
+ -> haievent
+ -> allocator experiment
+ -> benchmark
+ -> diagnostics/stress
 ```
 
-Host-only và dual examples dùng cùng command interface; `ENVIRONMENT` chỉ cần chỉ rõ khi example hỗ trợ cả host và target.
+## Host vs target
 
-## 5. Port validation
+Example 02 host-only. 14 và 16 có host+target. Các bài còn lại target.
 
-Khi thêm target, chạy example theo thứ tự tăng dần. Không bắt đầu bằng image tích hợp nếu bare-metal clock/UART/tick chưa PASS.
+## Port target mới
+
+Không bắt đầu bằng example 16. Chạy từ 01 lên để cô lập lỗi startup/clock/stack/context/tick trước khi thêm IPC/framework.
+
+## Allocator
+
+Allocator lab không phải kernel heap. Xem [memory-allocator-lab.md](memory-allocator-lab.md).

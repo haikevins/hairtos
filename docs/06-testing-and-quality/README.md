@@ -1,33 +1,25 @@
-# 06 — Kiểm thử và chất lượng
+# 06 — Testing, diagnostics và chất lượng
 
-## 1. Mục tiêu
+Chất lượng của RTOS không thể dựa vào một demo blink. `hairtos` tách kiểm thử thành nhiều tầng:
 
-Nhóm này mô tả host tests, diagnostics, stress, benchmark và release validation.
+```text
+host unit tests
+ -> deterministic stress
+ -> target cross-build
+ -> target runtime examples
+ -> fault injection
+ -> long-duration soak
+ -> benchmark/timing
+```
 
-## 2. Nội dung
+## Tài liệu
 
 - [testing-guide.md](testing-guide.md)
+- [validation-baseline.md](validation-baseline.md)
+- [test-matrix.md](test-matrix.md)
 - [diagnostics.md](diagnostics.md)
 - [stress-testing.md](stress-testing.md)
 - [kernel-benchmark.md](kernel-benchmark.md)
 - [release-checklist.md](release-checklist.md)
 
-## 3. Các lớp kiểm tra
-
-- host unit tests và sanitizer;
-- deterministic scheduler stress;
-- cross-build theo target manifest;
-- runtime smoke test trên board;
-- benchmark/logic-analyzer validation;
-- retained fault và long-duration soak test.
-
-## 4. Portability
-
-Target mới phải chạy lại toàn bộ tầng kiểm tra phù hợp. Cross-build PASS không thay thế hardware runtime validation.
-
-## 5. Lệnh chính
-
-```bash
-make TARGET=bluepill_f103c8 host-tests
-make TARGET=bluepill_f103c8 EXAMPLE=16-diagnostics-stress-stabilization check
-```
+Không gọi một release "validated" nếu chỉ cross-build mà chưa chạy phần hardware-dependent cần thiết.

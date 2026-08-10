@@ -1,42 +1,50 @@
 # Release checklist
 
-## 1. Source
+## Source/API
 
-- [ ] Không placeholder hoặc unused skeleton.
+- [ ] Version/changelog đồng bộ.
+- [ ] Không ghost API/placeholder.
 - [ ] Public/internal boundary đúng.
-- [ ] Make và CMake source list đồng bộ.
-- [ ] Version/changelog/roadmap đồng bộ.
+- [ ] Config checks cập nhật.
+- [ ] V2 planned features không bị mô tả như v1 implemented.
 
-## 2. Build
+## Host
 
-- [ ] Host Clang sanitizer PASS.
-- [ ] Host GCC sanitizer PASS.
-- [ ] Tất cả target example build.
-- [ ] CMake/Ninja build example `hairtos`.
-- [ ] No warning với `-Werror`.
+- [ ] GCC tests PASS.
+- [ ] Clang tests PASS.
+- [ ] ASan/UBSan thực sự chạy, không chỉ build.
+- [ ] Deterministic stress PASS.
 
-## 3. Runtime
+## Target build
 
-- [ ] Flash Blue Pill thật.
-- [ ] UART log expected cho Phase 4–16.
-- [ ] Preemption/round-robin quan sát được.
-- [ ] ISR semaphore path PASS.
-- [ ] Fault injection giữ record qua reset.
-- [ ] Stress dài hạn PASS.
+- [ ] Tất cả examples build cho mọi supported target.
+- [ ] GCC Arm build.
+- [ ] Clang/LLD build nếu được support.
+- [ ] No warnings.
+- [ ] Size budget.
 
-## 4. Resources
+## Hardware
 
-- [ ] Flash/RAM trong linker limit.
-- [ ] Stack margins đủ.
-- [ ] Benchmark sample buffers không tràn RAM.
-- [ ] Event pool/queue capacities có rationale.
+- [ ] Bare-metal UART/LED/tick.
+- [ ] First task/context switch.
+- [ ] Preemption/time slicing.
+- [ ] ISR wake.
+- [ ] Timer.
+- [ ] haievent integration.
+- [ ] Fault retention.
+- [ ] Benchmark clock/marker.
+- [ ] Soak.
 
-## 5. Package
+## Documentation
 
-- [ ] ZIP không có `.git`/build/cache.
-- [ ] SHA-256 được tạo và verify.
-- [ ] Docs link check PASS.
+- [ ] Markdown links.
+- [ ] API signatures.
+- [ ] Target list.
+- [ ] Known limitations.
+- [ ] Migration notes nếu breaking.
 
-## 6. Known limitations
+## Artifact
 
-Liệt kê rõ phần chưa test trên hardware, toolchain chưa có, API chưa hỗ trợ và board assumptions.
+- [ ] Không `.git`, build cache, IntelliSense DB.
+- [ ] ZIP integrity.
+- [ ] SHA-256.

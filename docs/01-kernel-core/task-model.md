@@ -1,54 +1,81 @@
-# Task model
+# Task model và TCB
 
-## 1. Mục tiêu
-
-Mô tả TCB, state, priority, stack và wait metadata của task.
-
-## 2. Public task object
-
-`hr_task_t` là opaque storage. Application tạo task bằng `hr_task_create_static()` và đăng ký bằng `hr_task_start()`.
-
-## 3. Internal TCB
-
-Field đầu tiên là `stack_pointer`; assembly SVC/PendSV phụ thuộc offset 0 này. TCB còn chứa stack bounds, entry/argument, state, base/effective priority, time slice, intrusive nodes, wait context, owned mutex list, diagnostics counters và magic.
-
-## 4. State model
+## Public state
 
 ```text
 INVALID
-  |
-CREATED --start--> READY <---- timeout/event/resume ---- BLOCKED/SUSPENDED
-                    |                                  ^
-                    +---- selected ----> RUNNING ------+
+CREATED
+READY
+RUNNING
+BLOCKED
+SUSPENDED
 ```
 
-State hợp lệ:
+## TCB nội bộ
 
-- `CREATED`: stack đã chuẩn bị nhưng chưa đăng ký.
-- `READY`: nằm trong ready queue.
-- `RUNNING`: task hiện hành.
-- `BLOCKED`: chờ delay hoặc synchronization object.
-- `SUSPENDED`: bị dừng hành chính, có thể lưu resume state READY hoặc BLOCKED.
+TCB lưu:
 
-## 5. Priority
+- saved stack pointer;
+- stack base/top/word count;
+- name;
+- entry + argument;
+- state + suspended resume state;
+- base/effective priority;
+- wake tick;
+- time-slice remaining;
+- ready/wait/timeout/all-task nodes;
+- wait object/list/buffer/cleanup/result/kind;
+- owned mutex list/count;
+- runtime counters;
+- magic.
 
-- `base_priority`: priority cấu hình khi tạo task.
-- `effective_priority`: có thể được boost bởi mutex priority inheritance.
+Saved SP phải ở offset assembly port mong đợi.
 
-Ready node và wait node phải phản ánh effective priority hiện tại.
+## Create
 
-## 6. Task return
+`hr_task_create_static()`:
 
-Task entry phải chạy vô hạn hoặc tự xử lý termination logic. Nếu return, LR dẫn tới `hr_task_exit_error()`; hairtos không có API delete task.
+1. validate argument/priority/stack;
+2. initialize TCB;
+3. fill stack + guard;
+4. gọi port dựng initial stack frame;
+5. state = CREATED.
 
-## 7. Wait metadata
+## Start
 
-TCB lưu object đang chờ, wait list, buffer, cleanup callback, result và wait kind. Điều này cho phép timeout gỡ task khỏi đúng object và cho suspend giữ nguyên wait operation.
+`hr_task_start()` register TCB vào all-task list và ready set, chuyển CREATED → READY.
 
-## 8. API liên quan
+## Running
 
-Xem `../05-api-reference/kernel-and-task-api.md`.
+Scheduler chọn task và state thành RUNNING. Task vẫn giữ ready membership.
 
-## 9. Giới hạn
+## Block
 
-Không có task deletion, join, notification hay affinity.
+Blocking operation remove ready membership, thiết lập wait metadata và optional timeout, rồi yêu cầu switch.
+
+## Suspend
+
+Suspend không nhất thiết xóa wait membership. Task có `suspended_resume_state` để biết khi resume phải READY hay tiếp tục BLOCKED.
+
+## Priority
+
+`base_priority`: application config.
+
+`effective_priority`: có thể boost do mutex. Scheduler và wait ordering dùng effective priority.
+
+## Task return
+
+Task entry được kỳ vọng không return. v1 route task return tới `hr_task_exit_error()` spin. Đây là v2 cleanup candidate: panic/hook policy rõ ràng hơn.
+
+## Queries
+
+Public API cho name/state/priorities/stack words/high-watermark/guard/current task.
+
+## V1 không có
+
+- delete;
+- join;
+- restart;
+- dynamic stack;
+- affinity;
+- application set-priority.

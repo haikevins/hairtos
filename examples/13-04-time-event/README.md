@@ -134,3 +134,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`13-05-publish-subscribe`](../13-05-publish-subscribe/README.md). Bài tiếp theo multicast dynamic event và quản lý reference count.
+
+### Liên hệ Version 2
+
+Version 2 sẽ thêm trace dispatch/drop và bảo toàn time-event semantics trên tickless kernel.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

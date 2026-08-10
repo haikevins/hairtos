@@ -145,3 +145,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-06-event-driven-demo build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`14-memory-allocator-lab`](../14-memory-allocator-lab/README.md). Bài tiếp theo nghiên cứu allocator như một lab độc lập, không đưa dynamic heap vào kernel.
+
+### Liên hệ Version 2
+
+Đây là integration regression quan trọng khi Version 2 thêm HSM, RTC enforcement, trace và second target.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

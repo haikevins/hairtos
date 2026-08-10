@@ -1,67 +1,102 @@
-# Cấu trúc repository
+# Cấu trúc repository và trách nhiệm
 
-## 1. Mục tiêu
+## Root
 
-Tài liệu này giải thích vai trò của từng thư mục và nơi nên đặt code mới.
+`Makefile` là CLI wrapper. `CMakeLists.txt` tạo object targets và link firmware/host executable. `VERSION` là version hiện tại; `CHANGELOG.md` ghi thay đổi.
 
-## 2. Cây thư mục chính
+## `kernel/`
 
 ```text
-hairtos/
-├── arch/                  # CPU architecture port
-├── benchmarks/            # Benchmark code chỉ dùng khi được chọn
-├── boards/                # Board-specific clock, pin, linker
-├── cmake/                 # Source-of-truth build modules and toolchains
-├── config/                # hairtos và haievent configuration
-├── docs/                  # Tài liệu đã phân loại
-├── drivers/               # Public interfaces, common code, SoC implementations
-├── examples/              # Host và target demonstrations
-├── haievent/             # Event-driven framework
-├── kernel/                # Public API, internal headers, implementation
-├── labs/                  # Các lab độc lập khỏi kernel runtime
-├── soc/                   # STM32F1 register/startup/IRQ support
-├── tests/                 # Host unit tests và stress tests
-└── tools/                 # OpenOCD, GDB, validation, packaging
+include/hairtos/  public API
+internal/         internal layout/contracts
+src/              generic implementation
 ```
 
-## 3. Quy tắc đặt file
+Không đặt register access hoặc board pin trong kernel.
 
-| Loại code | Vị trí |
-|---|---|
-| Public kernel API | `kernel/include/hairtos/` |
-| Kernel-only type/function | `kernel/internal/` |
-| Kernel implementation | `kernel/src/` |
-| Public haievent API | `haievent/include/haievent/` |
-| haievent internal layout | `haievent/internal/` |
-| CPU port | `arch/<architecture>/` |
-| MCU family | `soc/<family>/` |
-| Board | `boards/<board>/` |
-| Public driver API | `drivers/include/` |
-| Architecture tick adapters | `arch/<architecture>/` |
-| SoC driver implementation | `drivers/<soc>/` |
-| Independent experiment | `labs/<name>/` |
-| User-facing demo | `examples/<number-name>/` |
-| Host unit test | `tests/host/` |
-| Long-running deterministic test | `tests/stress/` |
+## `haievent/`
 
-## 4. Public và private headers
+```text
+include/haievent/ public framework API
+internal/         control-block layouts
+src/              event/FSM/AO/time/pubsub
+```
 
-Application chỉ nên thêm include path `kernel/include` và `haievent/include`. `kernel/internal` chỉ được dùng bởi kernel, port, host tests và benchmark cần kiểm tra internal policy.
+Chỉ phụ thuộc public kernel API và config.
 
-Opaque public objects như `hr_task_t` hoặc `hr_queue_t` chứa static byte storage. Layout thật được giữ trong internal headers và được bảo vệ bằng `_Static_assert`.
+## `arch/`
 
-## 5. Example numbering
+CPU/ISA-specific:
 
-Tên example bám theo roadmap. Phase 10 và Phase 13 có nhiều example nên sử dụng sub-number như `10-01-*` và `13-06-*`. `02-kernel-data-structures-host` là host-only; các example còn lại trong danh sách Makefile là target.
+- initial stack;
+- critical section;
+- SVC/PendSV;
+- fault entry;
+- tick IRQ adapter;
+- benchmark cycle clock.
 
-## 6. Không nên tạo lại
+Một MCU mới dùng cùng ISA có thể tái sử dụng phần lớn folder này.
 
-Không thêm skeleton rỗng, ghost API hoặc file không tham gia build. Mỗi source mới phải được một trong các thành phần sau sử dụng: Makefile, CMake, host tests, stress tests, validation tool hoặc tài liệu rõ ràng.
-## 7. Build source of truth
+## `soc/`
 
-`cmake/hairtos_examples.cmake` maps examples to modules and feature definitions.
-`cmake/hairtos_modules.cmake` owns module-to-source mappings. The root Makefile
-never repeats these lists; it configures and invokes CMake.
+MCU-family:
 
-This arrangement prevents Make and CMake from selecting different source sets.
+- register definitions;
+- startup vector;
+- clock setup;
+- IRQ support/fallback.
 
+## `boards/`
+
+Board-level binding:
+
+- LED/UART/pins;
+- board name/CPU name;
+- panic behavior;
+- benchmark marker;
+- linker script;
+- flash/static RAM footprint hooks.
+
+## `drivers/`
+
+`drivers/include` là API generic. `drivers/<soc>` chứa identifier encoding và register-level implementation.
+
+## `cmake/targets/`
+
+Mỗi `.cmake` là một hardware target manifest. Đây là nơi binding arch + SoC + board + driver + linker + OpenOCD.
+
+## `tests/`
+
+```text
+host/         unit/regression tests
+mocks/        fake architecture port
+portability/  compile proof
+stress/       deterministic long operation sequences
+```
+
+## `examples/`
+
+22 executable examples. Folder number thể hiện lộ trình học, không phải tên API nội bộ.
+
+## `labs/`
+
+Experiment không phải runtime dependency. Hiện có memory allocator lab.
+
+## `benchmarks/`
+
+Benchmark statistics generic; clock backend nằm ở architecture layer.
+
+## `docs/`
+
+00–08 mô tả v1. 09 mô tả v2 planned.
+
+## Quy tắc thêm file
+
+Một source mới phải trả lời được:
+
+1. thuộc layer nào?
+2. được build bởi module nào?
+3. public hay internal?
+4. host-test được không?
+5. target-specific assumption nằm ở đâu?
+6. tài liệu nào mô tả contract của nó?

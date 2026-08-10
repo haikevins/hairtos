@@ -1,53 +1,93 @@
 # Testing guide
 
-## 1. Mục tiêu
-
-Phân biệt host unit test, cross-build regression và hardware runtime validation.
-
-## 2. Host tests
+## Host unit tests
 
 ```bash
-make host-tests
+make TARGET=bluepill_f103c8 host-tests
 ```
 
-Build native với ASan/UBSan, kiểm tra intrusive lists, scheduler, TCB stack, queue, semaphore, mutex, timers, haievent, allocator, benchmark stats và diagnostics.
+Host build dùng mock port và sanitizer để kiểm tra generic C.
 
-Chạy compiler khác:
+Nhóm coverage hiện gồm:
+
+- intrusive list;
+- ready set/scheduler policy;
+- wait list;
+- timeout;
+- task/initial stack;
+- kernel start/select;
+- queue;
+- semaphore;
+- mutex/priority inheritance;
+- software timer;
+- haievent;
+- allocator;
+- benchmark statistics;
+- diagnostics;
+- scheduler stress.
+
+## Sanitizer
+
+ASan/UBSan là test aid, không phải target runtime. Một số loader environment có thể yêu cầu ASan runtime được load trước shared libraries. Nếu test binary chưa chạy mà báo `ASan runtime does not come first`, xác minh compiler/runtime loader trước khi kết luận source fail.
+
+## Target build
 
 ```bash
-make HOST_CC=clang host-tests
-make HOST_CC=gcc host-tests
+make TARGET=bluepill_f103c8 \
+     TOOLCHAIN=clang \
+     EXAMPLE=16-diagnostics-stress-stabilization \
+     build
 ```
 
-## 3. Phase checks
+Cross-build kiểm tra:
 
-```bash
-make EXAMPLE=16-diagnostics-stress-stabilization check
+- header/include boundary;
+- ARM codegen;
+- assembly ABI link;
+- linker script;
+- duplicate/missing handler symbol;
+- image size.
+
+## Target runtime
+
+Runtime test cần:
+
+- flash;
+- UART log;
+- LED/marker khi relevant;
+- expected preemption/order;
+- fault injection;
+- reset behavior.
+
+## Khi sửa kernel state machine
+
+Thêm regression test cho sequence cụ thể gây lỗi, không chỉ test API happy path.
+
+## Khi sửa port
+
+Chạy examples theo ladder 01→04→05→08→10-01→15→16.
+
+## Khi sửa haievent
+
+Chạy event ownership tests và examples 13-01..13-06.
+
+## Khi sửa allocator
+
+Host sanitizer trước target demo.
+
+## Test result metadata
+
+Khi lưu benchmark/release result, ghi:
+
+```text
+commit/version
+target
+board revision
+toolchain version
+optimization
+clock
+config overrides
+duration
+UART log
+image size
 ```
-
-Script phase cuối chạy hygiene, host regression, stress, target builds, symbol/disassembly checks, CMake/Ninja và memory limits.
-
-## 4. Target build
-
-```bash
-make EXAMPLE=16-diagnostics-stress-stabilization TOOLCHAIN=clang build
-```
-
-Cross-build PASS chỉ chứng minh compile/link/static checks, không chứng minh behavior trên board.
-
-## 5. Hardware test
-
-- Flash đúng example bằng cùng `EXAMPLE` argument.
-- Mở UART 115200 8-N-1.
-- Kiểm tra expected sequence.
-- Đo PB0/DWT khi benchmark.
-- Chạy fault injection và reset.
-- Chạy stress dài hạn.
-
-## 6. Test naming
-
-Mỗi bug fix nên có test mô tả behavior, không chỉ test function riêng. Invariant validation được gọi sau operation sequence.
-
-## 7. Kết quả cần lưu
-
-Compiler version, flags, board revision, clock, image size, UART log, duration và fault record.

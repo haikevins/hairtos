@@ -142,3 +142,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=10-02-mutex-priority-inheritance build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`11-task-suspend-resume`](../11-task-suspend-resume/README.md). Bài tiếp theo thêm administrative suspend/resume cho task ở nhiều trạng thái.
+
+### Liên hệ Version 2
+
+Version 2 ưu tiên deadlock diagnostics/trace, nhưng chained priority inheritance hiện tại vẫn là behavior nền.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

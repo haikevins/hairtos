@@ -155,3 +155,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=15-kernel-benchmark build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`16-diagnostics-stress-stabilization`](../16-diagnostics-stress-stabilization/README.md). Bài cuối tích hợp diagnostics, fault retention và stress workload dài hạn.
+
+### Liên hệ Version 2
+
+Version 2 nên mở rộng benchmark cho interrupt ceiling, tickless wake latency và multi-target baseline.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

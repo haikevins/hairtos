@@ -135,3 +135,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-03-flat-state-machine build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`13-04-time-event`](../13-04-time-event/README.md). Bài tiếp theo dùng software timer để post event định kỳ vào AO.
+
+### Liên hệ Version 2
+
+Flat FSM phải tiếp tục hoạt động như subset/compatibility layer của HSM engine Version 2.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

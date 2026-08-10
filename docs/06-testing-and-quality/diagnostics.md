@@ -1,34 +1,61 @@
-# Diagnostics và fault analysis
+# Diagnostics
 
-## 1. Mục tiêu
+## Runtime counters
 
-Phát hiện kernel corruption, stack exhaustion và Cortex-M fault với dữ liệu đủ để debug sau reset.
+Counters cho tick, PendSV, switch reasons, timeout wake, invariant/stack checks và panic.
 
-## 2. Health report
+Counters giúp trả lời "hệ thống có hoạt động không", nhưng không cho biết timeline chi tiết.
 
-Kiểm tra scheduler bitmap, task/list membership, timeout structure và stack guards. Report nêu current task, minimum free stack và số task dưới margin.
+## Task snapshot
 
-## 3. Runtime counters
+Diagnostics task info gồm:
 
-Counters giúp phân biệt workload: yield, block, preemption, time slice, timeout wake và switch tổng.
+- state;
+- base/effective priority;
+- stack total/free/used;
+- runtime ticks;
+- guard validity.
 
-## 4. Retained fault record
+## Health check
 
-Fault handler lấy stacked PC/LR và SCB status. Record có signature/version/sequence/boot count để phân biệt dữ liệu hợp lệ.
+Health report kết hợp:
 
-## 5. Quy trình debug
+```text
+kernel invariant validation
++ stack guard checks
++ task counts
++ ready bitmap
++ timeout counts
++ minimum free stack
+```
 
-1. Đọc panic reason và task name.
-2. Dùng PC/LR tra `.elf` bằng `addr2line`.
-3. Giải mã CFSR thành MemManage/BusFault/UsageFault sub-bits.
-4. Kiểm tra BFAR/MMFAR valid bits.
-5. Kiểm tra stack high-watermark và guard.
-6. So sánh map file và source commit.
+## Retained panic
 
-## 6. Fault injection
+Record lưu signature/version/boot/sequence/reason/tick/task/source/fault registers.
 
-Example `hairtos` có macro tạo `udf #0`. Dùng để kiểm tra strong handler, `.noinit` và log sau reset.
+`.noinit` cho phép đọc record ở boot sau nếu reset giữ SRAM.
 
-## 7. Giới hạn
+## Fault reasons
 
-Power cycle có thể làm mất retained RAM. Record không thay thế trace timeline hoặc core dump đầy đủ.
+NMI, HardFault, MemManage, BusFault, UsageFault và software panic reasons.
+
+## Source hash
+
+Record giữ source hash/line thay vì pointer string dài trong retained memory.
+
+## Hạn chế
+
+Không có trace ring buffer. Nếu deadlock/priority anomaly xảy ra nhưng chưa fault, counters có thể không đủ để reconstruct sequence.
+
+## V2
+
+Thêm static trace ring:
+
+```text
+timestamp
+event type
+task/object
+small payload
+```
+
+Các event quan trọng: switch, block/wake, timeout, mutex inheritance, timer expiry, AO post/dispatch/transition, panic.

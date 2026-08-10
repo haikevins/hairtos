@@ -1,41 +1,54 @@
-# Time, SysTick và timeout
+# Time và timeout
 
-## 1. Mục tiêu
+## Tick
 
-Cung cấp tick 32-bit, delay blocking, timeout cho IPC và xử lý wrap-around.
+`hr_tick_t` = `uint32_t`. `hr_time_now()` trả current kernel tick.
 
-## 2. Tick source
+Default target configuration: 1000 Hz.
 
-Từ Phase 7, strong `SysTick_Handler` gọi `hr_kernel_tick_from_isr()`. Tick mặc định 1 kHz, nên một tick tương đương khoảng 1 ms với cấu hình chuẩn.
+## Delay
 
-`hr_time_now()` trả tick hiện tại.
+`hr_task_delay(0)` tương đương yield.
 
-## 3. Blocking delay
+Finite nonzero delay:
 
-`hr_task_delay(ticks)` loại current task khỏi ready queue, thêm timeout node và chuyển state sang BLOCKED. `hr_task_delay_until()` tính deadline từ release trước để giảm drift periodic task.
+```text
+RUNNING
+ -> remove ready
+ -> add timeout
+ -> BLOCKED
+ -> switch
+ -> timeout expires
+ -> READY
+```
 
-## 4. Timeout list
+`HR_WAIT_FOREVER` không hợp lệ cho delay đơn thuần.
 
-Timeout node được sắp theo absolute wake tick trong current hoặc overflow list. Khi `now < last_tick`, kernel nhận biết wrap và hoán đổi lists.
+## `delay_until`
 
-## 5. Expiration
+Caller giữ `last_wake_tick`. Deadline mới = previous release + period, không phải `now + period`, nên periodic schedule giảm drift.
 
-SysTick lấy các node hết hạn, gọi cleanup nếu task đang chờ object, cập nhật wait result và đưa task về READY hoặc `SUSPENDED(READY)`.
+## Dual-list timeout
 
-## 6. Race delay một tick
+```text
+current epoch list
+overflow epoch list
+```
 
-Nếu timeout hết hạn trước khi PendSV của operation block chạy, selector kiểm tra state hiện tại và không giả định task vẫn BLOCKED. Đây là trường hợp được regression test.
+Nếu absolute deadline nằm sau wrap thì insert overflow. Khi tick wrap, swap lists.
 
-## 7. Timeout semantics
+## Timeout completion
 
-- `HR_NO_WAIT`: operation không block.
-- finite tick: block và có thể trả `HR_ERROR_TIMEOUT`.
-- `HR_WAIT_FOREVER`: block không gắn timeout node.
+Timeout callback/cleanup của blocked IPC gỡ task khỏi object wait list, đặt wait result TIMEOUT rồi đưa task READY nếu không administratively suspended.
 
-## 8. Software timer
+## Race một tick
 
-Software timer dùng timeout mechanism riêng trong timer subsystem nhưng cùng tick source. Callback được defer tới timer-service task.
+Blocking API có thể request PendSV nhưng tick IRQ đến trước PendSV và timeout task ngay. Selector phải kiểm tra actual state thay vì giả định request BLOCK vẫn còn đúng.
 
-## 9. Giới hạn
+## Wrap-safe elapsed
 
-Tick là 32-bit; khoảng wrap phụ thuộc tick rate. Timeout list giả định tick handler được gọi đều, không bỏ qua cả một vòng 32-bit.
+Unsigned subtraction phù hợp để tính elapsed trong khoảng nhỏ hơn full wrap.
+
+## V2
+
+Tickless idle nên dùng "next deadline" từ timeout/timer system thay vì đổi public semantics ngay. Có thể bổ sung 64-bit uptime diagnostic riêng mà vẫn giữ `hr_tick_t` 32-bit.

@@ -1,32 +1,37 @@
 # 01 — Lõi kernel
 
-## 1. Mục tiêu
+Kernel v1 là single-core, fixed-priority, preemptive và static-first. Phần C generic được tách khỏi context/interrupt mechanism của target.
 
-Nhóm này mô tả dữ liệu và luồng cốt lõi của kernel, độc lập board/SoC ở mức C generic.
+## Tài liệu
 
-## 2. Nội dung
+1. [kernel-lifecycle.md](kernel-lifecycle.md)
+2. [memory-model.md](memory-model.md)
+3. [intrusive-data-structures.md](intrusive-data-structures.md)
+4. [task-model.md](task-model.md)
+5. [scheduler.md](scheduler.md)
+6. [context-switch.md](context-switch.md)
+7. [interrupt-model.md](interrupt-model.md)
+8. [time-and-timeout.md](time-and-timeout.md)
+9. [kernel-invariants.md](kernel-invariants.md)
 
-- [memory-model.md](memory-model.md)
-- [intrusive-data-structures.md](intrusive-data-structures.md)
-- [task-model.md](task-model.md)
-- [scheduler.md](scheduler.md)
-- [kernel-lifecycle.md](kernel-lifecycle.md)
-- [context-switch.md](context-switch.md)
-- [interrupt-model.md](interrupt-model.md)
-- [time-and-timeout.md](time-and-timeout.md)
+## Execution model
 
-## 3. Thứ tự đọc
+```text
+task READY
+  -> selected
+  -> RUNNING
+  -> yield / block / preempt / time-slice
+  -> PendSV
+  -> next task
+```
 
-Bắt đầu từ memory/data structures, tiếp theo task/scheduler/lifecycle, rồi context/interrupt/time.
+Kernel policy nằm trong `kernel/`; mechanism save/restore context nằm trong `arch/`.
 
-## 4. Ranh giới port
+## Điểm cần nhớ
 
-Task state, ready/wait/timeout policy và IPC state machine thuộc kernel generic. Initial stack frame, critical section, ISR detection, first-task start và context switch thuộc architecture port qua `hr_port_*`.
-
-## 5. Cấu hình port
-
-`hr_port_config.h` cung cấp minimum stack, alignment, FPU-context capability và MPU capability. Kernel configuration kiểm tra dựa trên contract này thay vì giả định Cortex-M3 cố định.
-
-## 6. Kiểm thử
-
-Các thuật toán C được kiểm thử trên host; context switch/exception/tick cần cross-build và runtime validation trên target.
+- RUNNING task vẫn linked trong ready queue.
+- Một TCB dùng nhiều intrusive nodes cho nhiều membership.
+- Blocking operation có wait metadata + wait list + optional timeout.
+- Effective priority có thể khác base priority do mutex.
+- Timeout wrap được xử lý bằng current/overflow lists.
+- Public object là opaque storage; application không được cast sang internal type.

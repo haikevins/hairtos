@@ -1,48 +1,47 @@
 # Queue
 
-## 1. Mục tiêu
+## Model
 
-Truyền item fixed-size theo FIFO giữa task hoặc từ ISR, hỗ trợ blocking và timeout.
+Queue là fixed-capacity FIFO ring buffer. Application cung cấp byte storage, `item_size` và `capacity`.
 
-## 2. Cấu trúc
+Control block giữ head/tail/count và hai wait lists: sender, receiver.
 
-Queue control block lưu storage pointer, item size, capacity, head, tail, count và hai wait lists: sender và receiver.
+## Send path
 
-Application cung cấp storage:
+1. Nếu receiver đang block: copy trực tiếp item vào receiver buffer, complete receiver.
+2. Nếu queue còn chỗ: copy vào tail, tăng count.
+3. Nếu full + `HR_NO_WAIT`: `HR_ERROR_QUEUE_FULL`.
+4. Nếu được block: sender lưu source buffer vào TCB, vào sender wait list và optional timeout.
 
-```c
-static hr_queue_t queue;
-static message_t items[4];
-hr_queue_create_static(&queue, items, sizeof(message_t), 4U);
-```
+## Receive path
 
-## 3. Non-blocking path
+1. Nếu queue có item: copy head ra caller.
+2. Sau khi tạo slot, nếu sender đang block: copy item của sender vào slot vừa trống và wake sender.
+3. Nếu queue empty nhưng sender waiter tồn tại theo state hợp lệ: có thể direct transfer.
+4. Nếu empty + no-wait: `HR_ERROR_QUEUE_EMPTY`.
+5. Nếu block: receiver lưu destination buffer và wait.
 
-- Send vào queue chưa đầy: copy item vào tail.
-- Receive từ queue chưa rỗng: copy item tại head.
-- `HR_NO_WAIT` trên full/empty trả lỗi tương ứng.
+## Ordering
 
-## 4. Direct handoff
+Queue data FIFO. Waiters ưu tiên effective priority; cùng priority FIFO.
 
-Nếu receiver đang chờ, sender copy trực tiếp vào buffer của receiver rồi unblock nó. Nếu receiver vừa tạo slot trên queue đầy, item của blocked sender được copy ngay vào slot trước khi sender được đánh thức.
+## Direct handoff
 
-Cách này ngăn race “được đánh thức nhưng tài nguyên đã bị task khác chiếm”.
+Data được copy trước khi waiter READY. Điều này giữ semantics: waiter được wake vì operation đã hoàn thành, không phải chỉ vì "có thể thử lại".
 
-## 5. Blocking và timeout
+## ISR
 
-Blocked task lưu item buffer trong TCB và được insert vào wait list theo effective priority. Finite timeout đồng thời insert timeout node. Completion path phải remove node còn lại và đặt `wait_result`.
+Send/receive ISR nonblocking và có `higher_priority_task_woken`.
 
-## 6. ISR path
+## Invariants
 
-ISR API không block. Cờ higher-priority task woken cho biết cần pend PendSV.
+- `count <= capacity`;
+- head/tail trong range;
+- sender wait khi không thể send;
+- receiver wait khi không thể receive;
+- wait buffer lifetime còn hợp lệ khi task block;
+- item_size/capacity không đổi sau create.
 
-## 7. Invariants
+## Chưa có
 
-- `count <= capacity`.
-- head/tail luôn trong range.
-- sender chỉ chờ khi queue full; receiver chỉ chờ khi empty.
-- task không nằm đồng thời trong send và receive wait list.
-
-## 8. Giới hạn
-
-Không hỗ trợ variable-size message, zero-copy buffer ownership hoặc queue overwrite mode.
+Variable-size message, zero-copy ownership, overwrite queue, queue set/select.

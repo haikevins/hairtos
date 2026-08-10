@@ -138,3 +138,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=11-task-suspend-resume build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`12-software-timer`](../12-software-timer/README.md). Bài tiếp theo đưa callback định thời vào timer-service task.
+
+### Liên hệ Version 2
+
+Nếu Version 2 thêm cancellation/termination, phải giữ suspend là administrative control riêng, không nhập nhằng với cancel wait.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

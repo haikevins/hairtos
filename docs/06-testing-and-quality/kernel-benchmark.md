@@ -1,38 +1,55 @@
 # Kernel benchmark
 
-## 1. Mục tiêu
+## Generic statistics
 
-Đo latency/overhead trên Cortex-M3 bằng DWT cycle counter mà không đưa UART vào vùng đo.
+`benchmarks/kernel` chỉ tính sample statistics. Clock backend do target cung cấp.
 
-## 2. Metrics
+## Target example metrics
 
-SVC startup, critical section, scheduler selection, queue, semaphore, mutex, timer command, two-PendSV yield round trip, queue wake/preempt, haievent dispatch và timer jitter.
+Example 15 đo các path như:
 
-## 3. Statistics
+- first task startup;
+- critical section;
+- scheduler;
+- queue;
+- semaphore;
+- mutex;
+- timer commands;
+- yield round-trip;
+- wake/preemption;
+- haievent dispatch;
+- timer jitter.
 
-Mỗi metric giữ tối đa 64 sample và tính min, p50, mean, p95, max. Measurement overhead được đo riêng và trừ có clamp về 0.
+## DWT target
 
-## 4. Hardware markers
+Blue Pill target dùng Cortex-M3 DWT CYCCNT.
 
-PB0 high/low bao quanh một số path để logic analyzer xác nhận thời gian và thứ tự event.
+## Board marker
 
-## 5. Build
+Marker do `board_benchmark_marker_*` cung cấp; target hiện dùng PB0 nhưng benchmark generic không biết pin này.
 
-```bash
-make EXAMPLE=15-kernel-benchmark run
+## Method
+
+UART không nằm trong vùng timestamp. Sample được lưu tĩnh rồi report sau.
+
+Statistics:
+
+```text
+min
+p50
+mean
+p95
+max
 ```
 
-## 6. Diễn giải
+## Không phải WCET proof
 
-Cycle phụ thuộc compiler, optimization, Flash wait state, interrupt load và clock. Chỉ so sánh khi giữ cùng điều kiện.
+64 samples không đủ để chứng minh hard WCET. Interrupt load, compiler flags, Flash wait states và target clock ảnh hưởng kết quả.
 
-## 7. Không nên làm
+## V2
 
-- Không in UART giữa start/end timestamp.
-- Không dùng một sample làm guarantee.
-- Không so số đo host với Cortex-M3.
-- Không bỏ qua warm-up/cache/pipeline effects dù M3 không có data cache.
-
-## 8. RAM budget
-
-Benchmark dùng static sample buffers và chỉ link trong Phase 15.
+- trace/benchmark clock capability metadata;
+- automated result capture;
+- context-switch latency under interrupt load;
+- critical-section latency;
+- power/tickless wake latency.

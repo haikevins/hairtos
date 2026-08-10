@@ -136,3 +136,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`08-preemption-round-robin`](../08-preemption-round-robin/README.md). Bài tiếp theo bật preemption và time slicing bằng SysTick.
+
+### Liên hệ Version 2
+
+Tickless idle Version 2 phải giữ nguyên semantics delay/timeout của bài này dù tick source không còn chạy periodic liên tục.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

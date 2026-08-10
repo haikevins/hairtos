@@ -137,3 +137,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=05-cooperative-context-switch build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`06-priority-scheduler`](../06-priority-scheduler/README.md). Bài tiếp theo áp dụng policy fixed-priority và FIFO giữa các task cùng priority.
+
+### Liên hệ Version 2
+
+Đây là conformance test nền cho mọi port Version 2: callee-saved registers, SP và local state phải sống qua switch.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

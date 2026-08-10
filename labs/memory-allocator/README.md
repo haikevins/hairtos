@@ -124,3 +124,10 @@ Tài liệu liên quan:
 
 - [`../../docs/07-labs-and-examples/memory-allocator-lab.md`](../../docs/07-labs-and-examples/memory-allocator-lab.md);
 - [`../../examples/14-memory-allocator-lab/README.md`](../../examples/14-memory-allocator-lab/README.md).
+
+## Liên hệ audit và Version 2
+
+Allocator lab tiếp tục là experiment riêng, không trở thành dependency của kernel. Static-first vẫn là nguyên tắc baseline của Version 2.
+
+- [`../../docs/00-overview/design-principles.md`](../../docs/00-overview/design-principles.md)
+- [`../../docs/09-version2/vision-and-goals.md`](../../docs/09-version2/vision-and-goals.md)

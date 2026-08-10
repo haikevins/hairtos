@@ -1,70 +1,76 @@
-# Context switch trên Cortex-M3
+# Context switch
 
-## 1. Mục tiêu
+## Generic contract
 
-Khởi chạy first task bằng SVC và chuyển task bằng PendSV, tận dụng hardware exception frame.
+Kernel không biết register set. Port cung cấp:
 
-## 2. Stack frame
+- initial stack;
+- start first task;
+- request context switch;
+- critical section;
+- ISR detection;
+- wait-for-interrupt.
 
-Hardware tự push/pop:
+## Cortex-M3 initial frame
+
+Hardware exception frame:
 
 ```text
 R0 R1 R2 R3 R12 LR PC xPSR
 ```
 
-hairtos assembly tự lưu/khôi phục:
+Software-saved frame:
 
 ```text
 R4 R5 R6 R7 R8 R9 R10 R11
 ```
 
-## 3. Start first task
+R0 = task argument, PC = entry, xPSR Thumb bit set.
+
+## First task
 
 ```text
-main dùng MSP
+main/MSP
   -> hr_kernel_start
-  -> prepare current TCB
   -> SVC
-  -> reset MSP về _estack
-  -> restore R4-R11 từ task stack
-  -> set PSP và CONTROL.SPSEL
-  -> exception return 0xFFFFFFFD
-  -> task entry chạy bằng PSP
+  -> restore software frame
+  -> PSP = task stack
+  -> Thread mode uses PSP
+  -> exception return
+  -> task entry
 ```
 
-## 4. PendSV switch
+## PendSV
 
 ```text
 PendSV entry
-  -> MRS current PSP
-  -> STMDB R4-R11
-  -> lưu SP vào TCB field 0
-  -> gọi hr_kernel_select_next_from_pendsv()
-  -> lấy SP TCB mới
-  -> LDMIA R4-R11
-  -> MSR PSP
-  -> BX LR
+  -> read PSP
+  -> save R4-R11
+  -> store saved SP in current TCB
+  -> call C selector
+  -> load next TCB saved SP
+  -> restore R4-R11
+  -> write PSP
+  -> exception return
 ```
 
-Selector C chạy khi interrupt bị mask để cập nhật scheduler atomically.
+Handler mode dùng MSP; task Thread mode dùng PSP.
 
-## 5. MSP và PSP
+## Atomicity
 
-- Handler mode luôn dùng MSP.
-- Thread mode sau kernel start dùng PSP.
-- Mỗi task có PSP riêng.
+Selector chạy với interrupt state phù hợp để internal ready/wait structures không bị ISR sửa giữa save/select/restore.
 
-## 6. Exception priorities
+## FPU
 
-PendSV được đặt priority thấp để context switch chỉ xảy ra sau ISR khác. SysTick tạo scheduling decision nhưng không trực tiếp thay stack.
+Port v1 không lưu FPU context. `HR_PORT_SUPPORTS_FPU_CONTEXT=0`; config check cấm bật FPU feature.
 
-## 7. Kiểm thử
+## ABI invariant
 
-- Host test kiểm tra initial stack layout.
-- Phase 4 kiểm tra SVC.
-- Phase 5 kiểm tra local variable được bảo toàn qua PendSV.
-- Validation script kiểm tra strong symbols và disassembly.
+Assembly phụ thuộc saved stack pointer field offset. Mọi refactor TCB phải giữ static assertion/contract đồng bộ với assembly.
 
-## 8. Giới hạn
+## Validation
 
-`HR_CFG_USE_FPU=0`; không lưu floating-point context mở rộng.
+- host test initial stack layout;
+- example 04 first task;
+- example 05 local variable preservation;
+- example 08 preemption/time slice.

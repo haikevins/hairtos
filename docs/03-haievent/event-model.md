@@ -1,36 +1,72 @@
 # Event model
 
-## 1. Mục tiêu
+## Signal
 
-Biểu diễn thông điệp bằng signal và payload mở rộng, hỗ trợ static event và dynamic event từ fixed-block pool.
+`he_signal_t` = `uint16_t`.
 
-## 2. Signal
+Reserved:
 
-`he_signal_t` là `uint16_t`. Signal 0–4 dành cho framework; user signal bắt đầu từ `HE_SIG_USER` (32).
+```text
+NONE    0
+ENTRY   1
+EXIT    2
+INIT    3
+TIMEOUT 4
+USER    32 trở lên
+```
 
-## 3. Event header
+## Event header
 
-`he_event_t` chứa pool pointer, magic, size, reference count, signal và flags. Payload application có thể được đặt trong struct mở rộng với `he_event_t` ở đầu.
+`he_event_t` mang metadata:
 
-## 4. Static event
+- owning pool;
+- magic;
+- event size;
+- reference count;
+- signal;
+- flags.
 
-`he_event_init_static()` tạo event không thuộc pool. Static event không bị giải phóng và caller phải bảo đảm lifetime đủ dài cho mọi consumer.
+Application payload thường đặt `he_event_t` làm field đầu tiên trong struct mở rộng.
 
-## 5. Dynamic event
+## Static event
 
-`he_event_new()` lấy một block từ pool. Block size phải đủ cho event struct. Reference count theo dõi số consumer đang sở hữu.
+`he_event_init_static()`:
 
-## 6. Ownership
+- pool = NULL;
+- không return về pool;
+- lifetime do application chịu trách nhiệm.
 
-- Direct `he_active_post()` chuyển ownership của dynamic event sang AO khi thành công.
-- Failed post không được giả định đã giải phóng; caller xử lý theo contract của API/source.
-- Publish giữ một reference cho mỗi subscriber thành công và cuối cùng release ownership của publisher.
-- AO release event sau dispatch.
+Dùng tốt cho immutable command/event lặp lại có lifetime global.
 
-## 7. Event pool
+## Dynamic event
 
-Pool dùng fixed-size free list, không fragmentation. API cung cấp free count và block count để theo dõi exhaustion.
+`he_event_new()`:
 
-## 8. Giới hạn
+- lấy một fixed block;
+- event size phải fit block;
+- reference count bắt đầu từ 1;
+- release cuối cùng trả block về pool.
 
-Không có nhiều pool theo size class tự động; application phải chọn block size/capacity phù hợp.
+## Pool
+
+Pool dùng free list trong caller-provided storage. Block size fixed, số block fixed.
+
+Ưu điểm: không external fragmentation, bounded storage.
+
+Nhược điểm: internal fragmentation nếu event sizes chênh lệch; v1 không tự chọn size class.
+
+## Thread safety
+
+Pool retain/release/free-list update được bảo vệ bằng critical wrapper.
+
+## Error cases
+
+- event size quá lớn;
+- pool hết block;
+- invalid magic;
+- retain overflow;
+- release invalid/static semantics sai.
+
+## V2
+
+Nên bổ sung pool diagnostics/trace và optional multiple size-class registry ở framework level chỉ khi có use-case rõ; tránh biến framework thành general heap.

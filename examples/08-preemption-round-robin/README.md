@@ -132,3 +132,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`09-queue-blocking-ipc`](../09-queue-blocking-ipc/README.md). Bài tiếp theo thêm IPC queue và blocking timeout.
+
+### Liên hệ Version 2
+
+Interrupt ceiling và tickless Version 2 không được làm thay đổi preemption/round-robin semantics đã kiểm chứng ở đây.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

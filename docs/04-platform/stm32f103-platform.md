@@ -1,45 +1,49 @@
-# STM32F103/Blue Pill platform
+# STM32F103 / Blue Pill target
 
-## 1. Mục tiêu
+## Target identity
 
-Mô tả MCU, board clock, memory và wiring mặc định.
+```text
+TARGET=bluepill_f103c8
+MCU=STM32F103C8T6
+CPU=ARM Cortex-M3
+```
 
-## 2. Target
+## Clock
 
-- MCU: STM32F103C8T6.
-- CPU: ARM Cortex-M3.
-- Flash linker region: 64 KiB.
-- RAM linker region: 20 KiB.
-- Board: Blue Pill.
+Board target cố gắng đạt nominal 72 MHz từ HSE 8 MHz + PLL. Platform có clock query để board/report biết actual state.
 
-## 3. Clock
+## Board services
 
-Board cố gắng dùng HSE 8 MHz và PLL x9 để đạt 72 MHz. Nếu HSE không start, code giữ HSI fallback và driver dùng clock thực tế.
+`board.h` cung cấp:
 
-## 4. LED
+- init;
+- board/CPU name;
+- core clock;
+- LED;
+- UART log;
+- millis/delay bare-metal;
+- flash/static RAM footprint;
+- benchmark marker;
+- panic.
 
-PC13 active-low. Board API cung cấp init/toggle/panic behavior cho example.
+## GPIO/UART
 
-## 5. UART
+Public driver không expose STM32 port enum. Board dùng STM32F1 pin encoding header để khai PC13/PA9/PA10/PB0.
 
-USART1:
+UART driver tự lấy peripheral clock từ STM32F1 clock service.
 
-| Signal | Pin |
-|---|---|
-| TX | PA9 |
-| RX | PA10 |
-| GND | GND |
+## Benchmark marker
 
-Mặc định 115200, 8-N-1.
+Target tham chiếu dùng PB0 active-high. Đây là board detail, không phải benchmark API generic.
 
-## 6. Debug
+## Debug
 
-ST-Link V2 qua SWDIO/SWCLK/GND/3.3 V reference. OpenOCD config không yêu cầu NRST và dùng system/software reset sau program.
+ST-Link/SWD/OpenOCD config nằm dưới `tools/openocd`.
 
-## 7. Interrupts
+## Memory
 
-Startup vector table định nghĩa core exceptions và STM32F1 IRQs. Weak handlers có thể được example/kernel override bằng strong symbol.
+Linker profile dùng board-specific Flash/RAM regions và export symbols cho diagnostics/benchmark footprint.
 
-## 8. Giới hạn
+## Portability note
 
-Blue Pill clone có thể có Flash/RAM thực khác marking; linker vẫn dùng profile 64/20 KiB để an toàn.
+Application không nên hard-code PA9/PC13/PB0. Một số educational EXTI examples vẫn truy cập STM32F1 register trực tiếp để minh họa ISR; chúng cần adapter nếu chạy target khác.

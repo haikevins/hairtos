@@ -1,42 +1,68 @@
-# Cortex-M3 port
+# ARM Cortex-M3 port
 
-## 1. Mục tiêu
-
-Cung cấp primitives architecture-specific mà kernel generic cần: initial stack, critical section, SVC/PendSV, SysTick integration, ISR detection và fault capture.
-
-## 2. File chính
+## Files
 
 ```text
-arch/arm/cortex-m3/hr_port.c
-arch/arm/cortex-m3/hr_port_stack.c
-arch/arm/cortex-m3/hr_portasm.S
-arch/arm/cortex-m3/hr_fault.c
-arch/arm/cortex-m3/hr_faultasm.S
+hr_port.c
+hr_port_stack.c
+hr_portasm.S
+hr_fault.c
+hr_faultasm.S
+hr_kernel_tick_irq.c
+hr_baremetal_tick_irq.c
+hr_benchmark_clock_dwt.c
+include/hr_port*.h
 ```
 
-## 3. Port C API
+## Stack/exception model
 
-Port cấu hình exception priority, đọc/ghi PRIMASK/CONTROL/PSP, pend PendSV, kiểm tra IPSR và thực hiện WFI.
+Thread tasks dùng PSP; handlers dùng MSP.
 
-## 4. Assembly ABI
+Cortex-M hardware stack R0–R3/R12/LR/PC/xPSR. Port save thêm R4–R11.
 
-- TCB field 0 phải là saved SP.
-- SVC restore initial software frame và exception-return bằng PSP.
-- PendSV save/restore R4–R11.
-- Fault wrapper chọn MSP hoặc PSP dựa trên EXC_RETURN rồi chuyển frame sang C.
+## SVC
 
-## 5. Stack alignment
+SVC được dùng cho first-task bootstrap:
 
-Initial SP căn chỉnh 8 byte theo ARM EABI/exception requirements.
+- restore software frame;
+- set PSP;
+- select PSP in Thread mode;
+- exception return.
 
-## 6. Fault record
+## PendSV
 
-Port đọc SCB fault registers và ghi `hr_fault_context_t`; retained record nằm trong `.noinit`.
+PendSV priority thấp dùng cho context switch để tránh switch giữa ISR priority cao hơn.
 
-## 7. Kiểm thử
+## SysTick adapter
 
-Validation kiểm tra symbol strength, disassembly pattern và compile proof một phần cho Cortex-M0 generic structures.
+`hr_kernel_tick_irq.c` chỉ bridge `SysTick_Handler` → `hr_kernel_tick_from_isr()`.
 
-## 8. Giới hạn
+Bare-metal variant bridge tới hardware timer counter. Chỉ một adapter được link trong image.
 
-Không FPU, MPU, TrustZone hoặc low-power tickless idle.
+## Critical section
+
+v1 dùng PRIMASK/cpsid i và restore prior mask.
+
+## Fault
+
+Fault assembly capture stacked frame, exception return và SCB registers. Strong handler chỉ link khi diagnostics/fault module được chọn.
+
+## DWT benchmark
+
+Benchmark clock backend dùng DWT cycle counter. Statistics generic không biết DWT.
+
+## Capability
+
+```text
+FPU context: no
+MPU: no
+stack align: 8
+min initial frame: 18 words
+```
+
+## V2
+
+- BASEPRI critical ceiling;
+- Cortex-M4F variant với optional FP context;
+- interrupt priority validation;
+- actual second target.

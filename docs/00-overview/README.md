@@ -1,26 +1,15 @@
-# 00 — Tổng quan
+# 00 — Tổng quan và phân tích project
 
-## 1. Mục tiêu
+Nhóm này trả lời bốn câu hỏi: `hairtos` đang có gì, các layer phụ thuộc nhau thế nào, những bất biến thiết kế nào phải giữ, và khoảng cách từ v1 tới Version 2 còn bao nhiêu.
 
-Nhóm tài liệu này thiết lập phạm vi của project, dependency rules, cấu hình, coding standard, repository layout và roadmap.
+## Thứ tự đọc
 
-## 2. Nội dung
-
-- [architecture.md](architecture.md)
-- [dependency-rules.md](dependency-rules.md)
-- [project-layout.md](project-layout.md)
-- [configuration.md](configuration.md)
-- [coding-standard.md](coding-standard.md)
-- [roadmap.md](roadmap.md)
-
-## 3. Thứ tự đọc
-
-Đọc `architecture.md` và `dependency-rules.md` trước; sau đó xem `project-layout.md` và `configuration.md`. `coding-standard.md` áp dụng khi chỉnh source, còn `roadmap.md` mô tả hướng phát triển.
-
-## 4. Liên hệ với portability
-
-Target manifest không làm thay đổi dependency direction. Kernel/framework không được phụ thuộc ngược vào `arch/`, `soc/`, `boards/` hoặc driver implementation. CMake chỉ binding các layer tại build time.
-
-## 5. Kiểm tra
-
-Khi thêm target mới, xác nhận layout, target discovery và include boundary vẫn đúng; application không được nhận internal include ngoài các example có chủ đích.
+1. [project-analysis.md](project-analysis.md) — audit toàn bộ repository.
+2. [architecture.md](architecture.md) — kiến trúc runtime.
+3. [capability-matrix.md](capability-matrix.md) — đã có/chưa có.
+4. [design-principles.md](design-principles.md) — nguyên tắc không nên phá.
+5. [project-layout.md](project-layout.md) — trách nhiệm thư mục.
+6. [dependency-rules.md](dependency-rules.md) — hướng dependency.
+7. [configuration.md](configuration.md) — compile-time configuration.
+8. [coding-standard.md](coding-standard.md) — quy tắc source.
+9. [roadmap.md](roadmap.md) — lịch sử v1 và liên kết v2.

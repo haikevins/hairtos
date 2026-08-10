@@ -141,3 +141,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=04-start-first-task build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`05-cooperative-context-switch`](../05-cooperative-context-switch/README.md). Bài tiếp theo bổ sung PendSV để chuyển qua lại giữa hai task.
+
+### Liên hệ Version 2
+
+Version 2 không bắt buộc SVC trên mọi architecture; example nên kiểm chứng semantic “first task starts correctly” qua port contract.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

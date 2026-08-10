@@ -1,53 +1,84 @@
 # Scheduler
 
-## 1. Mục tiêu
+## Policy
 
-Cung cấp fixed-priority scheduling, preemption và round-robin xác định.
-
-## 2. Priority policy
-
-Priority số nhỏ hơn có độ khẩn cấp cao hơn. Mỗi priority có FIFO ready queue. Priority cuối dành cho idle task.
+Fixed-priority, preemptive, single-core.
 
 ```text
-P0: task A -> task B
-P1: task C
+priority 0 = cao nhất
 ...
-P7: idle
+idle priority = thấp nhất
 ```
 
-Scheduler chọn đầu queue priority thấp nhất đang có bit trong bitmap.
+Mỗi priority có FIFO queue.
 
-## 3. Cooperative yield
-
-`hr_task_yield()` đặt switch reason `YIELD` và pend PendSV. Nếu có peer cùng priority, current node được rotate về cuối queue. Nếu không có peer, task có thể được chọn lại.
-
-## 4. Preemption
-
-Khi task priority cao hơn trở thành READY do timeout, queue, semaphore, mutex handoff hoặc resume, kernel đánh dấu `PREEMPT` và yêu cầu PendSV sau critical section/ISR.
-
-## 5. Round-robin
-
-Mỗi task có `time_slice_remaining`. SysTick giảm quantum khi preemption và time slicing bật. Khi về 0 và có peer cùng priority, kernel đánh dấu `TIME_SLICE`.
-
-## 6. Switch reasons
+## Ready representation
 
 ```text
-YIELD | BLOCK | PREEMPT | TIME_SLICE
+ready_bitmap
+ready_queues[HR_CFG_PRIORITY_COUNT]
 ```
 
-PendSV selector dùng reason để quyết định state transition và queue rotation.
+Highest selection quét priority từ 0 lên. Với default 8 priority, chi phí nhỏ và deterministic.
 
-## 7. Priority inheritance
+## Switch reasons
 
-Mutex có thể thay effective priority của owner. Kernel phải remove/reinsert ready node hoặc wait node để giữ ordering đúng. Chained inheritance được giới hạn bởi số task tối đa.
+Kernel phân biệt:
 
-## 8. Invariants
+```text
+YIELD
+BLOCK
+PREEMPT
+TIME_SLICE
+```
 
-- RUNNING task vẫn thuộc ready queue cho đến khi block/suspend.
-- Idle luôn là lựa chọn cuối.
-- Ready bitmap và count luôn đồng bộ.
-- Task blocked không có ready node linked.
+Reason quan trọng vì RUNNING task vẫn nằm trong ready queue.
 
-## 9. Giới hạn
+### YIELD
 
-Không có deadline scheduling, EDF, SMP hoặc dynamic priority API cho application.
+Rotate current priority nếu có peer.
+
+### BLOCK
+
+Current đã bị remove READY hoặc selector thực hiện transition cần thiết; chọn highest còn lại.
+
+### PREEMPT
+
+Current vẫn READY; task priority cao hơn vừa READY. Không rotate current queue vô lý.
+
+### TIME_SLICE
+
+Rotate peers cùng priority khi quantum hết.
+
+## Preemption sources
+
+- timeout wakeup;
+- queue handoff;
+- semaphore give;
+- mutex unlock/handoff;
+- resume;
+- ISR wakeup.
+
+## Time slice
+
+`time_slice_remaining` giảm theo tick khi feature bật. Khi 0 và có peer cùng priority, request PendSV.
+
+## Priority inheritance interaction
+
+Nếu effective priority task thay đổi:
+
+- ready task phải được move sang ready queue mới;
+- blocked waiter có thể cần reorder wait list;
+- propagation có thể tiếp tục tới owner upstream.
+
+## Invariants
+
+- bitmap phản ánh queue nonempty;
+- running task có đúng state/membership;
+- idle là fallback;
+- blocked task không có ready node;
+- ready ordering dùng effective priority.
+
+## Chưa có
+
+EDF, deadline, sporadic server, CPU budget, SMP, application dynamic priority API.

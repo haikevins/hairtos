@@ -1,42 +1,46 @@
-# Publish/Subscribe
+# Publish / Subscribe
 
-## 1. Mục tiêu
+## Table
 
-Cho phép một event được chuyển tới nhiều Active Object mà publisher không biết trực tiếp từng consumer.
-
-## 2. Subscription table
-
-Application cung cấp mảng `he_active_t *` có kích thước:
+Caller cung cấp subscriber storage cho:
 
 ```text
-signal_count * max_subscribers_per_signal
+signal_count × max_subscribers_per_signal
 ```
 
-Mỗi signal có một vùng slot cố định.
+Mỗi slot là AO pointer.
 
-## 3. Subscribe và unsubscribe
+## Subscribe
 
-Chỉ user signal (`>= HE_SIG_USER`) được đăng ký. Duplicate subscription trả invalid state. Unsubscribe compact các slot còn lại.
+Signal phải trong configured range. Duplicate subscription bị từ chối. Unsubscribe compact slot.
 
-## 4. Publish
+## Publish flow
 
-Framework snapshot subscriber list trong critical section rồi post ngoài critical section. Điều này giảm thời gian mask interrupt và tránh list thay đổi giữa vòng lặp.
+1. validate event/signal;
+2. snapshot subscribers dưới critical section;
+3. rời critical section;
+4. post shared event tới từng AO;
+5. count successful deliveries;
+6. release publisher dynamic reference;
+7. trả first error + delivered count.
 
-## 5. Dynamic event ownership
+Snapshot giúp tránh giữ global interrupt mask suốt các queue posts.
 
-Mỗi successful shared post giữ một reference. Sau khi thử tất cả subscriber, publisher reference được release. Event trở về pool khi AO cuối cùng dispatch xong.
+## Dynamic event sharing
 
-## 6. Partial delivery
+Shared post retain reference trước enqueue. Nếu enqueue fail, retain phải rollback/release.
 
-API trả overall status đầu tiên gặp lỗi và optional delivered count. Một số subscriber có thể nhận trong khi subscriber khác full.
+## Partial delivery
 
-## 7. Invariants
+Một số subscriber có thể nhận trong khi subscriber khác queue full. Application phải hiểu `delivered_count`, không giả định publish là atomic multicast transaction.
 
-- Subscriber phải là AO valid.
-- Signal trong range table.
-- Snapshot không vượt `HE_CFG_MAX_ACTIVE_OBJECTS`.
-- Static event lifetime do caller quản lý.
+## Chưa có
 
-## 8. Giới hạn
+- wildcard topic;
+- topic string;
+- retained value;
+- event priority;
+- dynamic subscriber table;
+- QoS.
 
-Không có wildcard subscription, topic string hoặc retained last value.
+v2 nên ưu tiên observability và HSM hơn việc biến pub/sub thành message broker lớn.

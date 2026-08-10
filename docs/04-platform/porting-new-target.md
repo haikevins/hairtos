@@ -1,4 +1,3 @@
-
 # Port một target MCU mới
 
 ## 1. Mục tiêu
@@ -122,3 +121,20 @@ make TARGET=<target> host-tests
 
 Sau compile validation cần kiểm tra trên phần cứng: startup, UART, tick,
 PendSV/SVC, interrupt wake-up, fault retention và benchmark marker.
+
+
+## Audit checklist cho target mới
+
+Sau khi manifest configure được, xác nhận thêm:
+
+- không sửa `kernel/` hoặc `haievent/` để target build;
+- generic examples không cần SoC register header;
+- target tick adapter chỉ có một strong IRQ handler;
+- fault handlers không duplicate fallback vector handlers;
+- stack port capability khớp config;
+- public GPIO/UART identifiers không bị application suy diễn;
+- benchmark backend báo unavailable rõ ràng nếu target không có clock/marker;
+- `.noinit` retention được test sau reset thật;
+- compile database IntelliSense lấy đúng target flags.
+
+Một target thứ hai là bằng chứng quan trọng cho portability v1/v2; compile-only architecture probe không thay thế runtime port.

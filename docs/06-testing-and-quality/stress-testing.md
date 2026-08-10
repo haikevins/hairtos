@@ -1,43 +1,44 @@
 # Stress testing
 
-## 1. Mục tiêu
+## Deterministic host stress
 
-Tìm lỗi state/list hiếm bằng operation sequence dài và deterministic.
+Scheduler stress thực hiện operation sequence dài trên ready/list structures và validate sau mỗi bước.
 
-## 2. Host stress
+Baseline hiện dùng 500.000 iterations.
 
-```bash
-make ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run
-```
+Deterministic seed/sequence giúp bug reproducible.
 
-Stress ready-set/scheduler qua hàng trăm nghìn insert/remove/rotate/validate operations. Seed/sequence cố định giúp tái tạo lỗi.
+## Target stress
 
-## 3. Target stress
+Example 16 kết hợp:
 
-Example `16-diagnostics-stress-stabilization` chạy queue, semaphore, mutex, software timer, timeout, preemption và health monitor đồng thời.
+- queue producer/consumer;
+- semaphore pulse;
+- mutex-protected counters;
+- periodic timer;
+- preemption/time slicing;
+- diagnostics monitor;
+- stack/invariant checks.
 
-## 4. Tiêu chí PASS
+## Tiêu chí
 
-- Không panic/assert.
-- Health check luôn valid.
-- Stack guard hợp lệ.
-- Counters tiếp tục tăng.
-- Producer/consumer và timer không stall.
-- UART checkpoint xuất hiện theo chu kỳ.
+- counters tiến triển;
+- không order corruption;
+- no invariant failure;
+- stack guards valid;
+- no unexpected panic;
+- health reports tiếp tục.
 
-## 5. Long-duration plan
+## Soak
 
-Chạy ít nhất 8 giờ trên board, lưu UART log và reset reason. Thêm tải interrupt ngoài nếu sản phẩm thật có ISR dày.
+10-second PASS checkpoint chỉ là smoke/stress checkpoint, không phải endurance validation.
 
-## 6. Fault scenarios
+Stable release nên chạy giờ-level soak trên target thật, lưu logs và reset reason.
 
-- queue full/empty lặp lại;
-- timeout gần tick wrap;
-- waiter suspended khi event hoàn tất;
-- nested mutex inheritance;
-- timer pending backlog;
-- event pool exhaustion.
+## Fault injection
 
-## 7. Giới hạn
+Fault injection phải tách normal image. Sau injected fault, reset và kiểm tra retained record.
 
-Deterministic host stress không mô phỏng chính xác interrupt timing phần cứng.
+## V2
+
+Thêm randomized/property stress cho timeout wrap, mutex graph, event ownership và HSM transitions; giữ deterministic reproduction seed.

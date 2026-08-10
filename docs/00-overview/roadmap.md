@@ -1,39 +1,46 @@
 # Roadmap
 
-## 1. Các mốc phát triển đã hoàn thành
+## Lịch sử v1
 
-| Phase | Chủ đề | Trạng thái |
+| Mốc | Nội dung | Trạng thái |
 |---:|---|---|
-| 0 | Specification | ✅ Hoàn thành |
-| 1 | Bare-metal foundation | ✅ Hoàn thành |
-| 2 | Intrusive list và kernel data structures | ✅ Hoàn thành |
-| 3 | TCB và initial task stack | ✅ Hoàn thành |
-| 4 | Start first task bằng SVC | ✅ Hoàn thành |
-| 5 | PendSV cooperative context switch | ✅ Hoàn thành |
-| 6 | Priority scheduler | ✅ Hoàn thành |
-| 7 | SysTick và delay | ✅ Hoàn thành |
-| 8 | Preemption và round-robin | ✅ Hoàn thành |
-| 9 | Queue và blocking | ✅ Hoàn thành |
-| 10 | Semaphore và mutex | ✅ Hoàn thành |
-| 11 | Suspend/resume | ✅ Hoàn thành |
-| 12 | Software timer | ✅ Hoàn thành |
-| 13 | haievent framework | ✅ Hoàn thành |
-| 14 | Memory allocator lab | ✅ Hoàn thành |
-| 15 | Kernel benchmark | ✅ Hoàn thành |
-| 16 | Diagnostics và stabilization | ✅ Hoàn thành |
+| 0 | Specification | Hoàn thành |
+| 1 | Bare-metal foundation | Hoàn thành |
+| 2 | Intrusive structures | Hoàn thành |
+| 3 | TCB + initial stack | Hoàn thành |
+| 4 | First task startup | Hoàn thành |
+| 5 | Cooperative context switch | Hoàn thành |
+| 6 | Priority scheduler | Hoàn thành |
+| 7 | Tick + delay | Hoàn thành |
+| 8 | Preemption + round-robin | Hoàn thành |
+| 9 | Queue + blocking | Hoàn thành |
+| 10 | Semaphore + mutex | Hoàn thành |
+| 11 | Suspend/resume | Hoàn thành |
+| 12 | Software timer | Hoàn thành |
+| 13 | haievent | Hoàn thành |
+| 14 | Allocator lab | Hoàn thành |
+| 15 | Benchmark | Hoàn thành |
+| 16 | Diagnostics/stabilization | Hoàn thành |
 
-## 2. Quan hệ giữa các mốc
+Các số trên là **lộ trình học**, không xuất hiện trong tên API/function nội bộ.
 
-- Phase 0–3 tạo nền tảng memory, data structure và initial context.
-- Phase 4–8 hoàn thiện task startup, context switch, scheduler, tick và preemption.
-- Phase 9–12 bổ sung IPC, synchronization, task administration và timer service.
-- Phase 13 xây framework event-driven phía trên kernel.
-- Các mốc cuối tập trung allocator experiment, benchmark, diagnostics và stabilization.
+## Trạng thái release
 
-## 3. Trạng thái hiện tại
+Current version:
 
-Repository hiện là **hairtos mainline**. Bảng trên chỉ ghi lại lộ trình phát triển; tên phase không được dùng làm tên release hoặc artifact chính; riêng example tích hợp vẫn giữ tên lịch sử `16-diagnostics-stress-stabilization` để khớp roadmap. “Hoàn thành” nghĩa là source và validation hiện diện trong repository; không có nghĩa mọi example đã được chạy trên mọi Blue Pill clone hoặc mọi toolchain.
+```text
+1.0.0-rc1
+```
 
-## 4. Lịch sử chi tiết
+Mục tiêu trước stable v1:
 
-Roadmap chỉ mô tả tiến độ ở mức cao; thiết kế hiện hành nằm trong các nhóm tài liệu subsystem tương ứng.
+- chạy hardware regression trên target tham chiếu;
+- soak test dài;
+- retained-fault reset validation;
+- đóng known-issues quan trọng.
+
+## Version 2
+
+Version 2 không nối tiếp bằng "Phase 17". Nó là một release architecture roadmap riêng.
+
+Xem [`../09-version2/roadmap.md`](../09-version2/roadmap.md).

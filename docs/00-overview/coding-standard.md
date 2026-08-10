@@ -1,50 +1,65 @@
 # Coding standard
 
-## 1. Mục tiêu
+## Ngôn ngữ
 
-Quy tắc này ưu tiên tính xác định, khả năng audit và phát hiện lỗi tại compile time.
+- C11 cho C.
+- GNU assembler-with-cpp cho Cortex-M assembly.
+- Freestanding target.
+- Không phụ thuộc undefined behavior có chủ đích.
 
-## 2. Ngôn ngữ và compiler flags
+## Naming
 
-- C11 và GNU assembly cho Cortex-M3.
-- `-Wall -Wextra -Werror -Wshadow -Wundef`.
-- Bật cảnh báo conversion/sign-conversion.
-- Target dùng freestanding, không giả định libc đầy đủ.
+```text
+hr_*       public hairtos
+he_*       public haievent
+HR_CFG_*   kernel config
+HE_CFG_*   framework config
+HR_PORT_*  port capability
+board_*    board service
+```
 
-## 3. Naming
+Internal symbol vẫn dùng `hr_`/`he_`, nhưng header nằm trong `internal/`.
 
-| Thành phần | Prefix |
-|---|---|
-| Public hairtos | `hr_` |
-| Public haievent | `he_` |
-| Configuration | `HR_CFG_`, `HE_CFG_` |
-| Internal hairtos | `hr_*_internal` hoặc internal header |
-| Board API | `board_` |
+## Memory
 
-Kiểu public kết thúc bằng `_t`; enum constant viết hoa; function và variable dùng snake_case.
+- Không VLA trong kernel hot path.
+- Không recursion không giới hạn.
+- Không `malloc` trong kernel.
+- Mọi size multiplication phải xem overflow.
+- Opaque storage phải align đủ cho internal object.
 
-## 4. Memory
+## Concurrency
 
-- Ưu tiên static storage.
-- Không dùng recursion trong kernel hot path.
-- Không dùng variable-length array.
-- Kiểm tra overflow khi tính size/capacity.
-- Opaque object phải có `_Static_assert` với internal layout.
-
-## 5. Concurrency
-
-- Mọi cập nhật ready/wait/timeout structure phải nằm trong critical section phù hợp.
+- Ready/wait/timeout membership update phải atomic.
+- Critical section ngắn.
+- Không UART print trong critical section.
 - ISR API không block.
-- PendSV là nơi thực hiện context switch.
-- Callback timer và state handler không chạy trong SysTick ISR.
+- Application callback không chạy từ tick ISR.
+- Mutex không dùng trong ISR.
 
-## 6. Error handling
+## State machine
 
-- Public API trả `hr_status_t`.
-- Invalid argument khác invalid state.
-- Internal corruption dẫn tới `HR_ERROR_INTERNAL` hoặc panic theo ngữ cảnh.
-- Không bỏ qua return value nếu operation có thể rollback cấu trúc intrusive.
+State handler nên:
 
-## 7. Documentation và tests
+- không block;
+- không delay;
+- không giữ mutex lâu;
+- không dispatch reentrant cùng FSM;
+- hoàn thành một event nhanh rồi return.
 
-Source mới phải có tài liệu subsystem hoặc API tương ứng. Mỗi bug về list/state phải có regression test. Không giữ file “pending” trong release.
+v1 chưa enforce hoàn toàn rule này; đây là contract cần tuân thủ.
+
+## Error handling
+
+Public API trả `hr_status_t`. Invalid argument khác invalid state. Corruption nội bộ nên dẫn đến diagnostics/assert/panic thay vì tiếp tục trong state không xác định.
+
+## Header
+
+- include guard duy nhất;
+- public header không expose internal control block;
+- source include header của chính module;
+- target-specific header không lan lên generic layer.
+
+## Build hygiene
+
+Warning được coi là error trong target/host flags. Feature mới phải tham gia source mapping chính thức; không giữ placeholder `.c/.h` rỗng.

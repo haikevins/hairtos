@@ -135,3 +135,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-01-event-post build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`13-02-active-object`](../13-02-active-object/README.md). Bài tiếp theo cho hai Active Object giao tiếp bằng event.
+
+### Liên hệ Version 2
+
+Version 2 nên thay demo IRQ phụ thuộc STM32F1 bằng target capability/board demo IRQ để example portable hơn.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

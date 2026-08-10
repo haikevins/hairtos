@@ -134,3 +134,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=06-priority-scheduler build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`07-task-delay-timeout`](../07-task-delay-timeout/README.md). Bài tiếp theo giao SysTick cho kernel và cho phép task block theo timeout.
+
+### Liên hệ Version 2
+
+Fixed-priority vẫn là scheduler baseline Version 2; không có kế hoạch đổi sang EDF trong 2.0.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

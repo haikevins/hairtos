@@ -83,3 +83,9 @@ make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=<name> run
 - Build PASS chỉ xác nhận compile/link.
 - Runtime PASS cần UART/LED/debugger hoặc measurement trên board.
 - Host sanitizer PASS không chứng minh exception/context backend của target.
+
+## Liên hệ Version 2
+
+Examples v1 tiếp tục đóng vai trò regression ladder cho Version 2. Target mới phải đi từ bare-metal đến context/tick/IPC/framework thay vì chỉ build image tích hợp.
+
+Roadmap v2: [`../docs/09-version2/roadmap.md`](../docs/09-version2/roadmap.md).

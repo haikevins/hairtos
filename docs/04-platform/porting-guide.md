@@ -1,55 +1,61 @@
-# Porting guide
+# Porting guide — tư duy
 
-## 1. Mục tiêu
+## Hai loại port
 
-Liệt kê công việc cần làm khi chuyển hairtos sang MCU/CPU khác.
+### Board mới, cùng SoC/CPU
 
-## 2. Tách hai mức port
+Thường reuse:
 
-### Cùng Cortex-M3, MCU khác
+```text
+arch
+soc
+drivers
+```
 
-Giữ `arch/arm/cortex-m3`; thay `soc/`, `boards/`, driver, startup vector và linker script.
+Thay board pins/services/linker/debug manifest.
 
-### CPU architecture khác
+### SoC mới, cùng CPU architecture
 
-Phải viết lại initial stack, critical section, context switch, exception startup và fault capture.
+Reuse architecture port + kernel/framework; viết SoC/startup/driver/board.
 
-## 3. Checklist architecture
+### CPU architecture mới
 
-- Kiểu stack word và alignment.
-- Callee-saved register set.
-- Cách chuyển first task.
-- Cách request deferred context switch.
-- ISR nesting/priority rules.
-- Atomic critical-section primitive.
-- Tick source.
-- Fault frame.
+Ngoài platform, phải viết context/stack/critical/ISR/fault mechanism mới.
 
-## 4. Checklist platform
+## Không sửa kernel để port
 
-- clock frequency thật;
-- UART debug;
-- idle WFI equivalent;
-- linker Flash/RAM;
-- vector table;
-- OpenOCD/debug config;
-- board pins.
+Nếu cần thêm `#ifdef NEW_MCU` vào scheduler/queue/mutex, đó là dấu hiệu boundary đang sai.
 
-## 5. Contract với kernel
+## Port order
 
-TCB saved SP phải ở offset mà assembly dùng. Port phải bảo đảm `hr_port_request_context_switch()` an toàn từ task và ISR. `hr_port_is_inside_isr()` phải chính xác.
+1. startup + linker + bare-metal UART/LED;
+2. bare-metal tick;
+3. initial stack;
+4. first task;
+5. cooperative switch;
+6. priority/preemption;
+7. timeout;
+8. IPC;
+9. timer;
+10. haievent;
+11. benchmark;
+12. diagnostics/fault.
 
-## 6. Validation tối thiểu
+## Capability audit
 
-1. Bare-metal blink/UART.
-2. Initial stack host test tương đương.
-3. First task startup.
-4. Cooperative switch bảo toàn local variable.
-5. Preemption/time slicing.
-6. ISR semaphore wake.
-7. Fault injection.
-8. Full host regression.
+Trước khi reuse port, kiểm tra:
 
-## 7. Cortex-M0 proof
+- register width;
+- stack alignment;
+- callee-saved set;
+- exception frame;
+- interrupt masking;
+- ISR nesting;
+- atomicity;
+- FPU/lazy stacking;
+- MPU;
+- low-power wake/tick source.
 
-Repository chỉ có compile proof cho generic C structures; chưa có Cortex-M0 assembly port hoàn chỉnh.
+## Definition of done
+
+Port không "xong" chỉ vì build. Cần hardware logs + stress + fault + memory/benchmark validation.

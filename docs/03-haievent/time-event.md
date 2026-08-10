@@ -1,42 +1,42 @@
-# Time event
+# Time Event
 
-## 1. Mục tiêu
+## Mục đích
 
-Chuyển software timer expiration thành event gửi tới Active Object.
+Biến software timer expiration thành event tới AO mà không chạy state handler trong timer-service context.
 
-## 2. Thành phần
+## Composition
 
-Time event chứa hairtos timer, target AO, static timeout event và dropped counter.
+Time Event chứa:
 
-## 3. Luồng
+- kernel timer;
+- target AO;
+- embedded static event;
+- signal;
+- dropped counter;
+- validity/armed metadata.
+
+## Flow
 
 ```text
-SysTick
-  -> timer pending
-  -> timer-service callback
-  -> post HE_SIG_TIMEOUT/custom signal
-  -> AO task dispatch
+kernel tick
+ -> software timer expires
+ -> timer-service callback
+ -> nonblocking post static event to target AO
+ -> target AO dispatch
 ```
 
-State handler không chạy trong timer-service callback; callback chỉ post.
+## Dropped counter
 
-## 4. API
+Nếu AO queue không nhận event, time event tăng dropped count. Điều này giúp phát hiện queue capacity/priority không phù hợp.
 
-- create static;
-- arm;
-- disarm;
-- rearm;
-- change period;
-- query armed/dropped count.
+## Commands
 
-## 5. Dropped event
+Create, arm, disarm, rearm, change period.
 
-Nếu AO queue không nhận được event khi callback post non-blocking, dropped counter tăng. Application có thể dùng counter để phát hiện queue capacity hoặc priority không phù hợp.
+## Lifetime
 
-## 6. Periodic và one-shot
+Embedded event là static và được tái sử dụng. Handler không được giữ pointer để dùng asynchronous sau dispatch.
 
-`periodic` được ánh xạ sang auto-reload timer. Signal và period được cố định khi create nhưng period có thể đổi qua API.
+## V2
 
-## 7. Giới hạn
-
-Không tạo dynamic event cho mỗi tick; cùng static event được tái sử dụng nên không được giữ pointer sau dispatch.
+Trace nên record expiration, post success/drop và dispatch latency. HSM timeouts có thể build trên cùng primitive thay vì tạo timer semantics khác.

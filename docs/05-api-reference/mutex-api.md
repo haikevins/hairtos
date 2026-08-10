@@ -1,52 +1,46 @@
 # Mutex API
 
-## 1. Header
-
-```c
-#include "hairtos/hr_mutex.h"
-```
-
-## 2. Create
+## Create
 
 ```c
 hr_mutex_create(&mutex);
 hr_mutex_create_recursive(&mutex);
 ```
 
-## 3. Queries
+## Query
 
-`is_valid`, `is_recursive`, `get_owner`, `get_recursion_count`, `get_waiting_tasks`.
+```c
+hr_mutex_is_valid()
+hr_mutex_is_recursive()
+hr_mutex_get_owner()
+hr_mutex_get_recursion_count()
+hr_mutex_get_waiting_tasks()
+```
 
-## 4. Lock
+## Lock
 
 ```c
 hr_mutex_lock(&mutex, timeout);
 ```
 
-Có thể non-blocking, finite hoặc WAIT_FOREVER. Không gọi từ ISR.
+Task context only. Có priority inheritance nếu block.
 
-## 5. Unlock
+## Unlock
 
 ```c
 hr_mutex_unlock(&mutex);
 ```
 
-Chỉ owner được gọi. Recursive mutex chỉ handoff khi recursion count về 0.
+Chỉ owner. Recursive mutex chỉ release ownership khi recursion count về 0.
 
-## 6. Priority inheritance
+## Effective priority
 
-API không expose thao tác boost; kernel tự động cập nhật effective priority khi waiter xuất hiện/biến mất.
+Application có thể quan sát task effective priority qua task API, nhưng không tự set inheritance.
 
-## 7. Ví dụ
+## ISR
 
-```c
-if (hr_mutex_lock(&lock, HR_WAIT_FOREVER) == HR_OK)
-{
-    /* protected resource */
-    (void)hr_mutex_unlock(&lock);
-}
-```
+Mutex API không hợp lệ trong ISR.
 
-## 8. Lưu ý
+## Design advice
 
-Giữ mutex ngắn, không delay lâu khi đang sở hữu, và thiết kế lock ordering để tránh deadlock.
+Không giữ mutex qua delay dài hoặc external I/O chậm. Thiết kế lock ordering để tránh deadlock vì v1 không detect cycle ở application level.

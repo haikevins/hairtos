@@ -141,3 +141,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=12-software-timer build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`13-01-event-post`](../13-01-event-post/README.md). Nhóm bài tiếp theo xây haievent trên queue, task và software timer.
+
+### Liên hệ Version 2
+
+Tickless Version 2 phải bảo toàn one-shot/periodic deadline semantics và vẫn không chạy application callback trực tiếp trong tick ISR.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

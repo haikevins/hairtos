@@ -1,80 +1,92 @@
-# Kernel và task API
+# Kernel và Task API
 
-## 1. Header
+## Kernel
 
-```c
-#include "hairtos/hr_kernel.h"
-#include "hairtos/hr_task.h"
-```
+### `hr_kernel_init()`
 
-## 2. Kernel API
+Context: trước scheduler, một lần/boot.
 
-| Hàm | Ngữ cảnh | Mô tả |
-|---|---|---|
-| `hr_kernel_init()` | trước scheduler | Khởi tạo kernel và idle task |
-| `hr_kernel_start()` | trước scheduler | Chọn first task và không trở lại khi thành công |
-| `hr_kernel_is_running()` | task/diagnostics | Kiểm tra RUNNING |
-| `hr_kernel_get_state()` | mọi task context | Lấy lifecycle state |
-| `hr_kernel_get_tick()` | task | Lấy tick |
-| `hr_kernel_get_task_count()` | task | Số task đã đăng ký |
+Tạo internal scheduler structures và idle task. Trả lỗi nếu lifecycle không hợp lệ.
 
-## 3. Task creation
+### `hr_kernel_start()`
+
+Context: sau init/start task.
+
+Chọn first READY task rồi chuyển control qua port. Trên target thành công, hàm không return.
+
+### Queries
 
 ```c
-hr_status_t hr_task_create_static(
-    hr_task_t *task,
-    const char *name,
-    hr_task_entry_t entry,
-    void *argument,
-    hr_stack_t *stack,
-    size_t stack_words,
-    hr_priority_t priority);
+hr_kernel_is_running();
+hr_kernel_get_state();
+hr_kernel_get_tick();
+hr_kernel_get_task_count();
 ```
 
-Yêu cầu stack ít nhất `HR_CFG_MIN_TASK_STACK_WORDS`; priority phải nhỏ hơn idle priority cho application.
-
-`hr_task_start()` chỉ hợp lệ khi kernel INITIALIZED và task CREATED.
-
-## 4. Scheduling/time API
-
-- `hr_task_yield()` cooperative yield.
-- `hr_task_delay(ticks)` blocking delay; ticks không được 0 hoặc WAIT_FOREVER.
-- `hr_task_delay_until(last, period)` periodic release.
-
-## 5. Administration
-
-- `hr_task_suspend(task)`.
-- `hr_task_resume(task)`.
-
-Chỉ task context; idle không được suspend.
-
-## 6. Queries
-
-Name, state, base/effective priority, stack size, high-watermark, guard và current task.
-
-## 7. Ví dụ tối thiểu
+## Task create
 
 ```c
-static hr_task_t worker;
-static hr_stack_t worker_stack[256];
-
-static void worker_entry(void *arg)
-{
-    (void)arg;
-    for (;;)
-    {
-        /* work */
-        (void)hr_task_delay(100U);
-    }
-}
-
-hr_kernel_init();
-hr_task_create_static(&worker, "worker", worker_entry, NULL,
-                      worker_stack, 256U, 2U);
-hr_task_start(&worker);
-hr_kernel_start();
+hr_task_create_static(task, name, entry, arg,
+                      stack, stack_words, priority);
 ```
 
-## 8. Lưu ý
+Caller phải giữ `task` và `stack` tồn tại suốt runtime. Priority application không dùng idle priority.
 
-Task entry không được return. Không gọi blocking API trong ISR.
+## Task start
+
+`hr_task_start()` chỉ register CREATED task. Không gọi hai lần.
+
+## Queries
+
+```c
+hr_task_is_valid()
+hr_task_get_name()
+hr_task_get_state()
+hr_task_get_base_priority()
+hr_task_get_effective_priority()
+hr_task_get_stack_words()
+hr_task_get_stack_high_watermark()
+hr_task_stack_guard_is_valid()
+hr_task_current()
+```
+
+## Scheduling APIs
+
+### `hr_task_yield()`
+
+Task context. Chủ động nhường CPU; cùng priority có thể rotate.
+
+### `hr_task_delay(ticks)`
+
+- 0 → yield;
+- finite >0 → BLOCKED;
+- WAIT_FOREVER → invalid.
+
+### `hr_task_delay_until(last, period)`
+
+Periodic release. Caller giữ `last_wake_tick`.
+
+## Administrative control
+
+```c
+hr_task_suspend(task);
+hr_task_resume(task);
+```
+
+Suspend blocked task không hủy wait.
+
+## Không hợp lệ trong ISR
+
+Create/start/runtime blocking/admin APIs không phải ISR API.
+
+## Task state
+
+```text
+CREATED -> READY -> RUNNING
+              ^       |
+              |       +-> BLOCKED
+              |       +-> SUSPENDED
+              +-------------+
+```
+
+Actual suspend/blocked interaction chi tiết xem kernel docs.

@@ -1,43 +1,45 @@
-# Software timer API
+# Software Timer API
 
-## 1. Header
-
-```c
-#include "hairtos/hr_timer.h"
-```
-
-## 2. Create
+## Create
 
 ```c
-hr_timer_create_static(&timer, "name", period_ticks,
+hr_timer_create_static(timer, name, period_ticks,
                        auto_reload, callback, argument);
 ```
 
-Period phải khác 0 và khác `HR_WAIT_FOREVER`; callback không NULL.
+Timer storage/callback argument do caller quản lý lifetime.
 
-## 3. Queries
-
-`is_valid`, `is_active`, `get_name`, `get_period`, `get_pending_count`.
-
-## 4. Commands
-
-- `hr_timer_start()` — active từ now.
-- `hr_timer_stop()` — hủy active/pending chưa chạy.
-- `hr_timer_reset()` — deadline từ now.
-- `hr_timer_change_period()` — đổi period và rearm.
-
-## 5. Callback context
-
-Callback chạy trong timer-service task. Có thể gọi task-context API phù hợp nhưng nên ngắn và không block lâu để tránh trễ timer khác.
-
-## 6. Ví dụ
+## Queries
 
 ```c
-static void on_timer(void *arg) { (void)arg; }
-hr_timer_create_static(&timer, "t", 1000U, true, on_timer, NULL);
-hr_timer_start(&timer);
+hr_timer_is_valid()
+hr_timer_is_active()
+hr_timer_get_name()
+hr_timer_get_period()
+hr_timer_get_pending_count()
 ```
 
-## 7. Lưu ý
+## Commands
 
-Không có command from ISR và không delete timer.
+```c
+hr_timer_start()
+hr_timer_stop()
+hr_timer_reset()
+hr_timer_change_period()
+```
+
+Task context only trong v1.
+
+## Callback context
+
+Callback chạy trong timer-service task, không chạy trong tick ISR.
+
+Callback nên ngắn; nếu block lâu sẽ làm trễ callback timer khác.
+
+## Disabled feature
+
+Build có thể compile timer API với feature disabled path và trả `HR_ERROR_NOT_SUPPORTED` tùy mapping/config.
+
+## Không hỗ trợ
+
+Timer delete và ISR command API.

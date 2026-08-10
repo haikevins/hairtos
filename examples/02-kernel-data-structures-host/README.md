@@ -129,3 +129,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`03-static-task-stack`](../03-static-task-stack/README.md). Bài tiếp theo tạo TCB và initial task stack thật cho Cortex-M3.
+
+### Liên hệ Version 2
+
+Các intrusive structures nên tiếp tục là generic C ở Version 2. Property/randomized tests sẽ mở rộng stress nhưng không thay core ownership model.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

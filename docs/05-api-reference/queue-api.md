@@ -1,56 +1,57 @@
 # Queue API
 
-## 1. Header
-
-```c
-#include "hairtos/hr_queue.h"
-```
-
-## 2. Create
+## Create
 
 ```c
 hr_queue_create_static(queue, storage, item_size, capacity);
 ```
 
-Storage phải tồn tại suốt lifetime queue và có ít nhất `item_size * capacity` byte.
+`storage` phải đủ `item_size * capacity` và tồn tại suốt queue lifetime.
 
-## 3. Queries
-
-`is_valid`, `get_count`, `get_capacity`, `get_waiting_senders`, `get_waiting_receivers`.
-
-## 4. Task-context operations
+## Queries
 
 ```c
-hr_queue_send(queue, item, timeout);
-hr_queue_receive(queue, item, timeout);
+hr_queue_is_valid()
+hr_queue_get_count()
+hr_queue_get_capacity()
+hr_queue_get_waiting_senders()
+hr_queue_get_waiting_receivers()
 ```
 
-Timeout có thể là `HR_NO_WAIT`, finite hoặc `HR_WAIT_FOREVER`.
-
-## 5. ISR operations
+## Task send/receive
 
 ```c
-hr_queue_send_from_isr(queue, item, &wake);
-hr_queue_receive_from_isr(queue, item, &wake);
+hr_queue_send(queue, &item, timeout);
+hr_queue_receive(queue, &item, timeout);
 ```
 
-Không block; caller gọi `hr_yield_from_isr(wake)`.
+Timeout:
 
-## 6. Return values
+- `HR_NO_WAIT`;
+- finite;
+- `HR_WAIT_FOREVER`.
 
-- Full/empty cho non-blocking.
-- Timeout cho finite wait.
-- Invalid argument/state cho object/buffer sai.
-- `HR_ERROR_FROM_ISR` nếu gọi task API trong ISR.
-
-## 7. Ví dụ
+## ISR
 
 ```c
-typedef struct { uint32_t id; } msg_t;
-static hr_queue_t q;
-static msg_t storage[4];
-
-hr_queue_create_static(&q, storage, sizeof(msg_t), 4U);
-msg_t m = { .id = 1U };
-hr_queue_send(&q, &m, 10U);
+hr_queue_send_from_isr(queue, &item, &wake);
+hr_queue_receive_from_isr(queue, &item, &wake);
 ```
+
+Không block.
+
+## Return semantics
+
+Send no-wait full -> `HR_ERROR_QUEUE_FULL`.
+
+Receive no-wait empty -> `HR_ERROR_QUEUE_EMPTY`.
+
+Finite wait hết hạn -> `HR_ERROR_TIMEOUT`.
+
+## Buffer lifetime
+
+Nếu task block, source/destination buffer pointer nằm trong TCB wait context. Vì task stack vẫn tồn tại, local buffer hợp lệ miễn caller không vi phạm C lifetime.
+
+## Không hỗ trợ
+
+Variable-size frame và zero-copy buffer ownership.

@@ -136,3 +136,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-05-publish-subscribe build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`13-06-event-driven-demo`](../13-06-event-driven-demo/README.md). Bài tiếp theo tích hợp state machine, time event, dynamic event và pub/sub.
+
+### Liên hệ Version 2
+
+Version 2 ưu tiên instrumentation/ownership diagnostics hơn việc biến Pub/Sub thành message broker nhiều QoS.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

@@ -190,3 +190,11 @@ Tài liệu liên quan:
 
 - [`../docs/04-platform/drivers.md`](../docs/04-platform/drivers.md);
 - [`../docs/04-platform/porting-new-target.md`](../docs/04-platform/porting-new-target.md).
+
+## Liên hệ audit và Version 2
+
+Audit source xác nhận public driver API hiện đã loại GPIO port enum/peripheral clock khỏi application-facing contract. Bước chứng minh tiếp theo là target thứ hai dùng cùng public API mà không sửa kernel/framework.
+
+- [`../docs/00-overview/project-analysis.md`](../docs/00-overview/project-analysis.md)
+- [`../docs/04-platform/drivers.md`](../docs/04-platform/drivers.md)
+- [`../docs/09-version2/portability-roadmap.md`](../docs/09-version2/portability-roadmap.md)

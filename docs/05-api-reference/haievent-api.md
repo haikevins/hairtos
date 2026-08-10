@@ -1,50 +1,69 @@
 # haievent API
 
-## 1. Header
+## Event pool / event
 
 ```c
-#include "haievent/haievent.h"
+he_event_pool_init()
+he_event_pool_get_free_count()
+he_event_new()
+he_event_init_static()
+he_event_retain()
+he_event_release()
 ```
 
-## 2. Event pool/event
+Dynamic event reference count quản lý shared ownership.
 
-- `he_event_pool_init`, query counts.
-- `he_event_new` cho dynamic event.
-- `he_event_init_static` cho static event.
-- retain/release và validation queries.
+## State machine
 
-## 3. State machine
+```c
+he_state_machine_init()
+he_state_machine_start()
+he_state_machine_dispatch()
+he_state_transition()
+he_state_machine_current()
+he_state_machine_context()
+```
 
-- init/start/dispatch.
-- `he_state_transition()` trong handler.
-- query current handler và context.
+v1 = flat FSM.
 
-## 4. Active Object
+## Active Object
 
-- static create với queue/stack/priority.
-- post từ task hoặc ISR.
-- query name/pending/task/state machine.
+```c
+he_active_create_static()
+he_active_post()
+he_active_post_from_isr()
+he_active_get_pending_count()
+he_active_get_task()
+he_active_get_state_machine()
+```
 
-## 5. Time event
+AO create đồng thời tạo task/queue/FSM.
 
-- create, arm, disarm, rearm, change period.
-- query armed và dropped count.
+## Time Event
 
-## 6. Publish/Subscribe
+```c
+he_time_event_create_static()
+he_time_event_arm()
+he_time_event_disarm()
+he_time_event_rearm()
+he_time_event_change_period()
+he_time_event_get_dropped_count()
+```
 
-- init table.
-- subscribe/unsubscribe.
-- query subscriber count.
-- publish và lấy delivered count.
+## Publish/Subscribe
 
-## 7. Signal rules
+```c
+he_pubsub_init()
+he_pubsub_subscribe()
+he_pubsub_unsubscribe()
+he_pubsub_get_subscriber_count()
+he_pubsub_publish()
+```
 
-Signal framework 0–4; application signal bắt đầu từ `HE_SIG_USER`.
+## Signal
 
-## 8. Ownership rules
+Application signal bắt đầu từ `HE_SIG_USER`.
 
-Dynamic event phải được release đúng reference count. Không giữ static time-event pointer ngoài thời gian dispatch. Publish consumes publisher dynamic reference theo contract trong header.
+## Ownership rule
 
-## 9. Lưu ý
-
-haievent yêu cầu queue, task và software timer tương ứng được link/configure.
+Dynamic event không được release tùy tiện sau successful ownership transfer. Xem [`../03-haievent/ownership-and-rtc.md`](../03-haievent/ownership-and-rtc.md).

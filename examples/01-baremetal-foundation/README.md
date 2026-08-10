@@ -131,3 +131,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`02-kernel-data-structures-host`](../02-kernel-data-structures-host/README.md). Bài tiếp theo tách các cấu trúc dữ liệu scheduler khỏi phần cứng và kiểm chứng chúng trên host.
+
+### Liên hệ Version 2
+
+Version 2 dùng bài này làm gate đầu tiên khi port target thứ hai: startup, clock, board service, UART/GPIO và low-level tick phải ổn trước kernel.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

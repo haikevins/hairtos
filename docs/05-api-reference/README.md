@@ -1,17 +1,18 @@
-# 05 — Tham chiếu API
+# 05 — Public API reference
 
-## 1. Mục tiêu
-
-Nhóm này mô tả public API của kernel và `haievent`. Internal header không phải contract cho application.
-
-## 2. Header tổng hợp
+Application nên include:
 
 ```c
 #include "hairtos/hairtos.h"
+```
+
+và khi dùng event framework:
+
+```c
 #include "haievent/haievent.h"
 ```
 
-## 3. Nội dung
+## Tài liệu
 
 - [status-and-types.md](status-and-types.md)
 - [kernel-and-task-api.md](kernel-and-task-api.md)
@@ -22,11 +23,18 @@ Nhóm này mô tả public API của kernel và `haievent`. Internal header khô
 - [timer-api.md](timer-api.md)
 - [diagnostics-and-hooks-api.md](diagnostics-and-hooks-api.md)
 - [haievent-api.md](haievent-api.md)
+- [public-api-policy.md](public-api-policy.md)
 
-## 4. Portability
+## Context rule
 
-Application nên chỉ dựa trên các API này và `board.h`. Architecture/SoC-specific pin hoặc peripheral identifiers chỉ xuất hiện trong board/driver configuration.
+Mỗi API phải được hiểu theo context:
 
-## 5. Kiểm tra
+```text
+before kernel
+task context
+ISR context
+timer-service callback
+AO state handler
+```
 
-Khi đổi signature public, cần cập nhật header, implementation, host tests, example và tài liệu API trong cùng thay đổi.
+Không suy luận rằng một API "thread-safe" thì tự động hợp lệ trong ISR.

@@ -1,47 +1,64 @@
-# Diagnostics và hooks API
+# Diagnostics và Hooks API
 
-## 1. Header
-
-```c
-#include "hairtos/hr_diagnostics.h"
-#include "hairtos/hr_hooks.h"
-```
-
-## 2. Runtime statistics
-
-`hr_diagnostics_get_runtime_statistics()` trả counters SysTick, PendSV, switch reason, timeout, invariant, stack và panic.
-
-## 3. Task diagnostics
-
-`hr_diagnostics_get_task(task, &info)` trả state, priority, stack free/used, runtime ticks và guard status.
-
-## 4. Health check
-
-`hr_diagnostics_run_health_check(&report)` validate scheduler/list/task/stack và tổng hợp task count, ready bitmap, timeout count, minimum stack margin.
-
-## 5. Panic record
-
-- get last panic;
-- clear last panic;
-- record panic/fault;
-- reason-to-string.
-
-Record chứa exception registers và được giữ trong `.noinit` khi the integrated `hairtos` target build.
-
-## 6. Hooks
-
-Application có thể override weak hooks:
+## Initialize
 
 ```c
-void hr_hook_panic(const hr_panic_record_t *record);
-void hr_hook_stack_overflow(const hr_task_t *task, const char *name);
-void hr_hook_assert_failed(const char *expr, const char *file, uint32_t line);
+hr_diagnostics_initialize();
 ```
 
-## 7. Assert
+Chuẩn bị retained record/runtime state theo build configuration.
 
-`HR_ASSERT(expr)` gọi `_Noreturn hr_assert_failed()` khi bật cấu hình.
+## Runtime statistics
 
-## 8. Lưu ý
+```c
+hr_diagnostics_reset_runtime_statistics();
+hr_diagnostics_get_runtime_statistics(&stats);
+```
 
-Diagnostics nâng cao phụ thuộc `HR_CFG_ENABLE_DIAGNOSTICS`; runtime counters phụ thuộc `HR_CFG_ENABLE_RUNTIME_STATS`.
+Counters gồm tick, PendSV, switches, yield, block, preemption, slice, timeout wakeup, invariant, stack và panic.
+
+## Task diagnostics
+
+```c
+hr_diagnostics_get_task(task, &diag);
+```
+
+Trả name/state/priorities/stack usage/runtime ticks/guard.
+
+## Health
+
+```c
+hr_diagnostics_run_health_check(&report);
+```
+
+Kết hợp kernel internal validation với stack checks.
+
+## Panic record
+
+```c
+hr_diagnostics_get_last_panic()
+hr_diagnostics_clear_last_panic()
+hr_diagnostics_record_panic()
+hr_diagnostics_record_fault()
+hr_diagnostics_panic_reason_string()
+```
+
+Record version hiện là 1.
+
+## Hooks
+
+```c
+hr_hook_panic()
+hr_hook_stack_overflow()
+hr_hook_assert_failed()
+```
+
+Có thể override weak hook theo target/application policy.
+
+## Assert
+
+`HR_ASSERT` route tới `hr_assert_failed()` khi feature bật.
+
+## Cảnh báo
+
+Retained record chỉ meaningful nếu linker/startup/reset behavior của target giữ section. Không giả định power-cycle giữ SRAM.

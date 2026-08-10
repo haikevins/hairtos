@@ -131,3 +131,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=03-static-task-stack build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`04-start-first-task`](../04-start-first-task/README.md). Bài tiếp theo đăng ký task và khởi chạy task đầu tiên bằng SVC.
+
+### Liên hệ Version 2
+
+Version 2 port contract phải giữ initial-stack test cho từng architecture, đặc biệt nếu thêm Cortex-M4F/FPU hoặc Cortex-M0+.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

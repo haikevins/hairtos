@@ -1,69 +1,100 @@
-# Cấu hình hệ thống
+# Cấu hình compile-time
 
-## 1. Mục tiêu
-
-hairtos dùng compile-time configuration trong `config/hairtos_config.h`; haievent dùng `config/haievent_config.h`. Một số example override macro bằng compiler definitions.
-
-## 2. Kernel configuration
+## Kernel defaults
 
 | Macro | Mặc định | Ý nghĩa |
 |---|---:|---|
-| `HR_CFG_TICK_RATE_HZ` | `1000` | Tần số kernel tick |
-| `HR_CFG_PRIORITY_COUNT` | `8` | Số mức priority |
-| `HR_CFG_IDLE_PRIORITY` | `count - 1` | Priority dành riêng cho idle |
-| `HR_CFG_MAX_TASKS` | `8` | Số task tối đa, gồm idle và timer-service khi có |
-| `HR_CFG_PREEMPTION` | `1` | Cho phép task priority cao preempt |
-| `HR_CFG_TIME_SLICING` | `1` | Round-robin giữa task cùng priority |
-| `HR_CFG_TIME_SLICE_TICKS` | `1` | Quantum theo tick |
-| `HR_CFG_ENABLE_QUEUE` | `1` | Bật queue API/source khi được link |
-| `HR_CFG_ENABLE_SEMAPHORE` | `1` | Bật semaphore |
-| `HR_CFG_ENABLE_MUTEX` | `1` | Bật mutex |
-| `HR_CFG_ENABLE_SOFTWARE_TIMER` | `1` | Bật timer service |
-| `HR_CFG_ENABLE_ASSERT` | `1` | Bật `HR_ASSERT` |
-| `HR_CFG_ENABLE_STACK_CHECK` | `1` | Bật stack guard/fill diagnostics |
-| `HR_CFG_ENABLE_RUNTIME_STATS` | `0` | Ghi runtime counters |
-| `HR_CFG_ENABLE_DIAGNOSTICS` | `0` | Bật diagnostics nâng cao |
-| `HR_CFG_IDLE_STACK_WORDS` | `128` | Stack idle task |
-| `HR_CFG_TIMER_TASK_PRIORITY` | `idle - 1` | Priority timer-service |
-| `HR_CFG_TIMER_TASK_STACK_WORDS` | `160` | Stack timer-service |
+| `HR_CFG_TICK_RATE_HZ` | 1000 | Tick rate |
+| `HR_CFG_PRIORITY_COUNT` | 8 | Số priority |
+| `HR_CFG_IDLE_PRIORITY` | 7 | Idle priority |
+| `HR_CFG_MAX_TASKS` | 8 | Task registry limit |
+| `HR_CFG_PREEMPTION` | 1 | Preemptive scheduler |
+| `HR_CFG_TIME_SLICING` | 1 | Equal-priority slicing |
+| `HR_CFG_TIME_SLICE_TICKS` | 1 | Quantum |
+| `HR_CFG_STATIC_ALLOCATION` | 1 | Static-first |
+| `HR_CFG_DYNAMIC_ALLOCATION` | 0 | Không kernel heap |
+| `HR_CFG_ENABLE_QUEUE` | 1 | Queue |
+| `HR_CFG_ENABLE_SEMAPHORE` | 1 | Semaphore |
+| `HR_CFG_ENABLE_MUTEX` | 1 | Mutex |
+| `HR_CFG_ENABLE_SOFTWARE_TIMER` | 1 | Software timer |
+| `HR_CFG_ENABLE_ASSERT` | 1 | Assert |
+| `HR_CFG_ENABLE_STACK_CHECK` | 1 | Stack diagnostics |
+| `HR_CFG_ENABLE_RUNTIME_STATS` | 0 | Runtime counters |
+| `HR_CFG_ENABLE_DIAGNOSTICS` | 0 | Advanced diagnostics |
+| `HR_CFG_USE_FPU` | 0 | FPU context |
+| `HR_CFG_USE_MPU` | 0 | MPU |
+| `HR_CFG_SINGLE_CORE` | 1 | Single-core only |
 
-## 3. Opaque object sizes
+## Opaque object storage
+
+| Object | Bytes |
+|---|---:|
+| task | 384 |
+| queue | 192 |
+| semaphore | 96 |
+| mutex | 160 |
+| timer | 160 |
+
+Internal layout phải fit vào public storage. Nếu layout tăng vượt budget, build phải fail bằng compile-time assertion.
+
+## Stack
 
 ```text
-HR_CFG_TASK_STORAGE_BYTES       384
-HR_CFG_QUEUE_STORAGE_BYTES      192
-HR_CFG_SEMAPHORE_STORAGE_BYTES   96
-HR_CFG_MUTEX_STORAGE_BYTES      160
-HR_CFG_TIMER_STORAGE_BYTES      160
+idle: 128 words
+timer-service: 160 words
+minimum application: 32 words
 ```
 
-Nếu internal control block tăng kích thước vượt public storage, `_Static_assert` sẽ làm build thất bại. Không giảm các giá trị này mà không kiểm tra mọi toolchain.
+Minimum thực còn phụ thuộc `HR_PORT_MIN_TASK_STACK_WORDS`.
 
-## 4. Timeout constants
+## Timeout constants
 
 ```c
-#define HR_NO_WAIT      0UL
-#define HR_WAIT_FOREVER 0xFFFFFFFFUL
+HR_NO_WAIT
+HR_WAIT_FOREVER
 ```
 
-`HR_WAIT_FOREVER` hợp lệ cho IPC blocking nhưng không hợp lệ cho `hr_task_delay()` và timer period.
+`HR_WAIT_FOREVER` hợp lệ cho blocking IPC nhưng không hợp lệ như period/delay finite.
 
-## 5. haievent configuration
+## haievent
 
-| Macro | Mặc định | Ý nghĩa |
-|---|---:|---|
-| `HE_CFG_MAX_ACTIVE_OBJECTS` | `8` | Số AO tối đa trong table/snapshot |
-| `HE_CFG_MAX_SIGNALS` | `64` | Signal table tối đa |
-| `HE_CFG_MAX_INIT_TRANSITIONS` | `8` | Guard cho init transition loop |
-| `HE_CFG_ENABLE_HIERARCHICAL_SM` | `0` | HSM chưa triển khai |
-| `HE_CFG_*_STORAGE_BYTES` | tùy object | Opaque storage size |
+| Macro | Mặc định |
+|---|---:|
+| `HE_CFG_ENABLED` | 1 |
+| Active Object | 1 |
+| Flat FSM | 1 |
+| HSM | 0 |
+| Time Event | 1 |
+| Event Pool | 1 |
+| Pub/Sub | 1 |
+| Max AO | 8 |
+| Max signals | 64 |
+| Max init transitions | 8 |
 
-## 6. Override theo example
+## Port capabilities
 
-- Phase 7 tắt preemption và time slicing để minh họa delay cooperative.
-- Phase 15 bật software timer nhưng tắt time slicing để giảm nhiễu benchmark.
-- Example `hairtos` bật diagnostics và runtime stats.
+Cấu hình generic được validate với `hr_port_config.h`:
 
-## 7. Quy tắc thay đổi
+```text
+minimum stack
+stack alignment
+FPU context support
+MPU support
+```
 
-Mỗi thay đổi cấu hình phải được build ít nhất bằng host tests và target example bị ảnh hưởng. Thay đổi priority count phải kiểm tra bitmap width và idle priority. Thay đổi tick rate phải cập nhật mọi timeout trong example/tài liệu.
+Không bật `HR_CFG_USE_FPU=1` nếu port không lưu FPU context.
+
+## Example override
+
+CMake example definition có thể override macro để cô lập behavior cần minh họa. Ví dụ một bài có thể tắt time slicing để đo scheduler path ổn định hơn.
+
+## Quy tắc thay đổi config
+
+Sau khi thay:
+
+1. host tests;
+2. target examples bị ảnh hưởng;
+3. image size;
+4. stack margins;
+5. portability target manifests;
+6. docs/API expectations.

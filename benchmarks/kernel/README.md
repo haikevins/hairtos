@@ -159,3 +159,10 @@ Tài liệu liên quan:
 
 - [`../../docs/06-testing-and-quality/kernel-benchmark.md`](../../docs/06-testing-and-quality/kernel-benchmark.md);
 - [`../../docs/04-platform/porting-new-target.md`](../../docs/04-platform/porting-new-target.md).
+
+## Liên hệ audit và Version 2
+
+Benchmark statistics generic đã tách khỏi DWT backend. Version 2 dự kiến dùng cùng contract để so nhiều target và đo thêm critical-section/tickless wake latency.
+
+- [`../../docs/06-testing-and-quality/kernel-benchmark.md`](../../docs/06-testing-and-quality/kernel-benchmark.md)
+- [`../../docs/09-version2/diagnostics-and-observability.md`](../../docs/09-version2/diagnostics-and-observability.md)

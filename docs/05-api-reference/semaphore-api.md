@@ -1,45 +1,47 @@
 # Semaphore API
 
-## 1. Header
+## Create
 
 ```c
-#include "hairtos/hr_semaphore.h"
-```
-
-## 2. Create
-
-```c
-hr_semaphore_create_binary(&sem, false);
 hr_semaphore_create_counting(&sem, initial, maximum);
+hr_semaphore_create_binary(&sem, initially_available);
 ```
 
-`initial <= maximum`, maximum phải lớn hơn 0.
+`initial <= maximum`, maximum > 0.
 
-## 3. Queries
+## Query
 
-`is_valid`, `get_count`, `get_max_count`, `get_waiting_tasks`.
+```c
+hr_semaphore_is_valid()
+hr_semaphore_get_count()
+hr_semaphore_get_max_count()
+hr_semaphore_get_waiting_tasks()
+```
 
-## 4. Take/Give
+## Take
 
 ```c
 hr_semaphore_take(&sem, timeout);
+```
+
+Task context only. Có thể no-wait, finite hoặc forever.
+
+## Give
+
+```c
 hr_semaphore_give(&sem);
 ```
 
-Take có thể block; give không block và có thể đánh thức waiter.
+Task context; wake waiter hoặc increment count.
 
-## 5. ISR give
+## Give from ISR
 
 ```c
-bool wake = false;
 hr_semaphore_give_from_isr(&sem, &wake);
-hr_yield_from_isr(wake);
 ```
 
-## 6. Return values
+Nonblocking.
 
-Empty/full có status riêng; finite wait có thể timeout.
+## Ownership
 
-## 7. Lưu ý
-
-Semaphore không có owner, vì vậy không dùng thay mutex để bảo vệ critical resource cần ownership/priority inheritance.
+Không có owner. Nếu cần bảo vệ resource critical section giữa tasks, dùng mutex.

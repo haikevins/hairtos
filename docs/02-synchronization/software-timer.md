@@ -1,44 +1,56 @@
 # Software timer
 
-## 1. Mục tiêu
+## Kiến trúc
 
-Cung cấp one-shot và periodic callback mà không chạy callback trong SysTick ISR.
-
-## 2. Cấu trúc
-
-Timer control block có timeout node, pending node, period, callback, argument, pending count, active/auto-reload/callback-running flags.
-
-## 3. Timer service
-
-Timer đầu tiên tạo ra hệ thống timer tĩnh gồm ordered timeout list, pending callback list, wake semaphore và timer-service task.
-
-## 4. Tick path
+Timer callback không chạy trong tick ISR.
 
 ```text
-SysTick -> timer expiration -> pending_count++ -> wake timer-service
+tick IRQ
+ -> timer deadline expires
+ -> pending_count++
+ -> pending list
+ -> give timer-service semaphore
+ -> timer-service task
+ -> callback
 ```
 
-Timer-service lấy từng pending callback và gọi trong task context.
+## Timer object
 
-## 5. One-shot
+Control block lưu period, auto-reload, callback/arg, timeout node, pending node, active flag và pending count.
 
-Sau expiration, timer inactive. Pending callback vẫn được xử lý bởi service task.
+## Service task
 
-## 6. Periodic
+Timer system có static service task/stack/semaphore. Priority do config/example override.
 
-Deadline tiếp theo được tính từ deadline cũ để giảm drift. Nếu service chậm, `pending_count` có thể lớn hơn 1 và callback được gọi tương ứng.
+## One-shot
 
-## 7. Commands
+Expiration làm timer inactive, callback được queue cho service task.
 
-- `start`: chỉ cho inactive timer.
-- `stop`: hủy deadline và pending callback chưa chạy.
-- `reset`: deadline mới từ thời điểm hiện tại.
-- `change_period`: cập nhật period và rearm.
+## Periodic
 
-## 8. Invariants
+Deadline tiếp theo dựa trên schedule deadline, không đơn thuần callback completion time. Nếu service chậm, pending count có thể tích lũy/saturate theo implementation.
 
-Timer active có timeout node linked; timer pending có pending node linked tối đa một lần; callback không chạy trong ISR.
+## Commands
 
-## 9. Giới hạn
+- create;
+- start;
+- stop;
+- reset;
+- change period.
 
-Không có timer command from ISR, delete timer hoặc callback deadline guarantee cứng.
+Task context only.
+
+## Stop semantics
+
+Stop remove active deadline và xử lý pending state theo implementation contract; application không nên giả định callback đang chạy có thể bị preempt/cancel giữa chừng.
+
+## Invariants
+
+- active timer có đúng timeout membership;
+- pending node không double-link;
+- callback không chạy trong ISR;
+- period hợp lệ.
+
+## V2
+
+Có thể thêm timer command queue từ ISR nếu use-case rõ, nhưng không nên gọi callback từ ISR.

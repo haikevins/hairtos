@@ -1,36 +1,34 @@
 # Memory allocator lab
 
-## 1. Mục tiêu
+## Mục tiêu
 
-Học trade-off giữa fixed-block pool và first-fit heap mà không thay đổi static-first policy của kernel.
+So sánh hai chiến lược caller-owned memory:
 
-## 2. Fixed-block pool
+- fixed-block pool;
+- first-fit heap.
 
-O(1)-style free-list allocation, không external fragmentation, có internal fragmentation theo block stride. Phát hiện invalid pointer và double free.
+Kernel v1 không dùng hai allocator này.
 
-## 3. First-fit heap
+## Pool
 
-Arena chứa block headers; allocation căn chỉnh, split block đủ lớn; free coalesce hai phía. Stats gồm requested, allocated payload, free payload, largest block, internal/external fragmentation.
+Fixed stride free list. Không external fragmentation; có internal fragmentation theo block size.
 
-## 4. Host
+## Heap
 
-```bash
-make ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
-make host-tests
-```
+Block headers, alignment, first-fit, split và adjacent coalescing.
 
-## 5. Target
+## Statistics
 
-```bash
-make EXAMPLE=14-memory-allocator-lab run
-```
+Theo dõi requested/allocated/free/largest block và fragmentation metrics.
 
-Application dùng static arena và in stats qua UART.
+## Safety checks
 
-## 6. Boundary
+Host tests kiểm tra invalid pointer, double free, boundary, coalesce và randomized operation sequence.
 
-Không dùng allocator này để tạo task/queue/timer. Nó là lab và không được link vào example khác.
+## Vì sao không tích hợp kernel?
 
-## 7. Giới hạn
+Static-first giúp TCB/queue/timer footprint deterministic và tránh allocator failure path trong scheduler. Lab tồn tại để học trade-off, không phải để vô tình làm kernel dynamic.
 
-Không thread-safe, không real-time guarantee cho first-fit search, không realloc/calloc.
+## V2
+
+Giữ allocator ngoài core. Nếu v2 cần optional dynamic convenience API, nó nên là layer adapter rõ ràng trên caller-provided allocator, không làm core phụ thuộc heap.

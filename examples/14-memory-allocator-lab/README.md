@@ -145,3 +145,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=14-memory-allocator-lab build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`15-kernel-benchmark`](../15-kernel-benchmark/README.md). Bài tiếp theo đo latency và footprint của kernel trên Cortex-M3.
+
+### Liên hệ Version 2
+
+Allocator vẫn nên ở ngoài kernel core Version 2; nếu có dynamic convenience layer thì phải optional và caller-controlled.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

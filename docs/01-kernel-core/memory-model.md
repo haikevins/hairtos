@@ -1,52 +1,82 @@
 # Memory model
 
-## 1. Mục tiêu
+## Static-first
 
-Giữ memory footprint xác định và tránh heap dependency trong kernel runtime.
-
-## 2. Static-first
-
-Application cấp phát:
+Kernel không cấp phát object runtime từ heap. Application sở hữu storage:
 
 ```c
 static hr_task_t task;
 static hr_stack_t stack[256];
 static hr_queue_t queue;
-static message_t storage[8];
+static message_t queue_storage[8];
 ```
 
-Kernel chỉ khởi tạo object trên vùng nhớ đã cung cấp.
+Create API chỉ initialize storage đã tồn tại.
 
-## 3. Opaque storage
+## Opaque public object
 
-Public object là union căn chỉnh theo `max_align_t`. Internal control block được đặt bên trong `storage[]`. Cách này ẩn layout nhưng vẫn cho phép cấp phát tĩnh.
+Ví dụ:
 
-## 4. Task stack
+```c
+typedef union hr_task
+{
+    max_align_t alignment;
+    unsigned char storage[HR_CFG_TASK_STORAGE_BYTES];
+} hr_task_t;
+```
 
-Stack Cortex-M3 tăng xuống. Khi tạo task, kernel:
+Internal TCB được đặt vào `storage`. Ưu điểm:
 
-1. fill stack bằng `0xA5`;
-2. đặt guard `0xDEADBEEF` tại đáy;
-3. căn chỉnh SP 8 byte;
-4. tạo software frame R4–R11;
-5. tạo hardware-compatible frame R0–R3, R12, LR, PC, xPSR.
+- application biết footprint compile-time;
+- internal layout không public;
+- không cần heap;
+- alignment bảo đảm qua `max_align_t`.
 
-`R0` chứa argument; `LR` trỏ tới trap nếu task entry return; `xPSR` bật Thumb bit.
+Internal build phải static-assert object thật fit vào public storage.
 
-## 5. Stack diagnostics
+## Stack
 
-- `hr_task_stack_guard_is_valid()` kiểm tra guard.
-- `hr_task_get_stack_high_watermark()` quét pattern để tính vùng chưa dùng.
-- hairtos health check tổng hợp stack margin của mọi task.
+`hr_stack_t` hiện là `uint32_t`. Architecture port quyết định:
 
-## 6. Linker memory
+```text
+minimum words
+alignment
+initial frame
+```
 
-Board linker script dùng Flash 64 KiB và RAM 20 KiB, có vùng main stack/MSP và `.noinit.hairtos` cho retained panic record.
+Cortex-M3:
 
-## 7. Allocator lab
+- alignment 8 bytes;
+- fill `0xA5A5A5A5`;
+- guard word `0xDEADBEEF`;
+- stack grows downward;
+- initial frame dựng để exception return vào task entry.
 
-Phase 14 có fixed-block pool và first-fit heap nhưng chúng nằm trong `labs/` và không được kernel sử dụng.
+## High-water mark
 
-## 8. Giới hạn
+Sau khi fill, kernel scan vùng còn nguyên pattern để ước lượng free words. Đây là post-factum diagnostic, không phải hardware protection.
 
-Không có task stack overflow hardware protection vì MPU chưa được bật. Stack fill chỉ phát hiện sau khi kiểm tra, không ngăn ghi vượt vùng nhớ.
+## `.data`, `.bss`, `.noinit`
+
+Startup:
+
+- copy `.data`;
+- zero `.bss`;
+- không zero retained diagnostics section.
+
+Linker script board chịu trách nhiệm memory map.
+
+## Allocator lab không thuộc kernel
+
+`labs/memory-allocator/` chỉ minh họa pool/first-fit. Không dùng nó để tạo TCB/queue/timer.
+
+## V1 limits
+
+- không MPU guard region;
+- stack overflow có thể corrupt trước khi health check phát hiện;
+- opaque storage size có fixed headroom;
+- không per-object memory provenance tracking.
+
+## V2
+
+MPU và stronger stack protection chỉ nên thêm khi architecture port hỗ trợ thật; không bật macro trước implementation.

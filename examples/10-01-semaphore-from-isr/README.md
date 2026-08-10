@@ -136,3 +136,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=10-01-semaphore-from-isr build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`10-02-mutex-priority-inheritance`](../10-02-mutex-priority-inheritance/README.md). Bài tiếp theo xử lý priority inversion bằng mutex inheritance.
+
+### Liên hệ Version 2
+
+Version 2 sẽ dùng bài ISR-wakeup này để kiểm tra max-syscall interrupt priority/BASEPRI contract trên Cortex-M target.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

@@ -134,3 +134,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-02-active-object build
 ## 10. Liên hệ với lộ trình
 
 Bài tiếp theo: [`13-03-flat-state-machine`](../13-03-flat-state-machine/README.md). Bài tiếp theo tập trung vào semantics ENTRY/EXIT của state transition.
+
+### Liên hệ Version 2
+
+Dedicated-task Active Object vẫn là mặc định Version 2; shared executor nếu có chỉ là extension để giảm RAM.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

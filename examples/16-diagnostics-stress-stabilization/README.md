@@ -161,3 +161,9 @@ make TARGET=bluepill_f103c8 EXAMPLE=16-diagnostics-stress-stabilization build
 ## 10. Liên hệ với lộ trình
 
 Đây là example tích hợp cuối. Sau khi PASS, bước tiếp theo là chạy soak test dài, đo trên phần cứng và chuẩn bị release.
+
+### Liên hệ Version 2
+
+Version 2 sẽ mở rộng bài này bằng trace ring, build identity, second-target soak và richer fault/ownership diagnostics.
+
+Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).

@@ -1,25 +1,35 @@
-# 03 — Framework haievent
+# 03 — haievent: Event-Driven Framework
 
-## 1. Mục tiêu
+`haievent` là framework phía trên `hairtos`, không phải scheduler thứ hai.
 
-Nhóm này mô tả framework event-driven tùy chọn chạy trên public API của `hairtos`.
+```text
+Active Object
+ = RTOS task
+ + event queue
+ + state machine
+ + user context
+```
 
-## 2. Nội dung
+## Tài liệu
 
+- [architecture.md](architecture.md)
 - [event-model.md](event-model.md)
+- [ownership-and-rtc.md](ownership-and-rtc.md)
 - [state-machine.md](state-machine.md)
 - [active-object.md](active-object.md)
 - [time-event.md](time-event.md)
 - [publish-subscribe.md](publish-subscribe.md)
 
-## 3. Dependency
+## Runtime flow
 
-`haievent` chỉ include public kernel API; framework không truy cập `kernel/internal`, board hoặc SoC register.
+```text
+event source
+  -> post
+  -> AO queue
+  -> AO task wakes
+  -> dispatch FSM
+  -> handler returns
+  -> dynamic event release
+```
 
-## 4. Portability
-
-Khi kernel public contract hoạt động trên target mới, phần lớn `haievent` được giữ nguyên. Time event yêu cầu software timer và tick backend của target hoạt động đúng.
-
-## 5. Kiểm thử
-
-Host tests kiểm tra event ownership, state transitions, queueing và publish/subscribe. Target examples 13-01 đến 13-06 kiểm tra integration với scheduler và timer.
+Framework chỉ dùng public kernel API. `haievent` không include `kernel/internal`.

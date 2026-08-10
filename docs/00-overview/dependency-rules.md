@@ -1,47 +1,60 @@
 # Quy tắc dependency
 
-## 1. Mục tiêu
-
-Giữ kernel có thể kiểm thử trên host, ngăn application phụ thuộc vào layout nội bộ và tránh cycle giữa framework, kernel và platform.
-
-## 2. Hướng dependency hợp lệ
+## Hướng hợp lệ
 
 ```text
-Application -> haievent -> hairtos public API -> internal kernel -> port
-Application ----------------^                       |
-Board/drivers --------------------------------------+
+application -> haievent -> hairtos public -> kernel internal -> arch
+application -> hairtos public
+application -> board public
+board -> drivers/SoC
+target manifest -> binds all target-specific implementation
 ```
 
-## 3. Quy tắc bắt buộc
+## Các dependency bị cấm
 
-1. Application không include file trong `kernel/internal/`.
-2. haievent không include `hr_port.h`; nó đi qua `hr_context.h`.
-3. Kernel generic không đọc thanh ghi STM32 trực tiếp.
-4. Port không phụ thuộc vào application hoặc haievent.
-5. Driver không gọi scheduler internals.
-6. Lab allocator không trở thành dependency của kernel runtime.
-7. Benchmark source chỉ được link khi chọn benchmark example.
-8. Public header không expose internal control block.
+- `kernel/src` include STM32 register headers.
+- `haievent/src` include `kernel/internal`.
+- application bình thường include `kernel/internal`.
+- driver implementation gọi scheduler internals.
+- kernel generic gọi `board_*`.
+- SoC layer include application.
+- allocator lab trở thành kernel allocation backend ngầm.
 
-## 4. Critical section abstraction
+## Ngoại lệ có chủ đích
 
-Framework dùng:
+Example 15 benchmark có thể truy cập scheduler internal để đo policy path. Host tests cần internal layout để kiểm tra invariant. Những exception này phải được CMake cấp include riêng, không mở internal include cho mọi source.
+
+## Lý do
+
+Dependency một chiều cho phép:
+
+- unit test generic C trên host;
+- port MCU mà không sửa scheduler;
+- thay board mà không sửa driver contract;
+- thay internal TCB layout mà không sửa application;
+- kiểm tra include boundary bằng compiler.
+
+## Critical/ISR boundary
+
+Framework hoặc generic component dùng:
 
 ```c
 hr_irq_state_t state = hr_critical_enter();
-/* cập nhật dữ liệu dùng chung */
+/* short atomic update */
 hr_critical_exit(state);
 ```
 
-ISR đánh thức task dùng `hr_yield_from_isr(required)` thay vì gọi trực tiếp PendSV register.
+Không gọi Cortex-M PRIMASK trực tiếp ngoài architecture port.
 
-## 5. Lý do
+ISR wake task dùng ISR-safe API + `hr_yield_from_isr()`.
 
-- Host tests có thể mock port.
-- Có thể thay MCU mà không sửa scheduler.
-- ABI public không bị khóa vào layout TCB.
-- Fault và context-switch code vẫn được cô lập tại architecture layer.
+## Review checklist
 
-## 6. Kiểm tra
+Một PR thêm dependency mới cần kiểm tra:
 
-CMake phải giữ `kernel/internal` và `haievent/internal` ngoài include path của application example. Review code cần kiểm tra include graph, module mapping trong `cmake/hairtos_examples.cmake` và public/private boundary.
+- include direction;
+- CMake include visibility;
+- target assumptions;
+- blocking/ISR context;
+- ownership/lifetime;
+- tests.

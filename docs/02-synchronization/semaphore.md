@@ -1,40 +1,47 @@
 # Semaphore
 
-## 1. Mục tiêu
+## Counting model
 
-Đồng bộ event/token giữa task và ISR bằng binary hoặc counting semaphore.
+Semaphore có:
 
-## 2. Cấu trúc
-
-Control block gồm current count, max count, priority-ordered wait list và magic.
-
-## 3. Tạo object
-
-```c
-hr_semaphore_create_binary(&sem, false);
-hr_semaphore_create_counting(&sem, 2U, 8U);
+```text
+count
+max_count
+waiters
 ```
 
-Binary semaphore là counting semaphore có `max_count = 1`.
+Binary semaphore là counting semaphore max=1.
 
-## 4. Take
+## Take
 
-- Nếu count > 0: giảm count và trả `HR_OK`.
-- Nếu count = 0 và `HR_NO_WAIT`: trả `HR_ERROR_SEMAPHORE_EMPTY`.
-- Nếu được phép chờ: task BLOCKED trên wait list, có thể kèm timeout.
+Nếu count > 0, decrement ngay.
 
-## 5. Give
+Nếu 0:
 
-Nếu có waiter, token được chuyển trực tiếp cho waiter priority cao nhất; count không tăng trung gian. Nếu không có waiter, tăng count đến max; vượt max trả `HR_ERROR_SEMAPHORE_FULL`.
+- no-wait -> `HR_ERROR_SEMAPHORE_EMPTY`;
+- finite/forever -> block trên waiter list.
 
-## 6. ISR
+## Give
 
-`hr_semaphore_give_from_isr()` có cùng direct handoff nhưng không block và trả cờ preemption.
+Nếu waiter tồn tại, token được handoff trực tiếp cho waiter priority cao nhất; không cần increment count trung gian.
 
-## 7. Ordering
+Nếu không có waiter, increment tới max. Give khi full trả `HR_ERROR_SEMAPHORE_FULL`.
 
-Waiter priority cao hơn được phục vụ trước; cùng priority FIFO.
+## ISR give
 
-## 8. Giới hạn
+`hr_semaphore_give_from_isr()` dùng cùng handoff model nhưng không block.
 
-Không có take-from-ISR và không có semaphore deletion.
+## Semaphore khác mutex
+
+Semaphore không có owner. Task A có thể give token task B take. Vì vậy không dùng semaphore thay mutex khi cần ownership + priority inheritance.
+
+## Invariants
+
+- `count <= max_count`;
+- max > 0;
+- waiter ordering đúng;
+- token không vừa increment vừa handoff cùng lần give.
+
+## Chưa có
+
+Take-from-ISR, delete/reset semaphore.

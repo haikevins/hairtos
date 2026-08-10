@@ -1,49 +1,62 @@
 # Active Object
 
-## 1. Mục tiêu
+## Internal composition
 
-Đóng gói một task, event queue và state machine thành execution context độc lập.
-
-## 2. Static creation
-
-Application cung cấp:
-
-- opaque AO object;
-- event pointer queue storage;
-- task stack;
-- initial state handler;
-- private context;
-- priority.
-
-`he_active_create_static()` tạo queue nội bộ, state machine và hairtos task.
-
-## 3. Execution loop
+AO control block chứa:
 
 ```text
-block receive event
-  -> state_machine_dispatch
-  -> release dynamic event
-  -> receive tiếp
+hr_task_t
+hr_queue_t
+he_state_machine_t
+name
+magic
 ```
 
-Mỗi AO xử lý một event tại một thời điểm.
+Application còn cung cấp queue storage và task stack.
 
-## 4. Posting
+## Create
 
-`he_active_post()` dùng task-context queue send. `he_active_post_from_isr()` dùng ISR-safe queue API và trả cờ preemption.
+`he_active_create_static()`:
 
-## 5. Ownership
+1. validate storage/priority/state handler;
+2. create queue lưu `he_event_t *`;
+3. init FSM;
+4. create static task dùng AO task entry;
+5. start task.
 
-Queue lưu pointer tới event, không copy toàn payload. Vì vậy event lifetime và reference count là phần bắt buộc của thiết kế.
+## Task loop
 
-## 6. Priority
+```text
+start FSM
+for ever:
+    receive event WAIT_FOREVER
+    validate event
+    dispatch
+    release event
+```
 
-AO priority chính là task priority. AO priority cao có thể preempt publisher thấp sau post.
+## Priority
 
-## 7. Diagnostics
+AO priority chính là RTOS task priority. AO high priority có thể preempt low task/AO sau post.
 
-API cung cấp tên, pending count, task pointer và state machine pointer.
+## Post
 
-## 8. Giới hạn
+Task post dùng `he_active_post()`. ISR post dùng `he_active_post_from_isr()`.
 
-Không có AO deletion, queue resize hoặc multi-thread dispatch cho cùng AO.
+## Error path v1
+
+Nếu AO gặp invalid event/FSM dispatch failure nội bộ, current implementation không có rich framework panic policy; path có thể yield/spin.
+
+Version 2 nên route lỗi framework invariant tới diagnostics hook/panic record.
+
+## RAM trade-off
+
+Dedicated task/AO rất dễ hiểu nhưng stack cost tăng tuyến tính theo AO count.
+
+## Không có
+
+- delete AO;
+- resize queue;
+- shared executor;
+- migration giữa executors;
+- per-event priority.

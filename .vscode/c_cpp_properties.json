@@ -19,7 +19,6 @@
                 "${workspaceFolder}/haievent/internal",
                 "${workspaceFolder}/haievent/src",
                 "${workspaceFolder}/drivers/include",
-                "${workspaceFolder}/drivers/common",
                 "${workspaceFolder}/drivers/stm32f1",
                 "${workspaceFolder}/arch/arm/cortex-m3/include",
                 "${workspaceFolder}/arch/arm/cortex-m3",

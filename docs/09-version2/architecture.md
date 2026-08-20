@@ -1,107 +1,65 @@
-# Kiến trúc dự kiến cho Version 2
+# Kiến trúc dự kiến Version 2
 
-## Tổng thể
+> **Status: FUTURE DESIGN.** Nội dung này không phải capability của `hairtos 1.0.0-rc1`.
 
-```text
-Application
-  |
-  +--> haievent v2
-  |      +-- Event ownership
-  |      +-- HSM
-  |      +-- Active Object
-  |      +-- Deferred event
-  |      +-- Time Event / PubSub
-  |
-  +--> hairtos public API
-           |
-           +-- task/scheduler/time
-           +-- IPC/synchronization
-           +-- diagnostics/trace
-           |
-        kernel internals
-           |
-        port contract v2
-           |
-   target capabilities/bindings
-```
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](api-compatibility.md) · [Next →](diagnostics-and-observability.md)
 
-## Port contract v2
+## Mục lục
 
-Tách capability và mechanism rõ hơn:
+- [Baseline v1](#baseline)
+- [Mục tiêu](#goals)
+- [Design constraints](#constraints)
+- [Evidence để được coi là hoàn thành](#evidence)
+- [Migration/risk](#migration)
+- [References](#references)
 
-```text
-context
-interrupt ceiling
-tick source
-low-power sleep
-fault capture
-cycle clock
-optional FPU
-optional MPU
-```
+<a id="baseline"></a>
+## Baseline v1
 
-Không buộc mọi architecture phải có SysTick/PendSV; generic kernel chỉ cần semantics tương đương.
+Version 2 phải bắt đầu từ behavior v1 đang có: static object ownership, fixed-priority scheduler, intrusive ready/wait/timeout structures, direct-handoff IPC, one-task-per-AO, flat FSM, target manifest và host sanitizer tests. “Thiết kế mới” không được xóa evidence tốt chỉ để đổi kiến trúc.
 
-## Interrupt levels
+<a id="goals"></a>
+## Mục tiêu
 
-Trên Cortex-M3/M4, dự kiến:
+- Không rewrite toàn kernel; thay đổi quanh port capability, interrupt ceiling, HSM engine, trace/diagnostics và deadline/tickless contract.
+- Generic kernel phải tiếp tục không biết MCU register; target manifest bind capability thay vì nhét ifdef khắp core.
+- haievent HSM phải giữ run-to-completion và ownership semantics của v1, chỉ mở rộng hierarchy/defer/history theo phase.
+- Trace path phải fixed-size/bounded để không biến observability thành nguồn nondeterminism.
+- không gọi kernel
+- có thể chạy khi kernel critical
+- priority trong syscall-safe range
+- được gọi *_from_isr
 
-```text
-high urgency ISR
-  - không gọi kernel
-  - có thể chạy khi kernel critical
+<a id="constraints"></a>
+## Design constraints
 
-kernel-aware ISR
-  - priority trong syscall-safe range
-  - được gọi *_from_isr
+- Không merge API/header trước implementation + tests.
+- Mọi feature phải ghi memory cost, runtime cost, ISR implication và failure modes.
+- Generic kernel không được nhận dependency vào STM32/board registers.
+- Static-first vẫn là default; dynamic behavior nếu thêm phải explicit, bounded và opt-in.
+- Version 2 docs phải giữ nhãn proposal cho tới khi capability matrix/source/test được cập nhật.
 
-PendSV
-  - lowest
-```
+<a id="evidence"></a>
+## Evidence để được coi là hoàn thành
 
-BASEPRI phù hợp hơn PRIMASK cho mô hình này.
+Một mục roadmap chỉ chuyển sang implemented khi có đủ:
 
-## Time
+1. source implementation trong module đúng layer;
+2. unit/host tests hoặc compile probes tương ứng;
+3. target evidence nếu feature phụ thuộc architecture/hardware;
+4. compatibility/migration note;
+5. benchmark/overhead evidence nếu tác động timing hoặc RAM/Flash;
+6. cập nhật capability matrix và API docs.
 
-Generic time giữ tick semantics cho compatibility. Tickless port nhận next deadline và lập wake source.
+<a id="migration"></a>
+## Migration / risk
 
-```text
-timeout/timer next deadline
- -> port sleep_until(deadline)
- -> wake
- -> compute elapsed ticks
- -> advance kernel time
-```
+Rủi ro lớn nhất là scope creep làm mất tính audit được của một RTOS nhỏ. Migration nên opt-in theo feature và giữ v1 workload chạy được càng lâu càng tốt. HSM/tickless/trace/target 2 phải được tách phase để khi regression xuất hiện có thể khoanh vùng nguyên nhân.
 
-Cần thiết kế cẩn thận để không phá current timeout ordering.
+<a id="references"></a>
+## References
 
-## haievent HSM
-
-FSM object cần mở rộng state representation. Không nên dùng chỉ function pointer nếu parent metadata cần truy xuất efficient.
-
-Một hướng:
-
-```c
-typedef struct he_state
-{
-    he_state_handler_t handler;
-    const struct he_state *parent;
-} he_state_t;
-```
-
-Nhưng đây là proposed design, chưa final API.
-
-Transition HSM cần xác định least common ancestor, EXIT chain và ENTRY chain.
-
-## Trace
-
-Trace là optional static ring, event records nhỏ. Không dùng printf trong kernel hot path.
-
-```text
-kernel event -> trace record
-debug/export later
-```
-
-## Compatibility
-
-Dedicated-task AO và flat API có thể được implement như subset trên HSM engine để giảm hai engine song song.
+- [`../00-overview/capability-matrix.md`](../00-overview/capability-matrix.md) — baseline capability.
+- [`../01-kernel-core/kernel-invariants.md`](../01-kernel-core/kernel-invariants.md) — invariant v1 không được phá ngầm.
+- [`../06-testing-and-quality/validation-baseline.md`](../06-testing-and-quality/validation-baseline.md) — evidence baseline.
+- [Semantic Versioning 2.0.0](https://semver.org/)

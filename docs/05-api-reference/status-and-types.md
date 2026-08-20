@@ -1,54 +1,92 @@
 # Status và kiểu dữ liệu
 
-## `hr_status_t`
+> **Phạm vi:** Public API contract của `hairtos 1.0.0-rc1`; internal helper không phải compatibility surface.
 
-| Value | Ý nghĩa |
-|---|---|
-| `HR_OK` | Thành công |
-| `HR_ERROR_INVALID_ARGUMENT` | NULL/range/size sai |
-| `HR_ERROR_INVALID_STATE` | Object/state không cho phép operation |
-| `HR_ERROR_TIMEOUT` | Blocking operation hết hạn |
-| `HR_ERROR_QUEUE_FULL` | Queue send no-wait thất bại |
-| `HR_ERROR_QUEUE_EMPTY` | Queue receive no-wait thất bại |
-| `HR_ERROR_NO_MEMORY` | Static pool/table/task capacity hết |
-| `HR_ERROR_NOT_OWNER` | Mutex unlock sai owner |
-| `HR_ERROR_FROM_ISR` | Task-context API bị gọi từ ISR |
-| `HR_ERROR_NOT_SUPPORTED` | Feature/context không hỗ trợ |
-| `HR_ERROR_INTERNAL` | Internal invariant/operation lỗi |
-| `HR_ERROR_SEMAPHORE_EMPTY` | Semaphore take no-wait thất bại |
-| `HR_ERROR_SEMAPHORE_FULL` | Give vượt max |
-| `HR_ERROR_MUTEX_BUSY` | Mutex không thể acquire ngay |
-| `HR_ERROR_OVERFLOW` | Counter/reference overflow |
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](semaphore-api.md) · [Next →](time-and-context-api.md)
 
-## Scalar types
+## Mục lục
 
-```c
-typedef uint32_t hr_tick_t;
-typedef uint32_t hr_stack_t;
-typedef uint8_t  hr_priority_t;
-typedef uint32_t hr_irq_state_t;
+- [Nguyên tắc API](#principles)
+- [Function surface](#functions)
+- [Context / blocking contract](#context)
+- [Ownership và lifetime](#ownership)
+- [Error semantics](#errors)
+- [Source map](#source-map)
+- [References](#references)
+
+<a id="principles"></a>
+## Nguyên tắc API
+
+Public API được thiết kế để application không phụ thuộc internal control-block layout.
+
+- Public handles là opaque storage; không cast sang internal TCB/control block trong application.
+- Function trả `hr_status_t` khi operation có thể fail; query bool/size/metadata dùng giá trị neutral nếu object invalid theo implementation hiện tại.
+- API blocking chỉ dành cho task context khi kernel RUNNING; ISR variant được đặt tên `_from_isr` và không block.
+- Caller giữ ownership của backing storage tĩnh; create/init không copy whole storage sang kernel heap.
+
+<a id="functions"></a>
+## Function surface
+
+### `kernel/include/hairtos/hr_status.h`
+
+File này chủ yếu export type/aggregate include; xem source header để biết exact declaration.
+
+### `kernel/include/hairtos/hr_types.h`
+
+File này chủ yếu export type/aggregate include; xem source header để biết exact declaration.
+
+<a id="context"></a>
+## Context / blocking contract
+
+| Nhóm | Task context | ISR context | Có thể block |
+| --- | --- | --- | --- |
+| Query/getter | Có | Chỉ khi implementation không cần blocking/lock dài | Không |
+| API thường `send/take/lock/delay` | Có | Không | Có nếu timeout khác `HR_NO_WAIT` |
+| API `_from_isr` | Không phải mục tiêu chính | Có | Không |
+| `hr_critical_enter/exit` | Có | Có nhưng phải giữ cực ngắn | Không |
+
+<a id="ownership"></a>
+## Ownership và lifetime
+
+- `hr_task_t` + task stack: caller-owned trong suốt lifetime task.
+- Queue: caller-owned queue object + item storage.
+- Semaphore/mutex/timer: caller-owned opaque object storage.
+- haievent Active Object: caller-owned active storage + stack + event-pointer queue; dynamic event có reference count riêng.
+- Không được move/free/reuse backing storage khi object còn valid/registered.
+
+<a id="errors"></a>
+## Error semantics
+
+Các status public hiện có:
+
+```text
+HR_OK
+HR_ERROR_INVALID_ARGUMENT
+HR_ERROR_INVALID_STATE
+HR_ERROR_TIMEOUT
+HR_ERROR_QUEUE_FULL / HR_ERROR_QUEUE_EMPTY
+HR_ERROR_NO_MEMORY
+HR_ERROR_NOT_OWNER
+HR_ERROR_FROM_ISR
+HR_ERROR_NOT_SUPPORTED
+HR_ERROR_INTERNAL
+HR_ERROR_SEMAPHORE_EMPTY / HR_ERROR_SEMAPHORE_FULL
+HR_ERROR_MUTEX_BUSY
+HR_ERROR_OVERFLOW
 ```
 
-Priority số nhỏ hơn là cao hơn.
+Status là một phần của contract. Không nên đổi một timeout thành panic hoặc một invalid-context thành silent success nếu chưa có migration policy.
 
-## Opaque types
+<a id="source-map"></a>
+## Source map
 
-`hr_task_t`, `hr_queue_t`, `hr_semaphore_t`, `hr_mutex_t`, `hr_timer_t` là aligned byte storage. Không truy cập `.storage` trong application.
+- `kernel/include/hairtos/hr_status.h`
+- `kernel/include/hairtos/hr_types.h`
 
-## Callback
+<a id="references"></a>
+## References
 
-```c
-typedef void (*hr_task_entry_t)(void *);
-typedef void (*hr_timer_callback_t)(void *);
-```
 
-Task entry không nên return.
-
-## Timeout
-
-```c
-HR_NO_WAIT
-HR_WAIT_FOREVER
-```
-
-Không phải mọi API đều chấp nhận cả hai; xem tài liệu API tương ứng.
+**Nguồn implementation trong repository:**
+- `kernel/include/hairtos/hr_status.h`
+- `kernel/include/hairtos/hr_types.h`

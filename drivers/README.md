@@ -1,200 +1,72 @@
-# Lớp driver
+# Driver layer
 
-## 1. Mục đích
+> **Scope:** Driver API của hairtos cung cấp peripheral contract tối thiểu cho board/examples; đây không phải HAL tổng quát.
 
-`drivers/` cung cấp public peripheral API nhỏ và các implementation riêng theo SoC. Mục tiêu là giữ application và board code không phụ thuộc trực tiếp register layout, GPIO port enumeration hoặc peripheral clock của một MCU cụ thể.
+[← Root README](../README.md)
 
-## 2. Phạm vi và trách nhiệm
+## Mục lục
 
-Driver layer hiện cung cấp:
+- [Kiến trúc](#architecture)
+- [Public contracts](#contracts)
+- [STM32F1 backend](#backend)
+- [Ownership và timing](#ownership)
+- [Porting](#porting)
+- [Validation](#validation)
+- [References](#references)
 
-- cấu hình, đọc, ghi và toggle GPIO;
-- UART polling TX/RX;
-- hardware tick source dùng cho các example bare-metal;
-- opaque identifier cho pin và peripheral instance.
+<a id="architecture"></a>
+## Kiến trúc
 
-Driver layer không quản lý task, scheduler, DMA, asynchronous service hoặc interrupt policy của kernel.
-
-## 3. Cấu trúc thư mục
-
-```text
-drivers/
-├── README.md
-├── include/
-│   ├── hr_gpio.h
-│   ├── hr_hw_timer.h
-│   └── hr_uart.h
-└── stm32f1/
-    ├── include/
-    │   ├── hr_gpio_stm32f1.h
-    │   └── hr_uart_stm32f1.h
-    ├── hr_gpio_stm32f1.c
-    ├── hr_hw_timer_stm32f1.c
-    └── hr_uart_stm32f1.c
+```mermaid
+flowchart TD
+    BOARD["boards/.../board.c"] --> IF["drivers/include public interfaces"]
+    IF --> STM["drivers/stm32f1 backend"]
+    STM --> REG["soc/stm32f1 register model + clock helpers"]
 ```
 
-Quy ước:
+Driver không biết scheduler policy. Board chọn pin/instance và dùng driver; kernel generic không include STM32F1 register header.
 
-- `drivers/include/`: interface portable;
-- `drivers/<soc>/include/`: pin/peripheral identifier do SoC định nghĩa;
-- `drivers/<soc>/*.c`: register-level implementation;
-- target manifest chọn đúng implementation và include path.
+<a id="contracts"></a>
+## Public contracts
 
-## 4. Thành phần triển khai
+- `hr_gpio.h`: configure/write/toggle GPIO với opaque pin identifier target-defined.
+- `hr_uart.h`: blocking/simple UART init + write path đủ cho log/demo.
+- `hr_hw_timer.h`: board millisecond timebase/delay dành cho bare-metal foundation và utility ngoài kernel tick.
 
-### GPIO
+Các identifier pin/UART không được hard-code vào generic kernel. `board_pins.h` bind PC13, PA9/PA10, PB0 cho target hiện tại.
 
-Public API sử dụng `hr_gpio_pin_t` opaque. STM32F1 mã hóa port/pin qua các macro:
+<a id="backend"></a>
+## STM32F1 backend
 
-```c
-HR_STM32F1_GPIO_PIN_A(pin)
-HR_STM32F1_GPIO_PIN_B(pin)
-HR_STM32F1_GPIO_PIN_C(pin)
-```
+Backend thao tác RCC/GPIO/USART/timer registers qua `soc/stm32f1/include/stm32f1.h`. Clock divisor phải lấy từ active PCLK/HCLK helper; không giả định mọi peripheral luôn chạy 72 MHz.
 
-Encoding này chỉ xuất hiện trong board/SoC-specific code, không xuất hiện trong application generic.
+<a id="ownership"></a>
+## Ownership và timing
 
-### UART
+- Driver hiện không có async DMA queue hoặc IRQ-driven UART subsystem; UART log có thể làm nhiễu benchmark/timing nếu gọi trong measurement window.
+- `board_delay_ms()` dùng hardware timer utility, không phải scheduler delay; task RTOS nên dùng `hr_task_delay*()` nếu mục tiêu là block CPU.
+- Board panic disable IRQ và loop breakpoint, phù hợp demo/debug nhưng không phải production recovery policy.
 
-`hr_uart_config_t` chứa instance, baud rate, TX pin và RX pin. Driver STM32F1 tự lấy peripheral clock từ SoC clock service; caller không truyền PCLK.
+<a id="porting"></a>
+## Porting
 
-### Hardware timer
+Target mới cần implementation driver phù hợp với opaque IDs + board binding tương ứng. Không sửa public kernel chỉ để đổi register map/pin.
 
-`hr_hw_timer_init(tick_rate_hz)` nhận tần số tick mong muốn. Implementation target ánh xạ tần số đó sang SysTick hoặc timer phù hợp. IRQ adapter không nằm trong driver generic:
+<a id="validation"></a>
+## Validation
 
-```text
-arch/arm/cortex-m3/hr_baremetal_tick_irq.c
-arch/arm/cortex-m3/hr_kernel_tick_irq.c
-```
+Host tests mock port chứ không unit-test register backend. Hardware driver cần target build + board test. Platform contract chi tiết ở [`../docs/04-platform/`](../docs/04-platform/README.md).
 
-Nhờ đó kernel generic không định nghĩa `SysTick_Handler()`.
+<a id="references"></a>
+## References
 
-## 5. API công khai
+- [ST RM0008 — STM32F10x Reference Manual](https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf)
+- [ST PM0056 — STM32F10xxx Cortex-M3 Programming Manual](https://www.st.com/resource/en/programming_manual/cd00228163-stm32f10xxx20xxx21xxxl1xxxx-cortexm3-programming-manual-stmicroelectronics.pdf)
+- [STM32F103 documentation portal](https://www.st.com/en/microcontrollers-microprocessors/stm32f103/documentation.html)
 
-### GPIO
-
-```c
-typedef uint32_t hr_gpio_pin_t;
-
-bool hr_gpio_configure(hr_gpio_pin_t pin,
-                       const hr_gpio_config_t *config);
-void hr_gpio_write(hr_gpio_pin_t pin, bool high);
-bool hr_gpio_read(hr_gpio_pin_t pin);
-void hr_gpio_toggle(hr_gpio_pin_t pin);
-```
-
-### UART
-
-```c
-typedef uint32_t hr_uart_instance_t;
-
-bool hr_uart_init(const hr_uart_config_t *config);
-void hr_uart_write_char(char character);
-void hr_uart_write_string(const char *text);
-bool hr_uart_try_read_char(char *character);
-```
-
-### Hardware timer
-
-```c
-bool hr_hw_timer_init(uint32_t tick_rate_hz);
-uint32_t hr_hw_timer_millis(void);
-void hr_hw_timer_delay_ms(uint32_t milliseconds);
-void hr_hw_timer_tick_isr(void);
-```
-
-## 6. Luồng hoạt động
-
-### Khởi tạo board
-
-```text
-board_init()
-    |
-    +--> SoC clock initialization
-    +--> hr_gpio_configure(board-defined pins)
-    +--> hr_uart_init(board-defined configuration)
-    +--> hr_hw_timer_init(board-defined tick rate)
-```
-
-### Tick bare-metal
-
-```text
-architecture IRQ adapter
-    |
-    +--> hr_hw_timer_tick_isr()
-             |
-             +--> millisecond counter
-```
-
-### Tick kernel
-
-```text
-architecture IRQ adapter
-    |
-    +--> hr_kernel_tick_from_isr()
-```
-
-Hai adapter không được link trong cùng image.
-
-## 7. Tích hợp build và dependency
-
-Target manifest cung cấp:
-
-```cmake
-HAIRTOS_TARGET_PUBLIC_INCLUDES
-HAIRTOS_TARGET_PLATFORM_C
-HAIRTOS_TARGET_BAREMETAL_TICK_C
-HAIRTOS_TARGET_KERNEL_TICK_C
-```
-
-`cmake/hairtos_modules.cmake` chỉ ánh xạ các biến target này thành module `platform`, `baremetal_tick` và `kernel_time`; file root không hard-code STM32F1.
-
-Driver implementation chỉ nhận public platform includes, không nhận `kernel/internal`.
-
-## 8. Biên dịch và kiểm tra
-
-```bash
-make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation build
-make TARGET=bluepill_f103c8 EXAMPLE=16-diagnostics-stress-stabilization build
-make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation intellisense
-```
-
-Example 01 link bare-metal tick adapter. Example 16 link kernel tick adapter.
-
-## 9. Bất biến và giới hạn
-
-- `hr_gpio_pin_t` và `hr_uart_instance_t` chỉ có ý nghĩa với target tạo ra chúng.
-- Application generic không được tự suy diễn encoding của opaque identifier.
-- UART hiện dùng polling và không có timeout/DMA.
-- Hardware timer API hiện chỉ biểu diễn periodic tick source tối giản.
-- Driver không tự đảm bảo thread safety; board/application phải serialization khi cần.
-- Public abstraction chỉ nên mở rộng khi target thứ hai chứng minh interface hiện tại chưa đủ.
-
-## 10. Thêm SoC mới
-
-Tạo:
-
-```text
-drivers/<new-soc>/
-├── include/
-│   ├── hr_gpio_<new-soc>.h
-│   └── hr_uart_<new-soc>.h
-├── hr_gpio_<new-soc>.c
-├── hr_uart_<new-soc>.c
-└── hr_hw_timer_<new-soc>.c
-```
-
-Sau đó khai báo các file và include path trong `cmake/targets/<new-target>.cmake`. Không sửa `CMakeLists.txt`, `Makefile` hoặc application source.
-
-Tài liệu liên quan:
-
-- [`../docs/04-platform/drivers.md`](../docs/04-platform/drivers.md);
-- [`../docs/04-platform/porting-new-target.md`](../docs/04-platform/porting-new-target.md).
-
-## Liên hệ audit và Version 2
-
-Audit source xác nhận public driver API hiện đã loại GPIO port enum/peripheral clock khỏi application-facing contract. Bước chứng minh tiếp theo là target thứ hai dùng cùng public API mà không sửa kernel/framework.
-
-- [`../docs/00-overview/project-analysis.md`](../docs/00-overview/project-analysis.md)
-- [`../docs/04-platform/drivers.md`](../docs/04-platform/drivers.md)
-- [`../docs/09-version2/portability-roadmap.md`](../docs/09-version2/portability-roadmap.md)
+**Nguồn implementation trong repository:**
+- `drivers/include/hr_gpio.h`
+- `drivers/include/hr_uart.h`
+- `drivers/include/hr_hw_timer.h`
+- `drivers/stm32f1/`
+- `boards/bluepill_f103c8/board.c`

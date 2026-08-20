@@ -1,9 +1,31 @@
-# Vision và mục tiêu Version 2
+# Vision Version 2
 
-## 1. Giữ lại những gì v1 làm đúng
+> **Status: FUTURE DESIGN.** Nội dung này không phải capability của `hairtos 1.0.0-rc1`.
 
-Không rewrite:
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](testing-and-release.md)
 
+## Mục lục
+
+- [Baseline v1](#baseline)
+- [Mục tiêu](#goals)
+- [Design constraints](#constraints)
+- [Evidence để được coi là hoàn thành](#evidence)
+- [Migration/risk](#migration)
+- [References](#references)
+
+<a id="baseline"></a>
+## Baseline v1
+
+Version 2 phải bắt đầu từ behavior v1 đang có: static object ownership, fixed-priority scheduler, intrusive ready/wait/timeout structures, direct-handoff IPC, one-task-per-AO, flat FSM, target manifest và host sanitizer tests. “Thiết kế mới” không được xóa evidence tốt chỉ để đổi kiến trúc.
+
+<a id="goals"></a>
+## Mục tiêu
+
+- Giữ static-first, fixed-priority baseline, intrusive data structures, opaque public objects, direct-handoff IPC, kernel/haievent separation và host-testable generic C.
+- Tăng correctness bằng interrupt-priority contract có thể kiểm tra, controlled task-return/AO failure, stronger ownership/trace diagnostics.
+- Tăng event modeling bằng HSM, parent propagation, initial substates, LCA transition và deferred event; history chỉ sau khi core ổn định.
+- Tăng portability bằng target thứ hai chạy thật và capability model rõ thay vì copy manifest.
+- Tickless idle, trace ring, build identity trong panic record là hướng observability/power chính.
 - static-first object ownership;
 - fixed-priority scheduler baseline;
 - intrusive ready/wait/timeout structures;
@@ -13,85 +35,40 @@ Không rewrite:
 - target manifest;
 - one-task-per-AO default model;
 - host-testable generic C.
-
-## 2. Mục tiêu 2.0
-
-### Correctness
-
 - interrupt priority contract có thể kiểm tra;
 - task-return/AO-internal failure đi qua controlled diagnostics;
 - run-to-completion misuse có debug detection;
-- HSM transition semantics có model-based tests;
-- stronger ownership/trace diagnostics.
 
-### Portability
+<a id="constraints"></a>
+## Design constraints
 
-- ít nhất target thứ hai chạy thật;
-- target schema không duplicate vô tội vạ;
-- examples target-specific được capability-gate/adapt;
-- architecture capability rõ FPU/MPU/interrupt ceiling/tickless.
+- Không merge API/header trước implementation + tests.
+- Mọi feature phải ghi memory cost, runtime cost, ISR implication và failure modes.
+- Generic kernel không được nhận dependency vào STM32/board registers.
+- Static-first vẫn là default; dynamic behavior nếu thêm phải explicit, bounded và opt-in.
+- Version 2 docs phải giữ nhãn proposal cho tới khi capability matrix/source/test được cập nhật.
 
-### Event modeling
+<a id="evidence"></a>
+## Evidence để được coi là hoàn thành
 
-- hierarchical states;
-- parent event propagation;
-- initial substates;
-- LCA-based transitions;
-- deferred event/recall;
-- optional history sau core ổn định.
+Một mục roadmap chỉ chuyển sang implemented khi có đủ:
 
-### Power/time
+1. source implementation trong module đúng layer;
+2. unit/host tests hoặc compile probes tương ứng;
+3. target evidence nếu feature phụ thuộc architecture/hardware;
+4. compatibility/migration note;
+5. benchmark/overhead evidence nếu tác động timing hoặc RAM/Flash;
+6. cập nhật capability matrix và API docs.
 
-- tickless idle;
-- next-deadline contract;
-- optional extended uptime diagnostics.
+<a id="migration"></a>
+## Migration / risk
 
-### Observability
+Rủi ro lớn nhất là scope creep làm mất tính audit được của một RTOS nhỏ. Migration nên opt-in theo feature và giữ v1 workload chạy được càng lâu càng tốt. HSM/tickless/trace/target 2 phải được tách phase để khi regression xuất hiện có thể khoanh vùng nguyên nhân.
 
-- fixed-size trace ring;
-- task/IPC/timer/AO events;
-- build/version identity trong panic record;
-- export qua debugger/UART adapter.
+<a id="references"></a>
+## References
 
-## 3. Non-goals 2.0
-
-Không đưa vào critical path 2.0:
-
-- SMP;
-- general POSIX layer;
-- filesystem/network stack;
-- general dynamic kernel heap;
-- full vendor-independent HAL;
-- automatic deadlock prevention;
-- safety certification;
-- shared-executor AO production default;
-- every possible HSM feature.
-
-## 4. Chỉ số thành công
-
-Version 2 tốt hơn nếu:
-
-- target mới thêm mà không sửa kernel;
-- interrupt latency giảm/được kiểm soát;
-- debug fault có timeline;
-- state model phức tạp viết ít duplicated transition code hơn;
-- v1 application migration predictable;
-- test matrix bắt regression trước hardware.
-
-## 5. Scope discipline
-
-Mỗi feature proposal phải có:
-
-```text
-problem
-contract
-memory cost
-runtime cost
-ISR implications
-failure modes
-tests
-migration
-documentation
-```
-
-Không merge header/API trước implementation và tests.
+- [`../00-overview/capability-matrix.md`](../00-overview/capability-matrix.md) — baseline capability.
+- [`../01-kernel-core/kernel-invariants.md`](../01-kernel-core/kernel-invariants.md) — invariant v1 không được phá ngầm.
+- [`../06-testing-and-quality/validation-baseline.md`](../06-testing-and-quality/validation-baseline.md) — evidence baseline.
+- [Semantic Versioning 2.0.0](https://semver.org/)

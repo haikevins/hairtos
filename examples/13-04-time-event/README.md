@@ -1,142 +1,164 @@
 # `13-04-time-event` — Sự kiện thời gian haievent
 
-> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
-> **Vị trí mã nguồn:** `examples/13-04-time-event/main.c`  
-> **Mục đích:** Periodic time event dựa trên software timer post `SIGNAL_TICK` vào AO; state handler chạy trong AO task.
+> **Môi trường:** Target  
+> **Source:** `examples/13-04-time-event/main.c`  
+> **Trọng tâm:** Time Event → AO
 
-## 1. Mục tiêu học tập
+[← Root README](../../README.md)
+
+## Mục lục
+
+- [Mục tiêu và bản chất](#muc-tieu)
+- [Build graph và cấu hình](#build-graph)
+- [Luồng thực thi](#runtime)
+- [API và ownership](#api)
+- [Invariant / PASS criteria](#pass)
+- [Debug và failure modes](#debug)
+- [Validation](#validation)
+- [Source map và references](#source-map)
+
+<a id="muc-tieu"></a>
+## Mục tiêu và bản chất
+
+Software timer phát timeout event định kỳ; AO xử lý trong task context và theo dõi drop.
+
+Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
+
+<a id="build-graph"></a>
+## Build graph và cấu hình
+
+- Environment được CMake khai báo: **Target**.
+- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `context`, `queue`, `semaphore`, `timer`, `haievent`.
+- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+
+### Compile-time / source constants
+
+| Symbol | Giá trị trong `main.c` |
+| --- | --- |
+| `STACK_WORDS` | `224U` |
+| `QUEUE_LENGTH` | `6U` |
+
+### CMake feature overrides
+
+- Software timer được bật cho build này; timer-service task priority được override thành 1.
+
+<a id="runtime"></a>
+## Luồng thực thi
+
+```mermaid
+flowchart LR
+    TICK["Kernel tick"] --> KT["hr_timer expiry"]
+    KT --> TS["timer-service task"]
+    TS --> TE["he_time_event callback"]
+    TE --> POST["post timeout event to target AO"]
+    POST --> AO["AO RTC dispatch"]
+    POST -->|"queue/post failure"| DROP["dropped_count++"]
+```
+
+Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
+
+### Các chi tiết quan sát trực tiếp từ example
 
 - Tạo `he_time_event_t` tĩnh.
 - Arm periodic event và disarm sau số lần xác định.
 - Phân biệt timer-service callback với AO dispatch.
 - Kết hợp timing và event-driven state handler.
-
-## 2. Kiến thức trọng tâm
-
 - Time event sở hữu một static event nội bộ.
 - Software timer expiry chỉ post vào AO queue.
 - AO xử lý event theo run-to-completion.
 - Disarm ngăn deadline tiếp theo.
-
-## 3. Thành phần và cấu hình
-
-### Thành phần chính
-
-| Thành phần | Cấu hình | Vai trò |
-| --- | --- | --- |
-| Phần cứng | STM32F103C8T6 Blue Pill | Chạy firmware target. |
-| Nạp/debug | ST-Link V2 qua SWD | Dùng OpenOCD để flash, verify và reset. |
-| UART | USART1, PA9 TX / PA10 RX, 115200 8-N-1 | Theo dõi log và trạng thái PASS/FAIL. |
-| LED | PC13, active-low | Hiển thị heartbeat hoặc trạng thái quan sát. |
-| `blinker-AO` | Priority 2, stack 224, queue 6 | Toggle LED khi nhận tick. |
-| `blink-time-event` | Chu kỳ 250 tick, tự động nạp lại | Đăng `SIGNAL_TICK`. |
-| Timer service | Priority 1 | Chuyển expiration thành post operation. |
-
-### Tham số quan trọng
-
-| Tham số | Giá trị |
-| --- | --- |
-| Period | 250 ticks |
-| Số event trước disarm | 6 |
-| Tín hiệu | `SIGNAL_TICK` |
-
-### Target và khả năng port
-
-Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
-
-## 4. Luồng thực thi
-
-1. Tạo AO và time event.
-2. Kích hoạt time event trước khi khởi chạy kernel.
-3. Mỗi 250 tick software timer hết hạn.
-4. Dịch vụ timer đăng event vào queue của AO.
-5. AO tăng count, toggle LED và in tick.
-6. Tại count 6, AO disarm event và in PASS.
-
-## 5. API và mã nguồn liên quan
-
-### Header được dùng
-
 - `haievent/haievent.h`
 - `hairtos/hr_time.h`
-
-### API trọng tâm
-
 - `he_time_event_create_static()`
 - `he_time_event_arm()`
 - `he_time_event_disarm()`
-
-### Module được đưa vào bản biên dịch
-
-- `timer`
 - `haievent`
-
-## 6. Biên dịch, chạy và kiểm tra
-
-Chạy các lệnh từ thư mục gốc chứa `Makefile`:
-
-| Thao tác | Lệnh |
-| --- | --- |
-| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event build` |
-| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event run` |
-| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event check` |
-| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event clean` |
-
-Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
-
-```bash
-make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=13-04-time-event build
-```
-
-## 7. Kết quả mong đợi
-
-Output dưới đây là mẫu. Các giá trị tick, counter, địa chỉ hoặc thống kê có thể thay đổi theo thời điểm chạy và toolchain.
-
-```text
-hairtos time event
-Timer service posts events; the AO dispatches them in task context.
-blinker AO: waiting for periodic time events
-time-event count=1 tick=250
-...
-time-event count=6 tick=1500
-Time event: PASS
-```
-
-## 8. Tiêu chí PASS và xử lý lỗi
-
-### Tiêu chí PASS
-
 - Có đúng sáu event trước PASS.
 - Tick tăng gần 250 mỗi event.
 - Sau disarm không còn event mới.
-
-### Lỗi thường gặp
-
 - Event vẫn chạy sau khi disarm: timer chưa được gỡ hoặc trạng thái rearm sai.
-- Callback gọi trực tiếp state: vi phạm yêu cầu chạy trong task context.
-- Queue overflow: AO không consume đủ nhanh.
+- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
+- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
+- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
+- `blinker-AO` — Priority 2, stack 224, queue 6 — Toggle LED khi nhận tick.
+- `blink-time-event` — Chu kỳ 250 tick, tự động nạp lại — Đăng `SIGNAL_TICK`.
 
-Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
+<a id="api"></a>
+## API và ownership
+
+API được gọi trực tiếp trong `main.c` (đã trích từ source):
+
+- `board_init()`
+- `board_led_toggle()`
+- `board_panic()`
+- `board_uart_write_line()`
+- `board_uart_write_string()`
+- `board_uart_write_u32()`
+- `he_active_create_static()`
+- `he_time_event_arm()`
+- `he_time_event_create_static()`
+- `he_time_event_disarm()`
+- `hr_kernel_init()`
+- `hr_kernel_start()`
+- `hr_time_now()`
+
+Ownership cần nhớ:
+
+- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
+- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
+- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
+- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+
+<a id="pass"></a>
+## Invariant và PASS criteria
+
+- Time event chứa embedded kernel timer và target AO/signal.
+- Periodic/one-shot semantics được ủy quyền cho `hr_timer_*`.
+- Nếu AO queue không nhận được timeout event, `dropped_count` tăng saturating tới UINT32_MAX.
+- Disarm/arm/rearm/change-period ánh xạ trực tiếp sang timer API tương ứng.
+- Timeout event không tự làm state transition; AO state handler quyết định ý nghĩa signal.
+
+Các check/log cứng trong source:
+
+- `Time event: PASS`
+
+<a id="debug"></a>
+## Debug và failure modes
+
+- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
+- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
+- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
+- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
+- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+
+<a id="validation"></a>
+## Validation
+
+- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
+- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+
+### Lệnh chuẩn
 
 ```bash
-make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event clean
 make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event build
+make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event run
+make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event check
 ```
 
-## 9. Giới hạn của ví dụ
+<a id="source-map"></a>
+## Source map và references
 
-- Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
-- UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
-- Không minh họa rearm hoặc đổi chu kỳ của time event; ví dụ software timer đã bao phủ thao tác đó.
+- `examples/13-04-time-event/main.c`
+- `cmake/hairtos_examples.cmake`
+- `haievent/src/he_time_event.c`
+- `kernel/src/hr_timer.c`
+- `haievent/src/he_active.c`
 
-- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
+### Tài liệu tham khảo
 
-## 10. Liên hệ với lộ trình
 
-Bài tiếp theo: [`13-05-publish-subscribe`](../13-05-publish-subscribe/README.md). Bài tiếp theo multicast dynamic event và quản lý reference count.
-
-### Liên hệ Version 2
-
-Version 2 sẽ thêm trace dispatch/drop và bảo toàn time-event semantics trên tickless kernel.
-
-Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).
+**Nguồn implementation trong repository:**
+- `haievent/src/he_time_event.c`
+- `kernel/src/hr_timer.c`
+- `haievent/src/he_active.c`

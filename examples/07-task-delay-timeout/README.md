@@ -1,144 +1,182 @@
 # `07-task-delay-timeout` — SysTick, trì hoãn tác vụ và timeout
 
-> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
-> **Vị trí mã nguồn:** `examples/07-task-delay-timeout/main.c`  
-> **Mục đích:** SysTick trở thành kernel tick 1 kHz; task delay chuyển sang BLOCKED và được đánh thức từ timeout list.
+> **Môi trường:** Target  
+> **Source:** `examples/07-task-delay-timeout/main.c`  
+> **Trọng tâm:** SysTick, delay và absolute periodic timing
 
-## 1. Mục tiêu học tập
+[← Root README](../../README.md)
+
+## Mục lục
+
+- [Mục tiêu và bản chất](#muc-tieu)
+- [Build graph và cấu hình](#build-graph)
+- [Luồng thực thi](#runtime)
+- [API và ownership](#api)
+- [Invariant / PASS criteria](#pass)
+- [Debug và failure modes](#debug)
+- [Validation](#validation)
+- [Source map và references](#source-map)
+
+<a id="muc-tieu"></a>
+## Mục tiêu và bản chất
+
+Preemption/time slicing bị tắt cho bài này để tập trung vào block → idle → timeout wake và delay_until.
+
+Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
+
+<a id="build-graph"></a>
+## Build graph và cấu hình
+
+- Environment được CMake khai báo: **Target**.
+- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`.
+- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+
+### Compile-time / source constants
+
+| Symbol | Giá trị trong `main.c` |
+| --- | --- |
+| `PERIODIC_TASK_PRIORITY` | `2U` |
+| `HEARTBEAT_TASK_PRIORITY` | `3U` |
+| `TASK_STACK_WORDS` | `160U` |
+| `PERIODIC_INTERVAL_TICKS` | `500U` |
+| `HEARTBEAT_INTERVAL_TICKS` | `1000U` |
+
+### CMake feature overrides
+
+- `HR_CFG_PREEMPTION=0` và `HR_CFG_TIME_SLICING=0` để quan sát blocking/timeout mà không trộn preemption.
+
+<a id="runtime"></a>
+## Luồng thực thi
+
+```mermaid
+flowchart TD
+    BLOCK["Task blocks with finite timeout"] --> WAKE["wake_tick = now + delay"]
+    WAKE --> CHOOSE{"wake_tick wrapped?"}
+    CHOOSE -->|"no"| CURRENT["insert sorted in current list"]
+    CHOOSE -->|"yes"| OVERFLOW["insert sorted in overflow list"]
+    TICK["kernel tick advances"] --> WRAP{"now < last_tick?"}
+    WRAP -->|"yes"| SWAP["swap current and overflow"]
+    WRAP -->|"no"| EXPIRE["pop deadlines <= now"]
+    SWAP --> EXPIRE
+    EXPIRE --> READY["cleanup wait + make task READY"]
+```
+
+Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
+
+### Các chi tiết quan sát trực tiếp từ example
 
 - Dùng `hr_task_delay()` để block tương đối.
 - Dùng `hr_task_delay_until()` để chạy periodic không drift.
 - Quan sát idle task chạy khi mọi application task đều BLOCKED.
 - Hiểu timeout list và wake-up tại tick deadline.
-
-## 2. Kiến thức trọng tâm
-
 - SysTick do kernel quản lý.
 - Chuyển trạng thái RUNNING → BLOCKED → READY.
 - Dual timeout list hỗ trợ tick wrap.
 - Example tắt general preemption và time slicing để tập trung vào delay.
-
-## 3. Thành phần và cấu hình
-
-### Thành phần chính
-
-| Thành phần | Cấu hình | Vai trò |
-| --- | --- | --- |
-| Phần cứng | STM32F103C8T6 Blue Pill | Chạy firmware target. |
-| Nạp/debug | ST-Link V2 qua SWD | Dùng OpenOCD để flash, verify và reset. |
-| UART | USART1, PA9 TX / PA10 RX, 115200 8-N-1 | Theo dõi log và trạng thái PASS/FAIL. |
-| LED | PC13, active-low | Hiển thị heartbeat hoặc trạng thái quan sát. |
-| `periodic` | Priority 2, stack 160 words | `delay_until` mỗi 500 ticks. |
-| `heartbeat` | Priority 3, stack 160 words | `delay` mỗi 1000 ticks. |
-| Idle task | Nội bộ | WFI khi cả hai task block. |
-
-### Tham số quan trọng
-
-| Tham số | Giá trị |
-| --- | --- |
-| Tần số tick | 1 kHz |
-| Chu kỳ định kỳ | 500 ticks |
-| Chu kỳ heartbeat | 1000 ticks |
-| Preemption/time slicing | Tắt trong cấu hình example |
-
-### Target và khả năng port
-
-Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
-
-## 4. Luồng thực thi
-
-1. Periodic task chạy và lưu release tick.
-2. Heartbeat task chạy rồi cả hai gọi delay và chuyển BLOCKED.
-3. Idle task chạy.
-4. SysTick tăng tick và advance timeout list.
-5. Đến deadline, task chuyển READY; nếu idle đang chạy, PendSV đưa task vừa thức dậy lên CPU.
-6. Periodic dùng deadline trước làm mốc nên tránh drift.
-
-## 5. API và mã nguồn liên quan
-
-### Header được dùng
-
 - `hairtos/hr_time.h`
 - `hairtos/hr_task.h`
-
-### API trọng tâm
-
 - `hr_time_now()`
 - `hr_task_delay()`
 - `hr_task_delay_until()`
-
-### Module được đưa vào bản biên dịch
-
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
-
-## 6. Biên dịch, chạy và kiểm tra
-
-Chạy các lệnh từ thư mục gốc chứa `Makefile`:
-
-| Thao tác | Lệnh |
-| --- | --- |
-| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout build` |
-| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout run` |
-| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout check` |
-| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout clean` |
-
-Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
-
-```bash
-make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=07-task-delay-timeout build
-```
-
-## 7. Kết quả mong đợi
-
-Output dưới đây là mẫu. Các giá trị tick, counter, địa chỉ hoặc thống kê có thể thay đổi theo thời điểm chạy và toolchain.
-
-```text
-hairtos SysTick and task delay
-periodic activation=1 tick=0 -> delay_until +500
-heartbeat activation=1 tick=0 -> delay 1000
-periodic activation=2 tick=500 -> delay_until +500
-periodic activation=3 tick=1000 -> delay_until +500
-heartbeat activation=2 tick=1000 -> delay 1000
-```
-
-## 8. Tiêu chí PASS và xử lý lỗi
-
-### Tiêu chí PASS
-
 - Periodic xuất hiện gần các tick bội 500.
 - Heartbeat xuất hiện gần các tick bội 1000.
-- Không có lỗi delay và hệ thống không busy-loop tại application level khi chờ.
+- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
+- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
+- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
+- `periodic` — Priority 2, stack 160 words — `delay_until` mỗi 500 ticks.
+- `heartbeat` — Priority 3, stack 160 words — `delay` mỗi 1000 ticks.
 
-### Lỗi thường gặp
+<a id="api"></a>
+## API và ownership
 
-- Task không thức dậy: kiểm tra SysTick handler và timeout advance.
-- Periodic drift: kiểm tra `last_wake_tick` không bị gán lại theo thời điểm hoàn thành.
-- Idle không chạy: kiểm tra task đã được loại khỏi ready queue khi block.
+API được gọi trực tiếp trong `main.c` (đã trích từ source):
 
-Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
+- `board_init()`
+- `board_led_toggle()`
+- `board_panic()`
+- `board_uart_write_line()`
+- `board_uart_write_string()`
+- `board_uart_write_u32()`
+- `hr_kernel_init()`
+- `hr_kernel_start()`
+- `hr_port_thread_uses_psp()`
+- `hr_task_create_static()`
+- `hr_task_current()`
+- `hr_task_delay()`
+- `hr_task_delay_until()`
+- `hr_task_start()`
+- `hr_time_now()`
+
+Ownership cần nhớ:
+
+- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
+- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
+- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
+- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+
+<a id="pass"></a>
+## Invariant và PASS criteria
+
+- Mỗi blocked task có đúng một timeout node và node chỉ nằm trong một trong hai timeout list khi timeout hữu hạn đang active.
+- `HR_WAIT_FOREVER` không cần timeout node; `HR_NO_WAIT` không block.
+- Wake do object và wake do timeout cạnh tranh trên cùng wait state; đường thắng phải remove task khỏi cả wait list và timeout list một cách nhất quán.
+- `delay_until()` dùng absolute periodic reference để giảm phase drift so với cộng delay sau mỗi lần task thực sự chạy.
+- Wrap-around được unit test trực tiếp trong `test_timeout.c`.
+
+Các check/log cứng trong source:
+
+- `ERROR: invalid task context.`
+- `ERROR: periodic delay failed.`
+- `ERROR: heartbeat delay failed.`
+- `Kernel initialization failed.`
+- `Periodic task creation failed.`
+- `Heartbeat task creation failed.`
+- `Task registration failed.`
+
+<a id="debug"></a>
+## Debug và failure modes
+
+- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
+- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
+- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
+- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
+- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+
+<a id="validation"></a>
+## Validation
+
+- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
+- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+
+### Lệnh chuẩn
 
 ```bash
-make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout clean
 make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout build
+make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout run
+make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout check
 ```
 
-## 9. Giới hạn của ví dụ
+<a id="source-map"></a>
+## Source map và references
 
-- Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
-- UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
-- Chưa chứng minh CPU-bound tasks cùng priority được time slice.
-- Chưa preempt general low task khi high task thức dậy trong mọi trường hợp.
+- `examples/07-task-delay-timeout/main.c`
+- `cmake/hairtos_examples.cmake`
+- `kernel/src/hr_timeout.c`
+- `kernel/src/hr_kernel.c`
+- `kernel/src/hr_time.c`
+- `tests/host/test_timeout.c`
 
-- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
+### Tài liệu tham khảo
 
-## 10. Liên hệ với lộ trình
+- [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
+- [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-Bài tiếp theo: [`08-preemption-round-robin`](../08-preemption-round-robin/README.md). Bài tiếp theo bật preemption và time slicing bằng SysTick.
-
-### Liên hệ Version 2
-
-Tickless idle Version 2 phải giữ nguyên semantics delay/timeout của bài này dù tick source không còn chạy periodic liên tục.
-
-Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).
+**Nguồn implementation trong repository:**
+- `kernel/src/hr_timeout.c`
+- `kernel/src/hr_kernel.c`
+- `kernel/src/hr_time.c`
+- `tests/host/test_timeout.c`

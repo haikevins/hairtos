@@ -1,52 +1,67 @@
-# API compatibility policy cho Version 2
+# API compatibility Version 2
 
-## Nguyên tắc
+> **Status: FUTURE DESIGN.** Nội dung này không phải capability của `hairtos 1.0.0-rc1`.
 
-Không phá v1 API chỉ để đổi tên thẩm mỹ.
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [Next →](architecture.md)
 
-Breaking change chỉ hợp lý nếu:
+## Mục lục
 
+- [Baseline v1](#baseline)
+- [Mục tiêu](#goals)
+- [Design constraints](#constraints)
+- [Evidence để được coi là hoàn thành](#evidence)
+- [Migration/risk](#migration)
+- [References](#references)
+
+<a id="baseline"></a>
+## Baseline v1
+
+Version 2 phải bắt đầu từ behavior v1 đang có: static object ownership, fixed-priority scheduler, intrusive ready/wait/timeout structures, direct-handoff IPC, one-task-per-AO, flat FSM, target manifest và host sanitizer tests. “Thiết kế mới” không được xóa evidence tốt chỉ để đổi kiến trúc.
+
+<a id="goals"></a>
+## Mục tiêu
+
+- Public header v1 là baseline; internal layout không có compatibility promise.
+- Breaking change phải có migration note, compile-time guard hoặc versioned contract.
+- Không publish header trước implementation/test chỉ để “reserve API”.
 - sửa semantic bug;
 - mở đường HSM/port contract không thể làm sạch bằng extension;
 - loại contract nguy hiểm;
 - giảm coupling lớn.
-
-## Kernel API
-
-Ưu tiên giữ:
-
-```text
-hr_task_*
-hr_queue_*
-hr_semaphore_*
-hr_mutex_*
-hr_timer_*
-hr_context_*
-```
-
-Nếu thêm ISR priority contract, public ISR function signature chỉ đổi khi thực sự cần; ưu tiên config/port validation.
-
-## haievent
-
-Flat state machine API có thể giữ compatibility wrapper trên HSM core.
-
-Dynamic event ownership semantics không được âm thầm đổi.
-
-## Opaque storage
-
-Internal object có thể lớn hơn ở v2. Nếu public storage size tăng, application static RAM tăng nhưng source vẫn compile. Cần ghi footprint change.
-
-## Deprecation
-
-Nếu API cũ cần bỏ:
-
-1. mark deprecated macro/comment;
-2. docs migration;
-3. compatibility window nếu chi phí thấp;
-4. remove ở major version phù hợp.
-
-## Semantic versioning
-
 - 1.x: compatibility-focused stabilization;
 - 2.0: controlled breaking changes;
 - 2.x: backward-compatible features/fixes theo public contract mới.
+
+<a id="constraints"></a>
+## Design constraints
+
+- Không merge API/header trước implementation + tests.
+- Mọi feature phải ghi memory cost, runtime cost, ISR implication và failure modes.
+- Generic kernel không được nhận dependency vào STM32/board registers.
+- Static-first vẫn là default; dynamic behavior nếu thêm phải explicit, bounded và opt-in.
+- Version 2 docs phải giữ nhãn proposal cho tới khi capability matrix/source/test được cập nhật.
+
+<a id="evidence"></a>
+## Evidence để được coi là hoàn thành
+
+Một mục roadmap chỉ chuyển sang implemented khi có đủ:
+
+1. source implementation trong module đúng layer;
+2. unit/host tests hoặc compile probes tương ứng;
+3. target evidence nếu feature phụ thuộc architecture/hardware;
+4. compatibility/migration note;
+5. benchmark/overhead evidence nếu tác động timing hoặc RAM/Flash;
+6. cập nhật capability matrix và API docs.
+
+<a id="migration"></a>
+## Migration / risk
+
+Rủi ro lớn nhất là scope creep làm mất tính audit được của một RTOS nhỏ. Migration nên opt-in theo feature và giữ v1 workload chạy được càng lâu càng tốt. HSM/tickless/trace/target 2 phải được tách phase để khi regression xuất hiện có thể khoanh vùng nguyên nhân.
+
+<a id="references"></a>
+## References
+
+- [`../00-overview/capability-matrix.md`](../00-overview/capability-matrix.md) — baseline capability.
+- [`../01-kernel-core/kernel-invariants.md`](../01-kernel-core/kernel-invariants.md) — invariant v1 không được phá ngầm.
+- [`../06-testing-and-quality/validation-baseline.md`](../06-testing-and-quality/validation-baseline.md) — evidence baseline.
+- [Semantic Versioning 2.0.0](https://semver.org/)

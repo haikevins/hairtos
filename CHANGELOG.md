@@ -1,37 +1,41 @@
-# Nhật ký thay đổi
+# Changelog
 
-Tất cả thay đổi đáng chú ý của `hairtos` được ghi lại tại đây. Project sử dụng Semantic Versioning.
+> Lịch sử thay đổi của `hairtos`. Version hiện tại trong source: `1.0.0-rc1`.
 
-## [Chưa phát hành]
+Format bám theo tinh thần *Keep a Changelog* và Semantic Versioning. Phần `Unreleased` chỉ mô tả thay đổi chưa gắn tag; `docs/09-version2` là roadmap và không làm thay đổi version runtime hiện tại.
 
-### Tài liệu
+## [Unreleased]
 
-- Audit lại toàn bộ source v1: kernel, `haievent`, architecture port, SoC, board, driver, build system, tests, examples, diagnostics, benchmark và allocator lab.
-- Mở rộng tài liệu kiến trúc, invariants, blocking contract, ownership, portability và validation baseline.
-- Bổ sung `docs/00-overview/project-analysis.md` và `capability-matrix.md` để phân biệt rõ tính năng đã triển khai với giới hạn hiện tại.
-- Bổ sung nhóm `docs/09-version2/` mô tả mục tiêu, kiến trúc, migration, test/release và roadmap cho Version 2.
-- Version 2 chỉ là kế hoạch; version source hiện tại vẫn là `1.0.0-rc1`.
+### Documentation
+
+- Audit lại kernel, `haievent`, Cortex-M3 port, STM32F1 platform, driver, CMake/Make, examples, tests, diagnostics, benchmark và allocator lab.
+- Viết lại toàn bộ Markdown first-party theo cấu trúc: scope → contract → source mapping → invariant → failure semantics → validation → references.
+- Phân tách rõ v1 implementation (`docs/00`–`08`) với Version 2 proposal (`docs/09-version2`).
+- Bổ sung navigation/TOC/Mermaid đúng semantic và validation baseline từ host test suite.
 
 ## [1.0.0-rc1] - 2026-07-27
 
-### Bổ sung
+### Added
 
-- Kernel Cortex-M3 theo định hướng static-first với task, scheduler, timeout, queue, semaphore, mutex, software timer, diagnostics và retained fault record.
-- Framework `haievent` với Active Object, flat state machine, time event, event pool và publish/subscribe.
+- Static-first Cortex-M3 kernel: task, scheduler, timeout, queue, semaphore, mutex, software timer, diagnostics và retained fault record.
+- `haievent`: Active Object, flat state machine, time event, fixed-block event pool và publish/subscribe.
 - Host sanitizer tests, deterministic scheduler stress, allocator lab và target benchmark.
-- Hệ thống target manifest để tách architecture/SoC/board/driver khỏi build root.
-- `VERSION` và tài liệu changelog.
+- Target manifest tách architecture/SoC/board/driver khỏi generic build graph.
+- `VERSION` và changelog.
 
-### Thay đổi
+### Changed
 
-- CMake trở thành nguồn cấu hình duy nhất cho target/example/module/source.
-- Makefile trở thành command wrapper thống nhất.
-- `kernel/internal` và `haievent/internal` chỉ được cấp cho code cần internal contract.
-- Driver API được tách thành public interface và implementation theo SoC.
+- CMake trở thành source-of-truth cho target/example/module/source; Makefile trở thành command wrapper.
+- `kernel/internal` và `haievent/internal` chỉ được cấp cho test/example/module có lý do rõ ràng.
+- Driver public API và STM32F1 backend được tách riêng.
 - Kernel tick IRQ được chuyển ra architecture layer.
-- Benchmark clock và board marker được tách khỏi benchmark statistics generic.
+- Benchmark clock/board marker được tách khỏi statistics generic.
 
-### Loại bỏ
+### Removed
 
 - Placeholder benchmark trùng lặp.
-- Tài liệu và skeleton không còn tham gia build.
+- Skeleton/tài liệu không còn tham gia build runtime.
+
+## References
+
+- [Semantic Versioning 2.0.0](https://semver.org/)

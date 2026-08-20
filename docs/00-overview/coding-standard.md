@@ -1,65 +1,64 @@
-# Coding standard
+# Coding standard của repository
 
-## Ngôn ngữ
+> **Scope:** Convention quan sát từ source + compiler policy; không thay thế MISRA/CERT và repo không tuyên bố certification.
 
-- C11 cho C.
-- GNU assembler-with-cpp cho Cortex-M assembly.
-- Freestanding target.
-- Không phụ thuộc undefined behavior có chủ đích.
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](capability-matrix.md) · [Next →](configuration.md)
 
-## Naming
+## Mục lục
 
-```text
-hr_*       public hairtos
-he_*       public haievent
-HR_CFG_*   kernel config
-HE_CFG_*   framework config
-HR_PORT_*  port capability
-board_*    board service
-```
+- [Compiler discipline](#compiler)
+- [Naming/layers](#naming)
+- [Types/conversions](#types)
+- [Concurrency](#concurrency)
+- [Error handling](#errors)
+- [Data-structure discipline](#ds)
+- [Documentation/test expectations](#docs)
 
-Internal symbol vẫn dùng `hr_`/`he_`, nhưng header nằm trong `internal/`.
+<a id="compiler"></a>
+## Compiler discipline
 
-## Memory
+Target compile dùng C11, `-ffreestanding`, `-fno-common`, `-fno-builtin`, function/data sections và warning set strict: `-Wall -Wextra -Werror -Wshadow -Wundef -Wconversion -Wsign-conversion`. Host thêm `-pedantic` và ASan/UBSan.
 
-- Không VLA trong kernel hot path.
-- Không recursion không giới hạn.
-- Không `malloc` trong kernel.
-- Mọi size multiplication phải xem overflow.
-- Opaque storage phải align đủ cho internal object.
+<a id="naming"></a>
+## Naming và layer
 
+- `hr_` = hairtos kernel/public/internal symbol.
+- `he_` = haievent.
+- `board_` = board service.
+- `stm32f1_` = SoC-specific helper.
+- `HR_CFG_` / `HE_CFG_` = compile-time config.
+- public header nằm trong include tree; internal header không được “tiện tay” expose.
+
+<a id="types"></a>
+## Types và conversion
+
+Code dùng `<stdint.h>`, `<stddef.h>`, `size_t`, `uintptr_t` và suffix `U/UL` nhất quán. Warning conversion/sign-conversion ép mọi narrowing/unsigned interaction phải intentional. Pointer↔integer chỉ xuất hiện ở architecture/register/binary-boundary có lý do rõ.
+
+<a id="concurrency"></a>
 ## Concurrency
 
-- Ready/wait/timeout membership update phải atomic.
-- Critical section ngắn.
-- Không UART print trong critical section.
-- ISR API không block.
-- Application callback không chạy từ tick ISR.
-- Mutex không dùng trong ISR.
+- Critical section save/restore prior PRIMASK state, không đơn giản `enable irq` vô điều kiện.
+- ISR path không gọi blocking API.
+- Shared intrusive structure mutate dưới kernel/critical contract.
+- User callback không chạy trong SysTick ISR.
+- Mutex ownership và effective priority phải thay đổi atomically với wait/ready requeue.
 
-## State machine
-
-State handler nên:
-
-- không block;
-- không delay;
-- không giữ mutex lâu;
-- không dispatch reentrant cùng FSM;
-- hoàn thành một event nhanh rồi return.
-
-v1 chưa enforce hoàn toàn rule này; đây là contract cần tuân thủ.
-
+<a id="errors"></a>
 ## Error handling
 
-Public API trả `hr_status_t`. Invalid argument khác invalid state. Corruption nội bộ nên dẫn đến diagnostics/assert/panic thay vì tiếp tục trong state không xác định.
+Public operation trả `hr_status_t` cho recoverable contract failure. Internal invariant/fault có assert/panic/diagnostics path. Examples dùng `board_panic()` để biến violation thành dễ debug thay vì tiếp tục với state không hợp lệ.
 
-## Header
+<a id="ds"></a>
+## Data-structure discipline
 
-- include guard duy nhất;
-- public header không expose internal control block;
-- source include header của chính module;
-- target-specific header không lan lên generic layer.
+Intrusive node init trước insert, double insert/remove bị reject, list có validator. Magic values phân biệt initialized opaque object. `_Static_assert` bảo đảm hidden control block fit public storage.
 
-## Build hygiene
+<a id="docs"></a>
+## Documentation/test expectations
 
-Warning được coi là error trong target/host flags. Feature mới phải tham gia source mapping chính thức; không giữ placeholder `.c/.h` rỗng.
+Feature mới cần public contract, source mapping, failure mode, host/target evidence phù hợp và update capability matrix. Version 2 proposal không được coi là implemented chỉ vì có header/doc.
+
+## References
+
+- [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
+- [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)

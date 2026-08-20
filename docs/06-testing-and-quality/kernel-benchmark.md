@@ -1,55 +1,44 @@
-# Kernel benchmark
+# Kernel benchmark methodology
 
-## Generic statistics
+> **Scope:** Cách example 15 đo và cách diễn giải số liệu; không hard-code kết quả chưa được thu trong audit hiện tại.
 
-`benchmarks/kernel` chỉ tính sample statistics. Clock backend do target cung cấp.
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](diagnostics.md) · [Next →](release-checklist.md)
 
-## Target example metrics
+## Measurement architecture
 
-Example 15 đo các path như:
-
-- first task startup;
-- critical section;
-- scheduler;
-- queue;
-- semaphore;
-- mutex;
-- timer commands;
-- yield round-trip;
-- wake/preemption;
-- haievent dispatch;
-- timer jitter.
-
-## DWT target
-
-Blue Pill target dùng Cortex-M3 DWT CYCCNT.
-
-## Board marker
-
-Marker do `board_benchmark_marker_*` cung cấp; target hiện dùng PB0 nhưng benchmark generic không biết pin này.
-
-## Method
-
-UART không nằm trong vùng timestamp. Sample được lưu tĩnh rồi report sau.
-
-Statistics:
-
-```text
-min
-p50
-mean
-p95
-max
+```mermaid
+flowchart TD
+    DWT["DWT CYCCNT"] --> NOW["cycle timestamp"]
+    NOW --> OH["measure read overhead"]
+    OH --> SAMPLES["bounded sample arrays"]
+    PB0["PB0 marker"] --> EXT["optional external logic analyzer"]
+    SAMPLES --> STATS["min/p50/mean/p95/max"]
+    STATS --> UART["deferred UART report"]
 ```
 
-## Không phải WCET proof
+Metrics trong `examples/15-kernel-benchmark/main.c` gồm timestamp overhead, critical section, scheduler select, primitive queue/semaphore/mutex, yield roundtrip, queue wakeup, haievent dispatch và timer jitter. Footprint lấy từ linker symbols qua board helper.
 
-64 samples không đủ để chứng minh hard WCET. Interrupt load, compiler flags, Flash wait states và target clock ảnh hưởng kết quả.
+## Measurement discipline
 
-## V2
+- UART output bị trì hoãn khỏi hot measurement path.
+- Read overhead được đo riêng và adjusted cycle chỉ hợp lệ khi sample lớn hơn overhead.
+- Percentile/statistics nằm ở generic benchmark module, clock implementation ở architecture layer.
+- DWT frequency phải khớp core clock.
+- Toolchain `-Og`, config, target clock và marker phải được ghi cùng result.
 
-- trace/benchmark clock capability metadata;
-- automated result capture;
-- context-switch latency under interrupt load;
-- critical-section latency;
-- power/tickless wake latency.
+## Interpretation
+
+Microbenchmark đo một primitive/path trong workload kiểm soát; nó không chứng minh end-to-end deadline cho application khác. Khi compare, phải cùng target/toolchain/config/sample method.
+
+## Source
+
+- `examples/15-kernel-benchmark/main.c`
+- `benchmarks/kernel/src/hr_benchmark_stats.c`
+- `arch/arm/cortex-m3/hr_benchmark_clock_dwt.c`
+- `boards/bluepill_f103c8/board.c`
+- `tests/host/test_benchmark.c`
+
+## References
+
+- [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
+- [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)

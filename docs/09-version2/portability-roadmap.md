@@ -1,97 +1,62 @@
 # Portability roadmap Version 2
 
-## P1 — Target thứ hai
+> **Status: FUTURE DESIGN.** Nội dung này không phải capability của `hairtos 1.0.0-rc1`.
 
-Đây là mục tiêu bắt buộc vì abstraction chỉ được chứng minh bằng reuse thật.
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](migration-v1-to-v2.md) · [Next →](risk-register.md)
 
-Target thứ hai nên tạo đủ khác biệt để lộ assumption ẩn. Hai lựa chọn hợp lý:
+## Mục lục
 
+- [Baseline v1](#baseline)
+- [Mục tiêu](#goals)
+- [Design constraints](#constraints)
+- [Evidence để được coi là hoàn thành](#evidence)
+- [Migration/risk](#migration)
+- [References](#references)
+
+<a id="baseline"></a>
+## Baseline v1
+
+Version 2 phải bắt đầu từ behavior v1 đang có: static object ownership, fixed-priority scheduler, intrusive ready/wait/timeout structures, direct-handoff IPC, one-task-per-AO, flat FSM, target manifest và host sanitizer tests. “Thiết kế mới” không được xóa evidence tốt chỉ để đổi kiến trúc.
+
+<a id="goals"></a>
+## Mục tiêu
+
+- Success criterion là target thứ hai build + run examples + test hardware, không chỉ compile abstraction.
+- Target capability nên mô tả FPU/MPU/interrupt masking/benchmark/tickless thay vì duplicate source lists.
+- Application examples cần capability-gate thay vì hard-code Blue Pill assumptions.
 - Cortex-M4/M4F MCU: reuse ARM exception model nhưng test FPU/priority differences;
 - Cortex-M0+: ép viết port assembly khác và test feature capability.
 
-Không cần chọn target chỉ vì phổ biến; chọn target giúp kiểm chứng architecture boundary.
+<a id="constraints"></a>
+## Design constraints
 
-## P2 — Manifest schema v2
+- Không merge API/header trước implementation + tests.
+- Mọi feature phải ghi memory cost, runtime cost, ISR implication và failure modes.
+- Generic kernel không được nhận dependency vào STM32/board registers.
+- Static-first vẫn là default; dynamic behavior nếu thêm phải explicit, bounded và opt-in.
+- Version 2 docs phải giữ nhãn proposal cho tới khi capability matrix/source/test được cập nhật.
 
-v1 manifest flat. Khi target count tăng, tách reusable fragments:
+<a id="evidence"></a>
+## Evidence để được coi là hoàn thành
 
-```text
-architecture definition
-SoC definition
-board definition
-target binding
-```
+Một mục roadmap chỉ chuyển sang implemented khi có đủ:
 
-Ví dụ:
+1. source implementation trong module đúng layer;
+2. unit/host tests hoặc compile probes tương ứng;
+3. target evidence nếu feature phụ thuộc architecture/hardware;
+4. compatibility/migration note;
+5. benchmark/overhead evidence nếu tác động timing hoặc RAM/Flash;
+6. cập nhật capability matrix và API docs.
 
-```text
-cmake/architectures/cortex-m3.cmake
-cmake/socs/stm32f1.cmake
-cmake/boards/bluepill_f103c8.cmake
-cmake/targets/bluepill_f103c8.cmake
-```
+<a id="migration"></a>
+## Migration / risk
 
-Chỉ thực hiện nếu target thứ hai cho thấy duplication thật.
+Rủi ro lớn nhất là scope creep làm mất tính audit được của một RTOS nhỏ. Migration nên opt-in theo feature và giữ v1 workload chạy được càng lâu càng tốt. HSM/tickless/trace/target 2 phải được tách phase để khi regression xuất hiện có thể khoanh vùng nguyên nhân.
 
-## P3 — Capability metadata
+<a id="references"></a>
+## References
 
-Target/port nên expose:
-
-```text
-has benchmark clock
-has marker
-has retained RAM
-has kernel-aware IRQ priority model
-supports tickless
-supports FPU context
-supports MPU
-```
-
-Example có thể skip/adapt thay vì compile fail vì assumption target-specific.
-
-## P4 — Example adapters
-
-Examples 10-01/13-01 hiện dùng STM32F1 EXTI trực tiếp để demo ISR.
-
-v2 có thể tạo board demo IRQ service:
-
-```text
-board_demo_irq_init()
-board_demo_irq_trigger()
-```
-
-hoặc capability-specific example backend. Mục tiêu không phải generic EXTI HAL, chỉ loại direct SoC dependency khỏi educational application.
-
-## P5 — Template cleanup
-
-Target template phải phản ánh automatic discovery đúng, không còn comment cũ yêu cầu sửa supported-target list thủ công.
-
-## P6 — Port conformance suite
-
-Thêm common runtime tests:
-
-```text
-initial stack ABI
-first task
-register preservation
-nested critical state
-ISR detection
-preemption
-tick advancement
-fault frame
-benchmark clock monotonicity
-```
-
-## P7 — Documentation
-
-Mỗi target mới có:
-
-```text
-target README
-memory map
-clock assumptions
-debug wiring
-validated toolchains
-known errata/limitations
-runtime evidence
-```
+- [`../00-overview/capability-matrix.md`](../00-overview/capability-matrix.md) — baseline capability.
+- [`../01-kernel-core/kernel-invariants.md`](../01-kernel-core/kernel-invariants.md) — invariant v1 không được phá ngầm.
+- [`../06-testing-and-quality/validation-baseline.md`](../06-testing-and-quality/validation-baseline.md) — evidence baseline.
+- [Semantic Versioning 2.0.0](https://semver.org/)

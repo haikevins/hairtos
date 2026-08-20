@@ -1,85 +1,73 @@
 # Kernel roadmap Version 2
 
-## K1 — Failure policy
+> **Status: FUTURE DESIGN.** Nội dung này không phải capability của `hairtos 1.0.0-rc1`.
 
-Thay các infinite-spin paths khó debug:
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](haievent-roadmap.md) · [Next →](migration-v1-to-v2.md)
 
+## Mục lục
+
+- [Baseline v1](#baseline)
+- [Mục tiêu](#goals)
+- [Design constraints](#constraints)
+- [Evidence để được coi là hoàn thành](#evidence)
+- [Migration/risk](#migration)
+- [References](#references)
+
+<a id="baseline"></a>
+## Baseline v1
+
+Version 2 phải bắt đầu từ behavior v1 đang có: static object ownership, fixed-priority scheduler, intrusive ready/wait/timeout structures, direct-handoff IPC, one-task-per-AO, flat FSM, target manifest và host sanitizer tests. “Thiết kế mới” không được xóa evidence tốt chỉ để đổi kiến trúc.
+
+<a id="goals"></a>
+## Mục tiêu
+
+- Ưu tiên interrupt ceiling/BASEPRI-style contract trước feature scheduling mới.
+- Tickless cần next-deadline model thống nhất timeout + software timer và board/port sleep hook.
+- Không đưa general dynamic heap vào kernel critical path.
+- Stack/task-return/invariant failure phải đi qua diagnostics có context thay vì breakpoint mơ hồ.
 - task entry return;
 - AO internal dispatch failure;
 - severe internal invariant failure.
-
-Bằng policy:
-
-```text
-record diagnostics
-invoke hook
-enter controlled panic/halt
-```
-
-Task termination/delete vẫn có thể chưa cần.
-
-## K2 — Interrupt ceiling
-
-Cortex-M port:
-
 - thêm `HR_CFG_MAX_SYSCALL_INTERRUPT_PRIORITY` hoặc abstraction tương đương;
 - BASEPRI critical section;
 - validate ISR priority nếu có thể;
 - docs phân biệt kernel-aware/high-urgency ISR;
 - benchmark critical latency.
-
-Giữ PRIMASK fallback cho architecture/target không có priority mask nếu cần.
-
-## K3 — Tickless idle
-
-Thêm generic next-deadline query/service.
-
-Port low-power contract:
-
-```text
-prepare sleep
-program wake source
-sleep
-measure elapsed
-resume/advance time
-```
-
-Phải tương tác đúng với:
-
 - timeout list;
 - software timer;
 - time slicing;
 - pending IRQ;
-- wrap.
 
-## K4 — Extended uptime
+<a id="constraints"></a>
+## Design constraints
 
-Không nhất thiết đổi `hr_tick_t` thành 64-bit vì làm tăng cost/ABI. Có thể giữ scheduling tick 32-bit và thêm diagnostic monotonic uptime 64-bit.
+- Không merge API/header trước implementation + tests.
+- Mọi feature phải ghi memory cost, runtime cost, ISR implication và failure modes.
+- Generic kernel không được nhận dependency vào STM32/board registers.
+- Static-first vẫn là default; dynamic behavior nếu thêm phải explicit, bounded và opt-in.
+- Version 2 docs phải giữ nhãn proposal cho tới khi capability matrix/source/test được cập nhật.
 
-## K5 — Synchronization diagnostics
+<a id="evidence"></a>
+## Evidence để được coi là hoàn thành
 
-Mutex:
+Một mục roadmap chỉ chuyển sang implemented khi có đủ:
 
-- optional ownership graph snapshot;
-- detect obvious wait cycle trong diagnostics/debug build;
-- report owner/waiters/effective priority.
+1. source implementation trong module đúng layer;
+2. unit/host tests hoặc compile probes tương ứng;
+3. target evidence nếu feature phụ thuộc architecture/hardware;
+4. compatibility/migration note;
+5. benchmark/overhead evidence nếu tác động timing hoặc RAM/Flash;
+6. cập nhật capability matrix và API docs.
 
-Không cần automatic deadlock recovery.
+<a id="migration"></a>
+## Migration / risk
 
-## K6 — Lightweight signaling
+Rủi ro lớn nhất là scope creep làm mất tính audit được của một RTOS nhỏ. Migration nên opt-in theo feature và giữ v1 workload chạy được càng lâu càng tốt. HSM/tickless/trace/target 2 phải được tách phase để khi regression xuất hiện có thể khoanh vùng nguyên nhân.
 
-Event flags/task notification chỉ nên vào 2.x nếu use-case chứng minh queue/semaphore overhead không phù hợp.
+<a id="references"></a>
+## References
 
-Nếu thêm, thiết kế blocking contract phải reuse wait/timeout machinery, không tạo state path riêng khó validate.
-
-## K7 — Scheduler
-
-Không đổi sang EDF trong 2.0. Fixed-priority là identity của baseline.
-
-Có thể tối ưu highest-ready scan bằng CLZ/bit operation theo port sau khi correctness baseline giữ nguyên, nhưng default C fallback vẫn cần.
-
-## K8 — FPU/MPU
-
-FPU context là port capability, không kernel policy. Có thể đưa Cortex-M4F port vào 2.0 nếu second target dùng nó.
-
-MPU isolation lớn hơn nhiều; nên để 2.1+ trừ khi target thứ hai yêu cầu.
+- [`../00-overview/capability-matrix.md`](../00-overview/capability-matrix.md) — baseline capability.
+- [`../01-kernel-core/kernel-invariants.md`](../01-kernel-core/kernel-invariants.md) — invariant v1 không được phá ngầm.
+- [`../06-testing-and-quality/validation-baseline.md`](../06-testing-and-quality/validation-baseline.md) — evidence baseline.
+- [Semantic Versioning 2.0.0](https://semver.org/)

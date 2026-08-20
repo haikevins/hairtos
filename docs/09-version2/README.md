@@ -1,42 +1,66 @@
 # Version 2 — Kế hoạch tương lai
 
-> **Trạng thái:** planned. Không có nội dung nào trong thư mục này được coi là capability của `hairtos 1.0.0-rc1`.
+> **Vai trò:** Nhóm này mô tả proposal Version 2. Baseline để so sánh luôn là `1.0.0-rc1`; không feature nào trong đây được coi là implemented nếu source/test v1 chưa có.
 
-Version 2 không nhằm "thêm thật nhiều API". Mục tiêu là làm architecture v1 mạnh hơn ở bốn điểm:
+[← Root README](../../README.md)
 
-```text
-Correctness
-Portability
-Event modeling
-Observability / validation
+## Mục lục
+
+- [Bản đồ nội dung](#ban-do)
+- [Cách đọc](#cach-doc)
+- [Các tài liệu](#tai-lieu)
+- [Validation baseline](#validation)
+- [Tài liệu tham khảo](#references)
+
+<a id="ban-do"></a>
+## Bản đồ nội dung
+
+```mermaid
+flowchart LR
+    INDEX["Index"] --> CONCEPT["Concept / contract"]
+    CONCEPT --> SOURCE["Source mapping"]
+    SOURCE --> TEST["Validation / evidence"]
 ```
 
-## Các trụ cột
+<a id="cach-doc"></a>
+## Cách đọc
 
-1. [vision-and-goals.md](vision-and-goals.md) — mục tiêu và non-goals.
-2. [architecture.md](architecture.md) — architecture dự kiến.
-3. [kernel-roadmap.md](kernel-roadmap.md) — port/interrupt/time/sync.
-4. [haievent-roadmap.md](haievent-roadmap.md) — HSM, RTC, deferred event.
-5. [portability-roadmap.md](portability-roadmap.md) — second target và target schema.
-6. [diagnostics-and-observability.md](diagnostics-and-observability.md) — trace.
-7. [testing-and-release.md](testing-and-release.md) — CI/hardware/release.
-8. [api-compatibility.md](api-compatibility.md) — compatibility rules.
-9. [migration-v1-to-v2.md](migration-v1-to-v2.md) — migration.
-10. [risk-register.md](risk-register.md) — rủi ro scope/architecture.
-11. [roadmap.md](roadmap.md) — milestones cụ thể.
+1. Bắt đầu từ README của section để biết scope và thứ tự học.
+2. Khi gặp API, quay lại `docs/05-api-reference/` để xem context/return contract; khi gặp behavior kernel, ưu tiên `docs/01`–`03`.
+3. Đối chiếu mọi statement timing/ownership với source map ở cuối chapter.
+4. Phân biệt rõ **host evidence**, **target evidence** và **future proposal**.
 
-## Definition of Version 2
+<a id="tai-lieu"></a>
+## Các tài liệu
 
-Một `2.0.0` đáng phát hành khi:
+| Tài liệu | Vai trò |
+| --- | --- |
+| [`api-compatibility.md`](api-compatibility.md) | API compatibility policy cho Version 2 |
+| [`architecture.md`](architecture.md) | Kiến trúc dự kiến cho Version 2 |
+| [`diagnostics-and-observability.md`](diagnostics-and-observability.md) | Diagnostics và observability Version 2 |
+| [`haievent-roadmap.md`](haievent-roadmap.md) | haievent roadmap Version 2 |
+| [`kernel-roadmap.md`](kernel-roadmap.md) | Kernel roadmap Version 2 |
+| [`migration-v1-to-v2.md`](migration-v1-to-v2.md) | Migration từ v1 sang v2 |
+| [`portability-roadmap.md`](portability-roadmap.md) | Portability roadmap Version 2 |
+| [`risk-register.md`](risk-register.md) | Risk register Version 2 |
+| [`roadmap.md`](roadmap.md) | Roadmap Version 2 |
+| [`testing-and-release.md`](testing-and-release.md) | Testing và release plan Version 2 |
+| [`vision-and-goals.md`](vision-and-goals.md) | Vision và mục tiêu Version 2 |
 
-- v1 public use-cases vẫn migration rõ;
-- actual second MCU/board target chạy kernel + haievent;
-- interrupt priority contract rõ và test được;
-- HSM core ổn định;
-- blocking trong AO dispatch được detect trong debug configuration;
-- tickless/low-power contract hoạt động ít nhất trên một target;
-- trace ring giúp reconstruct scheduling/event sequence;
-- host/target CI matrix + hardware regression đủ mạnh;
-- docs phân biệt capability/limitation chính xác.
+<a id="validation"></a>
+## Validation baseline
 
-Các feature như SMP, POSIX, full HAL, safety certification không phải 2.0 goal.
+- `VERSION`: `1.0.0-rc1`.
+- Host test suite hiện có 64 test function và đã chạy PASS trong lần audit tài liệu này.
+- `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS trên host.
+- Target tham chiếu là `bluepill_f103c8`; cross toolchain/OpenOCD không có trong môi trường audit nên không tuyên bố đã flash lại hardware.
+
+<a id="references"></a>
+## Tài liệu tham khảo
+
+
+**Nguồn implementation trong repository:**
+- `README.md`
+- `CMakeLists.txt`
+- `cmake/hairtos_examples.cmake`
+- `cmake/hairtos_targets.cmake`

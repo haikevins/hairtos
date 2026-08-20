@@ -1,36 +1,59 @@
 # 07 — Labs và examples
 
-Examples là executable specification cho từng capability. Chúng không thay host unit tests, nhưng giúp quan sát behavior thật theo lộ trình.
+> **Vai trò:** Trang này là index của một cụm tài liệu. Mỗi chapter đi từ bản chất → mapping source → invariant → failure mode → validation để người đọc có thể đối chiếu trực tiếp với implementation.
 
-## Thứ tự
+[← Root README](../../README.md)
 
-Xem [example-index.md](example-index.md) và [`../../examples/README.md`](../../examples/README.md).
+## Mục lục
 
-Lộ trình chính:
+- [Bản đồ nội dung](#ban-do)
+- [Cách đọc](#cach-doc)
+- [Các tài liệu](#tai-lieu)
+- [Validation baseline](#validation)
+- [Tài liệu tham khảo](#references)
 
-```text
-bare metal
- -> data structures
- -> task stack/start
- -> context switch
- -> scheduler
- -> tick/time
- -> IPC/sync
- -> timer
- -> haievent
- -> allocator experiment
- -> benchmark
- -> diagnostics/stress
+<a id="ban-do"></a>
+## Bản đồ nội dung
+
+```mermaid
+flowchart LR
+    INDEX["Index"] --> CONCEPT["Concept / contract"]
+    CONCEPT --> SOURCE["Source mapping"]
+    SOURCE --> TEST["Validation / evidence"]
 ```
 
-## Host vs target
+<a id="cach-doc"></a>
+## Cách đọc
 
-Example 02 host-only. 14 và 16 có host+target. Các bài còn lại target.
+1. Bắt đầu từ README của section để biết scope và thứ tự học.
+2. Khi gặp API, quay lại `docs/05-api-reference/` để xem context/return contract; khi gặp behavior kernel, ưu tiên `docs/01`–`03`.
+3. Đối chiếu mọi statement timing/ownership với source map ở cuối chapter.
+4. Phân biệt rõ **host evidence**, **target evidence** và **future proposal**.
 
-## Port target mới
+<a id="tai-lieu"></a>
+## Các tài liệu
 
-Không bắt đầu bằng example 16. Chạy từ 01 lên để cô lập lỗi startup/clock/stack/context/tick trước khi thêm IPC/framework.
+| Tài liệu | Vai trò |
+| --- | --- |
+| [`example-index.md`](example-index.md) | Example index |
+| [`memory-allocator-lab.md`](memory-allocator-lab.md) | Memory allocator lab |
 
-## Allocator
+<a id="validation"></a>
+## Validation baseline
 
-Allocator lab không phải kernel heap. Xem [memory-allocator-lab.md](memory-allocator-lab.md).
+- `VERSION`: `1.0.0-rc1`.
+- Host test suite hiện có 64 test function và đã chạy PASS trong lần audit tài liệu này.
+- `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS trên host.
+- Target tham chiếu là `bluepill_f103c8`; cross toolchain/OpenOCD không có trong môi trường audit nên không tuyên bố đã flash lại hardware.
+
+<a id="references"></a>
+## Tài liệu tham khảo
+
+- [CMake — CMAKE_TOOLCHAIN_FILE](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html)
+- [CMake — CMAKE_EXPORT_COMPILE_COMMANDS](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html)
+
+**Nguồn implementation trong repository:**
+- `README.md`
+- `CMakeLists.txt`
+- `cmake/hairtos_examples.cmake`
+- `cmake/hairtos_targets.cmake`

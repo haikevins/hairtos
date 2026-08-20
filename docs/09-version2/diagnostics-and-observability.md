@@ -1,32 +1,33 @@
-# Diagnostics và observability Version 2
+# Diagnostics/observability Version 2
 
-## V1 hiện có
+> **Status: FUTURE DESIGN.** Nội dung này không phải capability của `hairtos 1.0.0-rc1`.
 
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](architecture.md) · [Next →](haievent-roadmap.md)
+
+## Mục lục
+
+- [Baseline v1](#baseline)
+- [Mục tiêu](#goals)
+- [Design constraints](#constraints)
+- [Evidence để được coi là hoàn thành](#evidence)
+- [Migration/risk](#migration)
+- [References](#references)
+
+<a id="baseline"></a>
+## Baseline v1
+
+Version 2 phải bắt đầu từ behavior v1 đang có: static object ownership, fixed-priority scheduler, intrusive ready/wait/timeout structures, direct-handoff IPC, one-task-per-AO, flat FSM, target manifest và host sanitizer tests. “Thiết kế mới” không được xóa evidence tốt chỉ để đổi kiến trúc.
+
+<a id="goals"></a>
+## Mục tiêu
+
+- Trace ring fixed-size ghi task/IPC/timer/AO transitions với timestamp/sequence.
+- Panic record nên thêm build/version identity để post-reset record map đúng binary.
+- Export UART/debugger là adapter; core trace không được block trong ISR/kernel critical path.
 - last retained panic/fault;
 - runtime aggregate counters;
 - health report;
 - stack watermark/guard.
-
-Thiếu: sequence dẫn tới lỗi.
-
-## Static trace ring
-
-Đề xuất fixed-size ring:
-
-```c
-timestamp
-event_type
-object/task id
-arg0
-arg1
-```
-
-Không lưu string dài trong hot path.
-
-## Candidate trace events
-
-Kernel:
-
 - context switch;
 - task READY/BLOCKED/SUSPENDED;
 - timeout;
@@ -34,51 +35,38 @@ Kernel:
 - semaphore wake;
 - mutex boost/restore/handoff;
 - timer expire/callback.
-
-haievent:
-
-- post;
-- drop;
 - dispatch;
-- transition;
-- event allocate/free/ref change;
-- pubsub publish.
 
-## Build identity
+<a id="constraints"></a>
+## Design constraints
 
-Panic record v2 nên có:
+- Không merge API/header trước implementation + tests.
+- Mọi feature phải ghi memory cost, runtime cost, ISR implication và failure modes.
+- Generic kernel không được nhận dependency vào STM32/board registers.
+- Static-first vẫn là default; dynamic behavior nếu thêm phải explicit, bounded và opt-in.
+- Version 2 docs phải giữ nhãn proposal cho tới khi capability matrix/source/test được cập nhật.
 
-- record version;
-- hairtos version;
-- build ID/commit short hash nếu build system cung cấp;
-- target ID;
-- config fingerprint.
+<a id="evidence"></a>
+## Evidence để được coi là hoàn thành
 
-## Export
+Một mục roadmap chỉ chuyển sang implemented khi có đủ:
 
-Trace export không thuộc kernel hot path. Có thể:
+1. source implementation trong module đúng layer;
+2. unit/host tests hoặc compile probes tương ứng;
+3. target evidence nếu feature phụ thuộc architecture/hardware;
+4. compatibility/migration note;
+5. benchmark/overhead evidence nếu tác động timing hoặc RAM/Flash;
+6. cập nhật capability matrix và API docs.
 
-- debugger memory dump;
-- UART command after fault;
-- application diagnostics task.
+<a id="migration"></a>
+## Migration / risk
 
-## Cost control
+Rủi ro lớn nhất là scope creep làm mất tính audit được của một RTOS nhỏ. Migration nên opt-in theo feature và giữ v1 workload chạy được càng lâu càng tốt. HSM/tickless/trace/target 2 phải được tách phase để khi regression xuất hiện có thể khoanh vùng nguyên nhân.
 
-Compile-time config:
+<a id="references"></a>
+## References
 
-```text
-trace enable
-record count
-event masks
-timestamp backend
-```
-
-Static storage rõ ràng.
-
-## Privacy/safety của trace
-
-Không tự động copy arbitrary application payload/pointers thành log text. Chỉ record metadata nhỏ do subsystem định nghĩa.
-
-## Success criterion
-
-Một timeout/deadlock-like anomaly trong stress test phải có đủ trace để reconstruct task/event order gần lỗi.
+- [`../00-overview/capability-matrix.md`](../00-overview/capability-matrix.md) — baseline capability.
+- [`../01-kernel-core/kernel-invariants.md`](../01-kernel-core/kernel-invariants.md) — invariant v1 không được phá ngầm.
+- [`../06-testing-and-quality/validation-baseline.md`](../06-testing-and-quality/validation-baseline.md) — evidence baseline.
+- [Semantic Versioning 2.0.0](https://semver.org/)

@@ -1,28 +1,29 @@
-# Testing và release plan Version 2
+# Testing/release Version 2
 
-## CI host matrix
+> **Status: FUTURE DESIGN.** Nội dung này không phải capability của `hairtos 1.0.0-rc1`.
 
-Tối thiểu:
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](roadmap.md) · [Next →](vision-and-goals.md)
 
-```text
-GCC + ASan + UBSan
-Clang + ASan + UBSan
-```
+## Mục lục
 
-Cần bảo đảm sanitizer runtime invocation ổn định, tránh loader-order issue môi trường.
+- [Baseline v1](#baseline)
+- [Mục tiêu](#goals)
+- [Design constraints](#constraints)
+- [Evidence để được coi là hoàn thành](#evidence)
+- [Migration/risk](#migration)
+- [References](#references)
 
-## Cross-build matrix
+<a id="baseline"></a>
+## Baseline v1
 
-```text
-all examples × all supported targets × supported toolchains
-```
+Version 2 phải bắt đầu từ behavior v1 đang có: static object ownership, fixed-priority scheduler, intrusive ready/wait/timeout structures, direct-handoff IPC, one-task-per-AO, flat FSM, target manifest và host sanitizer tests. “Thiết kế mới” không được xóa evidence tốt chỉ để đổi kiến trúc.
 
-Có thể tối ưu CI bằng smoke/full tiers nhưng release candidate chạy full.
+<a id="goals"></a>
+## Mục tiêu
 
-## Property/randomized tests
-
-Candidate:
-
+- Host sanitizer tests tiếp tục là fast feedback; thêm model-based HSM tests, port capability tests và target matrix.
+- Release candidate chỉ hợp lệ khi documentation capability matrix khớp source/test evidence.
+- Regression performance cần benchmark cùng target/toolchain/config, không so số liệu khác baseline.
 - intrusive list operation sequences;
 - timeout wrap/deadline ordering;
 - queue direct handoff;
@@ -30,49 +31,42 @@ Candidate:
 - event reference ownership;
 - HSM transition trees;
 - deferred/recall ownership.
-
-Mọi randomized failure phải in seed.
-
-## Model-based HSM
-
-Reference model đơn giản so expected active state/entry/exit sequence với implementation.
-
-## Hardware smoke
-
-Mỗi target:
-
-```text
-01 baremetal
-04 first task
-05 context
-08 preemption
-10-01 ISR
-12 timer
-13-06 haievent
-15 benchmark
-16 diagnostics
-```
-
-## Hardware soak
-
-Scheduled multi-hour run:
-
 - progress counters;
 - no health failure;
 - stack margins;
 - no unexpected reset;
 - retained record empty unless injected.
 
-## Fault campaign
+<a id="constraints"></a>
+## Design constraints
 
-Inject supported faults, reset, verify record fields/version/build ID.
+- Không merge API/header trước implementation + tests.
+- Mọi feature phải ghi memory cost, runtime cost, ISR implication và failure modes.
+- Generic kernel không được nhận dependency vào STM32/board registers.
+- Static-first vẫn là default; dynamic behavior nếu thêm phải explicit, bounded và opt-in.
+- Version 2 docs phải giữ nhãn proposal cho tới khi capability matrix/source/test được cập nhật.
 
-## Release gates 2.0
+<a id="evidence"></a>
+## Evidence để được coi là hoàn thành
 
-- no known invariant failure;
-- migration docs complete;
-- at least two hardware targets validated;
-- HSM conformance tests;
-- trace ring tested;
-- tickless validation if advertised;
-- benchmark baseline captured.
+Một mục roadmap chỉ chuyển sang implemented khi có đủ:
+
+1. source implementation trong module đúng layer;
+2. unit/host tests hoặc compile probes tương ứng;
+3. target evidence nếu feature phụ thuộc architecture/hardware;
+4. compatibility/migration note;
+5. benchmark/overhead evidence nếu tác động timing hoặc RAM/Flash;
+6. cập nhật capability matrix và API docs.
+
+<a id="migration"></a>
+## Migration / risk
+
+Rủi ro lớn nhất là scope creep làm mất tính audit được của một RTOS nhỏ. Migration nên opt-in theo feature và giữ v1 workload chạy được càng lâu càng tốt. HSM/tickless/trace/target 2 phải được tách phase để khi regression xuất hiện có thể khoanh vùng nguyên nhân.
+
+<a id="references"></a>
+## References
+
+- [`../00-overview/capability-matrix.md`](../00-overview/capability-matrix.md) — baseline capability.
+- [`../01-kernel-core/kernel-invariants.md`](../01-kernel-core/kernel-invariants.md) — invariant v1 không được phá ngầm.
+- [`../06-testing-and-quality/validation-baseline.md`](../06-testing-and-quality/validation-baseline.md) — evidence baseline.
+- [Semantic Versioning 2.0.0](https://semver.org/)

@@ -1,13 +1,37 @@
 # Bài thực hành bộ cấp phát bộ nhớ
 
-## 1. Mục đích
+> **Phạm vi:** Mô tả implementation `hairtos 1.0.0-rc1` đã được đối chiếu với source, config, build graph và host tests hiện có.
 
-`labs/memory-allocator/` là package học tập độc lập gồm fixed-block pool và first-fit heap. Kernel runtime không phụ thuộc allocator này; toàn bộ vùng nhớ do caller cung cấp tĩnh.
+[← Root README](../../README.md)
 
-## 2. Phạm vi và trách nhiệm
+## Mục lục
 
-Lab minh họa:
+- [Tổng quan và bản chất](#tong-quan)
+- [Implementation trong repository](#implementation)
+- [Mô hình và luồng thực thi](#mo-hinh)
+- [Ownership, concurrency và invariants](#invariants)
+- [Failure modes và giới hạn](#failure)
+- [Validation và cách kiểm chứng](#validation)
+- [Source map](#source-map)
+- [Tài liệu tham khảo](#references)
 
+<a id="tong-quan"></a>
+## Tổng quan và bản chất
+
+Memory allocator lab cố ý tách khỏi kernel runtime để học fragmentation và metadata mà không phá nguyên tắc static-first của hairtos. Lab có first-fit heap với split/coalesce và fixed-block pool với free-list.
+
+Trong project này, cách đọc đúng luôn là **contract → data ownership → state transition → concurrency boundary → failure semantics → evidence**. Điều đó quan trọng hơn việc chỉ nhớ tên API: một RTOS nhỏ vẫn có thể sai nghiêm trọng nếu cùng một task node xuất hiện ở hai list, nếu timeout và object wake cùng “thắng”, hoặc nếu context switch không khớp exception frame của CPU.
+
+<a id="implementation"></a>
+## Implementation trong repository
+
+Các điểm đã được đối chiếu với source/config hiện tại:
+
+- Arena do caller cấp; implementation không gọi system malloc.
+- Heap align theo `max_align_t`, dùng block metadata và first-fit scan; free coalesce cả forward/backward khi adjacent block trống.
+- Pool chia block stride cố định và recycle qua free list; allocation/free phù hợp object cùng kích thước.
+- Stats phân biệt allocated/free/largest free/internal/external fragmentation và failed allocation.
+- Host tests có invalid/double-free, exhaustion, coalescing và randomized sequence; lab không thread-safe và không phải production allocator.
 - alignment theo `max_align_t`;
 - block header và payload;
 - first-fit allocation;
@@ -16,98 +40,7 @@ Lab minh họa:
 - internal và external fragmentation;
 - validation trên host và target.
 
-## 3. Cấu trúc thư mục
-
-```text
-labs/memory-allocator/
-├── README.md
-├── include/
-│   ├── hr_heap_lab.h
-│   └── hr_pool_lab.h
-├── src/
-│   ├── hr_heap_lab.c
-│   └── hr_pool_lab.c
-├── tests/test_heap_lab.c
-└── demo.c
-```
-
-## 4. Thành phần triển khai
-
-### Pool khối cố định
-
-Pool chia arena thành các block cùng stride, quản lý free list và cung cấp allocation time xác định theo cấu trúc hiện tại.
-
-### Heap first-fit
-
-Heap duyệt block chain để tìm block đầu tiên đủ lớn, split phần dư khi hợp lệ và coalesce các block trống liền kề khi free.
-
-## 5. API công khai
-
-Các API chính:
-
-```c
-hr_heap_lab_init();
-hr_heap_lab_alloc();
-hr_heap_lab_free();
-hr_heap_lab_get_stats();
-hr_heap_lab_validate();
-
-hr_pool_lab_init();
-hr_pool_lab_alloc();
-hr_pool_lab_free();
-hr_pool_lab_get_stats();
-hr_pool_lab_validate();
-```
-
-Chi tiết kiểu dữ liệu và status nằm trong hai public header của lab.
-
-## 6. Luồng hoạt động
-
-```text
-caller-owned static arena
-    |
-    +--> init
-    +--> allocate/free sequence
-    +--> update block/free-list metadata
-    +--> collect statistics
-    +--> validate invariants
-```
-
-Allocator không gọi `malloc()` và không phụ thuộc scheduler.
-
-## 7. Tích hợp build và dependency
-
-Module `allocator` chỉ được link khi example 14 được chọn. Include path `labs/memory-allocator/include` không trở thành public include mặc định của kernel.
-
-Host và target dùng cùng implementation; target khác nhau chỉ ảnh hưởng board output và toolchain, không ảnh hưởng thuật toán allocator.
-
-## 8. Biên dịch và kiểm tra
-
-Host demo:
-
-```bash
-make TARGET=bluepill_f103c8 \
-     ENVIRONMENT=host \
-     EXAMPLE=14-memory-allocator-lab \
-     run
-```
-
-Target demo:
-
-```bash
-make TARGET=bluepill_f103c8 \
-     ENVIRONMENT=target \
-     EXAMPLE=14-memory-allocator-lab \
-     run
-```
-
-Host tests:
-
-```bash
-make TARGET=bluepill_f103c8 host-tests
-```
-
-## 9. Bất biến và giới hạn
+Các chi tiết bổ sung từ audit tài liệu/source:
 
 - Arena phải có alignment và kích thước hợp lệ.
 - Mỗi block thuộc đúng một trạng thái allocated/free.
@@ -116,18 +49,81 @@ make TARGET=bluepill_f103c8 host-tests
 - Lab không thread-safe và không được gọi từ ISR.
 - Đây không phải production allocator và không được kernel dùng ngầm.
 
-## 10. Khả năng port và tài liệu liên quan
 
-Allocator source không phụ thuộc MCU. Để chạy trên target mới, chỉ cần target đó cung cấp board initialization và output service mà example 14 sử dụng.
+<a id="mo-hinh"></a>
+## Mô hình và luồng thực thi
 
-Tài liệu liên quan:
+```mermaid
+flowchart LR
+    A["caller-owned arena"] --> H["first-fit heap"]
+    H --> S["split block when remainder is usable"]
+    H --> C["coalesce adjacent free blocks on free"]
+    A --> P["fixed-block pool"]
+    P --> F["free-list pop/push"]
+    H --> ST["fragmentation statistics + validate"]
+    P --> ST
+```
 
-- [`../../docs/07-labs-and-examples/memory-allocator-lab.md`](../../docs/07-labs-and-examples/memory-allocator-lab.md);
-- [`../../examples/14-memory-allocator-lab/README.md`](../../examples/14-memory-allocator-lab/README.md).
+Sơ đồ trên mô tả **semantic boundary**, không thay thế source. Khi debug, nên lần theo node của sơ đồ tới function/source file tương ứng thay vì suy luận từ diagram đơn lẻ.
 
-## Liên hệ audit và Version 2
+<a id="invariants"></a>
+## Ownership, concurrency và invariants
 
-Allocator lab tiếp tục là experiment riêng, không trở thành dependency của kernel. Static-first vẫn là nguyên tắc baseline của Version 2.
+Các invariant nền áp dụng cho chủ đề này:
 
-- [`../../docs/00-overview/design-principles.md`](../../docs/00-overview/design-principles.md)
-- [`../../docs/09-version2/vision-and-goals.md`](../../docs/09-version2/vision-and-goals.md)
+- Opaque object public chỉ hợp lệ sau create/init thành công và magic/internal state khớp contract.
+- Intrusive node chỉ được linked vào đúng một list tại một thời điểm; remove/timeout/wake phải để node về trạng thái unlinked nhất quán.
+- Thread API có thể block chỉ khi kernel RUNNING và không ở ISR; ISR API phải non-blocking và sử dụng `higher_priority_task_woken` khi cần defer switch sang PendSV.
+- Critical section hiện dùng PRIMASK trên Cortex-M3, nghĩa là mask interrupt toàn cục trong đoạn ngắn; vì vậy code trong critical section phải bounded và không được gọi operation có thể block.
+- Priority dùng **effective priority** ở ready/wait policy khi mutex inheritance đang active; base priority chỉ là cấu hình gốc.
+- Static-first không có nghĩa “không có lifetime”: caller-owned TCB/stack/queue storage/event pool vẫn phải sống lâu hơn mọi object đang tham chiếu tới chúng.
+
+<a id="failure"></a>
+## Failure modes và giới hạn
+
+- `hairtos 1.0.0-rc1` là single-core, không có SMP, FPU context, MPU isolation hay general dynamic kernel heap.
+- Interrupt masking model hiện là PRIMASK; repository chưa có BASEPRI ceiling contract cho application ISR priority phức tạp.
+- Tickless idle chưa có; time model hiện dựa trên tick 1 kHz ở target tham chiếu.
+- `haievent` v1 là flat state machine và one-task-per-AO; HSM/deferred event/shared executor nằm ở roadmap Version 2.
+- Build/link PASS không tự chứng minh real-time timing hoặc race-free behavior trên hardware; target tests và measurement vẫn cần thiết.
+
+<a id="validation"></a>
+## Validation và cách kiểm chứng
+
+- Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
+- Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests`: test suite PASS.
+- Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
+- Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
+
+Các command xuất hiện trong tài liệu/source hiện hành:
+
+```bash
+make TARGET=bluepill_f103c8 \
+ENVIRONMENT=host \
+EXAMPLE=14-memory-allocator-lab \
+run
+ENVIRONMENT=target \
+make TARGET=bluepill_f103c8 host-tests
+```
+
+
+<a id="source-map"></a>
+## Source map
+
+- `labs/memory-allocator/src/hr_heap_lab.c`
+- `labs/memory-allocator/src/hr_pool_lab.c`
+- `labs/memory-allocator/tests/test_heap_lab.c`
+- `labs/memory-allocator/`
+- `labs/memory-allocator/include`
+
+
+<a id="references"></a>
+## Tài liệu tham khảo
+
+
+**Nguồn implementation trong repository:**
+- `labs/memory-allocator/src/hr_heap_lab.c`
+- `labs/memory-allocator/src/hr_pool_lab.c`
+- `labs/memory-allocator/tests/test_heap_lab.c`
+- `labs/memory-allocator/`
+- `labs/memory-allocator/include`

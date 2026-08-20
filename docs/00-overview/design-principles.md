@@ -1,66 +1,69 @@
-# Nguyên tắc thiết kế
+# Design principles
 
-## 1. Static-first
+> **Scope:** Những quyết định kiến trúc có thể quan sát trực tiếp trong source, không phải khẩu hiệu chung về RTOS.
 
-Kernel object phải có lifetime và memory footprint biết trước. Public opaque object cho phép application cấp storage mà không phụ thuộc layout internal.
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](dependency-rules.md) · [Next →](project-analysis.md)
 
-Không biến allocator lab thành dependency ngầm của kernel.
+## Mục lục
 
-## 2. Generic policy, target-specific mechanism
+- [Static-first](#static)
+- [Opaque public objects](#opaque)
+- [Explicit ownership](#ownership)
+- [Policy/mechanism separation](#policy)
+- [Bounded ISR work](#isr)
+- [Testability](#testability)
+- [Fail visibly](#failure)
 
-Scheduler policy, wait ordering, timeout logic, queue, semaphore và mutex thuộc kernel generic.
+<a id="static"></a>
+## Static-first
 
-Stack frame, context switch, interrupt masking, fault entry, startup, linker, pins và peripheral clock thuộc port/SoC/board/driver.
+Kernel không tự cấp heap cho TCB/stack/queue/mutex/timer. Caller quyết định storage và lifetime. Điều này làm RAM footprint thấy được ở link/static object level và tránh allocator failure trong kernel path. Allocator lab được giữ riêng để học dynamic allocation mà không âm thầm thay đổi kernel contract.
 
-## 3. Một nguồn sự thật cho build
+<a id="opaque"></a>
+## Opaque public objects
 
-CMake quyết định target/example/module/source. Makefile chỉ wrap UX.
+Public handle là fixed-size aligned byte storage. Application biết kích thước config nhưng không biết internal field. Internal struct có magic và compile-time size assert. Cách này cân bằng **static allocation** với **encapsulation**.
 
-Không lặp lại source mapping trong nhiều build system.
+<a id="ownership"></a>
+## Explicit ownership
 
-## 4. Public API nhỏ
+- Task owns stack storage do caller cấp.
+- Queue owns logical use của item storage nhưng không cấp phát storage đó.
+- Mutex có owner thật, semaphore không.
+- Dynamic event có reference count; static event caller-owned.
+- AO sở hữu task/queue/FSM composition nhưng backing arrays vẫn caller-owned.
 
-Application dùng `hairtos/`, `haievent/` và `board.h`. Internal header được coi là implementation detail.
+Ownership được document vì đa số bug hệ thống nhỏ đến từ lifetime/wake race hơn là syntax.
 
-Opaque public storage đổi layout internal mà không buộc application truy cập field.
+<a id="policy"></a>
+## Policy / mechanism separation
 
-## 5. Invariant trước feature count
+Scheduler policy nằm ở generic C; PendSV/SVC mechanism nằm ở architecture assembly. Time policy nằm trong kernel timeout/timer; SysTick handler target-specific chỉ forward tick. Target manifest bind source; không quyết định “task nào cao priority hơn”.
 
-Một feature chỉ có giá trị khi state transitions và ownership rõ. Vì vậy direct handoff, wait cleanup, timeout race và list validation quan trọng hơn việc có thật nhiều API.
+```mermaid
+flowchart LR
+    POLICY["generic scheduler/blocking policy"] --> CONTRACT["port contract"]
+    CONTRACT --> MECH["Cortex-M3 SVC/PendSV/PRIMASK"]
+```
 
-## 6. ISR không block
+<a id="isr"></a>
+## Bounded ISR work
 
-ISR API phải nonblocking. ISR chỉ update object, wake task và request deferred switch.
+ISR API không block. SysTick không chạy user timer callback. `higher_priority_task_woken` chỉ yêu cầu PendSV sau handler. Critical section dùng PRIMASK nên càng cần giữ code bounded.
 
-Application callback không chạy trực tiếp từ SysTick.
+<a id="testability"></a>
+## Host-testable generic C
 
-## 7. Event ownership phải xác định
+List/scheduler/wait/timeout/IPC/timer/haievent/allocator/benchmark statistics được tách để chạy host. Cortex-M assembly có stack-frame unit tests cho phần có thể model bằng C và vẫn cần target evidence cho exception runtime.
 
-Dynamic event có owner/reference count. Mọi path success/failure phải biết ai release.
+<a id="failure"></a>
+## Fail visibly
 
-Static event có lifetime do caller đảm bảo.
+Magic, invariant validator, stack guard, panic record, fault context và strict compiler warnings ưu tiên phát hiện lỗi sớm. `-Werror -Wshadow -Wundef -Wconversion -Wsign-conversion` giúp lỗi type/implicit conversion không trôi qua build.
 
-## 8. Run-to-completion cho state handler
+## References
 
-State handler nên xử lý nhanh, không delay, không chờ semaphore/queue forever và không giữ mutex lâu. v1 mới quy định bằng architecture; v2 dự kiến enforce rõ hơn.
-
-## 9. Portability phải được chứng minh
-
-Tách folder chưa đủ. Một abstraction chỉ được coi là tốt sau khi target thứ hai dùng lại kernel/framework mà không sửa chúng.
-
-## 10. Diagnostics là một phần của kernel
-
-Stack guard, invariant check và panic record không phải "debug print thêm". Chúng là cơ chế giúp phát hiện khi assumptions của scheduler/memory bị phá.
-
-## 11. Version 2 không được biến thành rewrite vô hạn
-
-Mọi thay đổi v2 phải trả lời ít nhất một trong các mục tiêu:
-
-- tăng tính đúng;
-- giảm latency/power;
-- tăng portability;
-- tăng observability;
-- mở rộng event modeling có kiểm soát;
-- tăng khả năng kiểm thử.
-
-Feature không phục vụ các mục tiêu này nên để sau 2.0.
+- [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
+- [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
+- [CMake — CMAKE_TOOLCHAIN_FILE](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html)
+- [CMake — CMAKE_EXPORT_COMPILE_COMMANDS](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html)

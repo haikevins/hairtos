@@ -1,121 +1,149 @@
-# Ma trận capability của hairtos 1.0.0-rc1
+# Capability matrix — `hairtos 1.0.0-rc1`
 
-Ký hiệu:
+> **Quy ước:** **Có** = source + test/example/evidence hiện diện; **Một phần** = có nền tảng nhưng chưa đủ portability/coverage; **Chưa** = không implemented; **Không chủ đích** = nằm ngoài baseline v1.
 
-- **Có**: implementation và test/example hiện diện.
-- **Một phần**: có nền tảng nhưng chưa hoàn chỉnh/portable.
-- **Chưa**: không được triển khai trong v1.
-- **Không chủ đích**: project cố ý không cung cấp trong baseline.
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](architecture.md) · [Next →](coding-standard.md)
 
-## Kernel
+## Mục lục
 
-| Capability | Trạng thái | Ghi chú |
-|---|---|---|
-| Static task creation | Có | Caller-owned TCB + stack |
-| Dynamic task creation | Không chủ đích | Kernel không dùng heap |
-| First task startup | Có | Qua architecture port |
-| Context switch | Có | Cortex-M3 SVC/PendSV |
-| Fixed-priority scheduling | Có | Priority nhỏ hơn = cao hơn |
-| Preemption | Có | Higher priority READY |
-| Equal-priority round-robin | Có | Tick quantum |
+- [Kernel/task](#kernel)
+- [Time/scheduler](#time)
+- [IPC/synchronization](#ipc)
+- [`haievent`](#event)
+- [Diagnostics/benchmark](#diag)
+- [Platform/tooling](#platform)
+- [Not implemented](#missing)
+- [Evidence](#evidence)
+
+<a id="kernel"></a>
+## Kernel / task
+
+| Capability | Trạng thái | Implementation/evidence |
+| --- | --- | --- |
+| Static task creation | Có | caller-owned `hr_task_t` + stack; `hr_task_create_static()` |
+| Dynamic task creation | Không chủ đích | `HR_CFG_DYNAMIC_ALLOCATION=0` |
+| Initial Cortex-M stack | Có | `hr_port_initialize_stack_raw()` + host tests |
+| Start first task | Có | SVC path in `hr_portasm.S` |
+| Context switch | Có | PendSV save/restore R4–R11 + hardware frame |
+| Task states | Có | CREATED/READY/RUNNING/BLOCKED/SUSPENDED |
+| Stack guard | Có | `0xDEADBEEF` |
+| Stack fill/high-watermark | Có | fill `0xA5`; task diagnostics |
+| Task return handling | Có baseline | initial LR → `hr_task_exit_error()`; production recovery policy chưa có |
+| Idle task | Có | kernel-owned static idle task, WFI path |
+
+<a id="time"></a>
+## Scheduler / time
+
+| Capability | Trạng thái | Implementation/evidence |
+| --- | --- | --- |
+| Fixed-priority scheduler | Có | 8 FIFO ready queues + bitmap |
+| Priority convention | Có | số nhỏ hơn = cao hơn |
+| Preemption | Có | strict higher effective priority |
+| Equal-priority round-robin | Có | configurable tick slice, default 1 tick |
 | Cooperative yield | Có | `hr_task_yield()` |
-| Delay | Có | Relative |
-| Periodic delay | Có | `hr_task_delay_until()` |
-| Tick wrap handling | Có | Dual timeout lists |
-| Task suspend/resume | Có | READY/RUNNING/BLOCKED |
-| Task delete/join | Chưa | Không có terminal lifecycle |
-| Scheduler lock | Chưa | Không public API |
-| Tickless idle | Chưa | Fixed periodic tick |
-| SMP | Không chủ đích | Single-core enforced |
-| FPU context | Chưa | Port capability = 0 |
-| MPU isolation | Chưa | Port capability = 0 |
+| Relative delay | Có | `hr_task_delay()` |
+| Periodic absolute delay | Có | `hr_task_delay_until()` |
+| Finite timeout | Có | wait + timeout node |
+| Infinite wait | Có | `HR_WAIT_FOREVER` |
+| Tick wrap handling | Có | current/overflow timeout lists + tests |
+| Tickless idle | Chưa | Version 2 roadmap |
+| SMP scheduler | Không chủ đích | `HR_CFG_SINGLE_CORE=1` |
 
-## IPC và đồng bộ
+<a id="ipc"></a>
+## IPC / synchronization
 
 | Capability | Trạng thái | Ghi chú |
-|---|---|---|
-| FIFO queue | Có | Fixed item size |
-| Queue blocking send/receive | Có | Timeout/forever |
-| Queue ISR send/receive | Có | Nonblocking |
-| Direct handoff | Có | Sender↔receiver |
-| Binary semaphore | Có | Counting max=1 |
-| Counting semaphore | Có | Task take, task/ISR give |
-| Mutex ownership | Có | Owner tracked |
-| Recursive mutex | Có | Optional create mode |
-| Priority inheritance | Có | Recompute + chain propagation |
-| Priority ceiling | Chưa | Không có |
-| Deadlock detection | Chưa | Không có ownership graph diagnostics |
-| Event flags | Chưa | Không có |
-| Task notification | Chưa | Không có |
+| --- | --- | --- |
+| Static FIFO queue | Có | circular buffer + caller storage |
+| Blocking send/receive | Có | timeout + priority waiters |
+| Direct queue handoff | Có | sender↔receiver waiter fast path |
+| Queue ISR send/receive | Có | non-blocking + wake flag |
+| Counting semaphore | Có | count/max_count + waiter list |
+| Binary semaphore | Có | max count 1 |
+| Semaphore give from ISR | Có | non-blocking |
+| Non-recursive mutex | Có | owner + waiters |
+| Recursive mutex | Có | recursion count |
+| Priority inheritance | Có | recompute effective priority |
+| Chained inheritance | Có | propagation theo owned/waited mutex path |
+| Automatic deadlock prevention | Chưa | không có wait-for graph/deadlock detector |
+| Suspend/resume | Có | READY/RUNNING/BLOCKED-aware administrative control |
+| Software timer | Có | timer-service task; callback in task context |
 
-## Timer
-
-| Capability | Trạng thái | Ghi chú |
-|---|---|---|
-| One-shot software timer | Có | Timer-service callback |
-| Periodic software timer | Có | Auto reload |
-| Start/stop/reset/change period | Có | Task context |
-| Timer command from ISR | Chưa | Không public |
-| Callback in ISR | Không chủ đích | Callback defer về service task |
-
-## Diagnostics
+<a id="event"></a>
+## `haievent`
 
 | Capability | Trạng thái | Ghi chú |
-|---|---|---|
-| Stack fill/guard | Có | A5 + DEADBEEF |
-| Stack high-water mark | Có | Pattern scan |
-| Runtime counters | Có | Configurable |
-| Kernel invariant check | Có | Internal snapshot/validate |
-| Health report | Có | Task/list/timeout/stack |
+| --- | --- | --- |
+| Static event | Có | caller-owned |
+| Fixed-block dynamic event pool | Có | no general heap |
+| Reference counting | Có | uint16_t with overflow guard |
+| Flat FSM | Có | ENTRY/EXIT/INIT + transition |
+| Initial transition bound | Có | max 8 |
+| Active Object | Có | one task + one queue + FSM |
+| Task post | Có | retains dynamic event |
+| ISR post | Có | non-blocking path |
+| Time Event | Có | software timer adapter |
+| Publish/subscribe | Có | static subscriber matrix + snapshot publish |
+| Hierarchical State Machine | Chưa | Version 2 roadmap |
+| Deferred event/recall | Chưa | Version 2 roadmap |
+| History state | Chưa | ngoài baseline 2.0 core ban đầu |
+| Shared AO executor | Chưa | one-task-per-AO là v1 baseline |
+
+<a id="diag"></a>
+## Diagnostics / benchmark
+
+| Capability | Trạng thái | Ghi chú |
+| --- | --- | --- |
+| Runtime counters | Có | compile-time enable |
+| Kernel invariant validation | Có | internal full-structure check |
+| Per-task stack diagnostics | Có | guard + free/used words |
 | Retained panic record | Có | `.noinit.hairtos` |
-| Cortex-M fault context | Có | CFSR/HFSR/... |
-| Trace timeline | Chưa | Chỉ counters/last fault |
-| Build-ID in panic record | Chưa | v2 candidate |
+| Cortex-M fault context | Có target | stacked registers + SCB fault status |
+| Weak hooks | Có | panic/stack/assert hooks |
+| DWT benchmark clock | Có target | Blue Pill/Cortex-M3 |
+| Statistical benchmark | Có | bounded samples + min/p50/mean/p95/max |
+| External marker | Có target | PB0 active-high |
+| Fixed-size runtime trace ring | Chưa | Version 2 roadmap |
 
-## haievent
-
-| Capability | Trạng thái | Ghi chú |
-|---|---|---|
-| Static event | Có | Caller-owned |
-| Fixed-block dynamic event | Có | Reference counted |
-| Event pool diagnostics | Một phần | Free/block counts |
-| Flat FSM | Có | ENTRY/EXIT/INIT |
-| Hierarchical FSM | Chưa | Config flag = 0 |
-| Active Object | Có | 1 task + queue + FSM |
-| Time Event | Có | Built on software timer |
-| Publish/Subscribe | Có | Fixed subscriber table |
-| ISR post | Có | AO ISR API |
-| Deferred/recall event | Chưa | Không có |
-| RTC runtime enforcement | Chưa | Convention only |
-| Shared AO executor | Chưa | 1 task/AO only |
-| AO error→panic integration | Một phần | Invalid path currently yield/spin |
-
-## Portability
+<a id="platform"></a>
+## Platform / tooling
 
 | Capability | Trạng thái | Ghi chú |
-|---|---|---|
-| Target manifest | Có | Auto discovery |
-| Architecture layer | Có | Cortex-M3 |
-| SoC layer | Có | STM32F1 |
-| Board layer | Có | Blue Pill |
-| Portable GPIO/UART/timer facade | Có | Opaque IDs |
-| Benchmark backend abstraction | Có | DWT backend selected by target |
-| Second physical target | Chưa | Quan trọng để chứng minh abstraction |
-| Cortex-M0 full port | Chưa | Chỉ compile probe |
-| Cortex-M4F port | Chưa | Cần FPU handling nếu dùng FP |
-| Non-ARM port | Chưa | Cần context/interrupt backend mới |
+| --- | --- | --- |
+| CMake target manifest | Có | one manifest per target |
+| Host environment | Có | GCC + ASan/UBSan |
+| GCC ARM toolchain support | Có trong config | environment audit hiện không cài cross compiler |
+| Clang ARM toolchain support | Có trong config | compile path defined; target evidence cần toolchain |
+| Blue Pill target | Có | complete binding |
+| Second hardware target | Chưa | Version 2 success criterion |
+| OpenOCD config | Có | ST-Link/Blue Pill |
+| GDB helper | Có | `tools/gdb/hairtos.gdb` |
+| Compile database | Có | CMake export + Makefile symlink |
 
-## Build/test
+<a id="missing"></a>
+## Không có trong v1
 
-| Capability | Trạng thái |
-|---|---|
-| Make wrapper | Có |
-| CMake source-of-truth | Có |
-| GCC Arm toolchain | Có cấu hình |
-| Clang/LLD Arm toolchain | Có cấu hình |
-| Host sanitizer tests | Có |
-| Deterministic stress | Có |
-| 21 target examples | Có |
-| Automated hardware CI | Chưa |
-| Multi-target build matrix | Một phần — infrastructure có, chỉ một target |
-| Long-duration soak automation | Chưa |
+- FPU context switching;
+- MPU task isolation;
+- SMP/multicore;
+- tickless idle;
+- general POSIX layer;
+- filesystem/network stack;
+- general dynamic kernel heap;
+- HSM/deferred/history;
+- automatic deadlock prevention;
+- safety certification.
+
+<a id="evidence"></a>
+## Evidence
+
+Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests` và toàn bộ suite PASS. Ba host-capable example 02/14/16 cũng chạy PASS; scheduler stress đạt 500.000 iteration. Capability phụ thuộc hardware/assembly vẫn cần target validation để gọi là runtime-proven.
+
+## References
+
+- [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
+- [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
+- [ST RM0008 — STM32F10x Reference Manual](https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf)
+- [STM32F103 documentation portal](https://www.st.com/en/microcontrollers-microprocessors/stm32f103/documentation.html)
+
+**Source:** `config/hairtos_config.h`, `config/haievent_config.h`, `kernel/`, `haievent/`, `cmake/hairtos_examples.cmake`, `cmake/targets/bluepill_f103c8.cmake`, `tests/`.

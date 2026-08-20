@@ -1,56 +1,101 @@
 # Time và Context API
 
-## Time
+> **Phạm vi:** Public API contract của `hairtos 1.0.0-rc1`; internal helper không phải compatibility surface.
+
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](status-and-types.md) · [Next →](timer-api.md)
+
+## Mục lục
+
+- [Nguyên tắc API](#principles)
+- [Function surface](#functions)
+- [Context / blocking contract](#context)
+- [Ownership và lifetime](#ownership)
+- [Error semantics](#errors)
+- [Source map](#source-map)
+- [References](#references)
+
+<a id="principles"></a>
+## Nguyên tắc API
+
+Public API được thiết kế để application không phụ thuộc internal control-block layout.
+
+- Public handles là opaque storage; không cast sang internal TCB/control block trong application.
+- Function trả `hr_status_t` khi operation có thể fail; query bool/size/metadata dùng giá trị neutral nếu object invalid theo implementation hiện tại.
+- API blocking chỉ dành cho task context khi kernel RUNNING; ISR variant được đặt tên `_from_isr` và không block.
+- Caller giữ ownership của backing storage tĩnh; create/init không copy whole storage sang kernel heap.
+
+<a id="functions"></a>
+## Function surface
+
+### `kernel/include/hairtos/hr_time.h`
 
 ```c
 hr_tick_t hr_time_now(void);
 ```
 
-Lấy snapshot current kernel tick. Không bảo đảm wall-clock hoặc milliseconds nếu target config đổi tick rate.
-
-Elapsed wrap-safe phổ biến:
+### `kernel/include/hairtos/hr_context.h`
 
 ```c
-hr_tick_t elapsed = hr_time_now() - start;
-```
-
-## Critical section
-
-```c
-hr_irq_state_t state = hr_critical_enter();
-/* short atomic section */
-hr_critical_exit(state);
-```
-
-Phải exit bằng state tương ứng. Không giữ critical section qua UART/blocking/callback dài.
-
-## ISR detection
-
-```c
+hr_irq_state_t hr_critical_enter(void);
+void hr_critical_exit(hr_irq_state_t state);
 bool hr_is_inside_isr(void);
+void hr_yield_from_isr(bool switch_required);
 ```
 
-Dùng để validate context; không dùng thay synchronization.
+<a id="context"></a>
+## Context / blocking contract
 
-## Deferred yield
+| Nhóm | Task context | ISR context | Có thể block |
+| --- | --- | --- | --- |
+| Query/getter | Có | Chỉ khi implementation không cần blocking/lock dài | Không |
+| API thường `send/take/lock/delay` | Có | Không | Có nếu timeout khác `HR_NO_WAIT` |
+| API `_from_isr` | Không phải mục tiêu chính | Có | Không |
+| `hr_critical_enter/exit` | Có | Có nhưng phải giữ cực ngắn | Không |
 
-```c
-hr_yield_from_isr(switch_required);
+<a id="ownership"></a>
+## Ownership và lifetime
+
+- `hr_task_t` + task stack: caller-owned trong suốt lifetime task.
+- Queue: caller-owned queue object + item storage.
+- Semaphore/mutex/timer: caller-owned opaque object storage.
+- haievent Active Object: caller-owned active storage + stack + event-pointer queue; dynamic event có reference count riêng.
+- Không được move/free/reuse backing storage khi object còn valid/registered.
+
+<a id="errors"></a>
+## Error semantics
+
+Các status public hiện có:
+
+```text
+HR_OK
+HR_ERROR_INVALID_ARGUMENT
+HR_ERROR_INVALID_STATE
+HR_ERROR_TIMEOUT
+HR_ERROR_QUEUE_FULL / HR_ERROR_QUEUE_EMPTY
+HR_ERROR_NO_MEMORY
+HR_ERROR_NOT_OWNER
+HR_ERROR_FROM_ISR
+HR_ERROR_NOT_SUPPORTED
+HR_ERROR_INTERNAL
+HR_ERROR_SEMAPHORE_EMPTY / HR_ERROR_SEMAPHORE_FULL
+HR_ERROR_MUTEX_BUSY
+HR_ERROR_OVERFLOW
 ```
 
-Nếu true, port request deferred context switch.
+Status là một phần của contract. Không nên đổi một timeout thành panic hoặc một invalid-context thành silent success nếu chưa có migration policy.
 
-## Example ISR pattern
+<a id="source-map"></a>
+## Source map
 
-```c
-bool wake = false;
-hr_status_t status = hr_semaphore_give_from_isr(&sem, &wake);
-if (status == HR_OK)
-{
-    hr_yield_from_isr(wake);
-}
-```
+- `kernel/include/hairtos/hr_time.h`
+- `kernel/include/hairtos/hr_context.h`
 
-## Portability
+<a id="references"></a>
+## References
 
-Public context API không expose PRIMASK/PendSV. Architecture backend có thể thay mechanism mà application không đổi.
+- [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
+- [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
+
+**Nguồn implementation trong repository:**
+- `kernel/include/hairtos/hr_time.h`
+- `kernel/include/hairtos/hr_context.h`

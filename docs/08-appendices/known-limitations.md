@@ -1,41 +1,41 @@
-# Known limitations của v1
+# Known limitations — v1
 
-## Kernel
+> Đây là limitation thực tế của `1.0.0-rc1`, không phải bug list giả định.
 
-- single-core only;
-- không task delete/join;
-- không FPU context;
-- không MPU isolation;
-- PRIMASK critical section;
-- periodic tick, chưa tickless;
-- không event flags/task notification;
-- không priority ceiling/deadlock detector.
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](glossary.md) · [Next →](source-map.md)
 
-## haievent
+## Kernel/architecture
 
-- flat FSM;
-- không HSM/history;
-- không deferred/recall event;
-- RTC chưa runtime-enforced;
-- mỗi AO một task/stack;
-- không event priority;
-- publish partial delivery semantics.
+- Single-core only; no SMP.
+- No FPU context save/restore; target Cortex-M3 không có FPU.
+- No MPU isolation/user mode separation.
+- Critical section dùng PRIMASK global mask; chưa có BASEPRI interrupt ceiling contract.
+- No tickless idle; 1 kHz SysTick baseline.
+- No general dynamic kernel allocator/task create/delete runtime.
+- Task delete lifecycle không có.
+- Automatic deadlock detection/prevention không có.
 
-## Portability
+## `haievent`
 
-- mới một real target;
-- Cortex-M0 chỉ compile probe;
-- một số educational EXTI examples trực tiếp dùng STM32F1 registers;
-- target manifest v1 còn flat và có thể lặp khi target count tăng.
+- Flat FSM only; no hierarchical parent chain/LCA transition.
+- No deferred/recall/history state.
+- One task per Active Object; no shared executor.
+- Pub/sub subscriber matrix fixed-size compile/caller storage.
+- Event pool fixed-block; event lớn hơn block không allocate được.
 
-## Diagnostics
+## Platform
 
-- không trace timeline;
-- retained record phụ thuộc reset/RAM target;
-- no build-ID/commit ID in panic record.
+- Chỉ `bluepill_f103c8` là target hoàn chỉnh hiện tại.
+- Driver layer rất nhỏ, không phải vendor-independent HAL tổng quát.
+- UART log blocking có thể ảnh hưởng timing.
+- Benchmark DWT/marker là target-specific evidence.
 
-## Test/release
+## Validation
 
-- chưa hardware CI;
-- chưa automated soak;
-- cross-build không chứng minh electrical/timing behavior.
+- Host tests mạnh ở generic C nhưng không thay hardware exception/peripheral tests.
+- Audit hiện tại không cross-build target vì thiếu ARM toolchain/OpenOCD.
+- Project không tuyên bố safety certification/hard real-time certification.
+
+## Roadmap liên quan
+
+HSM, trace ring, second target, interrupt ceiling và tickless idle nằm trong `docs/09-version2/` với status proposal.

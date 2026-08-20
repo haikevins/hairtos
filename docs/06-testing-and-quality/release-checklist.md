@@ -1,50 +1,43 @@
 # Release checklist
 
-## Source/API
+> Checklist này dùng cho release candidate của project, không phải chứng nhận safety.
 
-- [ ] Version/changelog đồng bộ.
-- [ ] Không ghost API/placeholder.
-- [ ] Public/internal boundary đúng.
-- [ ] Config checks cập nhật.
-- [ ] V2 planned features không bị mô tả như v1 implemented.
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](kernel-benchmark.md) · [Next →](stress-testing.md)
 
-## Host
+## Source/build
 
-- [ ] GCC tests PASS.
-- [ ] Clang tests PASS.
-- [ ] ASan/UBSan thực sự chạy, không chỉ build.
-- [ ] Deterministic stress PASS.
+- [ ] `VERSION` khớp changelog/tag dự kiến.
+- [ ] `make host-tests` PASS với sanitizer.
+- [ ] Strict warnings không bị tắt để “qua build”.
+- [ ] Target build bằng toolchain supported PASS.
+- [ ] `make list-targets`/`list-examples` phản ánh đúng CMake registry.
+- [ ] Public/internal include boundary không bị nới toàn cục.
 
-## Target build
+## Kernel/framework correctness
 
-- [ ] Tất cả examples build cho mọi supported target.
-- [ ] GCC Arm build.
-- [ ] Clang/LLD build nếu được support.
-- [ ] No warnings.
-- [ ] Size budget.
+- [ ] Ready/wait/timeout validators PASS.
+- [ ] Tick-wrap tests PASS.
+- [ ] Queue/semaphore/mutex/timer tests PASS.
+- [ ] Priority inheritance regression tests PASS.
+- [ ] `haievent` refcount/FSM/pubsub tests PASS.
+- [ ] Diagnostics retained record behavior được kiểm target nếu release quảng bá feature này.
 
-## Hardware
+## Target evidence
 
-- [ ] Bare-metal UART/LED/tick.
-- [ ] First task/context switch.
-- [ ] Preemption/time slicing.
-- [ ] ISR wake.
-- [ ] Timer.
-- [ ] haievent integration.
-- [ ] Fault retention.
-- [ ] Benchmark clock/marker.
-- [ ] Soak.
+- [ ] Startup/SVC/PendSV examples chạy trên board.
+- [ ] UART/LED/clock binding đúng target manifest.
+- [ ] Fault injection/reset record được kiểm nếu diagnostics on.
+- [ ] Benchmark được đo lại nếu toolchain/config/clock đổi.
 
 ## Documentation
 
-- [ ] Markdown links.
-- [ ] API signatures.
-- [ ] Target list.
-- [ ] Known limitations.
-- [ ] Migration notes nếu breaking.
+- [ ] Capability matrix chỉ đánh dấu **Có** khi có source/evidence.
+- [ ] API docs khớp public headers.
+- [ ] Version 2 docs vẫn gắn nhãn future.
+- [ ] Markdown links/Mermaid render sạch.
+- [ ] Changelog mô tả breaking/behavior change.
 
-## Artifact
+## Packaging
 
-- [ ] Không `.git`, build cache, IntelliSense DB.
-- [ ] ZIP integrity.
-- [ ] SHA-256.
+- [ ] Không đưa `.git`, build tree, generated compile database/cache vào release archive nếu không có chủ đích.
+- [ ] License/VERSION/README tồn tại ở root.

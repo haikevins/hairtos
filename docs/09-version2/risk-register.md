@@ -1,28 +1,66 @@
 # Risk register Version 2
 
-| Risk | Tác động | Cách kiểm soát |
-|---|---|---|
-| HSM làm API quá phức tạp | Cao | Core subset trước, history sau |
-| BASEPRI misconfig IRQ | Cao | Compile/runtime validation + docs |
-| Tickless race | Cao | Model tests + hardware wake tests |
-| Second target kéo theo HAL scope | Trung bình | Chỉ driver API cần thiết |
-| Trace làm tăng latency | Trung bình | Compile-time/static/small records |
-| Shared AO executor làm scope nổ | Cao | Để stretch/2.1 |
-| V2 breaking quá nhiều | Cao | Compatibility policy |
-| FPU port lỗi lazy stacking | Cao | Chỉ advertise sau dedicated tests |
-| Manifest schema over-engineer | Trung bình | Đợi target thứ hai lộ duplication |
-| Docs lệch source | Trung bình | Release doc/API checks |
+> **Status: FUTURE DESIGN.** Nội dung này không phải capability của `hairtos 1.0.0-rc1`.
 
-## Nguyên tắc giảm risk
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](portability-roadmap.md) · [Next →](roadmap.md)
 
-Mỗi milestone phải giữ all previous tests green. Không phát triển HSM, tickless, second port và shared executor cùng lúc trên một nhánh integration lớn.
+## Mục lục
 
-## Feature kill criteria
+- [Baseline v1](#baseline)
+- [Mục tiêu](#goals)
+- [Design constraints](#constraints)
+- [Evidence để được coi là hoàn thành](#evidence)
+- [Migration/risk](#migration)
+- [References](#references)
 
-Một planned feature có thể bị defer khỏi 2.0 nếu:
+<a id="baseline"></a>
+## Baseline v1
 
+Version 2 phải bắt đầu từ behavior v1 đang có: static object ownership, fixed-priority scheduler, intrusive ready/wait/timeout structures, direct-handoff IPC, one-task-per-AO, flat FSM, target manifest và host sanitizer tests. “Thiết kế mới” không được xóa evidence tốt chỉ để đổi kiến trúc.
+
+<a id="goals"></a>
+## Mục tiêu
+
+- Scope creep HSM/tickless/trace/second target có thể làm mất khả năng audit; phase-gate là biện pháp chính.
+- Interrupt ceiling sai có thể gây deadlock/race khó thấy hơn PRIMASK; cần contract và negative tests.
+- Trace overhead có thể làm đổi timing; phải bounded và có compile-time disable.
+- Portability abstraction quá rộng có thể biến thành HAL mới; target capability phải giữ minimal contract.
 - chưa có use-case rõ;
 - không test deterministic được;
 - kéo dependency ngược;
 - làm static memory không dự đoán được;
 - làm chậm các mục tiêu bắt buộc như second target/HSM/validation.
+
+<a id="constraints"></a>
+## Design constraints
+
+- Không merge API/header trước implementation + tests.
+- Mọi feature phải ghi memory cost, runtime cost, ISR implication và failure modes.
+- Generic kernel không được nhận dependency vào STM32/board registers.
+- Static-first vẫn là default; dynamic behavior nếu thêm phải explicit, bounded và opt-in.
+- Version 2 docs phải giữ nhãn proposal cho tới khi capability matrix/source/test được cập nhật.
+
+<a id="evidence"></a>
+## Evidence để được coi là hoàn thành
+
+Một mục roadmap chỉ chuyển sang implemented khi có đủ:
+
+1. source implementation trong module đúng layer;
+2. unit/host tests hoặc compile probes tương ứng;
+3. target evidence nếu feature phụ thuộc architecture/hardware;
+4. compatibility/migration note;
+5. benchmark/overhead evidence nếu tác động timing hoặc RAM/Flash;
+6. cập nhật capability matrix và API docs.
+
+<a id="migration"></a>
+## Migration / risk
+
+Rủi ro lớn nhất là scope creep làm mất tính audit được của một RTOS nhỏ. Migration nên opt-in theo feature và giữ v1 workload chạy được càng lâu càng tốt. HSM/tickless/trace/target 2 phải được tách phase để khi regression xuất hiện có thể khoanh vùng nguyên nhân.
+
+<a id="references"></a>
+## References
+
+- [`../00-overview/capability-matrix.md`](../00-overview/capability-matrix.md) — baseline capability.
+- [`../01-kernel-core/kernel-invariants.md`](../01-kernel-core/kernel-invariants.md) — invariant v1 không được phá ngầm.
+- [`../06-testing-and-quality/validation-baseline.md`](../06-testing-and-quality/validation-baseline.md) — evidence baseline.
+- [Semantic Versioning 2.0.0](https://semver.org/)

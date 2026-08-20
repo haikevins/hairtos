@@ -1,140 +1,184 @@
 # `08-preemption-round-robin` — Chiếm quyền và Round-Robin
 
-> **Môi trường:** Target. Target tham chiếu là `bluepill_f103c8`; target khác được chọn bằng `TARGET=<name>`.  
-> **Vị trí mã nguồn:** `examples/08-preemption-round-robin/main.c`  
-> **Mục đích:** Hai worker CPU-bound không gọi yield vẫn chia sẻ CPU; monitor priority cao được đánh thức định kỳ và preempt ngay.
+> **Môi trường:** Target  
+> **Source:** `examples/08-preemption-round-robin/main.c`  
+> **Trọng tâm:** Preemption + tick time slicing
 
-## 1. Mục tiêu học tập
+[← Root README](../../README.md)
+
+## Mục lục
+
+- [Mục tiêu và bản chất](#muc-tieu)
+- [Build graph và cấu hình](#build-graph)
+- [Luồng thực thi](#runtime)
+- [API và ownership](#api)
+- [Invariant / PASS criteria](#pass)
+- [Debug và failure modes](#debug)
+- [Validation](#validation)
+- [Source map và references](#source-map)
+
+<a id="muc-tieu"></a>
+## Mục tiêu và bản chất
+
+Hai worker CPU-bound không yield vẫn chia CPU; monitor priority cao wake theo period và preempt worker.
+
+Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
+
+<a id="build-graph"></a>
+## Build graph và cấu hình
+
+- Environment được CMake khai báo: **Target**.
+- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`.
+- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+
+### Compile-time / source constants
+
+| Symbol | Giá trị trong `main.c` |
+| --- | --- |
+| `MONITOR_TASK_PRIORITY` | `1U` |
+| `WORKER_TASK_PRIORITY` | `3U` |
+| `TASK_STACK_WORDS` | `192U` |
+| `MONITOR_PERIOD_TICKS` | `250U` |
+
+### CMake feature overrides
+
+- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+
+<a id="runtime"></a>
+## Luồng thực thi
+
+```mermaid
+flowchart TD
+    WAKE["Task becomes READY"] --> INSERT["Insert intrusive ready node into queue[priority]"]
+    INSERT --> BITMAP["Set ready bitmap bit"]
+    BITMAP --> SELECT["Find smallest set priority number"]
+    SELECT --> FRONT["Select FIFO front of highest-priority queue"]
+    FRONT --> RUN["RUNNING task"]
+    RUN -->|"yield / time slice"| ROTATE["Rotate highest-priority FIFO"]
+    RUN -->|"blocks"| REMOVE["Remove from ready set"]
+    ROTATE --> SELECT
+    REMOVE --> SELECT
+```
+
+Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
+
+### Các chi tiết quan sát trực tiếp từ example
 
 - Chứng minh preemption khi task priority cao chuyển READY.
 - Chứng minh time slicing giữa hai task cùng priority.
 - Phát hiện starvation bằng cách so sánh worker counters.
 - Giữ PendSV là nơi duy nhất save/restore context.
-
-## 2. Kiến thức trọng tâm
-
 - SysTick quyết định PREEMPT hoặc TIME_SLICE rồi pend PendSV.
 - Monitor priority 1 cao hơn worker priority 3.
 - Worker không gọi kernel API trong vòng lặp.
 - Round-robin dùng quantum `HR_CFG_TIME_SLICE_TICKS`.
-
-## 3. Thành phần và cấu hình
-
-### Thành phần chính
-
-| Thành phần | Cấu hình | Vai trò |
-| --- | --- | --- |
-| Phần cứng | STM32F103C8T6 Blue Pill | Chạy firmware target. |
-| Nạp/debug | ST-Link V2 qua SWD | Dùng OpenOCD để flash, verify và reset. |
-| UART | USART1, PA9 TX / PA10 RX, 115200 8-N-1 | Theo dõi log và trạng thái PASS/FAIL. |
-| LED | PC13, active-low | Hiển thị heartbeat hoặc trạng thái quan sát. |
-| `monitor` | Priority 1, stack 192 words | Chạy mỗi 250 ticks và kiểm tra counters. |
-| `worker-a` | Priority 3, stack 192 words | CPU-bound counter. |
-| `worker-b` | Priority 3, stack 192 words | CPU-bound counter. |
-
-### Tham số quan trọng
-
-| Tham số | Giá trị |
-| --- | --- |
-| Monitor period | 250 ticks |
-| Worker priority | 3 |
-| Preemption | Bật |
-| Time slicing | Bật |
-
-### Target và khả năng port
-
-Application sử dụng public kernel/framework API và `board.h`. CPU flags, startup, linker script, port, tick IRQ, fault backend, driver và OpenOCD được lấy từ `cmake/targets/<target>.cmake`. Các chi tiết LED, UART, clock hoặc marker trong README là hành vi của target tham chiếu `bluepill_f103c8`; target khác phải cung cấp board service tương đương.
-
-## 4. Luồng thực thi
-
-1. Monitor chạy, chụp counters rồi block đến release tiếp theo.
-2. Worker A/B chiếm CPU.
-3. Mỗi quantum SysTick rotate worker queue và pend PendSV.
-4. Khi monitor hết delay, SysTick nhận thấy priority 1 cao hơn current worker và yêu cầu preemption.
-5. Monitor xác nhận cả hai counter đều tăng; nếu một counter đứng yên thì panic.
-
-## 5. API và mã nguồn liên quan
-
-### Header được dùng
-
 - `hairtos/hr_time.h`
 - `hr_port.h`
-
-### API trọng tâm
-
 - `hr_task_delay_until()`
 - `hr_task_current()`
-
-### Module được đưa vào bản biên dịch
-
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
-
-## 6. Biên dịch, chạy và kiểm tra
-
-Chạy các lệnh từ thư mục gốc chứa `Makefile`:
-
-| Thao tác | Lệnh |
-| --- | --- |
-| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin build` |
-| Flash và chạy | `make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin run` |
-| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin check` |
-| Dọn build riêng | `make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin clean` |
-
-Dùng `TOOLCHAIN=clang` khi cần cross-build bằng Clang/LLD:
-
-```bash
-make TARGET=bluepill_f103c8 TOOLCHAIN=clang EXAMPLE=08-preemption-round-robin build
-```
-
-## 7. Kết quả mong đợi
-
-Output dưới đây là mẫu. Các giá trị tick, counter, địa chỉ hoặc thống kê có thể thay đổi theo thời điểm chạy và toolchain.
-
-```text
-hairtos preemption and round-robin
-Two CPU-bound equal-priority workers never call yield().
-SysTick round-robin shares CPU; monitor wake-up preempts them.
-monitor preempted workers at tick=0 worker-a=0 worker-b=0
-monitor preempted workers at tick=250 worker-a=<tăng> worker-b=<tăng>
-```
-
-## 8. Tiêu chí PASS và xử lý lỗi
-
-### Tiêu chí PASS
-
 - Sau activation đầu, cả hai worker counter đều tăng giữa hai report.
 - Monitor chạy gần mỗi 250 tick.
 - Không xuất hiện starvation error.
+- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
+- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
+- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
+- `monitor` — Priority 1, stack 192 words — Chạy mỗi 250 ticks và kiểm tra counters.
+- `worker-a` — Priority 3, stack 192 words — CPU-bound counter.
 
-### Lỗi thường gặp
+<a id="api"></a>
+## API và ownership
 
-- Một counter đứng yên: kiểm tra quantum expiry và rotate highest queue.
-- Monitor chạy muộn lâu: kiểm tra higher-priority preemption.
-- Context hỏng: kiểm tra atomic selector và PendSV masking.
+API được gọi trực tiếp trong `main.c` (đã trích từ source):
 
-Khi example gọi `board_panic()`, LED và UART log ngay trước đó là dữ liệu đầu tiên cần kiểm tra. Với lỗi build/include, chạy lại:
+- `board_init()`
+- `board_led_toggle()`
+- `board_panic()`
+- `board_uart_write_line()`
+- `board_uart_write_string()`
+- `board_uart_write_u32()`
+- `hr_kernel_init()`
+- `hr_kernel_start()`
+- `hr_port_thread_uses_psp()`
+- `hr_task_create_static()`
+- `hr_task_current()`
+- `hr_task_delay_until()`
+- `hr_task_start()`
+- `hr_time_now()`
+
+Ownership cần nhớ:
+
+- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
+- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
+- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
+- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+
+<a id="pass"></a>
+## Invariant và PASS criteria
+
+- Ready task xuất hiện đúng một lần trong ready set; node không được đồng thời nằm ở list khác.
+- Selection không phụ thuộc thứ tự đăng ký giữa các priority khác nhau: priority nhỏ nhất đang có bit trong bitmap luôn thắng.
+- Giữa các task cùng priority, thứ tự là FIFO; `yield`/time slice rotate hàng đợi cao nhất thay vì làm thay đổi priority.
+- Preemption chỉ xảy ra khi có task READY với effective priority nhỏ hơn current task; peer cùng priority cần yield hoặc time slice để đổi lượt.
+- Mọi thay đổi effective priority của task READY phải requeue ready node để bitmap/list phản ánh priority mới.
+
+Các check/log cứng trong source:
+
+- `ERROR: invalid task context.`
+- `ERROR: equal-priority worker starvation detected.`
+- `ERROR: monitor delay failed.`
+- `Kernel initialization failed.`
+- `Monitor task creation failed.`
+- `Worker A creation failed.`
+- `Worker B creation failed.`
+- `Task registration failed.`
+- `ERROR: hr_kernel_start returned status=`
+
+<a id="debug"></a>
+## Debug và failure modes
+
+- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
+- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
+- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
+- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
+- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+
+<a id="validation"></a>
+## Validation
+
+- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
+- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+
+### Lệnh chuẩn
 
 ```bash
-make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin clean
 make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin build
+make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin run
+make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin check
 ```
 
-## 9. Giới hạn của ví dụ
+<a id="source-map"></a>
+## Source map và references
 
-- Kết quả build thành công chỉ xác nhận firmware biên dịch và liên kết; hành vi thời gian thực cần được kiểm chứng trên Blue Pill vật lý.
-- UART có thể làm thay đổi timing nếu in quá nhiều; các bài đo timing chuyên dụng sẽ trì hoãn việc in cho đến khi thu mẫu xong.
-- Không kiểm soát chính xác tỷ lệ CPU bằng UART log; dùng benchmark/logic analyzer cho phép đo định lượng.
+- `examples/08-preemption-round-robin/main.c`
+- `cmake/hairtos_examples.cmake`
+- `kernel/src/hr_scheduler.c`
+- `kernel/internal/hr_scheduler_internal.h`
+- `kernel/src/hr_kernel.c`
+- `tests/host/test_ready_queue.c`
+- `tests/host/test_scheduler_policy.c`
+- `labs/memory-allocator/`
 
-- Khi chạy trên target khác, pin, clock, CPU name, marker và output phần cứng lấy từ board/target manifest; không nên xem giá trị của Blue Pill là contract chung.
+### Tài liệu tham khảo
 
-## 10. Liên hệ với lộ trình
 
-Bài tiếp theo: [`09-queue-blocking-ipc`](../09-queue-blocking-ipc/README.md). Bài tiếp theo thêm IPC queue và blocking timeout.
-
-### Liên hệ Version 2
-
-Interrupt ceiling và tickless Version 2 không được làm thay đổi preemption/round-robin semantics đã kiểm chứng ở đây.
-
-Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).
+**Nguồn implementation trong repository:**
+- `kernel/src/hr_scheduler.c`
+- `kernel/internal/hr_scheduler_internal.h`
+- `kernel/src/hr_kernel.c`
+- `tests/host/test_ready_queue.c`
+- `tests/host/test_scheduler_policy.c`
+- `labs/memory-allocator/`

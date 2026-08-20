@@ -1,50 +1,42 @@
 # Example index
 
-| Example | Môi trường | Capability chính | Port validation |
-|---|---|---|---|
-| 01 baremetal | Target | startup/clock/UART/GPIO/tick | Board/SoC |
-| 02 structures | Host | ready/wait ordering | Generic C |
-| 03 stack | Target | TCB + initial frame | Port stack |
-| 04 first task | Target | first-task startup | SVC/port |
-| 05 coop switch | Target | PendSV context | Save/restore |
-| 06 priority | Target | fixed priority/FIFO | Scheduler |
-| 07 delay | Target | tick/timeout | Tick adapter |
-| 08 preemption | Target | preemption/slicing | Tick+PendSV |
-| 09 queue | Target | blocking IPC | Kernel |
-| 10-01 semaphore ISR | Target | ISR wake | IRQ contract |
-| 10-02 mutex | Target | inheritance | Scheduler+mutex |
-| 11 suspend | Target | admin state overlay | Task model |
-| 12 timer | Target | timer-service | Tick+service |
-| 13-01 event ISR | Target | AO post ISR | Framework/IRQ |
-| 13-02 AO | Target | task+queue+FSM | Framework |
-| 13-03 FSM | Target | ENTRY/EXIT | Framework |
-| 13-04 time event | Target | timer→AO | Framework/timer |
-| 13-05 pubsub | Target | reference ownership | Framework |
-| 13-06 integration | Target | complete event app | Framework |
-| 14 allocator | Host+Target | pool/first-fit | Lab |
-| 15 benchmark | Target | clock/marker/stats | Target backend |
-| 16 diagnostics | Host+Target | stress/fault/health | Integration |
+> 22 example directories tạo một progression có chủ đích từ bare-metal tới diagnostics/stress.
 
-## Command
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [Next →](memory-allocator-lab.md)
 
-```bash
-make TARGET=bluepill_f103c8 EXAMPLE=<name> build
-make TARGET=bluepill_f103c8 EXAMPLE=<name> run
-```
+| Example | Trọng tâm | Environment |
+| --- | --- | --- |
+| [`01-baremetal-foundation`](../../examples/01-baremetal-foundation/README.md) | `01-baremetal-foundation` — Nền tảng bare-metal | Target |
+| [`02-kernel-data-structures-host`](../../examples/02-kernel-data-structures-host/README.md) | `02-kernel-data-structures-host` — Cấu trúc dữ liệu kernel — Demo trên host | Host only |
+| [`03-static-task-stack`](../../examples/03-static-task-stack/README.md) | `03-static-task-stack` — TCB tĩnh và ngăn xếp khởi tạo của tác vụ | Target |
+| [`04-start-first-task`](../../examples/04-start-first-task/README.md) | `04-start-first-task` — Khởi chạy tác vụ đầu tiên bằng SVC | Target |
+| [`05-cooperative-context-switch`](../../examples/05-cooperative-context-switch/README.md) | `05-cooperative-context-switch` — Chuyển ngữ cảnh hợp tác | Target |
+| [`06-priority-scheduler`](../../examples/06-priority-scheduler/README.md) | `06-priority-scheduler` — Bộ lập lịch ưu tiên cố định | Target |
+| [`07-task-delay-timeout`](../../examples/07-task-delay-timeout/README.md) | `07-task-delay-timeout` — SysTick, trì hoãn tác vụ và timeout | Target |
+| [`08-preemption-round-robin`](../../examples/08-preemption-round-robin/README.md) | `08-preemption-round-robin` — Chiếm quyền và Round-Robin | Target |
+| [`09-queue-blocking-ipc`](../../examples/09-queue-blocking-ipc/README.md) | `09-queue-blocking-ipc` — Queue và IPC chặn | Target |
+| [`10-01-semaphore-from-isr`](../../examples/10-01-semaphore-from-isr/README.md) | `10-01-semaphore-from-isr` — Trao semaphore từ ISR | Target |
+| [`10-02-mutex-priority-inheritance`](../../examples/10-02-mutex-priority-inheritance/README.md) | `10-02-mutex-priority-inheritance` — Mutex và kế thừa ưu tiên | Target |
+| [`11-task-suspend-resume`](../../examples/11-task-suspend-resume/README.md) | `11-task-suspend-resume` — Tạm dừng và tiếp tục tác vụ | Target |
+| [`12-software-timer`](../../examples/12-software-timer/README.md) | `12-software-timer` — Dịch vụ bộ định thời phần mềm | Target |
+| [`13-01-event-post`](../../examples/13-01-event-post/README.md) | `13-01-event-post` — Đăng sự kiện haievent từ ISR | Target |
+| [`13-02-active-object`](../../examples/13-02-active-object/README.md) | `13-02-active-object` — Active Object Ping–Pong | Target |
+| [`13-03-flat-state-machine`](../../examples/13-03-flat-state-machine/README.md) | `13-03-flat-state-machine` — Máy trạng thái phẳng | Target |
+| [`13-04-time-event`](../../examples/13-04-time-event/README.md) | `13-04-time-event` — Sự kiện thời gian haievent | Target |
+| [`13-05-publish-subscribe`](../../examples/13-05-publish-subscribe/README.md) | `13-05-publish-subscribe` — Publish–Subscribe và quyền sở hữu sự kiện động | Target |
+| [`13-06-event-driven-demo`](../../examples/13-06-event-driven-demo/README.md) | `13-06-event-driven-demo` — Demo haievent tích hợp | Target |
+| [`14-memory-allocator-lab`](../../examples/14-memory-allocator-lab/README.md) | `14-memory-allocator-lab` — Bài thực hành bộ cấp phát bộ nhớ | Host + target |
+| [`15-kernel-benchmark`](../../examples/15-kernel-benchmark/README.md) | `15-kernel-benchmark` — Benchmark kernel | Target |
+| [`16-diagnostics-stress-stabilization`](../../examples/16-diagnostics-stress-stabilization/README.md) | `16-diagnostics-stress-stabilization` — Chẩn đoán và ổn định bằng stress test | Host + target |
 
-Dual:
+## Dependency progression
 
-```bash
-make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
-make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=14-memory-allocator-lab run
-```
+Examples 03–06 xây stack/start/context/scheduler trước khi 07 thêm kernel tick blocking. 09–12 thêm synchronization từng primitive. 13-* chỉ xuất hiện sau khi queue/timer/context đủ để Active Object chạy đúng. 14 allocator tách khỏi kernel; 15 benchmark đo; 16 stress/diagnostics tích hợp.
 
-## Khi thêm target
+## CMake truth
 
-Minimum useful sequence:
+Environment/module/feature define của từng example nằm trong `cmake/hairtos_examples.cmake`. README không nên ghi module khác file đó.
 
-```text
-01 -> 03 -> 04 -> 05 -> 07 -> 08 -> 10-01 -> 12 -> 13-06 -> 15 -> 16
-```
+## Validation
 
-Nếu fail ở bước nào, không bỏ qua lên integration image.
+Host examples 02/14/16 đã chạy PASS trong audit. Target examples cần ARM toolchain + Blue Pill.

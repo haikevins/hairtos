@@ -1,102 +1,62 @@
-# Cấu trúc repository và trách nhiệm
+# Repository layout và ownership
 
-## Root
+> **Scope:** Mỗi directory được giải thích theo trách nhiệm runtime/build/test, không chỉ liệt kê tree.
 
-`Makefile` là CLI wrapper. `CMakeLists.txt` tạo object targets và link firmware/host executable. `VERSION` là version hiện tại; `CHANGELOG.md` ghi thay đổi.
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](project-analysis.md) · [Next →](roadmap.md)
 
-## `kernel/`
-
-```text
-include/hairtos/  public API
-internal/         internal layout/contracts
-src/              generic implementation
-```
-
-Không đặt register access hoặc board pin trong kernel.
-
-## `haievent/`
+## Repository tree
 
 ```text
-include/haievent/ public framework API
-internal/         control-block layouts
-src/              event/FSM/AO/time/pubsub
+arch/                 CPU/ISA-specific context, critical, fault, benchmark clock
+benchmarks/kernel/    generic benchmark stats
+boards/                concrete board binding + linker + marker/UART/LED services
+cmake/                 target/example/module source-of-truth
+config/                compile-time contracts
+_docs_/                architecture/API/testing/labs/appendices/v2 roadmap
+drivers/               public peripheral contracts + STM32F1 backend
+examples/              staged executable learning/evidence
+haievent/              event-driven framework
+kernel/                RTOS public/internal/source
+labs/memory-allocator/ allocator experiment outside runtime
+soc/                   startup/register/clock/IRQ for MCU family
+tests/                 host/mocks/portability/stress
+tools/                 debugger/OpenOCD helpers
 ```
 
-Chỉ phụ thuộc public kernel API và config.
+## Ownership theo directory
 
-## `arch/`
+| Directory | Sở hữu | Không nên sở hữu |
+| --- | --- | --- |
+| `kernel/` | scheduler/blocking/object policy | STM32 pin/register |
+| `haievent/` | event/AO/FSM/pubsub semantics | context-switch assembly |
+| `arch/` | CPU execution mechanism | board pin binding |
+| `soc/` | chip-family startup/clock/register IRQ | application policy |
+| `boards/` | concrete board service/linker | generic scheduler |
+| `drivers/` | small peripheral contracts/backend | application workflow |
+| `cmake/` | source composition | runtime state machine |
+| `tests/` | executable verification | production dependency |
+| `examples/` | learning/integration evidence | hidden reusable core logic |
+| `labs/` | isolated experiment | implicit kernel dependency |
 
-CPU/ISA-specific:
+## Build path
 
-- initial stack;
-- critical section;
-- SVC/PendSV;
-- fault entry;
-- tick IRQ adapter;
-- benchmark cycle clock.
-
-Một MCU mới dùng cùng ISA có thể tái sử dụng phần lớn folder này.
-
-## `soc/`
-
-MCU-family:
-
-- register definitions;
-- startup vector;
-- clock setup;
-- IRQ support/fallback.
-
-## `boards/`
-
-Board-level binding:
-
-- LED/UART/pins;
-- board name/CPU name;
-- panic behavior;
-- benchmark marker;
-- linker script;
-- flash/static RAM footprint hooks.
-
-## `drivers/`
-
-`drivers/include` là API generic. `drivers/<soc>` chứa identifier encoding và register-level implementation.
-
-## `cmake/targets/`
-
-Mỗi `.cmake` là một hardware target manifest. Đây là nơi binding arch + SoC + board + driver + linker + OpenOCD.
-
-## `tests/`
-
-```text
-host/         unit/regression tests
-mocks/        fake architecture port
-portability/  compile proof
-stress/       deterministic long operation sequences
+```mermaid
+flowchart LR
+    USER["TARGET / EXAMPLE / ENVIRONMENT"] --> MAKE["Make wrapper"]
+    MAKE --> CMAKE["CMake configure"]
+    CMAKE --> T["target manifest"]
+    CMAKE --> E["example config"]
+    CMAKE --> M["module source map"]
+    T --> BIN["final source set"]
+    E --> BIN
+    M --> BIN
 ```
 
-## `examples/`
+## Source discoverability
 
-22 executable examples. Folder number thể hiện lộ trình học, không phải tên API nội bộ.
+Nếu muốn hiểu một public API, đi từ `kernel/include/hairtos/<x>.h` → `kernel/src/<x>.c` → `kernel/internal/<x>_internal.h` → relevant host test. Nếu behavior là CPU-specific, tiếp tục sang `arch/arm/cortex-m3`. Nếu là pin/UART/clock, đi qua board/driver/SoC.
 
-## `labs/`
+## References
 
-Experiment không phải runtime dependency. Hiện có memory allocator lab.
-
-## `benchmarks/`
-
-Benchmark statistics generic; clock backend nằm ở architecture layer.
-
-## `docs/`
-
-00–08 mô tả v1. 09 mô tả v2 planned.
-
-## Quy tắc thêm file
-
-Một source mới phải trả lời được:
-
-1. thuộc layer nào?
-2. được build bởi module nào?
-3. public hay internal?
-4. host-test được không?
-5. target-specific assumption nằm ở đâu?
-6. tài liệu nào mô tả contract của nó?
+- [CMake — CMAKE_TOOLCHAIN_FILE](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html)
+- [CMake — CMAKE_EXPORT_COMPILE_COMMANDS](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html)

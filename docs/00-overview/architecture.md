@@ -1,141 +1,181 @@
-# Kiến trúc hairtos
+# Kiến trúc `hairtos 1.0.0-rc1`
 
-## 1. Các layer
+> **Phạm vi:** Kiến trúc runtime và build architecture thực sự có trong source v1; không trộn roadmap Version 2.
 
-```text
-+--------------------------------------------------+
-| Application / examples                           |
-+-------------------------+------------------------+
-| haievent                | hairtos public API     |
-| event/FSM/AO/pubsub      | task/IPC/time/etc.    |
-+-------------------------+------------------------+
-| Kernel internals                                  |
-| scheduler/list/wait/timeout/TCB                   |
-+--------------------------------------------------+
-| Architecture port                                 |
-| stack/context/critical/ISR/fault/tick adapter     |
-+--------------------------------------------------+
-| SoC              | Board              | Drivers   |
-+--------------------------------------------------+
-```
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [Next →](capability-matrix.md)
 
-## 2. Kernel và framework khác nhau ở đâu?
+## Mục lục
 
-Kernel quản lý **CPU execution contexts và synchronization**.
+- [Mental model](#mental)
+- [Layer và dependency direction](#layers)
+- [Kernel execution model](#kernel)
+- [`haievent`](#haievent)
+- [Platform/target model](#platform)
+- [Build graph](#build)
+- [Cross-cutting invariants](#invariants)
+- [Validation](#validation)
+- [References](#references)
 
-`haievent` quản lý **application behavior dưới dạng event/state**.
+<a id="mental"></a>
+## Mental model
 
-Một Active Object không thay thế task; ở v1 nó chứa chính một task. Khi AO queue có event, task AO trở READY và scheduler kernel quyết định khi nào nó chạy.
-
-## 3. Luồng preemption
+`hairtos` có hai runtime subsystem chính nhưng chỉ một scheduler:
 
 ```text
-low task RUNNING
-    |
-IRQ/tick/IPC makes high task READY
-    |
-kernel requests context switch
-    |
-PendSV
-    |
-save low context
-    |
-select highest READY
-    |
-restore high context
+hairtos kernel
+    ├── task + scheduler + time/blocking
+    ├── queue / semaphore / mutex / software timer
+    └── diagnostics
+
+haievent
+    ├── event + pool + refcount
+    ├── flat state machine
+    ├── Active Object
+    ├── time event
+    └── publish/subscribe
 ```
 
-## 4. Luồng event
+`haievent` **không** có thread scheduler riêng. Một Active Object tạo một hairtos task; priority của AO vì vậy đi qua cùng ready set, preemption và PendSV như mọi task khác.
+
+<a id="layers"></a>
+## Layer và dependency direction
+
+```mermaid
+flowchart TD
+    APP["Application / examples"] --> HEAPI["haievent public API"]
+    APP --> HRAPI["hairtos public API"]
+    HEAPI --> HEINT["haievent internals"]
+    HEINT --> HRAPI
+    HRAPI --> KINT["kernel internals"]
+    KINT --> PORTC["architecture port contract"]
+    PORTC --> ARM["arch/arm/cortex-m3"]
+    KINT --> BOARD["board services"]
+    BOARD --> DAPI["driver public contracts"]
+    DAPI --> STMDRV["STM32F1 driver backend"]
+    STMDRV --> SOC["SoC register/clock layer"]
+    MAN["target manifest"] -. binds .-> ARM
+    MAN -. binds .-> SOC
+    MAN -. binds .-> BOARD
+```
+
+Dependency direction được thiết kế để generic kernel không biết STM32 register, pin hay OpenOCD config. Application bình thường cũng không biết TCB layout. Chỉ architecture assembly có một contract rất hẹp với TCB: `stack_pointer` phải ở offset 0.
+
+### Public/internal boundary
+
+Public:
+
+- `kernel/include/hairtos/`
+- `haievent/include/haievent/`
+- `drivers/include/`
+- target board public include như `board.h`
+
+Internal:
+
+- `kernel/internal/`
+- `haievent/internal/`
+
+Host tests và benchmark có thể được CMake cấp internal include để kiểm thử/đo policy, nhưng đó không biến internal header thành API compatibility surface.
+
+<a id="kernel"></a>
+## Kernel execution model
+
+Kernel state đi từ reset/uninitialized → initialized → running. `hr_kernel_init()` dựng scheduler, timeout list, idle task, registry và timer subsystem baseline; user task được create/start; `hr_kernel_start()` chuẩn bị current task rồi đi vào architecture port.
+
+### Scheduling path
+
+```mermaid
+flowchart LR
+    READY["READY nodes"] --> Q["8 priority FIFO queues"]
+    Q --> BM["ready bitmap"]
+    BM --> SEL["smallest active priority number"]
+    SEL --> RUN["RUNNING"]
+    RUN -->|"higher priority wakes"| PRE["PendSV preemption"]
+    RUN -->|"slice / yield"| ROT["rotate equal-priority FIFO"]
+    RUN -->|"block"| WAIT["wait + optional timeout"]
+    WAIT --> READY
+```
+
+### Context path
+
+Cortex-M3 hardware stack R0–R3/R12/LR/PC/xPSR. Port assembly save thêm R4–R11. First task dùng SVC; switch tiếp theo dùng PendSV. Task Thread mode dùng PSP; exception handler dùng MSP.
+
+### Blocking path
+
+Queue/semaphore/mutex và delay đều quy về một kernel blocking contract: current task rời ready set, gắn wait metadata, có thể gắn timeout node, rồi một wake path duy nhất cleanup và đưa task trở lại ready set. Đây là invariant trung tâm của kernel.
+
+<a id="haievent"></a>
+## `haievent`
+
+```mermaid
+sequenceDiagram
+    participant P as Producer
+    participant Q as AO queue
+    participant A as AO task
+    participant F as Flat FSM
+    P->>Q: post event (retain if dynamic)
+    Q->>A: receive pointer
+    A->>F: dispatch RTC
+    F-->>A: handled/ignored/transition
+    A->>A: release dynamic event
+```
+
+Dynamic event được cấp từ fixed-block pool và reference count; static event do caller sở hữu. Pub/sub snapshot subscriber list trong critical section, sau đó post ngoài critical section. Time event chỉ là adapter software timer → AO event.
+
+<a id="platform"></a>
+## Platform/target model
+
+Target `bluepill_f103c8` bind:
+
+- Cortex-M3 port;
+- STM32F1 startup/clock/IRQ;
+- Blue Pill linker/board;
+- STM32F1 driver backend;
+- ST-Link/OpenOCD config;
+- DWT benchmark clock;
+- compile flags CPU/Thumb.
+
+Portability được chứng minh về **structure**, nhưng v1 mới có một target hoàn chỉnh nên chưa thể gọi là multi-target proven.
+
+<a id="build"></a>
+## Build graph
+
+CMake là source-of-truth:
 
 ```text
-producer / ISR / timer
-        |
-        v
-he_active_post()
-        |
-        v
-AO queue
-        |
-        v
-AO task READY
-        |
-        v
-scheduler
-        |
-        v
-he_state_machine_dispatch()
-        |
-        v
-state handler RTC
+cmake/hairtos_targets.cmake   -> target registry
+cmake/targets/<target>.cmake  -> concrete binding
+cmake/hairtos_examples.cmake  -> environment/module/define per example
+cmake/hairtos_modules.cmake   -> source list per module
+CMakeLists.txt                -> compose final target/host executable
+Makefile                      -> user-facing command wrapper
 ```
 
-## 5. Luồng time event
+Host và target khác nhau ở toolchain/source subset, không bằng cách duplicate toàn bộ project.
 
-```text
-target tick IRQ
-  -> hr_kernel_tick_from_isr()
-  -> timer expiration
-  -> pending callback
-  -> timer-service task
-  -> he time-event callback
-  -> AO queue
-  -> AO state handler
-```
+<a id="invariants"></a>
+## Cross-cutting invariants
 
-Không có application state handler trong SysTick ISR.
+- Opaque object phải được init/create trước use; magic/internal state xác nhận validity.
+- Caller-owned storage phải sống lâu hơn object.
+- Intrusive node không được linked vào hai list.
+- ISR path không block.
+- Critical section phải bounded; Cortex-M3 v1 dùng PRIMASK.
+- Effective priority, không phải base priority, quyết định ready/wait order khi inheritance active.
+- Roadmap không được lẫn vào capability v1.
 
-## 6. Memory architecture
+<a id="validation"></a>
+## Validation
 
-Kernel không gọi heap allocator. Object public là opaque storage cố định:
+Host suite đã PASS dưới ASan/UBSan. Các test bao phủ data structure/policy, timeout wrap, initial stack, IPC/sync, timer, diagnostics, haievent, allocator, benchmark và scheduler stress. Target context/IRQ/timing cần cross-toolchain + hardware riêng.
 
-```text
-hr_task_t
-hr_queue_t
-hr_semaphore_t
-hr_mutex_t
-hr_timer_t
-```
+<a id="references"></a>
+## References
 
-Internal object được đặt vào storage này và kiểm tra size bằng static assertion.
+- [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
+- [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
+- [ST RM0008 — STM32F10x Reference Manual](https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf)
+- [STM32F103 documentation portal](https://www.st.com/en/microcontrollers-microprocessors/stm32f103/documentation.html)
+- [CMake — CMAKE_TOOLCHAIN_FILE](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html)
+- [CMake — CMAKE_EXPORT_COMPILE_COMMANDS](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html)
 
-`haievent` dùng cùng pattern cho Active Object/FSM/Time Event/PubSub. Dynamic **event payload** là ngoại lệ có kiểm soát: nó đến từ fixed-block event pool do application cung cấp.
-
-## 7. Scheduling model
-
-- single-core;
-- preemptive fixed-priority;
-- priority range compile-time;
-- priority 0 cao nhất;
-- idle priority cuối;
-- running task vẫn là member ready queue;
-- equal-priority FIFO/time slice.
-
-## 8. Blocking model
-
-Một blocking operation liên quan ít nhất ba nơi:
-
-```text
-TCB wait metadata
-wait list của object
-timeout list (nếu timeout hữu hạn)
-```
-
-Completion phải cleanup các membership còn lại atomically trước khi task trở READY.
-
-## 9. Port architecture
-
-Kernel gọi `hr_port_*`, không truy cập register Cortex-M. Target manifest binding:
-
-```text
-architecture port
-+ SoC startup/clock/IRQ
-+ board/linker
-+ drivers
-+ debugger config
-```
-
-## 10. Điều không thuộc kiến trúc v1
-
-Không có SMP, userspace/kernelspace, memory protection domain, hierarchical FSM hoặc dynamic kernel object lifecycle.
-
-Xem Version 2: [`../09-version2/architecture.md`](../09-version2/architecture.md).
+**Source chính:** `CMakeLists.txt`, `cmake/*.cmake`, `kernel/`, `haievent/`, `arch/`, `soc/`, `boards/`, `drivers/`.

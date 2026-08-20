@@ -1,102 +1,71 @@
 # Roadmap Version 2
 
-Roadmap này dùng milestone thay vì phase số học của v1.
+> **Status: FUTURE DESIGN.** Nội dung này không phải capability của `hairtos 1.0.0-rc1`.
 
-## M0 — Baseline freeze
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](risk-register.md) · [Next →](testing-and-release.md)
 
-Mục tiêu:
+## Mục lục
 
+- [Baseline v1](#baseline)
+- [Mục tiêu](#goals)
+- [Design constraints](#constraints)
+- [Evidence để được coi là hoàn thành](#evidence)
+- [Migration/risk](#migration)
+- [References](#references)
+
+<a id="baseline"></a>
+## Baseline v1
+
+Version 2 phải bắt đầu từ behavior v1 đang có: static object ownership, fixed-priority scheduler, intrusive ready/wait/timeout structures, direct-handoff IPC, one-task-per-AO, flat FSM, target manifest và host sanitizer tests. “Thiết kế mới” không được xóa evidence tốt chỉ để đổi kiến trúc.
+
+<a id="goals"></a>
+## Mục tiêu
+
+- Phase theo dependency: correctness/interrupt contract → observability → HSM core → portability target 2 → tickless → stabilization/release.
+- Mỗi phase phải có problem/contract/memory/runtime/ISR/failure/tests/migration/docs trước merge.
 - chốt v1 behavior;
 - docs/audit complete;
 - host test invocation ổn định;
 - hardware baseline Blue Pill;
 - known issues list.
-
-Exit criteria: có baseline để biết v2 làm thay đổi gì.
-
-## M1 — Port/interrupt contract v2
-
 - failure policy;
 - port capability cleanup;
 - BASEPRI path Cortex-M3;
 - max syscall IRQ priority;
 - conformance tests;
 - target template cleanup.
-
-Exit: current target chạy lại full regression.
-
-## M2 — Second target proof
-
 - chọn target;
-- SoC/board/driver;
-- reuse hoặc port architecture;
-- all essential examples;
-- fault/benchmark validation;
-- manifest scalability refactor chỉ khi cần.
 
-Exit: kernel + haievent chạy trên hai target thật mà không fork generic source.
+<a id="constraints"></a>
+## Design constraints
 
-## M3 — HSM core
+- Không merge API/header trước implementation + tests.
+- Mọi feature phải ghi memory cost, runtime cost, ISR implication và failure modes.
+- Generic kernel không được nhận dependency vào STM32/board registers.
+- Static-first vẫn là default; dynamic behavior nếu thêm phải explicit, bounded và opt-in.
+- Version 2 docs phải giữ nhãn proposal cho tới khi capability matrix/source/test được cập nhật.
 
-- parent state;
-- event propagation;
-- LCA transitions;
-- init substates;
-- flat compatibility;
-- model tests.
+<a id="evidence"></a>
+## Evidence để được coi là hoàn thành
 
-Exit: state transition conformance suite green.
+Một mục roadmap chỉ chuyển sang implemented khi có đủ:
 
-## M4 — Event robustness
+1. source implementation trong module đúng layer;
+2. unit/host tests hoặc compile probes tương ứng;
+3. target evidence nếu feature phụ thuộc architecture/hardware;
+4. compatibility/migration note;
+5. benchmark/overhead evidence nếu tác động timing hoặc RAM/Flash;
+6. cập nhật capability matrix và API docs.
 
-- deferred/recall;
-- RTC blocking detection;
-- AO failure diagnostics;
-- event ownership instrumentation.
+<a id="migration"></a>
+## Migration / risk
 
-Exit: no leak under randomized event tests.
+Rủi ro lớn nhất là scope creep làm mất tính audit được của một RTOS nhỏ. Migration nên opt-in theo feature và giữ v1 workload chạy được càng lâu càng tốt. HSM/tickless/trace/target 2 phải được tách phase để khi regression xuất hiện có thể khoanh vùng nguyên nhân.
 
-## M5 — Tickless / low power
+<a id="references"></a>
+## References
 
-- next-deadline API;
-- port sleep contract;
-- elapsed tick advancement;
-- timer/timeout integration;
-- hardware power/wake validation.
-
-Exit: same scheduling semantics with periodic and tickless modes.
-
-## M6 — Trace / observability
-
-- static trace ring;
-- kernel event records;
-- haievent records;
-- panic build identity;
-- export tooling.
-
-Exit: reconstruct stress/fault timeline from trace.
-
-## M7 — Release hardening
-
-- compiler matrix;
-- target matrix;
-- property/randomized tests;
-- hardware smoke automation;
-- soak;
-- migration docs;
-- benchmark baselines.
-
-## 2.0.0-rc1
-
-Chỉ tạo RC khi M0–M7 mandatory items hoàn tất.
-
-## Sau 2.0
-
-Candidates 2.1+:
-
-- HSM history;
-- shared AO executor;
-- event flags/task notifications;
-- MPU;
-- richer power states;
-- more targets.
+- [`../00-overview/capability-matrix.md`](../00-overview/capability-matrix.md) — baseline capability.
+- [`../01-kernel-core/kernel-invariants.md`](../01-kernel-core/kernel-invariants.md) — invariant v1 không được phá ngầm.
+- [`../06-testing-and-quality/validation-baseline.md`](../06-testing-and-quality/validation-baseline.md) — evidence baseline.
+- [Semantic Versioning 2.0.0](https://semver.org/)

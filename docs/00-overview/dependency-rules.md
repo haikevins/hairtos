@@ -1,60 +1,67 @@
-# Quy tắc dependency
+# Dependency rules
 
-## Hướng hợp lệ
+> **Scope:** Rule thực tế giữa application, public API, internal kernel/framework, architecture, SoC, board, driver và build manifests.
 
-```text
-application -> haievent -> hairtos public -> kernel internal -> arch
-application -> hairtos public
-application -> board public
-board -> drivers/SoC
-target manifest -> binds all target-specific implementation
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](configuration.md) · [Next →](design-principles.md)
+
+## Mục lục
+
+- [Allowed dependency graph](#graph)
+- [Forbidden dependencies](#forbidden)
+- [Internal access exceptions](#internal)
+- [Target/build rules](#target)
+- [Review checklist](#review)
+
+<a id="graph"></a>
+## Allowed dependency graph
+
+```mermaid
+flowchart TD
+    APP["application/examples"] --> PUB["hairtos / haievent / board public"]
+    HE["haievent internal"] --> PUB
+    K["kernel internal"] --> PORT["architecture contract"]
+    K --> PUBLIC_TYPES["kernel public types/config"]
+    BOARD["board"] --> D["driver public"]
+    DB["driver backend"] --> SOC["SoC"]
+    MAN["target manifest"] -. selects .-> PORT
+    MAN -. selects .-> BOARD
+    MAN -. selects .-> DB
 ```
 
-## Các dependency bị cấm
+<a id="forbidden"></a>
+## Forbidden dependencies
 
-- `kernel/src` include STM32 register headers.
-- `haievent/src` include `kernel/internal`.
-- application bình thường include `kernel/internal`.
-- driver implementation gọi scheduler internals.
-- kernel generic gọi `board_*`.
-- SoC layer include application.
-- allocator lab trở thành kernel allocation backend ngầm.
+- Generic kernel không include `stm32f1.h` hoặc board pin header.
+- Application production không include `kernel/internal/*` hay `haievent/internal/*`.
+- Driver backend không quyết định scheduler/task state.
+- Target manifest không chứa runtime kernel logic.
+- `haievent` có thể dùng hairtos public API nhưng hairtos kernel không phụ thuộc `haievent`.
+- Allocator lab không được kernel runtime gọi ngầm.
 
-## Ngoại lệ có chủ đích
+<a id="internal"></a>
+## Internal access exceptions
 
-Example 15 benchmark có thể truy cập scheduler internal để đo policy path. Host tests cần internal layout để kiểm tra invariant. Những exception này phải được CMake cấp include riêng, không mở internal include cho mọi source.
+Host tests cần internal header để unit-test ready/wait/scheduler structures. Example 02 cố ý là educational internal-data-structure demo. Example 15 benchmark cần internal scheduler primitive để đo selection cost. CMake encode exception này thay vì thêm internal include vào global public include path.
 
-## Lý do
+<a id="target"></a>
+## Target/build rules
 
-Dependency một chiều cho phép:
+`target → architecture + SoC + board + driver + linker + debugger`, còn `example → modules + feature defines`. Hai chiều này độc lập để cùng example có thể port target khác mà không copy application source.
 
-- unit test generic C trên host;
-- port MCU mà không sửa scheduler;
-- thay board mà không sửa driver contract;
-- thay internal TCB layout mà không sửa application;
-- kiểm tra include boundary bằng compiler.
-
-## Critical/ISR boundary
-
-Framework hoặc generic component dùng:
-
-```c
-hr_irq_state_t state = hr_critical_enter();
-/* short atomic update */
-hr_critical_exit(state);
-```
-
-Không gọi Cortex-M PRIMASK trực tiếp ngoài architecture port.
-
-ISR wake task dùng ISR-safe API + `hr_yield_from_isr()`.
-
+<a id="review"></a>
 ## Review checklist
 
-Một PR thêm dependency mới cần kiểm tra:
+Khi thêm module mới, hỏi:
 
-- include direction;
-- CMake include visibility;
-- target assumptions;
-- blocking/ISR context;
-- ownership/lifetime;
-- tests.
+1. API này là public hay internal?
+2. Có kéo MCU register vào generic layer không?
+3. Storage/lifetime do ai sở hữu?
+4. ISR có thể gọi không, và có blocking không?
+5. Source được CMake module nào sở hữu?
+6. Example/test nào chứng minh contract?
+7. Target mới cần bind gì mà không sửa core?
+
+## References
+
+- [CMake — CMAKE_TOOLCHAIN_FILE](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html)
+- [CMake — CMAKE_EXPORT_COMPILE_COMMANDS](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html)

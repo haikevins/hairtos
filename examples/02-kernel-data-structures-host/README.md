@@ -1,137 +1,162 @@
 # `02-kernel-data-structures-host` — Cấu trúc dữ liệu kernel — Demo trên host
 
-> **Môi trường:** Host; không cần phần cứng. `TARGET` mặc định chỉ cung cấp architecture/target contract cho CMake và compile configuration.  
-> **Vị trí mã nguồn:** `examples/02-kernel-data-structures-host/main.c`  
-> **Mục đích:** Minh họa ready set và wait list bằng các node intrusive mà chưa cần tạo task thật hoặc chạy trên Cortex-M3.
+> **Môi trường:** Host only  
+> **Source:** `examples/02-kernel-data-structures-host/main.c`  
+> **Trọng tâm:** Intrusive ready/wait structures trên host
 
-## 1. Mục tiêu học tập
+[← Root README](../../README.md)
+
+## Mục lục
+
+- [Mục tiêu và bản chất](#muc-tieu)
+- [Build graph và cấu hình](#build-graph)
+- [Luồng thực thi](#runtime)
+- [API và ownership](#api)
+- [Invariant / PASS criteria](#pass)
+- [Debug và failure modes](#debug)
+- [Validation](#validation)
+- [Source map và references](#source-map)
+
+<a id="muc-tieu"></a>
+## Mục tiêu và bản chất
+
+Chạy không cần MCU để chứng minh ready set chọn priority nhỏ nhất, FIFO rotation và wait list sắp theo priority.
+
+Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
+
+<a id="build-graph"></a>
+## Build graph và cấu hình
+
+- Environment được CMake khai báo: **Host only**.
+- Module được link cho example này: `hr_list`, `hr_scheduler`, `hr_wait (host sources)`.
+- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+
+### CMake feature overrides
+
+- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+
+<a id="runtime"></a>
+## Luồng thực thi
+
+```mermaid
+flowchart TD
+    WAKE["Task becomes READY"] --> INSERT["Insert intrusive ready node into queue[priority]"]
+    INSERT --> BITMAP["Set ready bitmap bit"]
+    BITMAP --> SELECT["Find smallest set priority number"]
+    SELECT --> FRONT["Select FIFO front of highest-priority queue"]
+    FRONT --> RUN["RUNNING task"]
+    RUN -->|"yield / time slice"| ROTATE["Rotate highest-priority FIFO"]
+    RUN -->|"blocks"| REMOVE["Remove from ready set"]
+    ROTATE --> SELECT
+    REMOVE --> SELECT
+```
+
+Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
+
+### Các chi tiết quan sát trực tiếp từ example
 
 - Hiểu priority 0 là mức ưu tiên cao nhất.
 - Quan sát ready queue FIFO giữa các node cùng priority.
 - Quan sát wait list được sắp xếp theo priority và giữ FIFO khi bằng nhau.
 - Kiểm tra structural invariants bằng hàm validate.
-
-## 2. Kiến thức trọng tâm
-
 - Danh sách liên kết đôi intrusive.
 - Ready bitmap và một FIFO queue cho mỗi priority.
 - Owner pointer từ node trở về đối tượng chứa node.
 - Host-native test không có ISR, task stack hoặc context switch.
-
-## 3. Thành phần và cấu hình
-
-### Thành phần chính
-
-| Thành phần | Cấu hình | Vai trò |
-| --- | --- | --- |
-| `communication` | Priority 1 | Phải được chọn trước hai sensor. |
-| `sensor-a` | Priority 3 | Đứng trước `sensor-b` theo FIFO ban đầu. |
-| `sensor-b` | Priority 3 | Lên đầu sau khi rotate queue priority 3. |
-| Ready set | `hr_ready_set_t` | Chọn highest priority và rotate FIFO. |
-| Wait list | `hr_wait_list_t` | Sắp waiter theo priority. |
-
-### Tham số quan trọng
-
-| Tham số | Giá trị |
-| --- | --- |
-| Môi trường | Native host compiler |
-| Phần cứng | Không cần |
-| Internal API | Có chủ đích để học cấu trúc kernel |
-
-### Target và khả năng port
-
-Example chạy hoàn toàn trên host và không dùng board/driver. Khi thêm MCU mới, source của example không đổi; chỉ host test configuration có thể dùng target contract để compile phần stack-port tương ứng.
-
-## 4. Luồng thực thi
-
-1. Khởi tạo ready set và wait list.
-2. Khởi tạo ba demo node và chèn vào ready set.
-3. Xem phần tử ưu tiên cao nhất: `communication` priority 1.
-4. Loại `communication`, peek `sensor-a`, rotate và peek `sensor-b`.
-5. Chèn waiter theo thứ tự không ưu tiên và xác nhận `communication` vẫn đứng đầu.
-6. Validate cả hai cấu trúc trước khi trả về `EXIT_SUCCESS`.
-
-## 5. API và mã nguồn liên quan
-
-### Header được dùng
-
 - `hr_scheduler_internal.h`
 - `hr_wait_internal.h`
-
-### API trọng tâm
-
 - `hr_ready_set_init()`
 - `hr_ready_set_insert()`
 - `hr_ready_set_peek_highest()`
 - `hr_ready_set_rotate_highest()`
 - `hr_wait_list_insert()`
 - `hr_*_validate()`
-
-### Module được đưa vào bản biên dịch
-
 - `kernel/src/hr_list.c`
 - `kernel/src/hr_scheduler.c`
-- `kernel/src/hr_wait.c`
+- `communication` — Priority 1 — Phải được chọn trước hai sensor.
+- `sensor-a` — Priority 3 — Đứng trước `sensor-b` theo FIFO ban đầu.
+- `sensor-b` — Priority 3 — Lên đầu sau khi rotate queue priority 3.
+- Ready set — `hr_ready_set_t` — Chọn highest priority và rotate FIFO.
+- Wait list — `hr_wait_list_t` — Sắp waiter theo priority.
+- Phần cứng — Không cần
 
-## 6. Biên dịch, chạy và kiểm tra
+<a id="api"></a>
+## API và ownership
 
-Chạy các lệnh từ thư mục gốc chứa `Makefile`:
+API được gọi trực tiếp trong `main.c` (đã trích từ source):
 
-| Thao tác | Lệnh |
-| --- | --- |
-| Biên dịch | `make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host build` |
-| Chạy | `make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host run` |
-| Kiểm tra | `make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host check` |
-| Dọn build | `make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host clean` |
+- `hr_list_node_owner()`
+- `hr_ready_node_init()`
+- `hr_ready_set_init()`
+- `hr_ready_set_insert()`
+- `hr_ready_set_peek_highest()`
+- `hr_ready_set_remove()`
+- `hr_ready_set_rotate_highest()`
+- `hr_ready_set_validate()`
+- `hr_wait_list_init()`
+- `hr_wait_list_insert()`
+- `hr_wait_list_peek()`
+- `hr_wait_list_validate()`
+- `hr_wait_node_init()`
 
-Host example dùng compiler native do CMake phát hiện. Có thể đặt `CC=clang` hoặc cấu hình CMake host riêng khi cần so sánh compiler.
+Ownership cần nhớ:
 
-## 7. Kết quả mong đợi
+- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
+- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
+- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
+- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
 
-Output dưới đây là mẫu. Các giá trị tick, counter, địa chỉ hoặc thống kê có thể thay đổi theo thời điểm chạy và toolchain.
+<a id="pass"></a>
+## Invariant và PASS criteria
 
-```text
-highest-ready: communication
-equal-priority-before-rotate: sensor-a
-equal-priority-after-rotate: sensor-b
-first-waiter: communication
-```
+- Ready task xuất hiện đúng một lần trong ready set; node không được đồng thời nằm ở list khác.
+- Selection không phụ thuộc thứ tự đăng ký giữa các priority khác nhau: priority nhỏ nhất đang có bit trong bitmap luôn thắng.
+- Giữa các task cùng priority, thứ tự là FIFO; `yield`/time slice rotate hàng đợi cao nhất thay vì làm thay đổi priority.
+- Preemption chỉ xảy ra khi có task READY với effective priority nhỏ hơn current task; peer cùng priority cần yield hoặc time slice để đổi lượt.
+- Mọi thay đổi effective priority của task READY phải requeue ready node để bitmap/list phản ánh priority mới.
 
-## 8. Tiêu chí PASS và xử lý lỗi
+<a id="debug"></a>
+## Debug và failure modes
 
-### Tiêu chí PASS
+- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
+- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
+- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
+- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
+- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
 
-- Process trả về exit code 0.
-- Bốn dòng output đúng thứ tự.
-- Ready set và wait list đều validate thành công.
+<a id="validation"></a>
+## Validation
 
-### Lỗi thường gặp
+- Example này đã được chạy trực tiếp trên host trong audit hiện tại và PASS.
+- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
 
-- Sai thứ tự priority: kiểm tra quy ước số nhỏ hơn là ưu tiên cao hơn.
-- Rotate không đổi node đầu: kiểm tra FIFO queue có ít nhất hai node cùng priority.
-- Sanitizer báo lỗi: kiểm tra double insertion/removal và owner pointer.
-
-Với lỗi build/include, chạy lại:
+### Lệnh chuẩn
 
 ```bash
-make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host clean
-make TARGET=bluepill_f103c8 EXAMPLE=02-kernel-data-structures-host build
+make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=02-kernel-data-structures-host run
 ```
 
-## 9. Giới hạn của ví dụ
+<a id="source-map"></a>
+## Source map và references
 
-- Không tạo TCB thật.
-- Không mô phỏng Cortex-M3 exception frame.
-- Không chứng minh concurrency hoặc interrupt safety.
+- `examples/02-kernel-data-structures-host/main.c`
+- `cmake/hairtos_examples.cmake`
+- `kernel/src/hr_scheduler.c`
+- `kernel/internal/hr_scheduler_internal.h`
+- `kernel/src/hr_kernel.c`
+- `tests/host/test_ready_queue.c`
+- `tests/host/test_scheduler_policy.c`
+- `labs/memory-allocator/`
 
-- Example không kiểm chứng startup, interrupt, tick hoặc context switch của target mới; các phần đó phải được xác nhận bằng target examples.
+### Tài liệu tham khảo
 
-## 10. Liên hệ với lộ trình
+- [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
+- [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-Bài tiếp theo: [`03-static-task-stack`](../03-static-task-stack/README.md). Bài tiếp theo tạo TCB và initial task stack thật cho Cortex-M3.
-
-### Liên hệ Version 2
-
-Các intrusive structures nên tiếp tục là generic C ở Version 2. Property/randomized tests sẽ mở rộng stress nhưng không thay core ownership model.
-
-Xem [`../../docs/09-version2/README.md`](../../docs/09-version2/README.md).
+**Nguồn implementation trong repository:**
+- `kernel/src/hr_scheduler.c`
+- `kernel/internal/hr_scheduler_internal.h`
+- `kernel/src/hr_kernel.c`
+- `tests/host/test_ready_queue.c`
+- `tests/host/test_scheduler_policy.c`
+- `labs/memory-allocator/`

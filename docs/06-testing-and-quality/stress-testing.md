@@ -1,44 +1,36 @@
 # Stress testing
 
-## Deterministic host stress
+> **Scope:** Deterministic scheduler stress hiện có và cách hiểu đúng evidence của nó.
 
-Scheduler stress thực hiện operation sequence dài trên ready/list structures và validate sau mỗi bước.
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](release-checklist.md) · [Next →](test-matrix.md)
 
-Baseline hiện dùng 500.000 iterations.
+## Workload
 
-Deterministic seed/sequence giúp bug reproducible.
+`tests/stress/scheduler_stress_core.c` tạo sequence insert/remove/rotate trên ready-set trong 500.000 iteration với deterministic PRNG/workload. Sau mỗi iteration, validator chạy để kiểm tra list/bitmap/count invariant.
 
-## Target stress
+```mermaid
+flowchart LR
+    STEP["deterministic operation"] --> MUT["insert / remove / rotate"]
+    MUT --> VAL["hr_ready_set_validate"]
+    VAL -->|"valid"| NEXT["next iteration"]
+    VAL -->|"invalid"| FAIL["FAIL immediately"]
+    NEXT --> STEP
+```
 
-Example 16 kết hợp:
+## Vì sao hữu ích
 
-- queue producer/consumer;
-- semaphore pulse;
-- mutex-protected counters;
-- periodic timer;
-- preemption/time slicing;
-- diagnostics monitor;
-- stack/invariant checks.
+Stress test tìm các bug state-sequence mà vài unit case đơn lẻ không chạm tới: bitmap stale sau remove, node double-link, FIFO corruption sau nhiều rotate, count/list mismatch.
 
-## Tiêu chí
+## Giới hạn
 
-- counters tiến triển;
-- không order corruption;
-- no invariant failure;
-- stack guards valid;
-- no unexpected panic;
-- health reports tiếp tục.
+Nó không tạo preemption thật, không chạy PendSV, không mô phỏng cache/FPU (target cũng không có FPU) hay asynchronous MCU interrupt. Đây là **data-structure/policy stress**, không phải hardware concurrency stress.
 
-## Soak
+## Kết quả audit
 
-10-second PASS checkpoint chỉ là smoke/stress checkpoint, không phải endurance validation.
+500.000 iteration PASS với 500.000 validation call.
 
-Stable release nên chạy giờ-level soak trên target thật, lưu logs và reset reason.
+## References
 
-## Fault injection
-
-Fault injection phải tách normal image. Sau injected fault, reset và kiểm tra retained record.
-
-## V2
-
-Thêm randomized/property stress cho timeout wrap, mutex graph, event ownership và HSM transitions; giữ deterministic reproduction seed.
+- `tests/stress/scheduler_stress_core.c`
+- `tests/stress/test_scheduler_stress.c`
+- `kernel/src/hr_scheduler.c`

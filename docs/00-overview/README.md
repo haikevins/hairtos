@@ -1,15 +1,66 @@
 # 00 — Tổng quan và phân tích project
 
-Nhóm này trả lời bốn câu hỏi: `hairtos` đang có gì, các layer phụ thuộc nhau thế nào, những bất biến thiết kế nào phải giữ, và khoảng cách từ v1 tới Version 2 còn bao nhiêu.
+> **Vai trò:** Trang này là index của một cụm tài liệu. Mỗi chapter đi từ bản chất → mapping source → invariant → failure mode → validation để người đọc có thể đối chiếu trực tiếp với implementation.
 
-## Thứ tự đọc
+[← Root README](../../README.md)
 
-1. [project-analysis.md](project-analysis.md) — audit toàn bộ repository.
-2. [architecture.md](architecture.md) — kiến trúc runtime.
-3. [capability-matrix.md](capability-matrix.md) — đã có/chưa có.
-4. [design-principles.md](design-principles.md) — nguyên tắc không nên phá.
-5. [project-layout.md](project-layout.md) — trách nhiệm thư mục.
-6. [dependency-rules.md](dependency-rules.md) — hướng dependency.
-7. [configuration.md](configuration.md) — compile-time configuration.
-8. [coding-standard.md](coding-standard.md) — quy tắc source.
-9. [roadmap.md](roadmap.md) — lịch sử v1 và liên kết v2.
+## Mục lục
+
+- [Bản đồ nội dung](#ban-do)
+- [Cách đọc](#cach-doc)
+- [Các tài liệu](#tai-lieu)
+- [Validation baseline](#validation)
+- [Tài liệu tham khảo](#references)
+
+<a id="ban-do"></a>
+## Bản đồ nội dung
+
+```mermaid
+flowchart LR
+    INDEX["Index"] --> CONCEPT["Concept / contract"]
+    CONCEPT --> SOURCE["Source mapping"]
+    SOURCE --> TEST["Validation / evidence"]
+```
+
+<a id="cach-doc"></a>
+## Cách đọc
+
+1. Bắt đầu từ README của section để biết scope và thứ tự học.
+2. Khi gặp API, quay lại `docs/05-api-reference/` để xem context/return contract; khi gặp behavior kernel, ưu tiên `docs/01`–`03`.
+3. Đối chiếu mọi statement timing/ownership với source map ở cuối chapter.
+4. Phân biệt rõ **host evidence**, **target evidence** và **future proposal**.
+
+<a id="tai-lieu"></a>
+## Các tài liệu
+
+| Tài liệu | Vai trò |
+| --- | --- |
+| [`architecture.md`](architecture.md) | Kiến trúc hairtos |
+| [`capability-matrix.md`](capability-matrix.md) | Ma trận capability của hairtos 1.0.0-rc1 |
+| [`coding-standard.md`](coding-standard.md) | Coding standard |
+| [`configuration.md`](configuration.md) | Cấu hình compile-time |
+| [`dependency-rules.md`](dependency-rules.md) | Quy tắc dependency |
+| [`design-principles.md`](design-principles.md) | Nguyên tắc thiết kế |
+| [`project-analysis.md`](project-analysis.md) | Phân tích toàn bộ project hairtos v1 |
+| [`project-layout.md`](project-layout.md) | Cấu trúc repository và trách nhiệm |
+| [`roadmap.md`](roadmap.md) | Roadmap |
+
+<a id="validation"></a>
+## Validation baseline
+
+- `VERSION`: `1.0.0-rc1`.
+- Host test suite hiện có 64 test function và đã chạy PASS trong lần audit tài liệu này.
+- `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS trên host.
+- Target tham chiếu là `bluepill_f103c8`; cross toolchain/OpenOCD không có trong môi trường audit nên không tuyên bố đã flash lại hardware.
+
+<a id="references"></a>
+## Tài liệu tham khảo
+
+- [CMake — CMAKE_TOOLCHAIN_FILE](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html)
+- [CMake — CMAKE_EXPORT_COMPILE_COMMANDS](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html)
+
+**Nguồn implementation trong repository:**
+- `README.md`
+- `CMakeLists.txt`
+- `cmake/hairtos_examples.cmake`
+- `cmake/hairtos_targets.cmake`

@@ -1,93 +1,75 @@
 # Testing guide
 
-## Host unit tests
+> **Scope:** Cách kiểm chứng hairtos theo tầng: pure data structures → kernel policy → framework → stress → target/hardware.
+
+[← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](test-matrix.md) · [Next →](validation-baseline.md)
+
+## Test pyramid
+
+```mermaid
+flowchart TD
+    UNIT["Host unit tests + ASan/UBSan"] --> STRESS["Deterministic scheduler stress"]
+    UNIT --> HOSTEX["Host examples 02/14/16"]
+    UNIT --> PORTPROBE["Portability compile probes"]
+    STRESS --> TARGET["Target examples on Blue Pill"]
+    HOSTEX --> TARGET
+    TARGET --> MEASURE["DWT / PB0 benchmark + fault/reset evidence"]
+```
+
+## Host suite
 
 ```bash
 make TARGET=bluepill_f103c8 host-tests
 ```
 
-Host build dùng mock port và sanitizer để kiểm tra generic C.
+CMake build host suite với `-O0 -g3`, strict warnings, AddressSanitizer và UndefinedBehaviorSanitizer. `ctest --output-on-failure` là canonical runner.
 
-Nhóm coverage hiện gồm:
+### Coverage logic hiện có
 
 - intrusive list;
-- ready set/scheduler policy;
+- ready queue + scheduler policy;
 - wait list;
-- timeout;
-- task/initial stack;
-- kernel start/select;
-- queue;
-- semaphore;
-- mutex/priority inheritance;
-- software timer;
-- haievent;
-- allocator;
-- benchmark statistics;
-- diagnostics;
-- scheduler stress.
+- timeout deadline ordering + tick wrap;
+- task creation/stack guard/high-watermark;
+- initial Cortex-M stack frame builder;
+- kernel start/preemption/RR/delay race through mock port;
+- queue/semaphore/mutex/timer;
+- diagnostics/fault record;
+- `haievent` event pool/refcount/FSM/AO/pubsub;
+- benchmark stats/helpers;
+- allocator heap/pool;
+- 500k deterministic scheduler stress.
 
-## Sanitizer
-
-ASan/UBSan là test aid, không phải target runtime. Một số loader environment có thể yêu cầu ASan runtime được load trước shared libraries. Nếu test binary chưa chạy mà báo `ASan runtime does not come first`, xác minh compiler/runtime loader trước khi kết luận source fail.
-
-## Target build
+## Host examples
 
 ```bash
-make TARGET=bluepill_f103c8 \
-     TOOLCHAIN=clang \
-     EXAMPLE=16-diagnostics-stress-stabilization \
-     build
+make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=02-kernel-data-structures-host run
+make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
+make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run
 ```
 
-Cross-build kiểm tra:
+Ba command trên đã PASS trong audit hiện tại.
 
-- header/include boundary;
-- ARM codegen;
-- assembly ABI link;
-- linker script;
-- duplicate/missing handler symbol;
-- image size.
+## Target tests
 
-## Target runtime
+Target-only examples cần cross toolchain và board. Kiểm chứng phải tách:
 
-Runtime test cần:
+1. build/link;
+2. flash/verify/reset;
+3. UART PASS/FAIL semantics;
+4. GDB inspection khi panic;
+5. benchmark marker/log khi đo timing;
+6. reset cycle cho retained fault record.
 
-- flash;
-- UART log;
-- LED/marker khi relevant;
-- expected preemption/order;
-- fault injection;
-- reset behavior.
+Host PASS không chứng minh SVC/PendSV hardware behavior, interrupt priority, PLL clock hay peripheral pins.
 
-## Khi sửa kernel state machine
+## Regression rule
 
-Thêm regression test cho sequence cụ thể gây lỗi, không chỉ test API happy path.
+Bug fix phải thêm test ở tầng thấp nhất có thể tái tạo bug. Race chỉ xuất hiện target nên thêm target example/check nhưng vẫn cố tách pure policy để host-test nếu có thể.
 
-## Khi sửa port
+## References
 
-Chạy examples theo ladder 01→04→05→08→10-01→15→16.
-
-## Khi sửa haievent
-
-Chạy event ownership tests và examples 13-01..13-06.
-
-## Khi sửa allocator
-
-Host sanitizer trước target demo.
-
-## Test result metadata
-
-Khi lưu benchmark/release result, ghi:
-
-```text
-commit/version
-target
-board revision
-toolchain version
-optimization
-clock
-config overrides
-duration
-UART log
-image size
-```
+- [CMake — CMAKE_TOOLCHAIN_FILE](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html)
+- [CMake — CMAKE_EXPORT_COMPILE_COMMANDS](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html)
+- [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
+- [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)

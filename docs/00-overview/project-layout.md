@@ -41,13 +41,13 @@ tools/                 debugger/OpenOCD helpers
 ## Build path
 
 ```mermaid
-flowchart LR
-    USER["TARGET / EXAMPLE / ENVIRONMENT"] --> MAKE["Make wrapper"]
+flowchart TB
+    USER["TARGET / EXAMPLE / ENV"] --> MAKE["Make wrapper"]
     MAKE --> CMAKE["CMake configure"]
-    CMAKE --> T["target manifest"]
-    CMAKE --> E["example config"]
-    CMAKE --> M["module source map"]
-    T --> BIN["final source set"]
+    CMAKE --> T["Target manifest"]
+    CMAKE --> E["Example config"]
+    CMAKE --> M["Module map"]
+    T --> BIN["Final source set"]
     E --> BIN
     M --> BIN
 ```

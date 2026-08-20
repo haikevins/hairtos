@@ -16,30 +16,13 @@
 ## Bản đồ nội dung
 
 ```mermaid
-flowchart TD
-    ROOT["Các ví dụ của hairtos"]
-    ROOT --> N0["01-baremetal-foundation"]
-    ROOT --> N1["02-kernel-data-structures-host"]
-    ROOT --> N2["03-static-task-stack"]
-    ROOT --> N3["04-start-first-task"]
-    ROOT --> N4["05-cooperative-context-switch"]
-    ROOT --> N5["06-priority-scheduler"]
-    ROOT --> N6["07-task-delay-timeout"]
-    ROOT --> N7["08-preemption-round-robin"]
-    ROOT --> N8["09-queue-blocking-ipc"]
-    ROOT --> N9["10-01-semaphore-from-isr"]
-    ROOT --> N10["10-02-mutex-priority-inheritance"]
-    ROOT --> N11["11-task-suspend-resume"]
-    ROOT --> N12["12-software-timer"]
-    ROOT --> N13["13-01-event-post"]
-    ROOT --> N14["13-02-active-object"]
-    ROOT --> N15["13-03-flat-state-machine"]
-    ROOT --> N16["13-04-time-event"]
-    ROOT --> N17["13-05-publish-subscribe"]
-    ROOT --> N18["13-06-event-driven-demo"]
-    ROOT --> N19["14-memory-allocator-lab"]
-    ROOT --> N20["15-kernel-benchmark"]
-    ROOT --> N21["16-diagnostics-stress-stabilization"]
+flowchart TB
+    E1["01 · Bare-metal"] --> E2["02 · Kernel structures"]
+    E2 --> E3["03–05 · Task and context"]
+    E3 --> E4["06–08 · Scheduler and time"]
+    E4 --> E5["09–12 · IPC and sync"]
+    E5 --> E6["13-01..13-06 · haievent"]
+    E6 --> E7["14–16 · Validation and diagnostics"]
 ```
 
 <a id="cach-doc"></a>
@@ -82,9 +65,9 @@ flowchart TD
 ## Validation baseline
 
 - `VERSION`: `1.0.0-rc1`.
-- Host test suite hiện có 64 test function và đã chạy PASS trong lần audit tài liệu này.
+- Host validation baseline: 64 test function trong suite hiện có đều PASS.
 - `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS trên host.
-- Target tham chiếu là `bluepill_f103c8`; cross toolchain/OpenOCD không có trong môi trường audit nên không tuyên bố đã flash lại hardware.
+- Target tham chiếu là `bluepill_f103c8`; host evidence không thay thế cross-build, OpenOCD và hardware validation trên board.
 
 <a id="references"></a>
 ## Tài liệu tham khảo

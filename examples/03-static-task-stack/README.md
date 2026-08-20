@@ -22,7 +22,6 @@
 
 Tạo task nhưng chưa start kernel; mục tiêu là kiểm tra object tĩnh, stack fill/guard và initial exception-compatible frame.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -39,23 +38,15 @@ Example này không được hiểu như một application production. Nó cố 
 ## Luồng thực thi
 
 ```mermaid
-sequenceDiagram
-    participant T as Current task / PSP
-    participant CPU as Cortex-M3 hardware
-    participant P as PendSV_Handler
-    participant K as hr_kernel_select_next_from_pendsv()
-    T->>CPU: PendSV pending
-    CPU->>CPU: stack R0-R3,R12,LR,PC,xPSR on PSP
-    CPU->>P: enter Handler mode on MSP
-    P->>P: save R4-R11 to current PSP
-    P->>K: select next TCB
-    K-->>P: g_hr_current_task_control_block updated
-    P->>P: restore R4-R11 from next PSP
-    P->>CPU: exception return 0xFFFFFFFD
-    CPU->>T: unstack hardware frame and resume next task
+flowchart TB
+    MAIN["main()"] --> CREATE["hr_task_create_static"]
+    CREATE --> TCB["Initialize static TCB"]
+    TCB --> STACK["Build initial stack frame"]
+    STACK --> CREATED["Task state = CREATED"]
+    CREATED --> LOOP["main() keeps bare-metal LED loop"]
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
+`demo_task()` chưa được scheduler chạy trong example này. Mục tiêu là kiểm tra object/stack construction trước khi sang bước SVC startup ở example 04.
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -118,17 +109,16 @@ Các check/log cứng trong source:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- `hr_task_create_static()` fail: kiểm tra object/stack pointer, stack size và alignment contract.
+- Initial frame sai: kiểm tra `hr_port_stack_initialize()`, xPSR Thumb bit, PC/LR và argument trong R0.
+- `demo_task()` không được chạy ở stage này; nếu nó chạy thì boundary CREATED → RUNNING đã bị vi phạm.
+- LED loop trong `main()` phải tiếp tục hoạt động sau khi task object được tạo.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

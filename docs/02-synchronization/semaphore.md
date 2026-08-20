@@ -1,6 +1,6 @@
 # Semaphore
 
-> **Phạm vi:** Mô tả implementation `hairtos 1.0.0-rc1` đã được đối chiếu với source, config, build graph và host tests hiện có.
+> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](queue.md) · [Next →](software-timer.md)
 
@@ -20,12 +20,11 @@
 
 Semaphore là synchronization counter không có ownership. Counting semaphore giữ `count/max_count`; binary semaphore chỉ là cấu hình max=1. `give` ưu tiên đánh thức waiter thay vì tăng count khi có task đang chờ.
 
-Trong project này, cách đọc đúng luôn là **contract → data ownership → state transition → concurrency boundary → failure semantics → evidence**. Điều đó quan trọng hơn việc chỉ nhớ tên API: một RTOS nhỏ vẫn có thể sai nghiêm trọng nếu cùng một task node xuất hiện ở hai list, nếu timeout và object wake cùng “thắng”, hoặc nếu context switch không khớp exception frame của CPU.
 
 <a id="implementation"></a>
 ## Implementation trong repository
 
-Các điểm đã được đối chiếu với source/config hiện tại:
+Implementation hiện tại gồm:
 
 - `take` tiêu thụ token nếu count > 0; nếu không có token thì có thể block theo timeout.
 - `give` với waiter đang chờ chuyển quyền tiến triển trực tiếp sang waiter; nếu không có waiter mới tăng count.
@@ -44,17 +43,16 @@ Các điểm đã được đối chiếu với source/config hiện tại:
 ## Mô hình và luồng thực thi
 
 ```mermaid
-stateDiagram-v2
-    [*] --> AVAILABLE: count > 0
-    AVAILABLE --> AVAILABLE: take / count--
-    AVAILABLE --> EMPTY: last token taken
-    EMPTY --> WAITING: task take with timeout
-    WAITING --> EMPTY: more waiters remain
-    WAITING --> AVAILABLE: give with no remaining waiter
-    EMPTY --> AVAILABLE: give increments count
+flowchart TB
+    TAKE["Take"] --> TOK{"count > 0?"}
+    TOK -->|"Yes"| DEC["Decrement count"]
+    TOK -->|"No + wait"| WAIT["Block task"]
+    GIVE["Give"] --> W{"Waiter exists?"}
+    W -->|"Yes"| WAKE["Wake highest-priority waiter"]
+    W -->|"No"| INC["Increment count"]
 ```
 
-Sơ đồ trên mô tả **semantic boundary**, không thay thế source. Khi debug, nên lần theo node của sơ đồ tới function/source file tương ứng thay vì suy luận từ diagram đơn lẻ.
+Các function và source file tương ứng được liệt kê trong phần Source map.
 
 <a id="invariants"></a>
 ## Ownership, concurrency và invariants
@@ -81,7 +79,7 @@ Các invariant nền áp dụng cho chủ đề này:
 ## Validation và cách kiểm chứng
 
 - Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
-- Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests`: test suite PASS.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
 - Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
 - Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
 

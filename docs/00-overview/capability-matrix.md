@@ -112,7 +112,7 @@
 | --- | --- | --- |
 | CMake target manifest | Có | one manifest per target |
 | Host environment | Có | GCC + ASan/UBSan |
-| GCC ARM toolchain support | Có trong config | environment audit hiện không cài cross compiler |
+| GCC ARM toolchain support | Có trong config | target validation cần cross compiler |
 | Clang ARM toolchain support | Có trong config | compile path defined; target evidence cần toolchain |
 | Blue Pill target | Có | complete binding |
 | Second hardware target | Chưa | Version 2 success criterion |
@@ -137,7 +137,7 @@
 <a id="evidence"></a>
 ## Evidence
 
-Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests` và toàn bộ suite PASS. Ba host-capable example 02/14/16 cũng chạy PASS; scheduler stress đạt 500.000 iteration. Capability phụ thuộc hardware/assembly vẫn cần target validation để gọi là runtime-proven.
+Validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite. Ba host-capable example 02/14/16 cũng chạy PASS; scheduler stress đạt 500.000 iteration. Capability phụ thuộc hardware/assembly vẫn cần target validation để gọi là runtime-proven.
 
 ## References
 

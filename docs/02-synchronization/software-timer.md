@@ -1,6 +1,6 @@
 # Software timer
 
-> **Phạm vi:** Mô tả implementation `hairtos 1.0.0-rc1` đã được đối chiếu với source, config, build graph và host tests hiện có.
+> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](semaphore.md) · [Next →](suspend-resume.md)
 
@@ -20,12 +20,11 @@
 
 Software timer không chạy callback trong SysTick. Tick ISR chỉ chuyển timer hết hạn sang pending queue và signal timer-service task; callback được thực thi trong task context. Mỗi timer theo dõi pending_count để không mất hoàn toàn nhiều expiry khi service task chưa kịp xử lý.
 
-Trong project này, cách đọc đúng luôn là **contract → data ownership → state transition → concurrency boundary → failure semantics → evidence**. Điều đó quan trọng hơn việc chỉ nhớ tên API: một RTOS nhỏ vẫn có thể sai nghiêm trọng nếu cùng một task node xuất hiện ở hai list, nếu timeout và object wake cùng “thắng”, hoặc nếu context switch không khớp exception frame của CPU.
 
 <a id="implementation"></a>
 ## Implementation trong repository
 
-Các điểm đã được đối chiếu với source/config hiện tại:
+Implementation hiện tại gồm:
 
 - Timer object là static opaque storage; một timer có name, period, auto_reload, callback, argument và timeout node.
 - Timer-service task được tạo lazily khi timer subsystem cần initialize và dùng priority/stack từ config.
@@ -42,22 +41,31 @@ Các điểm đã được đối chiếu với source/config hiện tại:
 <a id="mo-hinh"></a>
 ## Mô hình và luồng thực thi
 
+**Expiry handoff**
+
 ```mermaid
 sequenceDiagram
     participant ST as SysTick ISR
-    participant TL as Timer timeout list
-    participant TS as Timer-service task
-    participant CB as User callback
-    ST->>TL: advance(now)
-    TL-->>ST: expired timer(s)
-    ST->>ST: pending_count++ / queue pending node
-    ST->>TS: wake service task if needed
-    TS->>TS: pop one pending timer
-    TS->>CB: callback(argument)
-    CB-->>TS: return in task context
+    participant TL as Timer list
+    participant TS as Timer service
+    ST->>TL: advance time
+    TL-->>ST: expired timers
+    ST->>TS: queue pending work
+    ST->>TS: wake service task
 ```
 
-Sơ đồ trên mô tả **semantic boundary**, không thay thế source. Khi debug, nên lần theo node của sơ đồ tới function/source file tương ứng thay vì suy luận từ diagram đơn lẻ.
+**Callback execution**
+
+```mermaid
+sequenceDiagram
+    participant TS as Timer service
+    participant CB as User callback
+    TS->>TS: pop pending timer
+    TS->>CB: invoke callback
+    CB-->>TS: return
+```
+
+Các function và source file tương ứng được liệt kê trong phần Source map.
 
 <a id="invariants"></a>
 ## Ownership, concurrency và invariants
@@ -84,7 +92,7 @@ Các invariant nền áp dụng cho chủ đề này:
 ## Validation và cách kiểm chứng
 
 - Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
-- Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests`: test suite PASS.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
 - Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
 - Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
 

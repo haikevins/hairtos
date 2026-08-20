@@ -1,6 +1,6 @@
 # Publish / Subscribe
 
-> **Phạm vi:** Mô tả implementation `hairtos 1.0.0-rc1` đã được đối chiếu với source, config, build graph và host tests hiện có.
+> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](ownership-and-rtc.md) · [Next →](state-machine.md)
 
@@ -20,12 +20,11 @@
 
 Publish/subscribe dùng bảng subscriber tĩnh có kích thước `signal_count × max_subscribers_per_signal`. Subscribe/unsubscribe chạy trong critical section; publish chỉ giữ critical section lúc snapshot pointer, sau đó post ra từng AO ngoài critical section.
 
-Trong project này, cách đọc đúng luôn là **contract → data ownership → state transition → concurrency boundary → failure semantics → evidence**. Điều đó quan trọng hơn việc chỉ nhớ tên API: một RTOS nhỏ vẫn có thể sai nghiêm trọng nếu cùng một task node xuất hiện ở hai list, nếu timeout và object wake cùng “thắng”, hoặc nếu context switch không khớp exception frame của CPU.
 
 <a id="implementation"></a>
 ## Implementation trong repository
 
-Các điểm đã được đối chiếu với source/config hiện tại:
+Implementation hiện tại gồm:
 
 - Signal dưới `HE_SIG_USER` không được subscribe/publish như application signal.
 - Mỗi subscriber chỉ xuất hiện một lần cho một signal; subscribe đầy slot trả `HR_ERROR_NO_MEMORY`.
@@ -45,20 +44,17 @@ Các điểm đã được đối chiếu với source/config hiện tại:
 ```mermaid
 sequenceDiagram
     participant P as Publisher
-    participant PS as PubSub table
-    participant A as AO A
-    participant B as AO B
-    P->>PS: publish(dynamic event)
-    PS->>PS: critical section: snapshot subscribers
-    PS->>A: post_shared() / retain
-    PS->>B: post_shared() / retain
-    PS->>P: delivered_count + status
-    PS->>PS: release publisher dynamic reference
-    A->>A: dispatch then release
-    B->>B: dispatch then release
+    participant PS as PubSub
+    participant A as Subscribers
+    P->>PS: publish dynamic event
+    PS->>PS: snapshot subscriber set
+    PS->>A: post shared reference
+    PS-->>P: delivery count + status
+    PS->>PS: release publisher ref
+    A->>A: dispatch and release
 ```
 
-Sơ đồ trên mô tả **semantic boundary**, không thay thế source. Khi debug, nên lần theo node của sơ đồ tới function/source file tương ứng thay vì suy luận từ diagram đơn lẻ.
+Các function và source file tương ứng được liệt kê trong phần Source map.
 
 <a id="invariants"></a>
 ## Ownership, concurrency và invariants
@@ -85,7 +81,7 @@ Các invariant nền áp dụng cho chủ đề này:
 ## Validation và cách kiểm chứng
 
 - Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
-- Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests`: test suite PASS.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
 - Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
 - Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
 

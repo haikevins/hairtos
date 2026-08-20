@@ -22,7 +22,6 @@
 
 Publisher tạo event từ pool rồi broadcast tới nhiều AO; reference counting bảo vệ lifetime qua các queue.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -49,20 +48,16 @@ Example này không được hiểu như một application production. Nó cố 
 ```mermaid
 sequenceDiagram
     participant P as Publisher
-    participant PS as PubSub table
-    participant A as AO A
-    participant B as AO B
-    P->>PS: publish(dynamic event)
-    PS->>PS: critical section: snapshot subscribers
-    PS->>A: post_shared() / retain
-    PS->>B: post_shared() / retain
-    PS->>P: delivered_count + status
-    PS->>PS: release publisher dynamic reference
-    A->>A: dispatch then release
-    B->>B: dispatch then release
+    participant PS as PubSub
+    participant A as Subscribers
+    P->>PS: publish dynamic event
+    PS->>PS: snapshot subscriber set
+    PS->>A: post shared reference
+    PS-->>P: delivery count + status
+    PS->>PS: release publisher ref
+    A->>A: dispatch and release
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -133,17 +128,16 @@ Ownership cần nhớ:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- Subscriber bỏ sót/nhận thừa event: kiểm tra topic table và subscriber snapshot trong critical section.
+- Dynamic event refcount sai: mỗi shared post retain một reference; publisher reference được release sau publish.
+- Post tới một subscriber fail không được làm hỏng ownership của các subscriber còn lại.
+- Subscribe/unsubscribe và publish phải giữ bảng subscriber nhất quán dưới concurrency.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

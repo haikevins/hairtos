@@ -10,17 +10,27 @@
 
 ## Retained fault record
 
+**Fault capture**
+
 ```mermaid
 sequenceDiagram
-    participant F as Fault/assert
+    participant F as Fault / assert
     participant D as Diagnostics
-    participant N as .noinit.hairtos
+    participant N as .noinit record
+    F->>D: capture fault context
+    D->>N: store retained record
+    F->>F: panic / reset path
+```
+
+**Next-boot recovery**
+
+```mermaid
+sequenceDiagram
     participant B as Next boot
-    F->>D: record panic/fault context
-    D->>N: signature/version/sequence/reason/task/registers
-    F->>F: panic/reset/debug path
-    B->>D: hr_diagnostics_initialize()
-    D->>N: validate retained record
+    participant D as Diagnostics
+    participant N as .noinit record
+    B->>D: initialize diagnostics
+    D->>N: validate record
     N-->>B: previous fault available
 ```
 

@@ -1,6 +1,6 @@
 # Blocking contract
 
-> **Phạm vi:** Mô tả implementation `hairtos 1.0.0-rc1` đã được đối chiếu với source, config, build graph và host tests hiện có.
+> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [Next →](mutex.md)
 
@@ -18,14 +18,13 @@
 <a id="tong-quan"></a>
 ## Tổng quan và bản chất
 
-Tài liệu này giải thích vai trò của chủ đề trong kiến trúc hairtos, cách chủ đề được ánh xạ xuống source hiện tại và các boundary cần giữ để code còn kiểm thử/port được.
+Blocking contract là cơ chế chung mà task delay, queue, semaphore và mutex dùng để đưa current task ra khỏi ready set, gắn wait/timeout metadata và đưa task trở lại READY qua đúng một wake path.
 
-Trong project này, cách đọc đúng luôn là **contract → data ownership → state transition → concurrency boundary → failure semantics → evidence**. Điều đó quan trọng hơn việc chỉ nhớ tên API: một RTOS nhỏ vẫn có thể sai nghiêm trọng nếu cùng một task node xuất hiện ở hai list, nếu timeout và object wake cùng “thắng”, hoặc nếu context switch không khớp exception frame của CPU.
 
 <a id="implementation"></a>
 ## Implementation trong repository
 
-Các điểm đã được đối chiếu với source/config hiện tại:
+Implementation hiện tại gồm:
 
 - wait kind;
 - object wait ordering;
@@ -40,15 +39,28 @@ Các điểm đã được đối chiếu với source/config hiện tại:
 <a id="mo-hinh"></a>
 ## Mô hình và luồng thực thi
 
+**Blocking entry**
+
 ```mermaid
-flowchart TD
-    CONTRACT["Public/documented contract"] --> IMPL["Source implementation"]
-    IMPL --> TEST["Host/target validation"]
-    TEST --> DOC["Documentation evidence"]
-    DOC --> CONTRACT
+flowchart TB
+    CALL["Blocking API"] --> FAST{"Fast path?"}
+    FAST -->|"Success"| RET["Return"]
+    FAST -->|"Must wait"| DETACH["Remove current from ready set"]
+    DETACH --> WAIT["Attach object wait metadata"]
+    WAIT --> TIMEOUT["Optional timeout node"]
 ```
 
-Sơ đồ trên mô tả **semantic boundary**, không thay thế source. Khi debug, nên lần theo node của sơ đồ tới function/source file tương ứng thay vì suy luận từ diagram đơn lẻ.
+**Single-winner wake**
+
+```mermaid
+flowchart TB
+    EVENT["Object wake or timeout"] --> CLEAN["Detach remaining wait metadata"]
+    CLEAN --> RESULT["Publish one wait_result"]
+    RESULT --> READY["Make task READY"]
+    READY --> PEND["PendSV if required"]
+```
+
+Các function và source file tương ứng được liệt kê trong phần Source map.
 
 <a id="invariants"></a>
 ## Ownership, concurrency và invariants
@@ -75,7 +87,7 @@ Các invariant nền áp dụng cho chủ đề này:
 ## Validation và cách kiểm chứng
 
 - Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
-- Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests`: test suite PASS.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
 - Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
 - Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
 

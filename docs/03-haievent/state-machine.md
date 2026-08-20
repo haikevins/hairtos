@@ -1,6 +1,6 @@
 # Flat State Machine
 
-> **Phạm vi:** Mô tả implementation `hairtos 1.0.0-rc1` đã được đối chiếu với source, config, build graph và host tests hiện có.
+> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](publish-subscribe.md) · [Next →](time-event.md)
 
@@ -20,12 +20,11 @@
 
 State machine v1 là flat FSM, không phải HSM. Handler nhận reserved signals ENTRY/EXIT/INIT và user event. Transition được yêu cầu bằng `he_state_transition()` rồi framework thực hiện exit, đổi current state, entry và chuỗi init transition có giới hạn.
 
-Trong project này, cách đọc đúng luôn là **contract → data ownership → state transition → concurrency boundary → failure semantics → evidence**. Điều đó quan trọng hơn việc chỉ nhớ tên API: một RTOS nhỏ vẫn có thể sai nghiêm trọng nếu cùng một task node xuất hiện ở hai list, nếu timeout và object wake cùng “thắng”, hoặc nếu context switch không khớp exception frame của CPU.
 
 <a id="implementation"></a>
 ## Implementation trong repository
 
-Các điểm đã được đối chiếu với source/config hiện tại:
+Implementation hiện tại gồm:
 
 - Reserved signals 1..4 dành cho ENTRY, EXIT, INIT, TIMEOUT; user signal bắt đầu từ 32.
 - State handler trả HANDLED, IGNORED hoặc TRANSITION.
@@ -40,7 +39,7 @@ Các điểm đã được đối chiếu với source/config hiện tại:
 - shallow/deep history;
 - orthogonal regions;
 
-Các chi tiết bổ sung từ audit tài liệu/source:
+Các chi tiết implementation quan trọng:
 
 - transition guards/actions là object riêng.
 
@@ -49,21 +48,18 @@ Các chi tiết bổ sung từ audit tài liệu/source:
 ## Mô hình và luồng thực thi
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Initial
-    Initial --> Current: start + ENTRY + INIT chain
-    Current --> Current: HANDLED / IGNORED
-    Current --> Target: TRANSITION requested
-    note right of Current
-      Transition semantics:
-      EXIT current
-      set target
-      ENTRY target
-      follow INIT up to configured bound
-    end note
+flowchart TB
+    START["Start FSM"] --> ENTRY["ENTRY initial state"]
+    ENTRY --> INIT["Follow INIT chain"]
+    INIT --> CURRENT["Current state"]
+    CURRENT -->|"handled / ignored"| STAY["Remain current"]
+    CURRENT -->|"transition"| EXIT["EXIT current"]
+    EXIT --> TARGET["Set target"]
+    TARGET --> ENTER["ENTRY target"]
+    ENTER --> NEXTINIT["Follow INIT chain"]
 ```
 
-Sơ đồ trên mô tả **semantic boundary**, không thay thế source. Khi debug, nên lần theo node của sơ đồ tới function/source file tương ứng thay vì suy luận từ diagram đơn lẻ.
+Các function và source file tương ứng được liệt kê trong phần Source map.
 
 <a id="invariants"></a>
 ## Ownership, concurrency và invariants
@@ -90,7 +86,7 @@ Các invariant nền áp dụng cho chủ đề này:
 ## Validation và cách kiểm chứng
 
 - Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
-- Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests`: test suite PASS.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
 - Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
 - Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
 

@@ -33,7 +33,7 @@
 ## Validation
 
 - Host tests mạnh ở generic C nhưng không thay hardware exception/peripheral tests.
-- Audit hiện tại không cross-build target vì thiếu ARM toolchain/OpenOCD.
+- Host validation không thay thế target cross-build và OpenOCD/hardware validation.
 - Project không tuyên bố safety certification/hard real-time certification.
 
 ## Roadmap liên quan

@@ -24,20 +24,28 @@
 <a id="architecture"></a>
 ## Kiến trúc tổng thể
 
+**Runtime dependency path**
+
 ```mermaid
-flowchart TD
-    APP["Application / examples"] --> HE["haievent public API"]
-    APP --> HR["hairtos public API"]
-    HE --> K["generic kernel internals"]
+flowchart TB
+    APP["Application / examples"] --> HE["haievent API"]
+    APP --> HR["hairtos API"]
+    HE --> K["Kernel / framework core"]
     HR --> K
-    K --> PORT["architecture port contract"]
-    PORT --> CM3["ARM Cortex-M3 port"]
-    K --> BOARD["board services"]
-    BOARD --> DRV["driver interfaces"]
+```
+
+**Target binding path**
+
+```mermaid
+flowchart TB
+    K["Kernel core"] --> PORT["Port contract"]
+    PORT --> CM3["Cortex-M3 port"]
+    K --> BOARD["Board services"]
+    BOARD --> DRV["Driver contracts"]
     DRV --> SOC["STM32F1 backend"]
-    MAN["CMake target manifest"] -. binds .-> CM3
-    MAN -. binds .-> SOC
-    MAN -. binds .-> BOARD
+    MAN["Target manifest"] -.-> CM3
+    MAN -.-> SOC
+    MAN -.-> BOARD
 ```
 
 ### Boundary chính
@@ -81,12 +89,12 @@ flowchart TD
 ## `haievent`
 
 ```mermaid
-flowchart LR
-    PRODUCER["Task / ISR / publisher / time event"] --> POST["event post"]
-    POST --> AOQ["Active Object queue"]
-    AOQ --> AOT["Dedicated RTOS task"]
-    AOT --> FSM["Flat state machine / RTC"]
-    FSM --> OWN["dynamic event release"]
+flowchart TB
+    PRODUCER["Producer"] --> POST["Post event"]
+    POST --> AOQ["AO queue"]
+    AOQ --> AOT["AO task"]
+    AOT --> FSM["RTC dispatch"]
+    FSM --> OWN["Release dynamic event"]
 ```
 
 v1 có:
@@ -121,20 +129,31 @@ Target hoàn chỉnh hiện tại: `bluepill_f103c8`.
 
 Cortex-M3 context path:
 
+**First-task start**
+
 ```mermaid
 sequenceDiagram
     participant M as main / MSP
     participant S as SVC
-    participant T as task / PSP
+    participant T as first task / PSP
+    M->>S: start kernel via SVC
+    S->>T: restore software context
+    S-->>T: exception return on PSP
+```
+
+**Subsequent context switch**
+
+```mermaid
+sequenceDiagram
+    participant T as current task
     participant P as PendSV
     participant K as kernel selector
-    M->>S: hr_kernel_start() → svc #0
-    S->>T: restore initial frame, Thread mode uses PSP
-    T->>P: yield/preempt/block requests switch
-    P->>P: save R4-R11; hardware frame already on PSP
+    T->>P: switch requested
+    P->>P: save R4-R11
     P->>K: select next task
-    K-->>P: current TCB updated
-    P->>T: restore R4-R11 + exception return
+    K-->>P: update current TCB
+    P->>P: restore next R4-R11
+    P-->>T: exception return
 ```
 
 <a id="build"></a>
@@ -160,7 +179,7 @@ Host tests:
 make TARGET=bluepill_f103c8 host-tests
 ```
 
-### Validation đã chạy trong lần audit tài liệu này
+### Validation baseline
 
 - GCC host build + AddressSanitizer + UndefinedBehaviorSanitizer: **PASS**.
 - `ctest`: **PASS**.
@@ -169,7 +188,7 @@ make TARGET=bluepill_f103c8 host-tests
 - `14-memory-allocator-lab` host demo: **PASS**.
 - `16-diagnostics-stress-stabilization` host stress: **PASS**, 500.000 iteration.
 
-Môi trường audit **không có** `arm-none-eabi-gcc`, `arm-none-eabi-gdb` hoặc OpenOCD, vì vậy README này không tuyên bố firmware target đã được cross-build/flash lại trong phiên hiện tại.
+Host validation không chứng minh target firmware đã cross-build hoặc chạy trên hardware; bước đó cần ARM GNU toolchain, OpenOCD và board `bluepill_f103c8`.
 
 <a id="examples"></a>
 ## Lộ trình examples

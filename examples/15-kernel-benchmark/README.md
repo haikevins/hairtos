@@ -22,7 +22,6 @@
 
 DWT/PB0 đo primitive/scheduler/wakeup/event/timer và report statistical distribution + footprint.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -58,15 +57,14 @@ Example này không được hiểu như một application production. Nó cố 
 ## Luồng thực thi
 
 ```mermaid
-flowchart TD
-    INIT["DWT clock + PB0 marker init"] --> OH["measure timestamp overhead"]
-    OH --> M["collect bounded cycle samples"]
-    M --> ADJ["subtract measurement overhead where valid"]
-    ADJ --> ST["min / p50 / mean / p95 / max"]
-    ST --> OUT["deferred UART report + footprint"]
+flowchart TB
+    INIT["Init DWT + PB0"] --> OH["Measure timestamp overhead"]
+    OH --> M["Collect cycle samples"]
+    M --> ADJ["Subtract valid overhead"]
+    ADJ --> ST["Compute summary statistics"]
+    ST --> OUT["Deferred report + footprint"]
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -185,17 +183,16 @@ Các check/log cứng trong source:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- DWT không tăng: kiểm tra CYCCNT enable và clock-frequency binding.
+- Không log UART trong measurement window nếu mục tiêu là latency kernel; report được defer sau sampling.
+- Adjusted sample phải trừ measurement overhead chỉ khi phép trừ hợp lệ.
+- PB0 marker dùng để đối chiếu external timing; mismatch giữa marker và cycle sample cần kiểm tra measurement boundary.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

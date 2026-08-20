@@ -22,7 +22,6 @@
 
 Không có task/scheduler; board init, UART, LED, millisecond timer và busy delay tạo baseline để so sánh với RTOS.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -39,20 +38,17 @@ Example này không được hiểu như một application production. Nó cố 
 ## Luồng thực thi
 
 ```mermaid
-flowchart TD
-    APP["Application / example"] --> API["hairtos + haievent public API"]
-    API --> K["generic kernel/framework C"]
-    K --> PORT["architecture port contract"]
-    PORT --> ARCH["arch/arm/cortex-m3"]
-    K --> BOARD["board services"]
-    BOARD --> DRV["driver interfaces"]
-    DRV --> SOC["STM32F1 backend"]
-    MAN["CMake target manifest"] -. binds .-> ARCH
-    MAN -. binds .-> SOC
-    MAN -. binds .-> BOARD
+flowchart TB
+    RESET["Reset / startup"] --> BOARD["board_init()"]
+    BOARD --> UART["UART ready"]
+    UART --> LOOP["Bare-metal super-loop"]
+    LOOP --> LED["Toggle PC13"]
+    LED --> LOG["Print heartbeat + uptime"]
+    LOG --> DELAY["Blocking delay 500 ms"]
+    DELAY --> LOOP
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
+Example này không khởi tạo kernel, không tạo TCB và không đi qua SVC/PendSV. Runtime chỉ dùng board services và bare-metal millisecond timebase.
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -113,17 +109,16 @@ Ownership cần nhớ:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- UART không có log: kiểm tra `board_init()`, USART1 clock/pin PA9/PA10 và baud 115200.
+- LED không đổi trạng thái: kiểm tra PC13 active-low và `board_led_toggle()`.
+- `uptime_ms` không tăng hoặc delay sai: kiểm tra bare-metal millisecond timebase và `board_delay_ms()`.
+- Example này không có TCB, ready set, SVC hoặc PendSV; debug không nên bắt đầu từ kernel state.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

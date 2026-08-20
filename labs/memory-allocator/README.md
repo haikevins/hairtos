@@ -1,6 +1,6 @@
 # Bài thực hành bộ cấp phát bộ nhớ
 
-> **Phạm vi:** Mô tả implementation `hairtos 1.0.0-rc1` đã được đối chiếu với source, config, build graph và host tests hiện có.
+> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
 
 [← Root README](../../README.md)
 
@@ -20,12 +20,11 @@
 
 Memory allocator lab cố ý tách khỏi kernel runtime để học fragmentation và metadata mà không phá nguyên tắc static-first của hairtos. Lab có first-fit heap với split/coalesce và fixed-block pool với free-list.
 
-Trong project này, cách đọc đúng luôn là **contract → data ownership → state transition → concurrency boundary → failure semantics → evidence**. Điều đó quan trọng hơn việc chỉ nhớ tên API: một RTOS nhỏ vẫn có thể sai nghiêm trọng nếu cùng một task node xuất hiện ở hai list, nếu timeout và object wake cùng “thắng”, hoặc nếu context switch không khớp exception frame của CPU.
 
 <a id="implementation"></a>
 ## Implementation trong repository
 
-Các điểm đã được đối chiếu với source/config hiện tại:
+Implementation hiện tại gồm:
 
 - Arena do caller cấp; implementation không gọi system malloc.
 - Heap align theo `max_align_t`, dùng block metadata và first-fit scan; free coalesce cả forward/backward khi adjacent block trống.
@@ -40,7 +39,7 @@ Các điểm đã được đối chiếu với source/config hiện tại:
 - internal và external fragmentation;
 - validation trên host và target.
 
-Các chi tiết bổ sung từ audit tài liệu/source:
+Các chi tiết implementation quan trọng:
 
 - Arena phải có alignment và kích thước hợp lệ.
 - Mỗi block thuộc đúng một trạng thái allocated/free.
@@ -54,17 +53,17 @@ Các chi tiết bổ sung từ audit tài liệu/source:
 ## Mô hình và luồng thực thi
 
 ```mermaid
-flowchart LR
-    A["caller-owned arena"] --> H["first-fit heap"]
-    H --> S["split block when remainder is usable"]
-    H --> C["coalesce adjacent free blocks on free"]
-    A --> P["fixed-block pool"]
-    P --> F["free-list pop/push"]
-    H --> ST["fragmentation statistics + validate"]
+flowchart TB
+    A["Caller-owned arena"] --> H["First-fit heap"]
+    H --> S["Optional block split"]
+    H --> C["Coalesce on free"]
+    A --> P["Fixed-block pool"]
+    P --> F["Free-list pop / push"]
+    H --> ST["Statistics + validation"]
     P --> ST
 ```
 
-Sơ đồ trên mô tả **semantic boundary**, không thay thế source. Khi debug, nên lần theo node của sơ đồ tới function/source file tương ứng thay vì suy luận từ diagram đơn lẻ.
+Các function và source file tương ứng được liệt kê trong phần Source map.
 
 <a id="invariants"></a>
 ## Ownership, concurrency và invariants
@@ -91,11 +90,11 @@ Các invariant nền áp dụng cho chủ đề này:
 ## Validation và cách kiểm chứng
 
 - Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
-- Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests`: test suite PASS.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
 - Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
 - Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
 
-Các command xuất hiện trong tài liệu/source hiện hành:
+Các lệnh reproduction chính:
 
 ```bash
 make TARGET=bluepill_f103c8 \

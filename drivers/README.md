@@ -18,10 +18,10 @@
 ## Kiến trúc
 
 ```mermaid
-flowchart TD
-    BOARD["boards/.../board.c"] --> IF["drivers/include public interfaces"]
-    IF --> STM["drivers/stm32f1 backend"]
-    STM --> REG["soc/stm32f1 register model + clock helpers"]
+flowchart TB
+    BOARD["Board binding"] --> IF["Driver interfaces"]
+    IF --> STM["STM32F1 backend"]
+    STM --> REG["STM32F1 register / clock layer"]
 ```
 
 Driver không biết scheduler policy. Board chọn pin/instance và dùng driver; kernel generic không include STM32F1 register header.

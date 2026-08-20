@@ -7,22 +7,13 @@
 ## Progression
 
 ```mermaid
-flowchart LR
-    E1["01 bare metal"] --> E2["02 data structures"]
-    E2 --> E3["03 stack/TCB"]
-    E3 --> E4["04 SVC first task"]
-    E4 --> E5["05 PendSV"]
-    E5 --> E6["06 scheduler"]
-    E6 --> E7["07 timeout"]
-    E7 --> E8["08 preemption/RR"]
-    E8 --> E9["09 queue"]
-    E9 --> E10["10 semaphore/mutex"]
-    E10 --> E11["11 suspend/resume"]
-    E11 --> E12["12 timer"]
-    E12 --> E13["13 haievent"]
-    E13 --> E14["14 allocator lab"]
-    E14 --> E15["15 benchmark"]
-    E15 --> E16["16 diagnostics/stress"]
+flowchart TB
+    E1["01 · Bare metal"] --> E2["02 · Data structures"]
+    E2 --> E3["03–05 · Stack and context"]
+    E3 --> E4["06–08 · Scheduler and time"]
+    E4 --> E5["09–12 · IPC and synchronization"]
+    E5 --> E6["13 · haievent"]
+    E6 --> E7["14–16 · Validation and diagnostics"]
 ```
 
 ## Vì sao thứ tự này quan trọng

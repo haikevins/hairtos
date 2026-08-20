@@ -35,8 +35,8 @@ Examples 03–06 xây stack/start/context/scheduler trước khi 07 thêm kernel
 
 ## CMake truth
 
-Environment/module/feature define của từng example nằm trong `cmake/hairtos_examples.cmake`. README không nên ghi module khác file đó.
+Environment, module set và feature define của từng example được định nghĩa trong `cmake/hairtos_examples.cmake`, là source-of-truth cho build composition.
 
 ## Validation
 
-Host examples 02/14/16 đã chạy PASS trong audit. Target examples cần ARM toolchain + Blue Pill.
+Host validation baseline: examples 02/14/16 PASS. Target examples cần ARM toolchain và Blue Pill.

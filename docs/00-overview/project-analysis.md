@@ -1,6 +1,6 @@
 # Phân tích toàn bộ project `hairtos 1.0.0-rc1`
 
-> **Mục đích:** Đây là source-driven architecture audit: mô tả module nào thật sự tham gia runtime, ownership/concurrency boundary, build graph, evidence và limitation.
+> **Mục đích:** Phân tích source-driven về runtime modules, ownership/concurrency boundary, build graph, evidence và limitation.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](design-principles.md) · [Next →](project-layout.md)
 
@@ -22,18 +22,26 @@
 
 `hairtos` không phải wrapper mỏng quanh một RTOS khác. Scheduler, TCB, wait/timeout lists, queue/semaphore/mutex/timer và Cortex-M3 context switch đều được implement trong repo. Đồng thời project cố ý giữ kernel nhỏ bằng ba nguyên tắc: **static-first**, **opaque public storage**, **target logic outside generic core**.
 
+**Runtime core**
+
 ```mermaid
-flowchart TD
-    APP["examples / application"] --> PUB["public hairtos / haievent APIs"]
-    PUB --> OBJ["opaque caller-owned objects"]
-    OBJ --> CORE["kernel/framework internals"]
-    CORE --> DS["intrusive ready / wait / timeout structures"]
-    CORE --> PORT["architecture port"]
-    PORT --> CM3["SVC / PendSV / PRIMASK / PSP"]
-    CORE --> PLAT["board + driver + SoC"]
-    CMAKE["target/example/module manifests"] -. selects .-> CORE
-    CMAKE -. binds .-> PORT
-    CMAKE -. binds .-> PLAT
+flowchart TB
+    APP["Application / examples"] --> PUB["Public APIs"]
+    PUB --> OBJ["Opaque caller-owned objects"]
+    OBJ --> CORE["Kernel / framework internals"]
+    CORE --> DS["Ready / wait / timeout structures"]
+```
+
+**Target and build binding**
+
+```mermaid
+flowchart TB
+    CORE["Kernel internals"] --> PORT["Architecture port"]
+    PORT --> CM3["SVC / PendSV / PSP"]
+    CORE --> PLAT["Board / driver / SoC"]
+    CMAKE["CMake manifests"] -.-> CORE
+    CMAKE -.-> PORT
+    CMAKE -.-> PLAT
 ```
 
 <a id="layers"></a>
@@ -87,18 +95,26 @@ Ready set có 8 FIFO lists + bitmap. Wait list sort theo effective priority. Tim
 
 Mọi primitive blocking cuối cùng quy về kernel wait contract:
 
+**Blocking entry**
+
 ```mermaid
-flowchart TD
-    CALL["queue/semaphore/mutex/task delay"] --> FASTfast path succeeds?
-    FAST -->|"yes"| RET["return HR_OK"]
-    FAST -->|"no + HR_NO_WAIT"| ERR["immediate status"]
-    FAST -->|"no + wait"| BLOCK["remove current from ready; attach wait node"]
-    BLOCK --> TOfinite timeout?
-    TO -->|"yes"| TLIST["insert timeout node"]
-    TO -->|"forever"| SLEEP["wait only on object"]
-    WAKE["object give/send/unlock or tick expiry"] --> CLEAN["single winning cleanup"]
-    CLEAN --> READY["make task READY / set wait_result"]
-    READY --> PEND["PendSV if higher priority should run"]
+flowchart TB
+    CALL["Blocking API call"] --> FAST{"Fast path succeeds?"}
+    FAST -->|"Yes"| RET["Return HR_OK"]
+    FAST -->|"No wait"| ERR["Return immediately"]
+    FAST -->|"Wait"| BLOCK["Detach current from ready set"]
+    BLOCK --> TO{"Finite timeout?"}
+    TO -->|"Yes"| TLIST["Insert timeout node"]
+    TO -->|"No"| SLEEP["Wait only on object"]
+```
+
+**Wake path**
+
+```mermaid
+flowchart TB
+    WAKE["Object wake or timeout"] --> CLEAN["Single-winner cleanup"]
+    CLEAN --> READY["Set result + READY"]
+    READY --> PEND["PendSV if required"]
 ```
 
 Điểm khó không phải insert list mà là **single-winner wake**: object path và timeout path có thể gần như đồng thời; cleanup phải remove node còn lại và chỉ publish một result.
@@ -136,7 +152,7 @@ Makefile chỉ wrap configure/build/run/check. Host build bật ASan/UBSan; targ
 
 Host suite có 64 test function bao phủ list, ready set, scheduler policy, wait list, timeout wrap, task/stack, port initial frame, queue, semaphore, mutex, timer, diagnostics, haievent, benchmark, allocator và deterministic scheduler stress.
 
-Audit hiện tại đã chạy:
+Validation baseline gồm:
 
 ```text
 hairtos_host_tests: PASS

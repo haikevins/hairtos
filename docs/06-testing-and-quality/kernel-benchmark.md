@@ -1,19 +1,19 @@
 # Kernel benchmark methodology
 
-> **Scope:** Cách example 15 đo và cách diễn giải số liệu; không hard-code kết quả chưa được thu trong audit hiện tại.
+> **Scope:** Cách example 15 đo và cách diễn giải số liệu; không hard-code kết quả target khi chưa có measurement artifact tương ứng.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](diagnostics.md) · [Next →](release-checklist.md)
 
 ## Measurement architecture
 
 ```mermaid
-flowchart TD
-    DWT["DWT CYCCNT"] --> NOW["cycle timestamp"]
-    NOW --> OH["measure read overhead"]
-    OH --> SAMPLES["bounded sample arrays"]
-    PB0["PB0 marker"] --> EXT["optional external logic analyzer"]
-    SAMPLES --> STATS["min/p50/mean/p95/max"]
-    STATS --> UART["deferred UART report"]
+flowchart TB
+    DWT["DWT CYCCNT"] --> NOW["Cycle timestamp"]
+    NOW --> OH["Measure read overhead"]
+    OH --> SAMPLES["Bounded samples"]
+    SAMPLES --> STATS["Summary statistics"]
+    STATS --> UART["Deferred UART report"]
+    PB0["PB0 marker"] --> EXT["Logic analyzer"]
 ```
 
 Metrics trong `examples/15-kernel-benchmark/main.c` gồm timestamp overhead, critical section, scheduler select, primitive queue/semaphore/mutex, yield roundtrip, queue wakeup, haievent dispatch và timer jitter. Footprint lấy từ linker symbols qua board helper.

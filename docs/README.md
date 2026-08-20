@@ -16,18 +16,12 @@
 ## Bản đồ nội dung
 
 ```mermaid
-flowchart TD
-    ROOT["Tài liệu hairtos"]
-    ROOT --> N0["00-overview"]
-    ROOT --> N1["01-kernel-core"]
-    ROOT --> N2["02-synchronization"]
-    ROOT --> N3["03-haievent"]
-    ROOT --> N4["04-platform"]
-    ROOT --> N5["05-api-reference"]
-    ROOT --> N6["06-testing-and-quality"]
-    ROOT --> N7["07-labs-and-examples"]
-    ROOT --> N8["08-appendices"]
-    ROOT --> N9["09-version2"]
+flowchart TB
+    D0["00 · Overview"] --> D1["01–02 · Kernel and synchronization"]
+    D1 --> D2["03–04 · haievent and platform"]
+    D2 --> D3["05–06 · API and validation"]
+    D3 --> D4["07–08 · Labs and appendices"]
+    D4 --> D5["09 · Version 2 roadmap"]
 ```
 
 <a id="cach-doc"></a>
@@ -58,9 +52,9 @@ flowchart TD
 ## Validation baseline
 
 - `VERSION`: `1.0.0-rc1`.
-- Host test suite hiện có 64 test function và đã chạy PASS trong lần audit tài liệu này.
+- Host validation baseline: 64 test function trong suite hiện có đều PASS.
 - `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS trên host.
-- Target tham chiếu là `bluepill_f103c8`; cross toolchain/OpenOCD không có trong môi trường audit nên không tuyên bố đã flash lại hardware.
+- Target tham chiếu là `bluepill_f103c8`; host evidence không thay thế cross-build, OpenOCD và hardware validation trên board.
 
 <a id="references"></a>
 ## Tài liệu tham khảo

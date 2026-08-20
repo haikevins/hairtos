@@ -40,22 +40,30 @@ haievent
 <a id="layers"></a>
 ## Layer và dependency direction
 
+**Runtime dependency path**
+
 ```mermaid
-flowchart TD
-    APP["Application / examples"] --> HEAPI["haievent public API"]
-    APP --> HRAPI["hairtos public API"]
+flowchart TB
+    APP["Application / examples"] --> HEAPI["haievent API"]
+    APP --> HRAPI["hairtos API"]
     HEAPI --> HEINT["haievent internals"]
     HEINT --> HRAPI
-    HRAPI --> KINT["kernel internals"]
-    KINT --> PORTC["architecture port contract"]
-    PORTC --> ARM["arch/arm/cortex-m3"]
-    KINT --> BOARD["board services"]
-    BOARD --> DAPI["driver public contracts"]
-    DAPI --> STMDRV["STM32F1 driver backend"]
-    STMDRV --> SOC["SoC register/clock layer"]
-    MAN["target manifest"] -. binds .-> ARM
-    MAN -. binds .-> SOC
-    MAN -. binds .-> BOARD
+    HRAPI --> KINT["Kernel internals"]
+```
+
+**Target/platform path**
+
+```mermaid
+flowchart TB
+    KINT["Kernel internals"] --> PORTC["Port contract"]
+    PORTC --> ARM["Cortex-M3 port"]
+    KINT --> BOARD["Board services"]
+    BOARD --> DAPI["Driver contracts"]
+    DAPI --> STMDRV["STM32F1 backend"]
+    STMDRV --> SOC["SoC register / clock"]
+    MAN["Target manifest"] -.-> ARM
+    MAN -.-> BOARD
+    MAN -.-> SOC
 ```
 
 Dependency direction được thiết kế để generic kernel không biết STM32 register, pin hay OpenOCD config. Application bình thường cũng không biết TCB layout. Chỉ architecture assembly có một contract rất hẹp với TCB: `stack_pointer` phải ở offset 0.
@@ -83,16 +91,24 @@ Kernel state đi từ reset/uninitialized → initialized → running. `hr_kerne
 
 ### Scheduling path
 
+**Ready selection**
+
 ```mermaid
-flowchart LR
-    READY["READY nodes"] --> Q["8 priority FIFO queues"]
-    Q --> BM["ready bitmap"]
-    BM --> SEL["smallest active priority number"]
+flowchart TB
+    READY["READY nodes"] --> Q["Priority FIFO queues"]
+    Q --> BM["Ready bitmap"]
+    BM --> SEL["Pick highest priority"]
     SEL --> RUN["RUNNING"]
-    RUN -->|"higher priority wakes"| PRE["PendSV preemption"]
-    RUN -->|"slice / yield"| ROT["rotate equal-priority FIFO"]
-    RUN -->|"block"| WAIT["wait + optional timeout"]
-    WAIT --> READY
+```
+
+**Running-task outcomes**
+
+```mermaid
+flowchart TB
+    RUN["RUNNING"] -->|"preempt"| PRE["PendSV"]
+    RUN -->|"yield / slice"| ROT["Rotate FIFO"]
+    RUN -->|"block"| WAIT["Wait + optional timeout"]
+    WAIT --> READY["READY"]
 ```
 
 ### Context path
@@ -111,11 +127,9 @@ sequenceDiagram
     participant P as Producer
     participant Q as AO queue
     participant A as AO task
-    participant F as Flat FSM
-    P->>Q: post event (retain if dynamic)
+    P->>Q: post event
     Q->>A: receive pointer
-    A->>F: dispatch RTC
-    F-->>A: handled/ignored/transition
+    A->>A: RTC dispatch
     A->>A: release dynamic event
 ```
 

@@ -22,7 +22,6 @@
 
 Expiry xử lý từ tick ISR nhưng callback chạy trong timer task; demo one-shot/periodic/reset/change/stop semantics.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -45,22 +44,30 @@ Example này không được hiểu như một application production. Nó cố 
 <a id="runtime"></a>
 ## Luồng thực thi
 
+**Expiry handoff**
+
 ```mermaid
 sequenceDiagram
     participant ST as SysTick ISR
-    participant TL as Timer timeout list
-    participant TS as Timer-service task
-    participant CB as User callback
-    ST->>TL: advance(now)
-    TL-->>ST: expired timer(s)
-    ST->>ST: pending_count++ / queue pending node
-    ST->>TS: wake service task if needed
-    TS->>TS: pop one pending timer
-    TS->>CB: callback(argument)
-    CB-->>TS: return in task context
+    participant TL as Timer list
+    participant TS as Timer service
+    ST->>TL: advance time
+    TL-->>ST: expired timers
+    ST->>TS: queue pending work
+    ST->>TS: wake service task
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
+**Callback execution**
+
+```mermaid
+sequenceDiagram
+    participant TS as Timer service
+    participant CB as User callback
+    TS->>TS: pop pending timer
+    TS->>CB: invoke callback
+    CB-->>TS: return
+```
+
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -139,17 +146,16 @@ Các check/log cứng trong source:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- Callback chạy trong SysTick ISR là sai contract; expiry chỉ enqueue pending work và wake timer-service task.
+- Timer hết hạn nhưng callback không chạy: kiểm tra timeout list, pending node/count và service-task wake.
+- Periodic timer drift/loss: kiểm tra rearm semantics và pending handling.
+- Callback có thể gọi task-context API vì nó chạy trong timer-service task, không phải ISR.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

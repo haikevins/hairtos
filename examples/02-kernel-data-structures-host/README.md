@@ -22,7 +22,6 @@
 
 Chạy không cần MCU để chứng minh ready set chọn priority nhỏ nhất, FIFO rotation và wait list sắp theo priority.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -39,19 +38,18 @@ Example này không được hiểu như một application production. Nó cố 
 ## Luồng thực thi
 
 ```mermaid
-flowchart TD
-    WAKE["Task becomes READY"] --> INSERT["Insert intrusive ready node into queue[priority]"]
-    INSERT --> BITMAP["Set ready bitmap bit"]
-    BITMAP --> SELECT["Find smallest set priority number"]
-    SELECT --> FRONT["Select FIFO front of highest-priority queue"]
-    FRONT --> RUN["RUNNING task"]
-    RUN -->|"yield / time slice"| ROTATE["Rotate highest-priority FIFO"]
-    RUN -->|"blocks"| REMOVE["Remove from ready set"]
+flowchart TB
+    WAKE["Task becomes READY"] --> INSERT["Enqueue at priority"]
+    INSERT --> BITMAP["Set ready bitmap"]
+    BITMAP --> SELECT["Pick highest priority"]
+    SELECT --> FRONT["Select FIFO head"]
+    FRONT --> RUN["RUNNING"]
+    RUN -->|"yield / slice"| ROTATE["Rotate queue"]
+    RUN -->|"block"| REMOVE["Remove from ready set"]
     ROTATE --> SELECT
     REMOVE --> SELECT
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -118,17 +116,16 @@ Ownership cần nhớ:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- Highest-ready sai: kiểm tra priority ordering, ready bitmap và owner mapping của intrusive node.
+- Round-robin sai sau `hr_ready_set_rotate_highest()`: kiểm tra FIFO links/count ở priority cao nhất.
+- Wait-list head sai: kiểm tra effective-priority ordering và insert/remove invariants.
+- Example chạy trên host; GDB có thể đặt breakpoint trực tiếp vào `hr_ready_set_*` và `hr_wait_list_*`, không cần OpenOCD.
 
 <a id="validation"></a>
 ## Validation
 
-- Example này đã được chạy trực tiếp trên host trong audit hiện tại và PASS.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Host validation baseline: example này chạy trực tiếp trên host và PASS.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

@@ -24,7 +24,7 @@ Version 2 phải bắt đầu từ behavior v1 đang có: static object ownershi
 - Phase theo dependency: correctness/interrupt contract → observability → HSM core → portability target 2 → tickless → stabilization/release.
 - Mỗi phase phải có problem/contract/memory/runtime/ISR/failure/tests/migration/docs trước merge.
 - chốt v1 behavior;
-- docs/audit complete;
+- documentation baseline complete;
 - host test invocation ổn định;
 - hardware baseline Blue Pill;
 - known issues list.

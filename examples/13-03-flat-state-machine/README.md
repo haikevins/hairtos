@@ -22,7 +22,6 @@
 
 ENTRY/EXIT/INIT và transition được quan sát rõ mà chưa có Active Object concurrency.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -46,21 +45,17 @@ Example này không được hiểu như một application production. Nó cố 
 ## Luồng thực thi
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Initial
-    Initial --> Current: start + ENTRY + INIT chain
-    Current --> Current: HANDLED / IGNORED
-    Current --> Target: TRANSITION requested
-    note right of Current
-      Transition semantics:
-      EXIT current
-      set target
-      ENTRY target
-      follow INIT up to configured bound
-    end note
+flowchart TB
+    START["Start FSM"] --> ENTRY["ENTRY initial state"]
+    ENTRY --> INIT["Follow INIT chain"]
+    INIT --> CURRENT["Current state"]
+    CURRENT -->|"handled / ignored"| STAY["Remain current"]
+    CURRENT -->|"transition"| EXIT["EXIT current"]
+    EXIT --> TARGET["Set target"]
+    TARGET --> ENTER["ENTRY target"]
+    ENTER --> NEXTINIT["Follow INIT chain"]
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -132,17 +127,16 @@ Các check/log cứng trong source:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- ENTRY/EXIT/INIT sai thứ tự: kiểm tra transition path trong `he_state_machine.c`.
+- HANDLED/IGNORED không được tự đổi current state.
+- INIT chain phải dừng trong configured bound; loop init không được chạy vô hạn.
+- FSM v1 là flat state machine, không có parent-state propagation như HSM.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

@@ -22,7 +22,6 @@
 
 Producer/consumer dùng queue capacity nhỏ để buộc cả direct handoff, blocking và timeout trở nên quan sát được.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -49,21 +48,28 @@ Example này không được hiểu như một application production. Nó cố 
 <a id="runtime"></a>
 ## Luồng thực thi
 
+**Send path**
+
 ```mermaid
-flowchart LR
+flowchart TB
     S["Sender"] --> Q{"Receiver waiting?"}
-    Q -->|"yes"| H["Direct handoff to waiter buffer"]
-    Q -->|"no"| CAP{"FIFO has capacity?"}
-    CAP -->|"yes"| ENQ["Copy item to circular storage"]
-    CAP -->|"no + timeout"| SW["Block sender on priority wait list"]
-    R["Receiver"] --> E{"FIFO has item?"}
-    E -->|"yes"| DEQ["Dequeue FIFO item"]
-    E -->|"no"| SS{"Sender waiting?"}
-    SS -->|"yes"| DH["Direct handoff from sender buffer"]
-    SS -->|"no + timeout"| RW["Block receiver"]
+    Q -->|"Yes"| H["Direct handoff"]
+    Q -->|"No"| CAP{"FIFO space?"}
+    CAP -->|"Yes"| ENQ["Enqueue item"]
+    CAP -->|"No + wait"| SW["Block sender"]
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
+**Receive path**
+
+```mermaid
+flowchart TB
+    R["Receiver"] --> E{"FIFO item?"}
+    E -->|"Yes"| DEQ["Dequeue item"]
+    E -->|"No"| SS{"Sender waiting?"}
+    SS -->|"Yes"| DH["Direct handoff"]
+    SS -->|"No + wait"| RW["Block receiver"]
+```
+
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -146,17 +152,16 @@ Các check/log cứng trong source:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- Sender/receiver treo: kiểm tra queue wait lists, timeout node và single-winner wake cleanup.
+- Data sai sau direct handoff: kiểm tra item size và waiter buffer ownership.
+- FIFO path sai: kiểm tra head/tail/count của circular storage khi không có waiter.
+- Timeout và object wake không được cùng publish hai kết quả cho một task.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

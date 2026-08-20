@@ -1,6 +1,6 @@
 # Time và timeout
 
-> **Phạm vi:** Mô tả implementation `hairtos 1.0.0-rc1` đã được đối chiếu với source, config, build graph và host tests hiện có.
+> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](task-model.md)
 
@@ -20,12 +20,11 @@
 
 Timeout dùng hai sorted intrusive list: `current` cho deadline chưa wrap và `overflow` cho deadline sau khi `uint32_t` tick wrap. Khi `now` wrap qua `last_tick`, hai list được swap. Cách này giữ so sánh deadline đơn giản mà vẫn hỗ trợ tick 32-bit wrap-around.
 
-Trong project này, cách đọc đúng luôn là **contract → data ownership → state transition → concurrency boundary → failure semantics → evidence**. Điều đó quan trọng hơn việc chỉ nhớ tên API: một RTOS nhỏ vẫn có thể sai nghiêm trọng nếu cùng một task node xuất hiện ở hai list, nếu timeout và object wake cùng “thắng”, hoặc nếu context switch không khớp exception frame của CPU.
 
 <a id="implementation"></a>
 ## Implementation trong repository
 
-Các điểm đã được đối chiếu với source/config hiện tại:
+Implementation hiện tại gồm:
 
 - Mỗi blocked task có đúng một timeout node và node chỉ nằm trong một trong hai timeout list khi timeout hữu hạn đang active.
 - `HR_WAIT_FOREVER` không cần timeout node; `HR_NO_WAIT` không block.
@@ -37,20 +36,28 @@ Các điểm đã được đối chiếu với source/config hiện tại:
 <a id="mo-hinh"></a>
 ## Mô hình và luồng thực thi
 
+**Timeout insertion**
+
 ```mermaid
-flowchart TD
-    BLOCK["Task blocks with finite timeout"] --> WAKE["wake_tick = now + delay"]
-    WAKE --> CHOOSE{"wake_tick wrapped?"}
-    CHOOSE -->|"no"| CURRENT["insert sorted in current list"]
-    CHOOSE -->|"yes"| OVERFLOW["insert sorted in overflow list"]
-    TICK["kernel tick advances"] --> WRAP{"now < last_tick?"}
-    WRAP -->|"yes"| SWAP["swap current and overflow"]
-    WRAP -->|"no"| EXPIRE["pop deadlines <= now"]
-    SWAP --> EXPIRE
-    EXPIRE --> READY["cleanup wait + make task READY"]
+flowchart TB
+    BLOCK["Finite-timeout block"] --> WAKE["Compute wake_tick"]
+    WAKE --> CHOOSE{"Wrapped deadline?"}
+    CHOOSE -->|"No"| CURRENT["Insert current list"]
+    CHOOSE -->|"Yes"| OVERFLOW["Insert overflow list"]
 ```
 
-Sơ đồ trên mô tả **semantic boundary**, không thay thế source. Khi debug, nên lần theo node của sơ đồ tới function/source file tương ứng thay vì suy luận từ diagram đơn lẻ.
+**Tick expiry path**
+
+```mermaid
+flowchart TB
+    TICK["Kernel tick"] --> WRAP{"Tick wrapped?"}
+    WRAP -->|"Yes"| SWAP["Swap timeout lists"]
+    WRAP -->|"No"| EXPIRE["Expire due nodes"]
+    SWAP --> EXPIRE
+    EXPIRE --> READY["Cleanup wait + READY"]
+```
+
+Các function và source file tương ứng được liệt kê trong phần Source map.
 
 <a id="invariants"></a>
 ## Ownership, concurrency và invariants
@@ -77,7 +84,7 @@ Các invariant nền áp dụng cho chủ đề này:
 ## Validation và cách kiểm chứng
 
 - Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
-- Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests`: test suite PASS.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
 - Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
 - Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
 

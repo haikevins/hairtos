@@ -22,7 +22,6 @@
 
 Nối ISR-safe event production với Active Object queue và RTC dispatch.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -55,21 +54,28 @@ Example này không được hiểu như một application production. Nó cố 
 <a id="runtime"></a>
 ## Luồng thực thi
 
+**Dynamic event lifetime**
+
 ```mermaid
 stateDiagram-v2
-    [*] --> FREE: pool block available
-    FREE --> OWNED: he_event_new
-    OWNED --> SHARED: retain / post / publish
-    SHARED --> SHARED: more references
-    SHARED --> OWNED: release but refcount > 1
+    direction TB
+    [*] --> FREE
+    FREE --> OWNED: allocate
+    OWNED --> SHARED: share
+    SHARED --> OWNED: refs drop to one
     OWNED --> FREE: final release
-    state STATIC {
-      [*] --> CallerOwned
-      CallerOwned --> CallerOwned: post/dispatch does not free storage
-    }
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
+Additional retain/release operations can change the reference count while the event remains in `SHARED`; they do not require a state transition.
+
+**Static event ownership**
+
+```mermaid
+flowchart TB
+    CALLER["Caller-owned storage"] --> POST["Post / dispatch"]
+    POST --> SAME["Caller remains owner"]
+```
+
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -139,17 +145,16 @@ Ownership cần nhớ:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- Dynamic event leak/double free: kiểm tra reference count qua allocate → post/retain → dispatch/release.
+- ISR post fail: kiểm tra AO queue capacity và `_from_isr` contract.
+- Static event không được framework free; storage vẫn thuộc caller.
+- Queue failure phải trả status rõ và không làm mất ownership bookkeeping.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

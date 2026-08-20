@@ -22,7 +22,6 @@
 
 Queue/semaphore/mutex/timer + retained faults + health check + runtime stats; host scheduler stress có 500k iterations.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -50,17 +49,24 @@ Example này không được hiểu như một application production. Nó cố 
 <a id="runtime"></a>
 ## Luồng thực thi
 
+**Runtime health path**
+
 ```mermaid
-flowchart TD
-    RUN["Kernel runtime"] --> CNT["runtime counters"]
-    RUN --> CHECK["health/invariant + stack checks"]
-    FAULT["assert / HardFault / UsageFault / ..."] --> REC["retained panic record in .noinit"]
-    REC --> HOOK["weak panic/stack hooks"]
-    RESET["next boot"] --> INIT["hr_diagnostics_initialize"]
-    INIT --> READ["read previous retained record"]
+flowchart TB
+    RUN["Kernel runtime"] --> CNT["Runtime counters"]
+    RUN --> CHECK["Health + stack checks"]
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
+**Retained fault path**
+
+```mermaid
+flowchart TB
+    FAULT["Fault / assert"] --> REC["Retained .noinit record"]
+    REC --> HOOK["Panic / stack hooks"]
+    RESET["Next boot"] --> INIT["Initialize diagnostics"]
+    INIT --> READ["Read retained record"]
+```
+
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -148,17 +154,16 @@ Ownership cần nhớ:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- Health check fail: kiểm tra ready/timeout/task counts, stack guard và kernel invariant report.
+- Retained panic không xuất hiện sau reset: kiểm tra `.noinit.hairtos`, linker placement và record validation.
+- Producer/consumer/pulse progress dừng: kiểm tra queue, semaphore, mutex và periodic timer interaction.
+- Fault injection chỉ nên bật có chủ đích; sau boot kế tiếp record được đọc rồi clear theo example flow.
 
 <a id="validation"></a>
 ## Validation
 
 - Host variant (`scheduler_stress_main`) đã chạy PASS với 500.000 iteration; target diagnostics workload cần board để xác nhận retained fault/UART/stack behavior.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

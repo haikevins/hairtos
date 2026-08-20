@@ -1,6 +1,6 @@
 # Queue
 
-> **Phạm vi:** Mô tả implementation `hairtos 1.0.0-rc1` đã được đối chiếu với source, config, build graph và host tests hiện có.
+> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](mutex.md) · [Next →](semaphore.md)
 
@@ -20,12 +20,11 @@
 
 Queue là bounded FIFO dùng caller-owned byte storage và một control block opaque. Ngoài circular buffer thông thường, implementation còn có priority-ordered wait list cho sender/receiver và đường direct handoff để chuyển item thẳng giữa producer/consumer đang chờ khi có thể.
 
-Trong project này, cách đọc đúng luôn là **contract → data ownership → state transition → concurrency boundary → failure semantics → evidence**. Điều đó quan trọng hơn việc chỉ nhớ tên API: một RTOS nhỏ vẫn có thể sai nghiêm trọng nếu cùng một task node xuất hiện ở hai list, nếu timeout và object wake cùng “thắng”, hoặc nếu context switch không khớp exception frame của CPU.
 
 <a id="implementation"></a>
 ## Implementation trong repository
 
-Các điểm đã được đối chiếu với source/config hiện tại:
+Implementation hiện tại gồm:
 
 - Storage queue không được cấp phát động; `item_size × capacity` do caller sở hữu và phải tồn tại suốt đời queue.
 - Task API hỗ trợ timeout; ISR API luôn non-blocking và báo `higher_priority_task_woken` thay vì tự schedule trực tiếp.
@@ -43,21 +42,29 @@ Các điểm đã được đối chiếu với source/config hiện tại:
 <a id="mo-hinh"></a>
 ## Mô hình và luồng thực thi
 
+**Send path**
+
 ```mermaid
-flowchart LR
+flowchart TB
     S["Sender"] --> Q{"Receiver waiting?"}
-    Q -->|"yes"| H["Direct handoff to waiter buffer"]
-    Q -->|"no"| CAP{"FIFO has capacity?"}
-    CAP -->|"yes"| ENQ["Copy item to circular storage"]
-    CAP -->|"no + timeout"| SW["Block sender on priority wait list"]
-    R["Receiver"] --> E{"FIFO has item?"}
-    E -->|"yes"| DEQ["Dequeue FIFO item"]
-    E -->|"no"| SS{"Sender waiting?"}
-    SS -->|"yes"| DH["Direct handoff from sender buffer"]
-    SS -->|"no + timeout"| RW["Block receiver"]
+    Q -->|"Yes"| H["Direct handoff"]
+    Q -->|"No"| CAP{"FIFO space?"}
+    CAP -->|"Yes"| ENQ["Enqueue item"]
+    CAP -->|"No + wait"| SW["Block sender"]
 ```
 
-Sơ đồ trên mô tả **semantic boundary**, không thay thế source. Khi debug, nên lần theo node của sơ đồ tới function/source file tương ứng thay vì suy luận từ diagram đơn lẻ.
+**Receive path**
+
+```mermaid
+flowchart TB
+    R["Receiver"] --> E{"FIFO item?"}
+    E -->|"Yes"| DEQ["Dequeue item"]
+    E -->|"No"| SS{"Sender waiting?"}
+    SS -->|"Yes"| DH["Direct handoff"]
+    SS -->|"No + wait"| RW["Block receiver"]
+```
+
+Các function và source file tương ứng được liệt kê trong phần Source map.
 
 <a id="invariants"></a>
 ## Ownership, concurrency và invariants
@@ -84,7 +91,7 @@ Các invariant nền áp dụng cho chủ đề này:
 ## Validation và cách kiểm chứng
 
 - Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
-- Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests`: test suite PASS.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
 - Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
 - Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
 

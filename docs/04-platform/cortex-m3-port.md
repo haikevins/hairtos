@@ -1,6 +1,6 @@
 # ARM Cortex-M3 port
 
-> **Phạm vi:** Mô tả implementation `hairtos 1.0.0-rc1` đã được đối chiếu với source, config, build graph và host tests hiện có.
+> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [Next →](drivers.md)
 
@@ -20,12 +20,11 @@
 
 Cortex-M3 port tận dụng exception stacking của CPU: hardware tự lưu R0–R3, R12, LR, PC, xPSR lên PSP; PendSV chỉ phải lưu/khôi phục R4–R11. SVC được dùng để đi từ `main()`/MSP sang task đầu tiên/PSP, còn PendSV là đường context-switch sau đó.
 
-Trong project này, cách đọc đúng luôn là **contract → data ownership → state transition → concurrency boundary → failure semantics → evidence**. Điều đó quan trọng hơn việc chỉ nhớ tên API: một RTOS nhỏ vẫn có thể sai nghiêm trọng nếu cùng một task node xuất hiện ở hai list, nếu timeout và object wake cùng “thắng”, hoặc nếu context switch không khớp exception frame của CPU.
 
 <a id="implementation"></a>
 ## Implementation trong repository
 
-Các điểm đã được đối chiếu với source/config hiện tại:
+Implementation hiện tại gồm:
 
 - TCB đặt `stack_pointer` ở offset 0 và có `_Static_assert` để assembly có thể load/store saved PSP mà không cần biết layout C còn lại.
 - Initial stack frame được dựng giống exception-return frame thật; top stack được align xuống 8 byte.
@@ -40,7 +39,7 @@ Các điểm đã được đối chiếu với source/config hiện tại:
 - Cortex-M4F variant với optional FP context;
 - interrupt priority validation;
 
-Các chi tiết bổ sung từ audit tài liệu/source:
+Các chi tiết implementation quan trọng:
 
 - actual second target.
 
@@ -48,24 +47,32 @@ Các chi tiết bổ sung từ audit tài liệu/source:
 <a id="mo-hinh"></a>
 ## Mô hình và luồng thực thi
 
+**Exception entry and software save**
+
 ```mermaid
 sequenceDiagram
-    participant T as Current task / PSP
-    participant CPU as Cortex-M3 hardware
-    participant P as PendSV_Handler
-    participant K as hr_kernel_select_next_from_pendsv()
+    participant T as Current task
+    participant CPU as Cortex-M3
+    participant P as PendSV
     T->>CPU: PendSV pending
-    CPU->>CPU: stack R0-R3,R12,LR,PC,xPSR on PSP
-    CPU->>P: enter Handler mode on MSP
-    P->>P: save R4-R11 to current PSP
-    P->>K: select next TCB
-    K-->>P: g_hr_current_task_control_block updated
-    P->>P: restore R4-R11 from next PSP
-    P->>CPU: exception return 0xFFFFFFFD
-    CPU->>T: unstack hardware frame and resume next task
+    CPU->>P: stack hardware frame
+    P->>P: save R4-R11
 ```
 
-Sơ đồ trên mô tả **semantic boundary**, không thay thế source. Khi debug, nên lần theo node của sơ đồ tới function/source file tương ứng thay vì suy luận từ diagram đơn lẻ.
+**Task selection and restore**
+
+```mermaid
+sequenceDiagram
+    participant P as PendSV
+    participant K as Kernel selector
+    participant N as Next task
+    P->>K: select next TCB
+    K-->>P: update current TCB
+    P->>P: restore R4-R11
+    P-->>N: exception return
+```
+
+Các function và source file tương ứng được liệt kê trong phần Source map.
 
 <a id="invariants"></a>
 ## Ownership, concurrency và invariants
@@ -92,7 +99,7 @@ Các invariant nền áp dụng cho chủ đề này:
 ## Validation và cách kiểm chứng
 
 - Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
-- Audit hiện tại đã chạy `make TARGET=bluepill_f103c8 host-tests`: test suite PASS.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
 - Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
 - Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
 

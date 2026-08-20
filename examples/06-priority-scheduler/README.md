@@ -22,7 +22,6 @@
 
 Low được register trước nhưng không được chạy khi high READY; hai high task cùng priority rotate bằng yield.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -48,19 +47,18 @@ Example này không được hiểu như một application production. Nó cố 
 ## Luồng thực thi
 
 ```mermaid
-flowchart TD
-    WAKE["Task becomes READY"] --> INSERT["Insert intrusive ready node into queue[priority]"]
-    INSERT --> BITMAP["Set ready bitmap bit"]
-    BITMAP --> SELECT["Find smallest set priority number"]
-    SELECT --> FRONT["Select FIFO front of highest-priority queue"]
-    FRONT --> RUN["RUNNING task"]
-    RUN -->|"yield / time slice"| ROTATE["Rotate highest-priority FIFO"]
-    RUN -->|"blocks"| REMOVE["Remove from ready set"]
+flowchart TB
+    WAKE["Task becomes READY"] --> INSERT["Enqueue at priority"]
+    INSERT --> BITMAP["Set ready bitmap"]
+    BITMAP --> SELECT["Pick highest priority"]
+    SELECT --> FRONT["Select FIFO head"]
+    FRONT --> RUN["RUNNING"]
+    RUN -->|"yield / slice"| ROTATE["Rotate queue"]
+    RUN -->|"block"| REMOVE["Remove from ready set"]
     ROTATE --> SELECT
     REMOVE --> SELECT
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -140,17 +138,16 @@ Các check/log cứng trong source:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- Low-priority task chạy khi high tasks còn READY: kiểm tra ready bitmap và quy tắc số priority nhỏ hơn là cao hơn.
+- High-A/High-B không thay phiên khi yield: kiểm tra FIFO rotation trong cùng priority.
+- Current-task mismatch: kiểm tra selector lấy FIFO head của mức priority cao nhất.
+- Đừng suy luận scheduler từ thứ tự task được đăng ký; priority quyết định trước registration order.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

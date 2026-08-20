@@ -22,7 +22,6 @@
 
 Low giữ mutex, High block và boost Low; Medium CPU-bound không được kéo dài inversion.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -55,19 +54,15 @@ sequenceDiagram
     participant H as High task p=1
     participant M as Mutex
     participant L as Low owner p=5
-    participant S as Scheduler
-    L->>M: lock()
-    H->>M: lock(timeout)
-    M->>H: block on waiter list
-    M->>L: recompute effective priority = 1
-    L->>S: requeued as p=1
-    L->>M: unlock()
-    M->>H: direct ownership handoff
-    M->>L: restore/recompute effective priority
-    H->>S: READY at high priority
+    L->>M: lock
+    H->>M: lock with timeout
+    M-->>H: block on wait list
+    M-->>L: inherit priority 1
+    L->>M: unlock
+    M-->>H: direct ownership handoff
+    M-->>L: recompute priority
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -149,17 +144,16 @@ Các check/log cứng trong source:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- Priority inversion không được rút ngắn: kiểm tra owner effective priority và requeue sau inheritance.
+- Unlock không handoff đúng waiter: kiểm tra priority-ordered waiter list và ownership transfer.
+- Owner không trở về priority phù hợp: recompute từ base priority và toàn bộ mutex còn sở hữu.
+- Non-owner unlock hoặc recursive-count sai phải trả status theo mutex contract, không silent success.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

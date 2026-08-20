@@ -9,11 +9,11 @@
 `tests/stress/scheduler_stress_core.c` tạo sequence insert/remove/rotate trên ready-set trong 500.000 iteration với deterministic PRNG/workload. Sau mỗi iteration, validator chạy để kiểm tra list/bitmap/count invariant.
 
 ```mermaid
-flowchart LR
-    STEP["deterministic operation"] --> MUT["insert / remove / rotate"]
-    MUT --> VAL["hr_ready_set_validate"]
-    VAL -->|"valid"| NEXT["next iteration"]
-    VAL -->|"invalid"| FAIL["FAIL immediately"]
+flowchart TB
+    STEP["Deterministic operation"] --> MUT["Insert / remove / rotate"]
+    MUT --> VAL["Validate ready set"]
+    VAL -->|"valid"| NEXT["Next iteration"]
+    VAL -->|"invalid"| FAIL["FAIL"]
     NEXT --> STEP
 ```
 
@@ -25,7 +25,7 @@ Stress test tìm các bug state-sequence mà vài unit case đơn lẻ không ch
 
 Nó không tạo preemption thật, không chạy PendSV, không mô phỏng cache/FPU (target cũng không có FPU) hay asynchronous MCU interrupt. Đây là **data-structure/policy stress**, không phải hardware concurrency stress.
 
-## Kết quả audit
+## Kết quả validation
 
 500.000 iteration PASS với 500.000 validation call.
 

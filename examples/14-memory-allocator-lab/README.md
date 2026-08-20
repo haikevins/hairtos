@@ -22,7 +22,6 @@
 
 First-fit heap và fixed pool chạy host/target để quan sát fragmentation, coalescing và validation mà không đưa dynamic allocation vào kernel.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -46,17 +45,16 @@ Example này không được hiểu như một application production. Nó cố 
 ## Luồng thực thi
 
 ```mermaid
-flowchart LR
-    A["caller-owned arena"] --> H["first-fit heap"]
-    H --> S["split block when remainder is usable"]
-    H --> C["coalesce adjacent free blocks on free"]
-    A --> P["fixed-block pool"]
-    P --> F["free-list pop/push"]
-    H --> ST["fragmentation statistics + validate"]
+flowchart TB
+    A["Caller-owned arena"] --> H["First-fit heap"]
+    H --> S["Optional block split"]
+    H --> C["Coalesce on free"]
+    A --> P["Fixed-block pool"]
+    P --> F["Free-list pop / push"]
+    H --> ST["Statistics + validation"]
     P --> ST
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -127,17 +125,16 @@ Ownership cần nhớ:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- First-fit trả block sai hoặc overlap: kiểm tra header size/alignment và split condition.
+- Không coalesce được sau free: kiểm tra physical adjacency và free-list traversal.
+- Pool double-free/corruption: kiểm tra free-list ownership và validator.
+- Host variant phù hợp để dùng sanitizer/GDB; target variant dùng cùng allocator logic trên caller-owned arena.
 
 <a id="validation"></a>
 ## Validation
 
-- Host variant đã chạy PASS trong audit hiện tại; allocator tests cũng nằm trong host test suite.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Host validation baseline: host variant PASS; allocator tests cũng nằm trong host test suite.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

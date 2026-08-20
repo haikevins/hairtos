@@ -1,6 +1,6 @@
 # Validation baseline
 
-> **Thời điểm audit tài liệu:** source version `1.0.0-rc1`.
+> **Source baseline:** `1.0.0-rc1`.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](testing-guide.md)
 
@@ -17,8 +17,6 @@
 | Example 14 allocator host | PASS |
 | Example 16 scheduler stress host | PASS |
 | Stress iterations | 500,000 |
-| Non-Markdown source after documentation rewrite | byte-for-byte unchanged |
-| Markdown structural validation | heading/fence/local-link checks PASS |
 
 ## Stress result quan sát
 
@@ -33,7 +31,7 @@ validations=500000
 
 ## Environment limitation
 
-Audit container có native GCC/CMake/Ninja nhưng không có `arm-none-eabi-gcc`, `arm-none-eabi-gdb` hoặc OpenOCD. Do đó không ghi “target build PASS” hoặc “hardware PASS” nếu chưa chạy. Đây là deliberate evidence discipline, không phải dấu hiệu source target fail.
+Host validation dùng native GCC/CMake/Ninja. Target build và hardware validation là evidence riêng, cần ARM GNU toolchain, GDB/OpenOCD và board thật trước khi được đánh dấu PASS.
 
 ## Ý nghĩa
 

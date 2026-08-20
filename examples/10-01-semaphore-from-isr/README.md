@@ -22,7 +22,6 @@
 
 Hardware/bare-metal tick ISR give semaphore; task block chờ và `higher_priority_task_woken` quyết định PendSV.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -56,17 +55,15 @@ Example này không được hiểu như một application production. Nó cố 
 ## Luồng thực thi
 
 ```mermaid
-stateDiagram-v2
-    [*] --> AVAILABLE: count > 0
-    AVAILABLE --> AVAILABLE: take / count--
-    AVAILABLE --> EMPTY: last token taken
-    EMPTY --> WAITING: task take with timeout
-    WAITING --> EMPTY: more waiters remain
-    WAITING --> AVAILABLE: give with no remaining waiter
-    EMPTY --> AVAILABLE: give increments count
+flowchart TB
+    TAKE["Take"] --> TOK{"count > 0?"}
+    TOK -->|"Yes"| DEC["Decrement count"]
+    TOK -->|"No + wait"| WAIT["Block task"]
+    GIVE["Give"] --> W{"Waiter exists?"}
+    W -->|"Yes"| WAKE["Wake highest-priority waiter"]
+    W -->|"No"| INC["Increment count"]
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -147,17 +144,16 @@ Các check/log cứng trong source:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- ISR give không đánh thức task: kiểm tra ISR API, waiter selection và `higher_priority_task_woken`.
+- Count tăng khi đang có waiter: kiểm tra direct handoff semantics; token không nên bị giữ đồng thời ở count và waiter.
+- ISR path phải non-blocking và chỉ defer context switch qua PendSV.
+- Priority của task được wake phải được so với current task trước khi yêu cầu switch.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

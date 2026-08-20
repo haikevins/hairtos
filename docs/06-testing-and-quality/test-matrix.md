@@ -1,6 +1,6 @@
 # Test matrix
 
-> **Baseline audit:** host test suite PASS; 64 test function được compile/run trong test binary hiện tại.
+> **Validation baseline:** host test suite PASS; 64 test function được compile/run trong test binary hiện tại.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](stress-testing.md) · [Next →](testing-guide.md)
 

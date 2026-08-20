@@ -22,7 +22,6 @@
 
 Hai AO độc lập, mỗi AO là task + queue + state machine; event ownership đi qua post/dispatch/release.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -46,17 +45,15 @@ Example này không được hiểu như một application production. Nó cố 
 ## Luồng thực thi
 
 ```mermaid
-flowchart TD
-    P["Producer / ISR / publisher"] --> POST["he_active_post[_from_isr]"]
-    POST --> Q["AO queue of event pointers"]
-    Q --> TASK["Dedicated hairtos task"]
-    TASK --> DISPATCH["Flat state-machine dispatch"]
-    DISPATCH --> TRANS["Optional EXIT → state change → ENTRY → INIT"]
-    TRANS --> RELEASE["Release dynamic event reference"]
-    RELEASE --> Q
+flowchart TB
+    P["Producer / ISR / publisher"] --> POST["Post event"]
+    POST --> Q["AO event queue"]
+    Q --> TASK["Dedicated task"]
+    TASK --> DISPATCH["RTC dispatch"]
+    DISPATCH --> TRANS["Apply transition"]
+    TRANS --> RELEASE["Release dynamic event"]
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -124,17 +121,16 @@ Ownership cần nhớ:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- AO không dispatch: kiểm tra dedicated hairtos task, AO queue và start order.
+- Ping-pong dừng: kiểm tra post status, queue capacity và RTC handler return.
+- Dynamic event ownership phải được release sau dispatch; static event vẫn caller-owned.
+- Priority của AO đi qua scheduler hairtos như task bình thường.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

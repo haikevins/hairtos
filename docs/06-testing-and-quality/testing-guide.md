@@ -7,13 +7,13 @@
 ## Test pyramid
 
 ```mermaid
-flowchart TD
-    UNIT["Host unit tests + ASan/UBSan"] --> STRESS["Deterministic scheduler stress"]
-    UNIT --> HOSTEX["Host examples 02/14/16"]
-    UNIT --> PORTPROBE["Portability compile probes"]
-    STRESS --> TARGET["Target examples on Blue Pill"]
+flowchart TB
+    UNIT["Host tests + sanitizers"] --> STRESS["Scheduler stress"]
+    UNIT --> HOSTEX["Host examples 02 / 14 / 16"]
+    UNIT --> PORTPROBE["Portability probes"]
+    STRESS --> TARGET["Blue Pill target tests"]
     HOSTEX --> TARGET
-    TARGET --> MEASURE["DWT / PB0 benchmark + fault/reset evidence"]
+    TARGET --> MEASURE["DWT / PB0 / fault evidence"]
 ```
 
 ## Host suite
@@ -48,7 +48,7 @@ make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
 make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run
 ```
 
-Ba command trên đã PASS trong audit hiện tại.
+Ba command trên thuộc validation baseline hiện có và đều PASS.
 
 ## Target tests
 

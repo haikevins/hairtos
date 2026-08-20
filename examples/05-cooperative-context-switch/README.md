@@ -22,7 +22,6 @@
 
 Hai task cùng priority tự gọi yield; stack-local counter/cookie chứng minh context R4-R11 + hardware frame được bảo toàn.
 
-Example này không được hiểu như một application production. Nó cố ý cô lập một cơ chế để người học nhìn thấy **state transition và scheduling consequence** mà không bị che bởi middleware lớn. Những log/PASS check trong `main.c` là executable documentation: nếu invariant bị vi phạm, example gọi `board_panic()` hoặc trả failure trên host.
 
 <a id="build-graph"></a>
 ## Build graph và cấu hình
@@ -46,24 +45,31 @@ Example này không được hiểu như một application production. Nó cố 
 <a id="runtime"></a>
 ## Luồng thực thi
 
+**Exception entry and software save**
+
 ```mermaid
 sequenceDiagram
-    participant T as Current task / PSP
-    participant CPU as Cortex-M3 hardware
-    participant P as PendSV_Handler
-    participant K as hr_kernel_select_next_from_pendsv()
+    participant T as Current task
+    participant CPU as Cortex-M3
+    participant P as PendSV
     T->>CPU: PendSV pending
-    CPU->>CPU: stack R0-R3,R12,LR,PC,xPSR on PSP
-    CPU->>P: enter Handler mode on MSP
-    P->>P: save R4-R11 to current PSP
-    P->>K: select next TCB
-    K-->>P: g_hr_current_task_control_block updated
-    P->>P: restore R4-R11 from next PSP
-    P->>CPU: exception return 0xFFFFFFFD
-    CPU->>T: unstack hardware frame and resume next task
+    CPU->>P: stack hardware frame
+    P->>P: save R4-R11
 ```
 
-Để hiểu runtime thật, đọc sơ đồ cùng `main.c` và module source. Các điểm chuyển task state/context không diễn ra trong application code đơn lẻ mà qua kernel + architecture port.
+**Task selection and restore**
+
+```mermaid
+sequenceDiagram
+    participant P as PendSV
+    participant K as Kernel selector
+    participant N as Next task
+    P->>K: select next TCB
+    K-->>P: update current TCB
+    P->>P: restore R4-R11
+    P-->>N: exception return
+```
+
 
 ### Các chi tiết quan sát trực tiếp từ example
 
@@ -143,17 +149,16 @@ Các check/log cứng trong source:
 <a id="debug"></a>
 ## Debug và failure modes
 
-- Nếu target treo trong `board_panic()`, xem UART log ngay trước đó rồi attach GDB/OpenOCD để kiểm tra current task, PSP/MSP, ready bitmap và fault record nếu diagnostics bật.
-- Nếu behavior sai chỉ khi optimize/timing thay đổi, kiểm tra race giữa task/ISR, critical-section scope và việc log UART làm nhiễu thời gian.
-- Nếu task không chạy, phân biệt CREATED/READY/BLOCKED/SUSPENDED và kiểm tra task có được `hr_task_start()` hay không.
-- Nếu wake không xảy ra, kiểm tra cả object wait list lẫn timeout node; một wake path không được để node stale trong structure còn lại.
-- Target log là evidence runtime; build PASS chỉ là evidence compile/link.
+- Task A/B không luân phiên sau `hr_task_yield()`: kiểm tra PendSV pending, ready FIFO rotation và selector.
+- Stack-local counter bị hỏng: kiểm tra PSP của từng task và save/restore R4–R11.
+- Current-task check fail: kiểm tra `g_hr_current_task_control_block` sau selector.
+- UART logging và `board_delay_ms()` chỉ phục vụ quan sát; cooperative switch xảy ra tại `hr_task_yield()`.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake. Môi trường audit không có `arm-none-eabi-gcc`/OpenOCD nên không tuyên bố đã build/flash lại target.
-- `make TARGET=bluepill_f103c8 host-tests` đã PASS toàn bộ host suite trong audit tài liệu này.
+- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
 
 ### Lệnh chuẩn
 

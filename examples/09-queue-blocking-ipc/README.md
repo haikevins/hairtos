@@ -1,38 +1,38 @@
-# `09-queue-blocking-ipc` — Queue và IPC chặn
+# `09-queue-blocking-ipc` — Queue and Blocking IPC
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/09-queue-blocking-ipc/main.c`  
-> **Trọng tâm:** Bounded FIFO + blocking IPC
+> **Focus:** Bounded FIFO + blocking IPC
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Producer/consumer dùng queue capacity nhỏ để buộc cả direct handoff, blocking và timeout trở nên quan sát được.
+Producer/consumer tasks use a small-capacity queue so direct handoff, blocking, and timeout behavior are all observable.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `queue`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `queue`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `CONSUMER_TASK_PRIORITY` | `1U` |
 | `PRODUCER_TASK_PRIORITY` | `3U` |
@@ -43,10 +43,10 @@ Producer/consumer dùng queue capacity nhỏ để buộc cả direct handoff, b
 
 ### CMake feature overrides
 
-- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+- The example uses the default configuration except for modules/definitions explicitly declared in `cmake/hairtos_examples.cmake`.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 **Send path**
 
@@ -71,17 +71,17 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Tạo queue với storage do application cấp.
-- Block receiver khi queue rỗng và sender khi queue đầy.
-- Dùng finite timeout cho send.
-- Xác nhận FIFO của các message được nhận thành công.
-- Ring buffer với head/tail/count.
-- Các wait list gửi/nhận được sắp theo priority.
-- Direct handoff tới blocked receiver.
-- Refill slot từ blocked sender khi receiver lấy item.
-- Timeout cleanup khỏi queue wait list và timeout list.
+- Create a queue backed by application-owned storage.
+- Block receivers when the queue is empty and senders when it is full.
+- Use a finite timeout for send.
+- Verify FIFO order for successfully received messages.
+- Ring buffer with head/tail/count.
+- Send/receive wait lists are ordered by priority.
+- Direct handoff to a blocked receiver.
+- Refill a freed slot from a blocked sender when the receiver removes an item.
+- Timeout cleanup removes the task from both the queue wait list and timeout list.
 - `hairtos/hr_queue.h`
 - `hairtos/hr_time.h`
 - `hr_queue_create_static()`
@@ -91,17 +91,17 @@ flowchart TB
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- Queue — 2 phần tử `queue_message_t` — Mỗi message chứa `sequence` và `produced_at`.
-- `consumer` — Priority 1, stack 224 words — Receive forever, xử lý chậm 200 ticks.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- Queue — 2 `queue_message_t` entries — Each message contains `sequence` and `produced_at`.
+- `consumer` — Priority 1, stack 224 words — Receives forever and processes slowly for 200 ticks.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_led_toggle()`
@@ -122,23 +122,23 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_start()`
 - `hr_time_now()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Storage queue không được cấp phát động; `item_size × capacity` do caller sở hữu và phải tồn tại suốt đời queue.
-- Task API hỗ trợ timeout; ISR API luôn non-blocking và báo `higher_priority_task_woken` thay vì tự schedule trực tiếp.
-- Waiters được sắp theo effective priority, FIFO trong cùng priority nhờ wait-list insertion order.
-- Khi receiver đang chờ, send có thể copy trực tiếp vào receive buffer thay vì bắt buộc enqueue rồi dequeue; tương tự receive có thể lấy trực tiếp từ blocked sender.
-- Queue full/empty với `HR_NO_WAIT` trả status ngay; blocking chỉ hợp lệ khi kernel đang RUNNING và caller không ở ISR.
+- Queue storage is not dynamically allocated; `item_size × capacity` bytes are caller-owned and must remain valid for the queue's entire lifetime.
+- Task APIs support timeouts; ISR APIs are always non-blocking and report `higher_priority_task_woken` rather than scheduling directly.
+- Waiters are ordered by effective priority and FIFO within the same priority through wait-list insertion order.
+- When a receiver is already waiting, send may copy directly into the receive buffer instead of enqueueing and then dequeueing; similarly, receive may take data directly from a blocked sender.
+- Full/empty queues with `HR_NO_WAIT` return immediately; blocking is valid only while the kernel is RUNNING and the caller is not in ISR context.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `ERROR: invalid queue task context.`
 - `ERROR: blocking queue receive failed.`
@@ -150,20 +150,20 @@ Các check/log cứng trong source:
 - `Consumer task creation failed.`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Sender/receiver treo: kiểm tra queue wait lists, timeout node và single-winner wake cleanup.
-- Data sai sau direct handoff: kiểm tra item size và waiter buffer ownership.
-- FIFO path sai: kiểm tra head/tail/count của circular storage khi không có waiter.
-- Timeout và object wake không được cùng publish hai kết quả cho một task.
+- Sender/receiver hangs: inspect queue wait lists, timeout nodes, and single-winner wake cleanup.
+- Data corruption after direct handoff: inspect item size and waiter-buffer ownership.
+- Incorrect FIFO path: inspect head/tail/count of circular storage when no waiter is present.
+- Timeout and object wakeup must not publish two results for the same task.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=09-queue-blocking-ipc build
@@ -172,7 +172,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=09-queue-blocking-ipc check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/09-queue-blocking-ipc/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -181,12 +181,12 @@ make TARGET=bluepill_f103c8 EXAMPLE=09-queue-blocking-ipc check
 - `kernel/src/hr_wait.c`
 - `tests/host/test_queue.c`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/src/hr_queue.c`
 - `kernel/internal/hr_queue_internal.h`
 - `kernel/src/hr_wait.c`

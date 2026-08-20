@@ -1,48 +1,48 @@
-# `12-software-timer` — Dịch vụ bộ định thời phần mềm
+# `12-software-timer` — Software Timer Service
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/12-software-timer/main.c`  
-> **Trọng tâm:** Timer-service task
+> **Focus:** Timer-service task
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Expiry xử lý từ tick ISR nhưng callback chạy trong timer task; demo one-shot/periodic/reset/change/stop semantics.
+Expiry is processed from the tick ISR, but callbacks run in the timer task; the demo exercises one-shot/periodic/reset/change/stop semantics.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `semaphore`, `timer`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `semaphore`, `timer`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `CONTROL_TASK_PRIORITY` | `3U` |
 | `CONTROL_TASK_STACK_WORDS` | `224U` |
 
 ### CMake feature overrides
 
-- Software timer được bật cho build này; timer-service task priority được override thành 1.
+- Software timers are enabled for this build; the timer-service task priority is overridden to 1.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 **Expiry handoff**
 
@@ -69,16 +69,16 @@ sequenceDiagram
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Tạo timer tĩnh.
-- Start, reset, change period và stop timer.
-- Phân biệt timer expiration trong SysTick với callback execution trong task.
-- Kiểm tra one-shot chỉ callback một lần và periodic tự rearm.
-- Danh sách deadline của timer được sắp thứ tự.
-- Pending callback list và timer-service semaphore.
-- Callback không chạy trong ISR.
-- Periodic rearm từ deadline để hạn chế drift.
+- Create static timers.
+- Start, reset, change period, and stop timers.
+- Distinguish timer expiration in SysTick from callback execution in task context.
+- Verify one-shot callbacks occur once and periodic timers re-arm automatically.
+- Timer deadlines are kept in sorted order.
+- Pending-callback list plus timer-service semaphore.
+- Callbacks do not execute in ISR context.
+- Periodic rearm is based on the deadline to limit drift.
 - `hairtos/hr_timer.h`
 - `hairtos/hr_time.h`
 - `hr_timer_create_static()`
@@ -89,17 +89,17 @@ sequenceDiagram
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `timer-control` — Priority 3, stack 224 words — Điều khiển start/reset/stop.
-- `periodic` — 250 ticks → 500 ticks, auto reload — Toggle LED và đếm callback.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `timer-control` — Priority 3, stack 224 words — Controls start/reset/stop.
+- `periodic` — 250 ticks → 500 ticks, auto reload — Toggles LED and counts callbacks.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_led_toggle()`
@@ -121,43 +121,43 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_timer_start()`
 - `hr_timer_stop()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Timer object là static opaque storage; một timer có name, period, auto_reload, callback, argument và timeout node.
-- Timer-service task được tạo lazily khi timer subsystem cần initialize và dùng priority/stack từ config.
-- Expiry ISR path chỉ cập nhật state/pending và wake service task; callback không được chạy trong handler mode.
-- One-shot trở inactive sau expiry; periodic timer được re-arm theo period.
-- `stop/reset/change_period` phải xử lý cả active timeout node và pending callbacks một cách có chủ đích.
+- A timer is static opaque storage containing a name, period, `auto_reload`, callback, argument, and timeout node.
+- The timer-service task is created lazily when the timer subsystem is first initialized and uses priority/stack settings from configuration.
+- The expiry ISR path only updates state/pending information and wakes the service task; callbacks never execute in Handler mode.
+- A one-shot timer becomes inactive after expiry; a periodic timer is re-armed for its configured period.
+- `stop/reset/change_period` deliberately handle both an active timeout node and any pending callbacks.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `ERROR: software timer callback count mismatch.`
 - `Software timer service: PASS`
 - `Software timer setup failed.`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Callback chạy trong SysTick ISR là sai contract; expiry chỉ enqueue pending work và wake timer-service task.
-- Timer hết hạn nhưng callback không chạy: kiểm tra timeout list, pending node/count và service-task wake.
-- Periodic timer drift/loss: kiểm tra rearm semantics và pending handling.
-- Callback có thể gọi task-context API vì nó chạy trong timer-service task, không phải ISR.
+- Callback running in the SysTick ISR violates the contract; expiry should only enqueue pending work and wake the timer-service task.
+- Timer expires but callback does not run: inspect timeout list, pending node/count, and service-task wakeup.
+- Periodic timer drifts/loses expirations: inspect rearm semantics and pending handling.
+- A callback may call task-context APIs because it runs in the timer-service task, not in ISR context.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=12-software-timer build
@@ -166,7 +166,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=12-software-timer check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/12-software-timer/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -174,12 +174,12 @@ make TARGET=bluepill_f103c8 EXAMPLE=12-software-timer check
 - `kernel/internal/hr_timer_internal.h`
 - `tests/host/test_timer.c`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/src/hr_timer.c`
 - `kernel/internal/hr_timer_internal.h`
 - `tests/host/test_timer.c`

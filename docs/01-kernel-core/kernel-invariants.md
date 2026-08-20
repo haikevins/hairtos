@@ -1,60 +1,60 @@
 # Kernel invariants
 
-> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
+> **Scope:** `hairtos 1.0.0-rc1` implementation, including the current source, configuration, build graph, and host-test evidence.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](intrusive-data-structures.md) · [Next →](kernel-lifecycle.md)
 
-## Mục lục
+## Table of Contents
 
-- [Tổng quan và bản chất](#tong-quan)
-- [Implementation trong repository](#implementation)
-- [Mô hình và luồng thực thi](#mo-hinh)
-- [Ownership, concurrency và invariants](#invariants)
-- [Failure modes và giới hạn](#failure)
-- [Validation và cách kiểm chứng](#validation)
+- [Overview and Core Concepts](#overview)
+- [Implementation in the Repository](#implementation)
+- [Execution Model and Runtime Flow](#runtime-model)
+- [Ownership, Concurrency, and Invariants](#invariants)
+- [Failure Modes and Limitations](#failure)
+- [Validation and Verification](#validation)
 - [Source map](#source-map)
-- [Tài liệu tham khảo](#references)
+- [References](#references)
 
-<a id="tong-quan"></a>
-## Tổng quan và bản chất
+<a id="overview"></a>
+## Overview and Core Concepts
 
-Scheduler của hairtos là fixed-priority preemptive scheduler. Priority số nhỏ hơn mạnh hơn. Ready set chứa một FIFO intrusive list cho mỗi mức priority và một bitmap để biết mức nào đang có task READY. Round-robin chỉ xoay FIFO ở mức priority cao nhất khi time slicing được bật.
+The hairtos scheduler is fixed-priority and preemptive. Lower numeric priority values represent higher scheduling priority. The ready set contains one intrusive FIFO list per priority and a bitmap identifying non-empty levels. Round-robin rotates only the FIFO at the highest ready priority when time slicing is enabled.
 
 
 <a id="implementation"></a>
-## Implementation trong repository
+## Implementation in the Repository
 
-Implementation hiện tại gồm:
+The current implementation includes:
 
-- Ready task xuất hiện đúng một lần trong ready set; node không được đồng thời nằm ở list khác.
-- Selection không phụ thuộc thứ tự đăng ký giữa các priority khác nhau: priority nhỏ nhất đang có bit trong bitmap luôn thắng.
-- Giữa các task cùng priority, thứ tự là FIFO; `yield`/time slice rotate hàng đợi cao nhất thay vì làm thay đổi priority.
-- Preemption chỉ xảy ra khi có task READY với effective priority nhỏ hơn current task; peer cùng priority cần yield hoặc time slice để đổi lượt.
-- Mọi thay đổi effective priority của task READY phải requeue ready node để bitmap/list phản ánh priority mới.
-- bitmap bit = 1 khi và chỉ khi ready queue tương ứng nonempty;
-- task READY/RUNNING có đúng ready membership;
-- task BLOCKED không có ready membership;
-- priority index nằm trong configured range;
-- effective priority phản ánh mutex inheritance.
+- A READY task appears exactly once in the ready set; its node must not simultaneously belong to another list.
+- Selection is independent of registration order across different priorities: the lowest-numbered priority whose bitmap bit is set always wins.
+- Tasks at the same priority are ordered FIFO; `yield`/time slicing rotates the highest-priority ready queue rather than changing priority.
+- Preemption occurs only when a READY task has a numerically lower effective priority than the current task; equal-priority peers require yield or time slicing to rotate execution.
+- Any change to the effective priority of a READY task must requeue its ready node so the bitmap/list reflects the new priority.
+- a bitmap bit is 1 if and only if the corresponding ready queue is non-empty;
+- READY/RUNNING tasks have correct ready membership;
+- BLOCKED tasks have no ready membership;
+- priority indices stay within the configured range;
+- effective priority reflects mutex inheritance.
 - current TCB valid;
-- đúng một task có state RUNNING;
+- exactly one task has state RUNNING;
 
-Các chi tiết implementation quan trọng:
+Key implementation details:
 
-- current task thuộc scheduler;
-- saved/runtime stack metadata hợp lệ.
-- `next->previous` và `previous->next` đối xứng;
-- node linked có `node->list` đúng;
-- list size khớp số node;
-- node không double-link.
-- wait kind hợp lệ;
-- wait object/list tương ứng;
-- wait node đúng list;
-- result ở trạng thái pending cho tới completion.
+- the current task belongs to the scheduler;
+- saved/runtime stack metadata is valid.
+- `next->previous` and `previous->next` are symmetric;
+- a linked node has the correct `node->list`;
+- list size matches the number of nodes;
+- a node is never double-linked.
+- wait kind is valid;
+- wait object/list correspondence is valid;
+- the wait node is on the correct list;
+- result remains pending until completion.
 
 
-<a id="mo-hinh"></a>
-## Mô hình và luồng thực thi
+<a id="runtime-model"></a>
+## Execution Model and Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -69,36 +69,36 @@ flowchart TB
     REMOVE --> SELECT
 ```
 
-Các function và source file tương ứng được liệt kê trong phần Source map.
+The corresponding functions and source files are listed in the Source Map section.
 
 <a id="invariants"></a>
-## Ownership, concurrency và invariants
+## Ownership, Concurrency, and Invariants
 
-Các invariant nền áp dụng cho chủ đề này:
+The following baseline invariants apply to this topic:
 
-- Opaque object public chỉ hợp lệ sau create/init thành công và magic/internal state khớp contract.
-- Intrusive node chỉ được linked vào đúng một list tại một thời điểm; remove/timeout/wake phải để node về trạng thái unlinked nhất quán.
-- Thread API có thể block chỉ khi kernel RUNNING và không ở ISR; ISR API phải non-blocking và sử dụng `higher_priority_task_woken` khi cần defer switch sang PendSV.
-- Critical section hiện dùng PRIMASK trên Cortex-M3, nghĩa là mask interrupt toàn cục trong đoạn ngắn; vì vậy code trong critical section phải bounded và không được gọi operation có thể block.
-- Priority dùng **effective priority** ở ready/wait policy khi mutex inheritance đang active; base priority chỉ là cấu hình gốc.
-- Static-first không có nghĩa “không có lifetime”: caller-owned TCB/stack/queue storage/event pool vẫn phải sống lâu hơn mọi object đang tham chiếu tới chúng.
+- A public opaque object is valid only after a successful create/init operation and when its magic/internal state matches the contract.
+- An intrusive node may be linked into exactly one list at a time; remove/timeout/wake paths must leave the node in a consistent unlinked state.
+- A thread API may block only while the kernel is RUNNING and the caller is not in ISR context; ISR APIs must be non-blocking and use `higher_priority_task_woken` when a switch should be deferred to PendSV.
+- Critical sections currently use PRIMASK on Cortex-M3, globally masking interrupts for a short bounded interval; therefore critical-section code must remain bounded and must not invoke operations that can block.
+- Ready/wait policy uses **effective priority** while mutex priority inheritance is active; base priority remains the task's configured priority.
+- Static-first does not mean “no lifetime”: caller-owned TCB, stack, queue storage, and event-pool storage must outlive every object that still references them.
 
 <a id="failure"></a>
-## Failure modes và giới hạn
+## Failure Modes and Limitations
 
-- `hairtos 1.0.0-rc1` là single-core, không có SMP, FPU context, MPU isolation hay general dynamic kernel heap.
-- Interrupt masking model hiện là PRIMASK; repository chưa có BASEPRI ceiling contract cho application ISR priority phức tạp.
-- Tickless idle chưa có; time model hiện dựa trên tick 1 kHz ở target tham chiếu.
-- `haievent` v1 là flat state machine và one-task-per-AO; HSM/deferred event/shared executor nằm ở roadmap Version 2.
-- Build/link PASS không tự chứng minh real-time timing hoặc race-free behavior trên hardware; target tests và measurement vẫn cần thiết.
+- `hairtos 1.0.0-rc1` is single-core and provides no SMP, FPU context management, MPU isolation, or general-purpose dynamic kernel heap.
+- The current interrupt-masking model uses PRIMASK; the repository does not yet define a BASEPRI ceiling contract for applications with complex ISR-priority schemes.
+- Tickless idle is not implemented; the current time model uses a 1 kHz tick on the reference target.
+- `haievent` v1 provides a flat state machine and one task per AO; HSMs, deferred events, and a shared executor are Version 2 roadmap items.
+- A successful build/link does not by itself prove real-time timing or race-free behavior on hardware; target tests and measurements remain necessary.
 
 <a id="validation"></a>
-## Validation và cách kiểm chứng
+## Validation and Verification
 
-- Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
+- The repository's host suite is built with GCC, AddressSanitizer, UndefinedBehaviorSanitizer, and `ctest`.
 - Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
-- Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
-- Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
+- Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, and `16-diagnostics-stress-stabilization` pass; the scheduler stress test reports 500,000 iterations.
+- Do not infer target-runtime PASS from host tests. Cortex-M3 assembly, timing, exception priorities, UART/LED behavior, and hardware clocks still require cross-build and board validation.
 
 
 <a id="source-map"></a>
@@ -112,12 +112,12 @@ Các invariant nền áp dụng cho chủ đề này:
 
 
 <a id="references"></a>
-## Tài liệu tham khảo
+## References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/src/hr_scheduler.c`
 - `kernel/internal/hr_scheduler_internal.h`
 - `kernel/src/hr_kernel.c`

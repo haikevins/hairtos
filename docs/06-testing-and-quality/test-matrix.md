@@ -1,12 +1,12 @@
 # Test matrix
 
-> **Validation baseline:** host test suite PASS; 64 test function được compile/run trong test binary hiện tại.
+> **Validation baseline:** the host test suite passes; 64 test functions are compiled and run in the current test binary.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](stress-testing.md) · [Next →](testing-guide.md)
 
-## Matrix theo source file
+## Matrix by Source File
 
-| Test source | Số test | Trọng tâm cụ thể |
+| Test source | Number of tests | Specific focus |
 | --- | ---: | --- |
 | `tests/host/test_benchmark.c` | 4 | `test_benchmark_stats_empty_state`, `test_benchmark_stats_summary_and_percentiles`, `test_benchmark_stats_capacity_is_bounded`, `test_benchmark_cycle_helpers_handle_wrap_and_conversion` |
 | `tests/host/test_diagnostics.c` | 4 | `test_diagnostics_task_snapshot_and_stack_guard`, `test_diagnostics_runtime_counters_are_recorded`, `test_diagnostics_panic_record_can_be_retained_and_cleared`, `test_diagnostics_fault_record_captures_frame` |
@@ -26,21 +26,21 @@
 | `labs/memory-allocator/tests/test_heap_lab.c` | 11 | `test_heap_init_alignment_and_minimum_allocation`, `test_heap_first_fit_reuses_freed_block`, `test_heap_forward_and_backward_coalescing`, `test_heap_coalesced_space_satisfies_large_allocation`, `test_heap_reports_internal_and_external_fragmentation`, `test_heap_rejects_invalid_and_double_free`, `test_heap_exhaustion_and_failed_allocation_counter`, `test_heap_randomized_allocate_free_sequences`, `test_pool_allocates_fixed_aligned_blocks_and_reuses_lifo`, `test_pool_exhaustion_stats_and_recovery`, `test_pool_rejects_invalid_and_double_free` |
 | `tests/stress/test_scheduler_stress.c` | 1 | `test_scheduler_stress_preserves_invariants` |
 
-## Những gì host tests không chứng minh
+## What Host Tests Do Not Prove
 
-- real PendSV/SVC exception entry/return trên Cortex-M3;
-- NVIC/System Handler priority interaction với application ISR;
-- HSE/PLL clock startup và HSI fallback;
-- UART/GPIO/hardware timer register backend trên board thật;
-- DWT timing absolute dưới toolchain/hardware cụ thể;
-- retained `.noinit` behavior qua power/reset thực tế.
+- real PendSV/SVC exception entry/return on Cortex-M3;
+- NVIC/System Handler priority interaction with application ISRs;
+- HSE/PLL clock startup and HSI fallback;
+- UART/GPIO/hardware-timer register backends on real hardware;
+- absolute DWT timing under a specific toolchain/hardware combination;
+- retained `.noinit` behavior across a physical reset.
 
-## Evidence bổ sung
+## Additional Evidence
 
 - Example 02: ready/wait policy observable on host — PASS.
 - Allocator example 14 host — PASS.
-- Scheduler stress example 16 host — PASS, 500.000 iteration.
-- Target examples 01–16 đóng vai trò integration/learning evidence; cần Blue Pill để chạy đầy đủ.
+- Scheduler stress example 16 host — PASS, 500,000 iterations.
+- Target examples 01–16 provide integration/learning evidence and require a Blue Pill for complete execution.
 
 ## References
 

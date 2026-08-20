@@ -1,38 +1,38 @@
-# `08-preemption-round-robin` — Chiếm quyền và Round-Robin
+# `08-preemption-round-robin` — Preemption and Round-Robin
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/08-preemption-round-robin/main.c`  
-> **Trọng tâm:** Preemption + tick time slicing
+> **Focus:** Preemption + tick time slicing
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Hai worker CPU-bound không yield vẫn chia CPU; monitor priority cao wake theo period và preempt worker.
+Two CPU-bound workers that never yield still share CPU time; a higher-priority monitor wakes periodically and preempts them.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `MONITOR_TASK_PRIORITY` | `1U` |
 | `WORKER_TASK_PRIORITY` | `3U` |
@@ -41,10 +41,10 @@ Hai worker CPU-bound không yield vẫn chia CPU; monitor priority cao wake theo
 
 ### CMake feature overrides
 
-- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+- The example uses the default configuration except for modules/definitions explicitly declared in `cmake/hairtos_examples.cmake`.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -60,16 +60,16 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Chứng minh preemption khi task priority cao chuyển READY.
-- Chứng minh time slicing giữa hai task cùng priority.
-- Phát hiện starvation bằng cách so sánh worker counters.
-- Giữ PendSV là nơi duy nhất save/restore context.
-- SysTick quyết định PREEMPT hoặc TIME_SLICE rồi pend PendSV.
-- Monitor priority 1 cao hơn worker priority 3.
-- Worker không gọi kernel API trong vòng lặp.
-- Round-robin dùng quantum `HR_CFG_TIME_SLICE_TICKS`.
+- Demonstrate preemption when a higher-priority task becomes READY.
+- Demonstrate time slicing between two equal-priority tasks.
+- Detect starvation by comparing worker counters.
+- Keep PendSV as the only context save/restore path.
+- SysTick decides PREEMPT or TIME_SLICE and then pends PendSV.
+- Monitor priority 1 is higher than worker priority 3.
+- Workers do not call kernel APIs inside their loops.
+- Round-robin uses quantum `HR_CFG_TIME_SLICE_TICKS`.
 - `hairtos/hr_time.h`
 - `hr_port.h`
 - `hr_task_delay_until()`
@@ -77,20 +77,20 @@ flowchart TB
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
-- Sau activation đầu, cả hai worker counter đều tăng giữa hai report.
-- Monitor chạy gần mỗi 250 tick.
-- Không xuất hiện starvation error.
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `monitor` — Priority 1, stack 192 words — Chạy mỗi 250 ticks và kiểm tra counters.
+- After initial activation, both worker counters increase between consecutive reports.
+- The monitor runs approximately every 250 ticks.
+- No starvation error appears.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `monitor` — Priority 1, stack 192 words — Runs every 250 ticks and checks counters.
 - `worker-a` — Priority 3, stack 192 words — CPU-bound counter.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_led_toggle()`
@@ -107,23 +107,23 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_start()`
 - `hr_time_now()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Ready task xuất hiện đúng một lần trong ready set; node không được đồng thời nằm ở list khác.
-- Selection không phụ thuộc thứ tự đăng ký giữa các priority khác nhau: priority nhỏ nhất đang có bit trong bitmap luôn thắng.
-- Giữa các task cùng priority, thứ tự là FIFO; `yield`/time slice rotate hàng đợi cao nhất thay vì làm thay đổi priority.
-- Preemption chỉ xảy ra khi có task READY với effective priority nhỏ hơn current task; peer cùng priority cần yield hoặc time slice để đổi lượt.
-- Mọi thay đổi effective priority của task READY phải requeue ready node để bitmap/list phản ánh priority mới.
+- A READY task appears exactly once in the ready set; its node must not simultaneously belong to another list.
+- Selection is independent of registration order across different priorities: the lowest-numbered priority whose bitmap bit is set always wins.
+- Tasks at the same priority are ordered FIFO; `yield`/time slicing rotates the highest-priority ready queue rather than changing priority.
+- Preemption occurs only when a READY task has a numerically lower effective priority than the current task; equal-priority peers require yield or time slicing to rotate execution.
+- Any change to the effective priority of a READY task must requeue its ready node so the bitmap/list reflects the new priority.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `ERROR: invalid task context.`
 - `ERROR: equal-priority worker starvation detected.`
@@ -136,20 +136,20 @@ Các check/log cứng trong source:
 - `ERROR: hr_kernel_start returned status=`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Higher-priority task wake nhưng không preempt: kiểm tra wake path có pend PendSV.
-- Equal-priority tasks không round-robin: kiểm tra time-slice counter và FIFO rotation.
-- Priority ordering sai: kiểm tra effective priority và ready bitmap.
-- Nếu lỗi chỉ xuất hiện sau nhiều tick, kiểm tra cả time-slice reset khi task/block state thay đổi.
+- A higher-priority task wakes but does not preempt: inspect whether the wake path pends PendSV.
+- Equal-priority tasks do not round-robin: inspect the time-slice counter and FIFO rotation.
+- Incorrect priority ordering: inspect effective priority and the ready bitmap.
+- If the issue appears only after many ticks, also inspect time-slice reset behavior when task/block state changes.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin build
@@ -158,7 +158,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/08-preemption-round-robin/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -169,10 +169,10 @@ make TARGET=bluepill_f103c8 EXAMPLE=08-preemption-round-robin check
 - `tests/host/test_scheduler_policy.c`
 - `labs/memory-allocator/`
 
-### Tài liệu tham khảo
+### References
 
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/src/hr_scheduler.c`
 - `kernel/internal/hr_scheduler_internal.h`
 - `kernel/src/hr_kernel.c`

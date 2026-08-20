@@ -1,10 +1,10 @@
 # Public API policy
 
-> **Scope:** Quy định boundary nào application được phép phụ thuộc trong `hairtos 1.0.0-rc1`.
+> **Scope:** Defines which boundaries application code may depend on in `hairtos 1.0.0-rc1`.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](mutex-api.md) · [Next →](queue-api.md)
 
-## Mục lục
+## Table of Contents
 
 - [Public surface](#public)
 - [Internal surface](#internal)
@@ -16,7 +16,7 @@
 <a id="public"></a>
 ## Public surface
 
-Application bình thường dùng:
+Normal applications use:
 
 ```c
 #include "hairtos/hairtos.h"
@@ -24,41 +24,41 @@ Application bình thường dùng:
 #include "board.h"
 ```
 
-Các header con trong `kernel/include/hairtos/` và `haievent/include/haievent/` cũng là public khi include trực tiếp có chủ đích.
+Subheaders under `kernel/include/hairtos/` and `haievent/include/haievent/` are also public when intentionally included directly.
 
 <a id="internal"></a>
 ## Internal surface
 
-`kernel/internal/` và `haievent/internal/` **không phải API compatibility surface**. Chúng chứa TCB/control block, intrusive nodes, scheduler/wait/timeout internals và helper dùng để test hoặc module core phối hợp. CMake chỉ cấp internal include cho target/tests/example có lý do cụ thể.
+`kernel/internal/` and `haievent/internal/` are **not part of the API compatibility surface**. They contain TCB/control blocks, intrusive nodes, scheduler/wait/timeout internals, and helpers used by tests or cooperating core modules. CMake grants internal includes only to targets/tests/examples with a specific reason.
 
 <a id="opaque"></a>
 ## Opaque storage
 
-Public type như `hr_task_t` là union `max_align_t + unsigned char storage[N]`. Ưu điểm:
+Public types such as `hr_task_t` are unions of `max_align_t + unsigned char storage[N]`. Advantages:
 
-- caller cấp phát tĩnh mà không biết internal layout;
-- internal struct có thể thay đổi nếu vẫn fit config storage;
-- compile-time `_Static_assert` bắt storage quá nhỏ;
-- assembly chỉ phụ thuộc contract tối thiểu (ví dụ saved SP ở TCB offset 0), không cần expose TCB cho application.
+- callers allocate objects statically without knowing the internal layout;
+- internal structures may change as long as they still fit the configured storage;
+- compile-time `_Static_assert` catches undersized storage;
+- assembly depends only on the minimum contract (for example, saved SP at TCB offset 0) and does not require exposing the TCB to applications.
 
 <a id="compat"></a>
 ## Compatibility
 
-- Public function signature/status semantics là thứ cần migration policy khi thay đổi.
-- Internal struct size/order không có compatibility promise.
-- Config macro là build-time contract; thay giá trị có thể đổi RAM footprint/timing và phải rebuild toàn bộ binary.
-- `docs/09-version2` không reserve API v2 bằng cách làm application phụ thuộc symbol chưa implemented.
+- Public function signatures and status semantics require a migration policy when changed.
+- Internal structure size/order carries no compatibility promise.
+- Configuration macros are build-time contracts; changing them may alter RAM footprint/timing and requires rebuilding the complete binary.
+- `docs/09-version2` does not reserve v2 APIs by making applications depend on symbols that are not implemented.
 
 <a id="testing"></a>
 ## Testing boundary
 
-Host tests được phép include internal header để unit-test data structure/policy. Điều đó không biến internal header thành public API. Example 15 cũng được CMake cấp internal access cho benchmark có chủ đích.
+Host tests may include internal headers to unit-test data structures/policies. That does not make those headers public API. Example 15 also receives intentional internal access from CMake for benchmarking.
 
 <a id="references"></a>
 ## References
 
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/include/hairtos/`
 - `kernel/internal/`
 - `haievent/include/haievent/`

@@ -1,60 +1,60 @@
-# Port một target MCU mới
+# Porting a New MCU Target
 
-> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
+> **Scope:** `hairtos 1.0.0-rc1` implementation, including the current source, configuration, build graph, and host-test evidence.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](porting-guide.md) · [Next →](startup-and-linker.md)
 
-## Mục lục
+## Table of Contents
 
-- [Tổng quan và bản chất](#tong-quan)
-- [Implementation trong repository](#implementation)
-- [Mô hình và luồng thực thi](#mo-hinh)
-- [Ownership, concurrency và invariants](#invariants)
-- [Failure modes và giới hạn](#failure)
-- [Validation và cách kiểm chứng](#validation)
+- [Overview and Core Concepts](#overview)
+- [Implementation in the Repository](#implementation)
+- [Execution Model and Runtime Flow](#runtime-model)
+- [Ownership, Concurrency, and Invariants](#invariants)
+- [Failure Modes and Limitations](#failure)
+- [Validation and Verification](#validation)
 - [Source map](#source-map)
-- [Tài liệu tham khảo](#references)
+- [References](#references)
 
-<a id="tong-quan"></a>
-## Tổng quan và bản chất
+<a id="overview"></a>
+## Overview and Core Concepts
 
-Portability của hairtos chia thành architecture port, SoC, board, driver và CMake target manifest. Kernel generic chỉ gọi contract port; target manifest bind source/ASM/linker/OpenOCD/compile flags mà không nhét logic scheduler vào build metadata.
+Portability in hairtos is divided across the architecture port, SoC, board, driver, and CMake target manifest. The generic kernel calls only the port contract; the target manifest binds source, assembly, linker scripts, OpenOCD configuration, and compiler flags without embedding scheduler logic into build metadata.
 
 
 <a id="implementation"></a>
-## Implementation trong repository
+## Implementation in the Repository
 
-Implementation hiện tại gồm:
+The current implementation includes:
 
-- Architecture port sở hữu critical section, ISR-context query, initial stack, first task và context switch.
-- SoC sở hữu startup, register definitions, clock tree và IRQ/fault backends mang tính chip-family.
-- Board sở hữu pin binding, UART/LED/benchmark marker và human-readable identity.
-- Driver public API dùng opaque target-defined identifiers; STM32F1 backend thực hiện register access.
-- CMake target manifest là single source of truth để chọn architecture/SoC/board/driver/linker/debug config.
+- The architecture port owns critical sections, ISR-context queries, initial stack construction, first-task startup, and context switching.
+- The SoC layer owns startup, register definitions, clock tree, and chip-family-specific IRQ/fault backends.
+- The board layer owns pin bindings, UART/LED/benchmark markers, and human-readable target identity.
+- Public driver APIs use opaque target-defined identifiers; the STM32F1 backend performs register access.
+- The CMake target manifest is the single source of truth for architecture/SoC/board/driver/linker/debug configuration selection.
 - CPU flags;
 - compile definitions;
 - public include directories;
 - platform C/ASM sources;
-- port, tick và fault sources;
+- port, tick, and fault sources;
 - benchmark clock backend;
 - linker script;
 
-Các chi tiết implementation quan trọng:
+Key implementation details:
 
-- OpenOCD configuration và erase command.
-- không sửa `kernel/` hoặc `haievent/` để target build;
-- generic examples không cần SoC register header;
-- target tick adapter chỉ có một strong IRQ handler;
-- fault handlers không duplicate fallback vector handlers;
-- stack port capability khớp config;
-- public GPIO/UART identifiers không bị application suy diễn;
-- benchmark backend báo unavailable rõ ràng nếu target không có clock/marker;
-- `.noinit` retention được test sau reset thật;
-- compile database IntelliSense lấy đúng target flags.
+- OpenOCD configuration and erase command.
+- do not modify `kernel/` or `haievent/` merely to make the target build;
+- generic examples do not need SoC register headers;
+- the target tick adapter provides exactly one strong IRQ handler;
+- fault handlers do not duplicate fallback vector handlers;
+- stack/port capabilities match configuration;
+- application code does not infer public GPIO/UART identifier layouts;
+- the benchmark backend reports unavailable explicitly when the target lacks a clock/marker;
+- `.noinit` retention is tested across a real reset;
+- compile-database IntelliSense uses the correct target flags.
 
 
-<a id="mo-hinh"></a>
-## Mô hình và luồng thực thi
+<a id="runtime-model"></a>
+## Execution Model and Runtime Flow
 
 **Runtime path**
 
@@ -78,38 +78,38 @@ flowchart TB
     MAN -.-> ARCH["Cortex-M3 port"]
 ```
 
-Các function và source file tương ứng được liệt kê trong phần Source map.
+The corresponding functions and source files are listed in the Source Map section.
 
 <a id="invariants"></a>
-## Ownership, concurrency và invariants
+## Ownership, Concurrency, and Invariants
 
-Các invariant nền áp dụng cho chủ đề này:
+The following baseline invariants apply to this topic:
 
-- Opaque object public chỉ hợp lệ sau create/init thành công và magic/internal state khớp contract.
-- Intrusive node chỉ được linked vào đúng một list tại một thời điểm; remove/timeout/wake phải để node về trạng thái unlinked nhất quán.
-- Thread API có thể block chỉ khi kernel RUNNING và không ở ISR; ISR API phải non-blocking và sử dụng `higher_priority_task_woken` khi cần defer switch sang PendSV.
-- Critical section hiện dùng PRIMASK trên Cortex-M3, nghĩa là mask interrupt toàn cục trong đoạn ngắn; vì vậy code trong critical section phải bounded và không được gọi operation có thể block.
-- Priority dùng **effective priority** ở ready/wait policy khi mutex inheritance đang active; base priority chỉ là cấu hình gốc.
-- Static-first không có nghĩa “không có lifetime”: caller-owned TCB/stack/queue storage/event pool vẫn phải sống lâu hơn mọi object đang tham chiếu tới chúng.
+- A public opaque object is valid only after a successful create/init operation and when its magic/internal state matches the contract.
+- An intrusive node may be linked into exactly one list at a time; remove/timeout/wake paths must leave the node in a consistent unlinked state.
+- A thread API may block only while the kernel is RUNNING and the caller is not in ISR context; ISR APIs must be non-blocking and use `higher_priority_task_woken` when a switch should be deferred to PendSV.
+- Critical sections currently use PRIMASK on Cortex-M3, globally masking interrupts for a short bounded interval; therefore critical-section code must remain bounded and must not invoke operations that can block.
+- Ready/wait policy uses **effective priority** while mutex priority inheritance is active; base priority remains the task's configured priority.
+- Static-first does not mean “no lifetime”: caller-owned TCB, stack, queue storage, and event-pool storage must outlive every object that still references them.
 
 <a id="failure"></a>
-## Failure modes và giới hạn
+## Failure Modes and Limitations
 
-- `hairtos 1.0.0-rc1` là single-core, không có SMP, FPU context, MPU isolation hay general dynamic kernel heap.
-- Interrupt masking model hiện là PRIMASK; repository chưa có BASEPRI ceiling contract cho application ISR priority phức tạp.
-- Tickless idle chưa có; time model hiện dựa trên tick 1 kHz ở target tham chiếu.
-- `haievent` v1 là flat state machine và one-task-per-AO; HSM/deferred event/shared executor nằm ở roadmap Version 2.
-- Build/link PASS không tự chứng minh real-time timing hoặc race-free behavior trên hardware; target tests và measurement vẫn cần thiết.
+- `hairtos 1.0.0-rc1` is single-core and provides no SMP, FPU context management, MPU isolation, or general-purpose dynamic kernel heap.
+- The current interrupt-masking model uses PRIMASK; the repository does not yet define a BASEPRI ceiling contract for applications with complex ISR-priority schemes.
+- Tickless idle is not implemented; the current time model uses a 1 kHz tick on the reference target.
+- `haievent` v1 provides a flat state machine and one task per AO; HSMs, deferred events, and a shared executor are Version 2 roadmap items.
+- A successful build/link does not by itself prove real-time timing or race-free behavior on hardware; target tests and measurements remain necessary.
 
 <a id="validation"></a>
-## Validation và cách kiểm chứng
+## Validation and Verification
 
-- Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
+- The repository's host suite is built with GCC, AddressSanitizer, UndefinedBehaviorSanitizer, and `ctest`.
 - Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
-- Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
-- Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
+- Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, and `16-diagnostics-stress-stabilization` pass; the scheduler stress test reports 500,000 iterations.
+- Do not infer target-runtime PASS from host tests. Cortex-M3 assembly, timing, exception priorities, UART/LED behavior, and hardware clocks still require cross-build and board validation.
 
-Các lệnh reproduction chính:
+Primary reproduction commands:
 
 ```bash
 make TARGET=<target> EXAMPLE=16-diagnostics-stress-stabilization build
@@ -141,7 +141,7 @@ make TARGET=<target> host-tests
 
 
 <a id="references"></a>
-## Tài liệu tham khảo
+## References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
@@ -151,7 +151,7 @@ make TARGET=<target> host-tests
 - [CMake — CMAKE_TOOLCHAIN_FILE](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html)
 - [CMake — CMAKE_EXPORT_COMPILE_COMMANDS](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `arch/arm/cortex-m3/hr_port.c`
 - `arch/arm/cortex-m3/hr_port_stack.c`
 - `arch/arm/cortex-m3/hr_portasm.S`

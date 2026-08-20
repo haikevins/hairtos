@@ -1,10 +1,10 @@
 # Compile-time configuration
 
-> **Scope:** Các macro thật trong `config/hairtos_config.h` và `config/haievent_config.h`, cùng compile-definition override từ CMake examples.
+> **Scope:** Actual macros in `config/hairtos_config.h` and `config/haievent_config.h`, plus compile-definition overrides from CMake examples.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](coding-standard.md) · [Next →](dependency-rules.md)
 
-## Mục lục
+## Table of Contents
 
 - [Kernel configuration](#kernel)
 - [`haievent` configuration](#event)
@@ -16,23 +16,23 @@
 <a id="kernel"></a>
 ## Kernel configuration
 
-| Macro | Default | Ý nghĩa implementation |
+| Macro | Default | Implementation Meaning |
 | --- | ---: | --- |
 | `HR_CFG_TICK_RATE_HZ` | 1000 | nominal kernel tick contract |
-| `HR_CFG_PRIORITY_COUNT` | 8 | số ready queues / bitmap priority bits sử dụng |
-| `HR_CFG_IDLE_PRIORITY` | 7 | idle; user effective priority không được chạm idle range trong internal setter |
+| `HR_CFG_PRIORITY_COUNT` | 8 | number of ready queues / priority bits used in the bitmap |
+| `HR_CFG_IDLE_PRIORITY` | 7 | idle priority; user effective priorities cannot enter the idle range in the internal setter |
 | `HR_CFG_MAX_TASKS` | 8 | registry size |
-| `HR_CFG_PREEMPTION` | 1 | strict-higher-priority wake có thể request PendSV |
+| `HR_CFG_PREEMPTION` | 1 | a strictly higher-priority wakeup may request PendSV |
 | `HR_CFG_TIME_SLICING` | 1 | equal-priority tick rotation |
 | `HR_CFG_TIME_SLICE_TICKS` | 1 | default quantum |
 | `HR_CFG_STATIC_ALLOCATION` | 1 | design contract |
-| `HR_CFG_DYNAMIC_ALLOCATION` | 0 | không kernel heap |
+| `HR_CFG_DYNAMIC_ALLOCATION` | 0 | no kernel heap |
 | Queue / semaphore / mutex | 1 | compile feature enable |
-| `HR_CFG_ENABLE_SOFTWARE_TIMER` | 1 | có thể bị example override |
+| `HR_CFG_ENABLE_SOFTWARE_TIMER` | 1 | may be overridden by an example |
 | `HR_CFG_ENABLE_ASSERT` | 1 | assert hook/path |
 | `HR_CFG_ENABLE_STACK_CHECK` | 1 | guard/high-watermark support |
-| `HR_CFG_ENABLE_RUNTIME_STATS` | 0 | default off; example 16 bật |
-| `HR_CFG_ENABLE_DIAGNOSTICS` | 0 | default off; example 16 bật |
+| `HR_CFG_ENABLE_RUNTIME_STATS` | 0 | off by default; enabled by example 16 |
+| `HR_CFG_ENABLE_DIAGNOSTICS` | 0 | off by default; enabled by example 16 |
 | `HR_CFG_DIAGNOSTICS_STACK_MARGIN_WORDS` | 16 | low-stack health threshold |
 | `HR_CFG_IDLE_STACK_WORDS` | 128 | idle stack |
 | `HR_CFG_TIMER_TASK_PRIORITY` | 6 default | overridden to 1 in timer/event/benchmark/diagnostics examples |
@@ -47,7 +47,7 @@
 <a id="event"></a>
 ## `haievent` configuration
 
-| Macro | Default | Ý nghĩa |
+| Macro | Default | Meaning |
 | --- | ---: | --- |
 | `HE_CFG_ENABLED` | 1 | framework compiled when module selected |
 | Active Object | 1 | v1 AO support |
@@ -78,32 +78,32 @@ Public object bytes are compile-time ABI-within-one-build contracts:
 | Time Event | 256 |
 | pub/sub | 64 |
 
-Internal headers có `_Static_assert(sizeof(control_block) <= sizeof(public_object))`; giảm storage macro quá thấp sẽ fail compile thay vì silent overwrite.
+Internal headers contain `_Static_assert(sizeof(control_block) <= sizeof(public_object))`; reducing a storage macro too far causes a compile-time failure rather than silent overwrite.
 
 <a id="overrides"></a>
 ## Per-example overrides
 
-`cmake/hairtos_examples.cmake` là nguồn thực tế cho override:
+`cmake/hairtos_examples.cmake` is the actual source of example-specific overrides:
 
 - Example 07: `PREEMPTION=0`, `TIME_SLICING=0`.
-- Example 12 và toàn bộ 13-* bật software timer, timer task priority 1.
+- Example 12 and all 13-* examples enable software timers with timer-task priority 1.
 - Example 15: preemption on, time slicing off, timer priority 1.
 - Example 16: preemption/time slicing/software timer + diagnostics + runtime stats on, timer priority 1.
-- Nhiều example sớm cố ý `HR_CFG_ENABLE_SOFTWARE_TIMER=0` để giảm module/behavior chưa học tới.
+- Many early examples intentionally set `HR_CFG_ENABLE_SOFTWARE_TIMER=0` to exclude modules/behavior that have not yet been introduced.
 
 <a id="invariants"></a>
 ## Configuration invariants
 
-- Priority count phải fit bitmap implementation và idle priority phải nằm trong range.
-- Timer task priority không được vô tình xung đột semantic với idle.
-- Config macro thay đổi phải rebuild toàn binary; object storage/layout không phải runtime-tunable.
-- Feature disable phải có stub/status rõ, không để symbol behavior nửa bật nửa tắt.
-- Target-specific compile definition nằm ở manifest; example-specific definition nằm ở examples map.
+- Priority count must fit the bitmap implementation, and idle priority must remain within range.
+- Timer-task priority must not accidentally conflict semantically with idle.
+- Changing configuration macros requires rebuilding the entire binary; object storage/layout is not runtime-tunable.
+- A disabled feature must expose a clear stub/status path rather than leaving behavior half-enabled.
+- Target-specific compile definitions live in the manifest; example-specific definitions live in the examples map.
 
 <a id="validation"></a>
 ## Validation
 
-`config/config_check.h` và compile-time assertions bắt một phần invalid combination. Host tests chạy nhiều feature path; example-specific override được CMake compose trong từng build tree.
+`config/config_check.h` and compile-time assertions catch some invalid combinations. Host tests exercise multiple feature paths; CMake composes example-specific overrides in each build tree.
 
 ## References
 

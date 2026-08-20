@@ -1,48 +1,48 @@
-# `13-04-time-event` — Sự kiện thời gian haievent
+# `13-04-time-event` — haievent Time Events
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/13-04-time-event/main.c`  
-> **Trọng tâm:** Time Event → AO
+> **Focus:** Time Event → AO
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Software timer phát timeout event định kỳ; AO xử lý trong task context và theo dõi drop.
+A software timer generates periodic timeout events; the AO handles them in task context and tracks drops.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `context`, `queue`, `semaphore`, `timer`, `haievent`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `context`, `queue`, `semaphore`, `timer`, `haievent`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `STACK_WORDS` | `224U` |
 | `QUEUE_LENGTH` | `6U` |
 
 ### CMake feature overrides
 
-- Software timer được bật cho build này; timer-service task priority được override thành 1.
+- Software timers are enabled for this build; the timer-service task priority is overridden to 1.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -55,37 +55,37 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Tạo `he_time_event_t` tĩnh.
-- Arm periodic event và disarm sau số lần xác định.
-- Phân biệt timer-service callback với AO dispatch.
-- Kết hợp timing và event-driven state handler.
-- Time event sở hữu một static event nội bộ.
-- Software timer expiry chỉ post vào AO queue.
-- AO xử lý event theo run-to-completion.
-- Disarm ngăn deadline tiếp theo.
+- Create a static `he_time_event_t`.
+- Arm a periodic event and disarm it after a defined number of expirations.
+- Distinguish the timer-service callback from AO dispatch.
+- Combine timing with an event-driven state handler.
+- A Time Event owns one internal static event.
+- Software-timer expiry only posts to the AO queue.
+- The AO handles the event run-to-completion.
+- Disarm prevents the next deadline from firing.
 - `haievent/haievent.h`
 - `hairtos/hr_time.h`
 - `he_time_event_create_static()`
 - `he_time_event_arm()`
 - `he_time_event_disarm()`
 - `haievent`
-- Có đúng sáu event trước PASS.
-- Tick tăng gần 250 mỗi event.
-- Sau disarm không còn event mới.
-- Event vẫn chạy sau khi disarm: timer chưa được gỡ hoặc trạng thái rearm sai.
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `blinker-AO` — Priority 2, stack 224, queue 6 — Toggle LED khi nhận tick.
-- `blink-time-event` — Chu kỳ 250 tick, tự động nạp lại — Đăng `SIGNAL_TICK`.
+- Exactly six events occur before PASS.
+- Tick values increase by approximately 250 per event.
+- No new events arrive after disarm.
+- Events continue after disarm: the timer was not removed correctly or rearm state is wrong.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `blinker-AO` — Priority 2, stack 224, queue 6 — Toggles the LED on each tick event.
+- `blink-time-event` — Period 250 ticks, auto-reload — Posts `SIGNAL_TICK`.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_led_toggle()`
@@ -101,41 +101,41 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_kernel_start()`
 - `hr_time_now()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Time event chứa embedded kernel timer và target AO/signal.
-- Periodic/one-shot semantics được ủy quyền cho `hr_timer_*`.
-- Nếu AO queue không nhận được timeout event, `dropped_count` tăng saturating tới UINT32_MAX.
-- Disarm/arm/rearm/change-period ánh xạ trực tiếp sang timer API tương ứng.
-- Timeout event không tự làm state transition; AO state handler quyết định ý nghĩa signal.
+- A time event embeds a kernel timer and stores its target AO/signal.
+- Periodic/one-shot semantics are delegated to `hr_timer_*`.
+- If the AO queue cannot accept a timeout event, `dropped_count` increments with saturation at UINT32_MAX.
+- Disarm/arm/rearm/change-period operations map directly to the corresponding timer APIs.
+- A timeout event does not perform a state transition by itself; the AO state handler determines the signal's meaning.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `Time event: PASS`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Timeout event không tới AO: kiểm tra software timer → timer-service task → time-event callback → AO post.
-- Post failure phải tăng `dropped_count` theo time-event contract.
-- Callback không chạy trong SysTick ISR; nó đi qua timer-service task.
-- Disarm/rearm phải giữ timer và AO/event lifetime hợp lệ.
+- Timeout event does not reach the AO: inspect software timer → timer-service task → time-event callback → AO post.
+- Post failure must increment `dropped_count` according to the Time Event contract.
+- The callback does not execute in the SysTick ISR; it runs through the timer-service task.
+- Disarm/rearm must preserve valid timer and AO/event lifetimes.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event build
@@ -144,7 +144,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/13-04-time-event/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -152,10 +152,10 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-04-time-event check
 - `kernel/src/hr_timer.c`
 - `haievent/src/he_active.c`
 
-### Tài liệu tham khảo
+### References
 
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `haievent/src/he_time_event.c`
 - `kernel/src/hr_timer.c`
 - `haievent/src/he_active.c`

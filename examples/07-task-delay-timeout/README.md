@@ -1,38 +1,38 @@
-# `07-task-delay-timeout` — SysTick, trì hoãn tác vụ và timeout
+# `07-task-delay-timeout` — SysTick, Task Delay, and Timeouts
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/07-task-delay-timeout/main.c`  
-> **Trọng tâm:** SysTick, delay và absolute periodic timing
+> **Focus:** SysTick, delays, and absolute periodic timing
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Preemption/time slicing bị tắt cho bài này để tập trung vào block → idle → timeout wake và delay_until.
+Preemption/time slicing are disabled in this example to isolate block → idle → timeout wake and `delay_until` behavior.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `PERIODIC_TASK_PRIORITY` | `2U` |
 | `HEARTBEAT_TASK_PRIORITY` | `3U` |
@@ -42,10 +42,10 @@ Preemption/time slicing bị tắt cho bài này để tập trung vào block �
 
 ### CMake feature overrides
 
-- `HR_CFG_PREEMPTION=0` và `HR_CFG_TIME_SLICING=0` để quan sát blocking/timeout mà không trộn preemption.
+- `HR_CFG_PREEMPTION=0` and `HR_CFG_TIME_SLICING=0` so blocking/timeout behavior can be observed without mixing in preemption.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 **Timeout insertion**
 
@@ -69,16 +69,16 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Dùng `hr_task_delay()` để block tương đối.
-- Dùng `hr_task_delay_until()` để chạy periodic không drift.
-- Quan sát idle task chạy khi mọi application task đều BLOCKED.
-- Hiểu timeout list và wake-up tại tick deadline.
-- SysTick do kernel quản lý.
-- Chuyển trạng thái RUNNING → BLOCKED → READY.
-- Dual timeout list hỗ trợ tick wrap.
-- Example tắt general preemption và time slicing để tập trung vào delay.
+- Use `hr_task_delay()` for relative blocking.
+- Use `hr_task_delay_until()` for drift-resistant periodic execution.
+- Observe the idle task running while all application tasks are BLOCKED.
+- Understand timeout lists and wakeup at the tick deadline.
+- SysTick is managed by the kernel.
+- State transition RUNNING → BLOCKED → READY.
+- Dual timeout lists support tick wrap-around.
+- This example disables general preemption and time slicing to focus on delays.
 - `hairtos/hr_time.h`
 - `hairtos/hr_task.h`
 - `hr_time_now()`
@@ -87,19 +87,19 @@ flowchart TB
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
-- Periodic xuất hiện gần các tick bội 500.
-- Heartbeat xuất hiện gần các tick bội 1000.
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `periodic` — Priority 2, stack 160 words — `delay_until` mỗi 500 ticks.
-- `heartbeat` — Priority 3, stack 160 words — `delay` mỗi 1000 ticks.
+- Periodic output appears near ticks that are multiples of 500.
+- Heartbeat output appears near ticks that are multiples of 1000.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `periodic` — Priority 2, stack 160 words — `delay_until` every 500 ticks.
+- `heartbeat` — Priority 3, stack 160 words — `delay` every 1000 ticks.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_led_toggle()`
@@ -117,23 +117,23 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_start()`
 - `hr_time_now()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Mỗi blocked task có đúng một timeout node và node chỉ nằm trong một trong hai timeout list khi timeout hữu hạn đang active.
-- `HR_WAIT_FOREVER` không cần timeout node; `HR_NO_WAIT` không block.
-- Wake do object và wake do timeout cạnh tranh trên cùng wait state; đường thắng phải remove task khỏi cả wait list và timeout list một cách nhất quán.
-- `delay_until()` dùng absolute periodic reference để giảm phase drift so với cộng delay sau mỗi lần task thực sự chạy.
-- Wrap-around được unit test trực tiếp trong `test_timeout.c`.
+- Each blocked task has exactly one timeout node, and that node belongs to exactly one of the two timeout lists while a finite timeout is active.
+- `HR_WAIT_FOREVER` requires no timeout node; `HR_NO_WAIT` does not block.
+- Object wakeup and timeout wakeup race on the same wait state; the winning path must remove the task consistently from both the wait list and timeout list.
+- `delay_until()` uses an absolute periodic reference to reduce phase drift compared with adding a delay after each actual execution.
+- Wrap-around behavior is unit-tested directly in `test_timeout.c`.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `ERROR: invalid task context.`
 - `ERROR: periodic delay failed.`
@@ -144,20 +144,20 @@ Các check/log cứng trong source:
 - `Task registration failed.`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Task delay không wake: kiểm tra SysTick, `hr_time_now()`, timeout insertion và expiry cleanup.
-- Wake sai quanh `uint32_t` wrap: kiểm tra current/overflow timeout lists và swap khi tick wrap.
-- Task còn nằm trong ready set khi BLOCKED: kiểm tra single ownership của ready/timeout nodes.
-- Example tắt preemption/time slicing theo CMake; mọi behavior phải được đọc trong config đó.
+- Delayed task does not wake: inspect SysTick, `hr_time_now()`, timeout insertion, and expiry cleanup.
+- Incorrect wakeup around `uint32_t` wrap: inspect current/overflow timeout lists and list swapping at tick wrap.
+- Task remains in the ready set while BLOCKED: inspect single ownership of ready/timeout nodes.
+- The example disables preemption/time slicing through CMake; interpret all behavior under that configuration.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout build
@@ -166,7 +166,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/07-task-delay-timeout/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -175,12 +175,12 @@ make TARGET=bluepill_f103c8 EXAMPLE=07-task-delay-timeout check
 - `kernel/src/hr_time.c`
 - `tests/host/test_timeout.c`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/src/hr_timeout.c`
 - `kernel/src/hr_kernel.c`
 - `kernel/src/hr_time.c`

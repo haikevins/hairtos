@@ -1,6 +1,6 @@
 # Kernel benchmark methodology
 
-> **Scope:** Cách example 15 đo và cách diễn giải số liệu; không hard-code kết quả target khi chưa có measurement artifact tương ứng.
+> **Scope:** How example 15 performs measurements and how to interpret the results; do not hard-code target results without a corresponding measurement artifact.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](diagnostics.md) · [Next →](release-checklist.md)
 
@@ -16,19 +16,19 @@ flowchart TB
     PB0["PB0 marker"] --> EXT["Logic analyzer"]
 ```
 
-Metrics trong `examples/15-kernel-benchmark/main.c` gồm timestamp overhead, critical section, scheduler select, primitive queue/semaphore/mutex, yield roundtrip, queue wakeup, haievent dispatch và timer jitter. Footprint lấy từ linker symbols qua board helper.
+Metrics in `examples/15-kernel-benchmark/main.c` include timestamp-read overhead, critical-section latency, scheduler selection, queue/semaphore/mutex primitives, yield round-trip, queue wakeup, haievent dispatch, and timer jitter. Footprint is obtained from linker symbols through board helpers.
 
 ## Measurement discipline
 
-- UART output bị trì hoãn khỏi hot measurement path.
-- Read overhead được đo riêng và adjusted cycle chỉ hợp lệ khi sample lớn hơn overhead.
-- Percentile/statistics nằm ở generic benchmark module, clock implementation ở architecture layer.
-- DWT frequency phải khớp core clock.
-- Toolchain `-Og`, config, target clock và marker phải được ghi cùng result.
+- UART output is deferred outside the hot measurement path.
+- Timestamp-read overhead is measured separately; adjusted cycle counts are valid only when the measured sample exceeds that overhead.
+- Percentile/statistics logic lives in the generic benchmark module, while the clock implementation lives in the architecture layer.
+- The DWT frequency must match the core clock.
+- Toolchain `-Og`, configuration, target clock, and marker setup must be recorded with the result.
 
 ## Interpretation
 
-Microbenchmark đo một primitive/path trong workload kiểm soát; nó không chứng minh end-to-end deadline cho application khác. Khi compare, phải cùng target/toolchain/config/sample method.
+A microbenchmark measures one primitive/path under a controlled workload; it does not prove end-to-end deadlines for another application. Comparisons require the same target, toolchain, configuration, and sampling method.
 
 ## Source
 

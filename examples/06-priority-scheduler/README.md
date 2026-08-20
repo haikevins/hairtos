@@ -1,38 +1,38 @@
-# `06-priority-scheduler` — Bộ lập lịch ưu tiên cố định
+# `06-priority-scheduler` — Fixed-Priority Scheduler
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/06-priority-scheduler/main.c`  
-> **Trọng tâm:** Fixed-priority scheduling + equal-priority yield
+> **Focus:** Fixed-priority scheduling + equal-priority yield
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Low được register trước nhưng không được chạy khi high READY; hai high task cùng priority rotate bằng yield.
+The low-priority task is registered first but must not run while high-priority tasks are READY; two equal-priority high tasks rotate using yield.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `baremetal_tick`, `task_kernel`, `kernel_runtime`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `baremetal_tick`, `task_kernel`, `kernel_runtime`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `HIGH_TASK_PRIORITY` | `1U` |
 | `LOW_TASK_PRIORITY` | `5U` |
@@ -41,10 +41,10 @@ Low được register trước nhưng không được chạy khi high READY; hai
 
 ### CMake feature overrides
 
-- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+- The example uses the default configuration except for modules/definitions explicitly declared in `cmake/hairtos_examples.cmake`.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -60,16 +60,16 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Hiểu quy ước priority số nhỏ hơn là khẩn cấp hơn.
-- Phân biệt registration order với scheduling order.
-- Kiểm tra FIFO giữa `high-a` và `high-b`.
-- Chứng minh task low không được chạy khi high tasks luôn READY.
-- Ready queues theo priority.
-- Ready bitmap tìm priority cao nhất.
-- Yield rotate queue hiện tại, không hạ xuống priority thấp hơn khi vẫn còn task high READY.
-- Scheduler policy vẫn cooperative ở thời điểm này.
+- Understand the convention that lower numeric values represent higher urgency/priority.
+- Distinguish registration order from scheduling order.
+- Verify FIFO behavior between `high-a` and `high-b`.
+- Prove the low-priority task does not run while high-priority tasks remain READY.
+- Ready queues are organized by priority.
+- The ready bitmap identifies the highest-priority non-empty queue.
+- Yield rotates the current queue and does not drop to a lower priority while a high-priority task remains READY.
+- Scheduler policy is still cooperative at this stage.
 - `hairtos/hr_kernel.h`
 - `hairtos/hr_task.h`
 - `hr_task_get_effective_priority()`
@@ -78,19 +78,19 @@ flowchart TB
 - `task_kernel`
 - `kernel_runtime`
 - `baremetal_tick`
-- Chỉ thấy `high-A` và `high-B` xen kẽ.
-- Không thấy lỗi low-priority task ran.
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `high-a` — Priority 1, stack 160 words — Yield cho peer cùng priority.
-- `high-b` — Priority 1, stack 160 words — Yield cho peer cùng priority.
+- Only alternating `high-A` and `high-B` output appears.
+- No `low-priority task ran` error appears.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `high-a` — Priority 1, stack 160 words — Yields to an equal-priority peer.
+- `high-b` — Priority 1, stack 160 words — Yields to an equal-priority peer.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_delay_ms()`
 - `board_init()`
@@ -108,23 +108,23 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_start()`
 - `hr_task_yield()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Ready task xuất hiện đúng một lần trong ready set; node không được đồng thời nằm ở list khác.
-- Selection không phụ thuộc thứ tự đăng ký giữa các priority khác nhau: priority nhỏ nhất đang có bit trong bitmap luôn thắng.
-- Giữa các task cùng priority, thứ tự là FIFO; `yield`/time slice rotate hàng đợi cao nhất thay vì làm thay đổi priority.
-- Preemption chỉ xảy ra khi có task READY với effective priority nhỏ hơn current task; peer cùng priority cần yield hoặc time slice để đổi lượt.
-- Mọi thay đổi effective priority của task READY phải requeue ready node để bitmap/list phản ánh priority mới.
+- A READY task appears exactly once in the ready set; its node must not simultaneously belong to another list.
+- Selection is independent of registration order across different priorities: the lowest-numbered priority whose bitmap bit is set always wins.
+- Tasks at the same priority are ordered FIFO; `yield`/time slicing rotates the highest-priority ready queue rather than changing priority.
+- Preemption occurs only when a READY task has a numerically lower effective priority than the current task; equal-priority peers require yield or time slicing to rotate execution.
+- Any change to the effective priority of a READY task must requeue its ready node so the bitmap/list reflects the new priority.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `ERROR: scheduler selected wrong task in `
 - `ERROR: scheduled task is not using PSP.`
@@ -136,20 +136,20 @@ Các check/log cứng trong source:
 - `Task registration failed.`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Low-priority task chạy khi high tasks còn READY: kiểm tra ready bitmap và quy tắc số priority nhỏ hơn là cao hơn.
-- High-A/High-B không thay phiên khi yield: kiểm tra FIFO rotation trong cùng priority.
-- Current-task mismatch: kiểm tra selector lấy FIFO head của mức priority cao nhất.
-- Đừng suy luận scheduler từ thứ tự task được đăng ký; priority quyết định trước registration order.
+- Low-priority task runs while high-priority tasks remain READY: inspect the ready bitmap and the lower-number-is-higher-priority convention.
+- High-A/High-B do not alternate on yield: inspect FIFO rotation within the same priority.
+- Current-task mismatch: inspect the selector choosing the FIFO head of the highest-priority ready level.
+- Do not infer scheduler order from task registration order; priority takes precedence over registration order.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=06-priority-scheduler build
@@ -158,7 +158,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=06-priority-scheduler check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/06-priority-scheduler/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -169,12 +169,12 @@ make TARGET=bluepill_f103c8 EXAMPLE=06-priority-scheduler check
 - `tests/host/test_scheduler_policy.c`
 - `labs/memory-allocator/`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/src/hr_scheduler.c`
 - `kernel/internal/hr_scheduler_internal.h`
 - `kernel/src/hr_kernel.c`

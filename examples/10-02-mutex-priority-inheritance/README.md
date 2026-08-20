@@ -1,38 +1,38 @@
-# `10-02-mutex-priority-inheritance` — Mutex và kế thừa ưu tiên
+# `10-02-mutex-priority-inheritance` — Mutex and Priority Inheritance
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/10-02-mutex-priority-inheritance/main.c`  
-> **Trọng tâm:** Priority inversion và inheritance
+> **Focus:** Priority inversion and inheritance
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Low giữ mutex, High block và boost Low; Medium CPU-bound không được kéo dài inversion.
+Low holds the mutex, High blocks and boosts Low, and the CPU-bound Medium task must not prolong the inversion.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `mutex`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `mutex`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `HIGH_TASK_PRIORITY` | `1U` |
 | `MEDIUM_TASK_PRIORITY` | `3U` |
@@ -44,10 +44,10 @@ Low giữ mutex, High block và boost Low; Medium CPU-bound không được kéo
 
 ### CMake feature overrides
 
-- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+- The example uses the default configuration except for modules/definitions explicitly declared in `cmake/hairtos_examples.cmake`.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 sequenceDiagram
@@ -64,16 +64,16 @@ sequenceDiagram
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Phân biệt base priority và effective priority.
-- Quan sát task high block trên mutex do low sở hữu.
-- Ngăn medium task làm low bị starvation bằng priority inheritance.
-- Xác nhận direct ownership handoff và priority restoration.
-- Quyền sở hữu mutex.
-- Priority inheritance từ waiter cao nhất.
-- Owner được requeue khi effective priority thay đổi.
-- Unlock chuyển ownership trực tiếp cho waiter phù hợp.
+- Distinguish base priority from effective priority.
+- Observe a high-priority task blocking on a mutex owned by a low-priority task.
+- Prevent the medium-priority task from starving Low through priority inheritance.
+- Verify direct ownership handoff and priority restoration.
+- Mutex ownership.
+- Priority inheritance from the highest-priority waiter.
+- The owner is requeued when its effective priority changes.
+- Unlock transfers ownership directly to the appropriate waiter.
 - `hairtos/hr_mutex.h`
 - `hairtos/hr_time.h`
 - `hr_mutex_create()`
@@ -84,17 +84,17 @@ sequenceDiagram
 - `hr_task_get_effective_priority()`
 - `task_kernel`
 - `kernel_runtime`
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `high` — Priority 1, stack 224 words — Thức ở tick 10 và chờ mutex.
-- `medium` — Priority 3, stack 224 words — Thức ở tick 20, CPU-bound cho đến PASS.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `high` — Priority 1, stack 224 words — Wakes at tick 10 and waits for the mutex.
+- `medium` — Priority 3, stack 224 words — Wakes at tick 20 and remains CPU-bound until PASS.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_led_toggle()`
@@ -115,23 +115,23 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_start()`
 - `hr_time_now()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Non-recursive mutex từ chối lock lại bởi chính owner; recursive mutex tăng recursion count và chỉ release ownership khi count về 0.
-- Waiter priority cao hơn có thể boost owner; task READY phải được requeue theo effective priority mới.
-- Chained inheritance được hỗ trợ bằng recompute đệ quy có bound phòng cycle/pathological depth.
-- Unlock chỉ hợp lệ với owner; ownership có thể handoff trực tiếp sang waiter được chọn trước khi task cũ restore priority.
-- Mutex API không được gọi từ ISR.
+- A non-recursive mutex rejects relocking by its current owner; a recursive mutex increments a recursion count and releases ownership only when the count returns to zero.
+- A higher-priority waiter may boost the owner; a READY owner must be requeued under its new effective priority.
+- Chained inheritance is supported through bounded recursive recomputation to guard against cycles or pathological depth.
+- Unlock is valid only for the owner; ownership may be handed directly to the selected waiter before the previous owner's priority is restored.
+- Mutex APIs must not be called from ISR context.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `ERROR: high mutex lock failed.`
 - `ERROR: mutex ownership/restoration failed.`
@@ -142,20 +142,20 @@ Các check/log cứng trong source:
 - `Mutex creation failed.`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Priority inversion không được rút ngắn: kiểm tra owner effective priority và requeue sau inheritance.
-- Unlock không handoff đúng waiter: kiểm tra priority-ordered waiter list và ownership transfer.
-- Owner không trở về priority phù hợp: recompute từ base priority và toàn bộ mutex còn sở hữu.
-- Non-owner unlock hoặc recursive-count sai phải trả status theo mutex contract, không silent success.
+- Priority inversion is not shortened: inspect the owner's effective priority and requeue behavior after inheritance.
+- Unlock does not hand off to the correct waiter: inspect the priority-ordered waiter list and ownership transfer.
+- Owner does not return to the proper priority: recompute from base priority and all mutexes it still owns.
+- Non-owner unlock or an invalid recursion count must return status according to the mutex contract, not silently succeed.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=10-02-mutex-priority-inheritance build
@@ -164,7 +164,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=10-02-mutex-priority-inheritance check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/10-02-mutex-priority-inheritance/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -173,12 +173,12 @@ make TARGET=bluepill_f103c8 EXAMPLE=10-02-mutex-priority-inheritance check
 - `kernel/src/hr_kernel.c`
 - `tests/host/test_mutex.c`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/src/hr_mutex.c`
 - `kernel/internal/hr_mutex_internal.h`
 - `kernel/src/hr_kernel.c`

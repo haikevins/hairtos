@@ -1,41 +1,41 @@
-# `02-kernel-data-structures-host` — Cấu trúc dữ liệu kernel — Demo trên host
+# `02-kernel-data-structures-host` — Kernel Data Structures — Host Demo
 
-> **Môi trường:** Host only  
+> **Environment:** Host only  
 > **Source:** `examples/02-kernel-data-structures-host/main.c`  
-> **Trọng tâm:** Intrusive ready/wait structures trên host
+> **Focus:** Intrusive ready/wait structures on the host
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Chạy không cần MCU để chứng minh ready set chọn priority nhỏ nhất, FIFO rotation và wait list sắp theo priority.
+Runs without an MCU to prove that the ready set selects the numerically lowest priority, preserves FIFO rotation, and orders wait lists by priority.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Host only**.
-- Module được link cho example này: `hr_list`, `hr_scheduler`, `hr_wait (host sources)`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as **Host only**.
+- Modules linked for this example: `hr_list`, `hr_scheduler`, `hr_wait (host sources)`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### CMake feature overrides
 
-- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+- The example uses the default configuration except for modules/definitions explicitly declared in `cmake/hairtos_examples.cmake`.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -51,16 +51,16 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Hiểu priority 0 là mức ưu tiên cao nhất.
-- Quan sát ready queue FIFO giữa các node cùng priority.
-- Quan sát wait list được sắp xếp theo priority và giữ FIFO khi bằng nhau.
-- Kiểm tra structural invariants bằng hàm validate.
-- Danh sách liên kết đôi intrusive.
-- Ready bitmap và một FIFO queue cho mỗi priority.
-- Owner pointer từ node trở về đối tượng chứa node.
-- Host-native test không có ISR, task stack hoặc context switch.
+- Understand that priority 0 is the highest priority.
+- Observe FIFO ready-queue ordering between nodes at the same priority.
+- Observe a wait list sorted by priority while preserving FIFO order among equal-priority waiters.
+- Validate structural invariants using the validator function.
+- Intrusive doubly linked list.
+- Ready bitmap plus one FIFO queue per priority.
+- Owner pointer from an intrusive node back to its containing object.
+- Host-native test with no ISR, task stack, or context switch.
 - `hr_scheduler_internal.h`
 - `hr_wait_internal.h`
 - `hr_ready_set_init()`
@@ -71,17 +71,17 @@ flowchart TB
 - `hr_*_validate()`
 - `kernel/src/hr_list.c`
 - `kernel/src/hr_scheduler.c`
-- `communication` — Priority 1 — Phải được chọn trước hai sensor.
-- `sensor-a` — Priority 3 — Đứng trước `sensor-b` theo FIFO ban đầu.
-- `sensor-b` — Priority 3 — Lên đầu sau khi rotate queue priority 3.
-- Ready set — `hr_ready_set_t` — Chọn highest priority và rotate FIFO.
-- Wait list — `hr_wait_list_t` — Sắp waiter theo priority.
-- Phần cứng — Không cần
+- `communication` — Priority 1 — Must be selected before the two sensor nodes.
+- `sensor-a` — Priority 3 — Initially precedes `sensor-b` by FIFO order.
+- `sensor-b` — Priority 3 — Moves to the head after rotating priority-3 queue.
+- Ready set — `hr_ready_set_t` — Selects highest priority and rotates FIFO order.
+- Wait list — `hr_wait_list_t` — Orders waiters by priority.
+- Hardware — Not required
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `hr_list_node_owner()`
 - `hr_ready_node_init()`
@@ -97,44 +97,44 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_wait_list_validate()`
 - `hr_wait_node_init()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Ready task xuất hiện đúng một lần trong ready set; node không được đồng thời nằm ở list khác.
-- Selection không phụ thuộc thứ tự đăng ký giữa các priority khác nhau: priority nhỏ nhất đang có bit trong bitmap luôn thắng.
-- Giữa các task cùng priority, thứ tự là FIFO; `yield`/time slice rotate hàng đợi cao nhất thay vì làm thay đổi priority.
-- Preemption chỉ xảy ra khi có task READY với effective priority nhỏ hơn current task; peer cùng priority cần yield hoặc time slice để đổi lượt.
-- Mọi thay đổi effective priority của task READY phải requeue ready node để bitmap/list phản ánh priority mới.
+- A READY task appears exactly once in the ready set; its node must not simultaneously belong to another list.
+- Selection is independent of registration order across different priorities: the lowest-numbered priority whose bitmap bit is set always wins.
+- Tasks at the same priority are ordered FIFO; `yield`/time slicing rotates the highest-priority ready queue rather than changing priority.
+- Preemption occurs only when a READY task has a numerically lower effective priority than the current task; equal-priority peers require yield or time slicing to rotate execution.
+- Any change to the effective priority of a READY task must requeue its ready node so the bitmap/list reflects the new priority.
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Highest-ready sai: kiểm tra priority ordering, ready bitmap và owner mapping của intrusive node.
-- Round-robin sai sau `hr_ready_set_rotate_highest()`: kiểm tra FIFO links/count ở priority cao nhất.
-- Wait-list head sai: kiểm tra effective-priority ordering và insert/remove invariants.
-- Example chạy trên host; GDB có thể đặt breakpoint trực tiếp vào `hr_ready_set_*` và `hr_wait_list_*`, không cần OpenOCD.
+- Incorrect highest-ready selection: inspect priority ordering, ready bitmap, and intrusive-node owner mapping.
+- Incorrect round-robin after `hr_ready_set_rotate_highest()`: inspect FIFO links/count at the highest priority.
+- Incorrect wait-list head: inspect effective-priority ordering and insert/remove invariants.
+- This example runs on the host; GDB can break directly in `hr_ready_set_*` and `hr_wait_list_*` without OpenOCD.
 
 <a id="validation"></a>
 ## Validation
 
-- Host validation baseline: example này chạy trực tiếp trên host và PASS.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- Host validation baseline: this example runs directly on the host and passes.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=02-kernel-data-structures-host run
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/02-kernel-data-structures-host/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -145,12 +145,12 @@ make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=02-kernel-data-structures-h
 - `tests/host/test_scheduler_policy.c`
 - `labs/memory-allocator/`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/src/hr_scheduler.c`
 - `kernel/internal/hr_scheduler_internal.h`
 - `kernel/src/hr_kernel.c`

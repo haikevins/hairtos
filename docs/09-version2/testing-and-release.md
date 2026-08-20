@@ -1,29 +1,29 @@
 # Testing/release Version 2
 
-> **Status: FUTURE DESIGN.** Nội dung này không phải capability của `hairtos 1.0.0-rc1`.
+> **Status: FUTURE DESIGN.** This content is not a capability of `hairtos 1.0.0-rc1`.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](roadmap.md) · [Next →](vision-and-goals.md)
 
-## Mục lục
+## Table of Contents
 
 - [Baseline v1](#baseline)
-- [Mục tiêu](#goals)
+- [Goals](#goals)
 - [Design constraints](#constraints)
-- [Evidence để được coi là hoàn thành](#evidence)
+- [Completion Evidence](#evidence)
 - [Migration/risk](#migration)
 - [References](#references)
 
 <a id="baseline"></a>
 ## Baseline v1
 
-Version 2 phải bắt đầu từ behavior v1 đang có: static object ownership, fixed-priority scheduler, intrusive ready/wait/timeout structures, direct-handoff IPC, one-task-per-AO, flat FSM, target manifest và host sanitizer tests. “Thiết kế mới” không được xóa evidence tốt chỉ để đổi kiến trúc.
+Version 2 must start from the existing v1 behavior: static object ownership, fixed-priority scheduling, intrusive ready/wait/timeout structures, direct-handoff IPC, one task per AO, flat FSMs, target manifests, and host sanitizer tests. A “new design” must not discard useful evidence merely to change the architecture.
 
 <a id="goals"></a>
-## Mục tiêu
+## Goals
 
-- Host sanitizer tests tiếp tục là fast feedback; thêm model-based HSM tests, port capability tests và target matrix.
-- Release candidate chỉ hợp lệ khi documentation capability matrix khớp source/test evidence.
-- Regression performance cần benchmark cùng target/toolchain/config, không so số liệu khác baseline.
+- Host sanitizer tests remain the fast-feedback layer; add model-based HSM tests, port-capability tests, and a target matrix.
+- A release candidate is valid only when the documentation capability matrix matches source/test evidence.
+- Performance regressions must be benchmarked with the same target/toolchain/configuration; do not compare numbers against a different baseline.
 - intrusive list operation sequences;
 - timeout wrap/deadline ordering;
 - queue direct handoff;
@@ -40,33 +40,33 @@ Version 2 phải bắt đầu từ behavior v1 đang có: static object ownershi
 <a id="constraints"></a>
 ## Design constraints
 
-- Không merge API/header trước implementation + tests.
-- Mọi feature phải ghi memory cost, runtime cost, ISR implication và failure modes.
-- Generic kernel không được nhận dependency vào STM32/board registers.
-- Static-first vẫn là default; dynamic behavior nếu thêm phải explicit, bounded và opt-in.
-- Version 2 docs phải giữ nhãn proposal cho tới khi capability matrix/source/test được cập nhật.
+- Do not merge an API/header before the implementation and tests exist.
+- Every feature must document memory cost, runtime cost, ISR implications, and failure modes.
+- The generic kernel must not depend on STM32 or board registers.
+- Static-first remains the default; any added dynamic behavior must be explicit, bounded, and opt-in.
+- Version 2 documentation must retain the proposal label until the capability matrix, source, and tests are updated.
 
 <a id="evidence"></a>
-## Evidence để được coi là hoàn thành
+## Completion Evidence
 
-Một mục roadmap chỉ chuyển sang implemented khi có đủ:
+A roadmap item is considered implemented only when all of the following are available:
 
-1. source implementation trong module đúng layer;
-2. unit/host tests hoặc compile probes tương ứng;
-3. target evidence nếu feature phụ thuộc architecture/hardware;
+1. source implementation in the correct module/layer;
+2. corresponding unit/host tests or compile probes;
+3. target evidence when the feature depends on architecture/hardware;
 4. compatibility/migration note;
-5. benchmark/overhead evidence nếu tác động timing hoặc RAM/Flash;
-6. cập nhật capability matrix và API docs.
+5. benchmark/overhead evidence when timing, RAM, or Flash are affected;
+6. updated capability matrix and API documentation.
 
 <a id="migration"></a>
 ## Migration / risk
 
-Rủi ro lớn nhất là scope creep làm mất tính audit được của một RTOS nhỏ. Migration nên opt-in theo feature và giữ v1 workload chạy được càng lâu càng tốt. HSM/tickless/trace/target 2 phải được tách phase để khi regression xuất hiện có thể khoanh vùng nguyên nhân.
+The primary risk is scope creep, which can make a small RTOS difficult to audit. Migration should be feature-by-feature and opt-in, keeping v1 workloads operational for as long as practical. HSM, tickless, trace, and second-target work should be phased separately so regressions can be isolated.
 
 <a id="references"></a>
 ## References
 
 - [`../00-overview/capability-matrix.md`](../00-overview/capability-matrix.md) — baseline capability.
-- [`../01-kernel-core/kernel-invariants.md`](../01-kernel-core/kernel-invariants.md) — invariant v1 không được phá ngầm.
+- [`../01-kernel-core/kernel-invariants.md`](../01-kernel-core/kernel-invariants.md) — a v1 invariant that must not be silently broken.
 - [`../06-testing-and-quality/validation-baseline.md`](../06-testing-and-quality/validation-baseline.md) — evidence baseline.
 - [Semantic Versioning 2.0.0](https://semver.org/)

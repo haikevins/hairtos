@@ -1,21 +1,21 @@
 # Driver layer
 
-> **Scope:** Driver API của hairtos cung cấp peripheral contract tối thiểu cho board/examples; đây không phải HAL tổng quát.
+> **Scope:** The hairtos driver API provides the minimum peripheral contracts required by boards/examples; it is not a general-purpose HAL.
 
 [← Root README](../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Kiến trúc](#architecture)
+- [Architecture](#architecture)
 - [Public contracts](#contracts)
 - [STM32F1 backend](#backend)
-- [Ownership và timing](#ownership)
+- [Ownership and Timing](#ownership)
 - [Porting](#porting)
 - [Validation](#validation)
 - [References](#references)
 
 <a id="architecture"></a>
-## Kiến trúc
+## Architecture
 
 ```mermaid
 flowchart TB
@@ -24,38 +24,38 @@ flowchart TB
     STM --> REG["STM32F1 register / clock layer"]
 ```
 
-Driver không biết scheduler policy. Board chọn pin/instance và dùng driver; kernel generic không include STM32F1 register header.
+Drivers are unaware of scheduler policy. The board selects pins/instances and uses the drivers; the generic kernel does not include STM32F1 register headers.
 
 <a id="contracts"></a>
 ## Public contracts
 
-- `hr_gpio.h`: configure/write/toggle GPIO với opaque pin identifier target-defined.
-- `hr_uart.h`: blocking/simple UART init + write path đủ cho log/demo.
-- `hr_hw_timer.h`: board millisecond timebase/delay dành cho bare-metal foundation và utility ngoài kernel tick.
+- `hr_gpio.h`: configure/write/toggle GPIO through opaque, target-defined pin identifiers.
+- `hr_uart.h`: simple/blocking UART initialization and write path sufficient for logs and demos.
+- `hr_hw_timer.h`: board millisecond timebase/delay for the bare-metal foundation and utilities outside the kernel tick.
 
-Các identifier pin/UART không được hard-code vào generic kernel. `board_pins.h` bind PC13, PA9/PA10, PB0 cho target hiện tại.
+Pin/UART identifiers must not be hard-coded into the generic kernel. `board_pins.h` binds PC13, PA9/PA10, and PB0 for the current target.
 
 <a id="backend"></a>
 ## STM32F1 backend
 
-Backend thao tác RCC/GPIO/USART/timer registers qua `soc/stm32f1/include/stm32f1.h`. Clock divisor phải lấy từ active PCLK/HCLK helper; không giả định mọi peripheral luôn chạy 72 MHz.
+The backend accesses RCC/GPIO/USART/timer registers through `soc/stm32f1/include/stm32f1.h`. Clock divisors must come from active PCLK/HCLK helpers; code must not assume every peripheral always runs at 72 MHz.
 
 <a id="ownership"></a>
-## Ownership và timing
+## Ownership and Timing
 
-- Driver hiện không có async DMA queue hoặc IRQ-driven UART subsystem; UART log có thể làm nhiễu benchmark/timing nếu gọi trong measurement window.
-- `board_delay_ms()` dùng hardware timer utility, không phải scheduler delay; task RTOS nên dùng `hr_task_delay*()` nếu mục tiêu là block CPU.
-- Board panic disable IRQ và loop breakpoint, phù hợp demo/debug nhưng không phải production recovery policy.
+- The current drivers provide no asynchronous DMA queue or IRQ-driven UART subsystem; UART logging can perturb benchmarks/timing if invoked inside a measurement window.
+- `board_delay_ms()` uses a hardware-timer utility, not a scheduler delay; RTOS tasks should use `hr_task_delay*()` when the intent is to block the task.
+- Board panic disables interrupts and loops on a breakpoint, which is appropriate for demos/debugging but is not a production recovery policy.
 
 <a id="porting"></a>
 ## Porting
 
-Target mới cần implementation driver phù hợp với opaque IDs + board binding tương ứng. Không sửa public kernel chỉ để đổi register map/pin.
+A new target requires driver implementations compatible with the opaque IDs plus matching board bindings. Do not modify the public kernel merely to change register maps or pin assignments.
 
 <a id="validation"></a>
 ## Validation
 
-Host tests mock port chứ không unit-test register backend. Hardware driver cần target build + board test. Platform contract chi tiết ở [`../docs/04-platform/`](../docs/04-platform/README.md).
+Host tests mock the port rather than unit-testing register backends. Hardware drivers require a target build and board testing. The detailed platform contract is in [`../docs/04-platform/`](../docs/04-platform/README.md).
 
 <a id="references"></a>
 ## References
@@ -64,7 +64,7 @@ Host tests mock port chứ không unit-test register backend. Hardware driver c�
 - [ST PM0056 — STM32F10xxx Cortex-M3 Programming Manual](https://www.st.com/resource/en/programming_manual/cd00228163-stm32f10xxx20xxx21xxxl1xxxx-cortexm3-programming-manual-stmicroelectronics.pdf)
 - [STM32F103 documentation portal](https://www.st.com/en/microcontrollers-microprocessors/stm32f103/documentation.html)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `drivers/include/hr_gpio.h`
 - `drivers/include/hr_uart.h`
 - `drivers/include/hr_hw_timer.h`

@@ -1,38 +1,38 @@
-# `05-cooperative-context-switch` — Chuyển ngữ cảnh hợp tác
+# `05-cooperative-context-switch` — Cooperative Context Switching
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/05-cooperative-context-switch/main.c`  
-> **Trọng tâm:** PendSV context switch hợp tác
+> **Focus:** Cooperative PendSV context switching
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Hai task cùng priority tự gọi yield; stack-local counter/cookie chứng minh context R4-R11 + hardware frame được bảo toàn.
+Two equal-priority tasks call yield explicitly; stack-local counters/cookies demonstrate preservation of R4–R11 plus the hardware frame.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `baremetal_tick`, `task_kernel`, `kernel_runtime`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `baremetal_tick`, `task_kernel`, `kernel_runtime`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `COOPERATIVE_TASK_PRIORITY` | `2U` |
 | `TASK_STACK_WORDS` | `160U` |
@@ -40,10 +40,10 @@ Hai task cùng priority tự gọi yield; stack-local counter/cookie chứng min
 
 ### CMake feature overrides
 
-- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+- The example uses the default configuration except for modules/definitions explicitly declared in `cmake/hairtos_examples.cmake`.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 **Exception entry and software save**
 
@@ -71,16 +71,16 @@ sequenceDiagram
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Save PSP và R4–R11 của task đang chạy.
-- Restore context của task kế tiếp.
-- Xác nhận local variable và stack cookie của mỗi task được bảo toàn.
-- Hiểu cooperative scheduling: task chỉ chuyển khi tự yield.
-- Hardware tự stack R0–R3, R12, LR, PC, xPSR.
+- Save PSP and R4–R11 for the running task.
+- Restore the next task's context.
+- Verify that each task's local variables and stack cookie are preserved.
+- Understand cooperative scheduling: a task switches only when it yields explicitly.
+- Hardware automatically stacks R0–R3, R12, LR, PC, and xPSR.
 - Port assembly stack/unstack R4–R11.
-- TCB lưu saved PSP.
-- Equal-priority FIFO được rotate khi yield.
+- The TCB stores the saved PSP.
+- The equal-priority FIFO is rotated on yield.
 - `hairtos/hr_kernel.h`
 - `hairtos/hr_task.h`
 - `hr_port.h`
@@ -90,18 +90,18 @@ sequenceDiagram
 - `task_kernel`
 - `kernel_runtime`
 - `baremetal_tick`
-- Dòng A/B xen kẽ ổn định.
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `task-a` — Priority 2, stack 160 words — Counter bắt đầu từ 0 và tăng 1.
-- `task-b` — Priority 2, stack 160 words — Counter bắt đầu từ 1000 và tăng 10.
+- A/B output alternates consistently.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `task-a` — Priority 2, stack 160 words — Counter starts at 0 and increments by 1.
+- `task-b` — Priority 2, stack 160 words — Counter starts at 1000 and increments by 10.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_delay_ms()`
 - `board_init()`
@@ -118,23 +118,23 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_start()`
 - `hr_task_yield()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- TCB đặt `stack_pointer` ở offset 0 và có `_Static_assert` để assembly có thể load/store saved PSP mà không cần biết layout C còn lại.
-- Initial stack frame được dựng giống exception-return frame thật; top stack được align xuống 8 byte.
-- Thread mode sau SVC chạy privileged với PSP (`CONTROL.SPSEL=1`); handler mode tiếp tục dùng MSP.
-- PendSV được cấu hình priority thấp nhất để việc chọn next task không cắt ngang exception quan trọng hơn.
-- Port hiện không lưu FPU context vì `HR_CFG_USE_FPU=0` và target Cortex-M3 không có FPU.
+- The TCB places `stack_pointer` at offset 0 and uses `_Static_assert` so assembly can load/store the saved PSP without knowing the rest of the C layout.
+- The initial stack frame is constructed to match a real exception-return frame; the top of stack is aligned down to 8 bytes.
+- After SVC, Thread mode runs privileged using PSP (`CONTROL.SPSEL=1`); Handler mode continues using MSP.
+- PendSV is configured at the lowest priority so next-task selection cannot preempt more important exceptions.
+- The current port does not save FPU context because `HR_CFG_USE_FPU=0` and the Cortex-M3 reference target has no FPU.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `ERROR: wrong current task in `
 - `ERROR: cooperative task is not using PSP.`
@@ -147,20 +147,20 @@ Các check/log cứng trong source:
 - `ERROR: hr_kernel_start returned status=`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Task A/B không luân phiên sau `hr_task_yield()`: kiểm tra PendSV pending, ready FIFO rotation và selector.
-- Stack-local counter bị hỏng: kiểm tra PSP của từng task và save/restore R4–R11.
-- Current-task check fail: kiểm tra `g_hr_current_task_control_block` sau selector.
-- UART logging và `board_delay_ms()` chỉ phục vụ quan sát; cooperative switch xảy ra tại `hr_task_yield()`.
+- Tasks A/B do not alternate after `hr_task_yield()`: inspect PendSV pending state, ready-FIFO rotation, and scheduler selection.
+- Stack-local counter is corrupted: inspect each task's PSP and the save/restore of R4–R11.
+- Current-task check fails: inspect `g_hr_current_task_control_block` after scheduler selection.
+- UART logging and `board_delay_ms()` are only for observation; the cooperative switch occurs at `hr_task_yield()`.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=05-cooperative-context-switch build
@@ -169,7 +169,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=05-cooperative-context-switch check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/05-cooperative-context-switch/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -179,12 +179,12 @@ make TARGET=bluepill_f103c8 EXAMPLE=05-cooperative-context-switch check
 - `kernel/internal/hr_task_internal.h`
 - `tests/host/test_port_stack.c`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `arch/arm/cortex-m3/hr_portasm.S`
 - `arch/arm/cortex-m3/hr_port_stack.c`
 - `arch/arm/cortex-m3/hr_port.c`

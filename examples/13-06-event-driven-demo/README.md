@@ -1,38 +1,38 @@
-# `13-06-event-driven-demo` — Demo haievent tích hợp
+# `13-06-event-driven-demo` — Integrated haievent Demo
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/13-06-event-driven-demo/main.c`  
-> **Trọng tâm:** Tích hợp haievent đầy đủ
+> **Focus:** Full haievent integration
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Controller/observer + script task kết hợp state transition, AO, time event, pub-sub, dynamic/static event.
+A controller/observer pair plus a script task combines state transitions, Active Objects, Time Events, pub/sub, and both dynamic and static events.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `context`, `queue`, `semaphore`, `timer`, `haievent`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `context`, `queue`, `semaphore`, `timer`, `haievent`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `STACK_WORDS` | `256U` |
 | `QUEUE_LENGTH` | `6U` |
@@ -40,10 +40,10 @@ Controller/observer + script task kết hợp state transition, AO, time event, 
 
 ### CMake feature overrides
 
-- Software timer được bật cho build này; timer-service task priority được override thành 1.
+- Software timers are enabled for this build; the timer-service task priority is overridden to 1.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -56,15 +56,15 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Kết hợp các capability haievent trong một flow hoàn chỉnh.
-- Arm/disarm time event theo state ENTRY/EXIT.
-- Publish dynamic status event từ state handler.
-- Dùng script task để phát command START/STOP.
-- Controller có states IDLE và ACTIVE.
-- Time event chỉ active khi controller ở ACTIVE.
-- Heartbeat event nội bộ tạo status dynamic event.
+- Combine haievent capabilities in one complete flow.
+- Arm/disarm the time event on state ENTRY/EXIT.
+- Publish a dynamic status event from a state handler.
+- Use a script task to issue START/STOP commands.
+- The controller has IDLE and ACTIVE states.
+- The Time Event is active only while the controller is in ACTIVE.
+- An internal heartbeat event creates a dynamic status event.
 - Observer subscribe `SIGNAL_STATUS`.
 - `haievent/haievent.h`
 - `hairtos/hr_time.h`
@@ -76,17 +76,17 @@ flowchart TB
 - `context`
 - `semaphore`
 - `haievent`
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `controller-AO` — Priority 2, stack 256, queue 6 — State IDLE/ACTIVE và heartbeat count.
-- `observer-AO` — Priority 3, stack 256, queue 6 — Nhận status event.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `controller-AO` — Priority 2, stack 256, queue 6 — IDLE/ACTIVE state plus heartbeat count.
+- `observer-AO` — Priority 3, stack 256, queue 6 — Receives status events.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_led_off()`
@@ -115,37 +115,37 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_start()`
 - `hr_time_now()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Một AO chạy run-to-completion: lấy một event, dispatch hoàn tất state handler/transition rồi mới nhận event tiếp theo.
-- Queue của AO dùng kernel queue và do caller cấp mảng pointer storage.
-- AO task start cùng lúc với create; state machine được start trước vòng nhận event.
-- Dynamic event được release sau mỗi dispatch; static event vẫn do caller sở hữu.
-- v1 dùng one-task-per-AO, không có shared executor.
+- An AO runs run-to-completion: it dequeues one event, completes state-handler dispatch/transition processing, then receives the next event.
+- The AO queue uses a kernel queue backed by a caller-supplied array of event pointers.
+- The AO task starts during creation; the state machine is initialized before entering the event-receive loop.
+- Dynamic events are released after each dispatch; static events remain caller-owned.
+- v1 uses one task per AO and provides no shared executor.
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Event-driven flow dừng: kiểm tra AO task, queue, timer và pub/sub theo từng boundary thay vì debug application như một khối.
-- Dynamic event leak: kiểm tra retain/release qua mọi consumer.
-- Time-event drop phải được quan sát qua status/counter thay vì im lặng.
-- FSM handler phải hoàn tất theo run-to-completion trước khi AO lấy event kế tiếp.
+- Event-driven flow stalls: inspect AO task, queue, timer, and pub/sub boundaries individually instead of debugging the application as one monolithic block.
+- Dynamic-event leak: inspect retain/release across every consumer.
+- Time-event drops must be observable through status/counters rather than remaining silent.
+- An FSM handler must complete run-to-completion before the AO dequeues the next event.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=13-06-event-driven-demo build
@@ -154,7 +154,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-06-event-driven-demo check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/13-06-event-driven-demo/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -163,10 +163,10 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-06-event-driven-demo check
 - `haievent/src/he_state_machine.c`
 - `kernel/src/hr_queue.c`
 
-### Tài liệu tham khảo
+### References
 
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `haievent/src/he_active.c`
 - `haievent/internal/he_internal.h`
 - `haievent/src/he_state_machine.c`

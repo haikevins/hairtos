@@ -4,9 +4,9 @@
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](testing-guide.md)
 
-## Kết quả đã chạy
+## Executed Results
 
-| Validation | Kết quả |
+| Validation | Result |
 | --- | --- |
 | CMake host test configure/build | PASS |
 | GCC strict warnings | PASS |
@@ -18,7 +18,7 @@
 | Example 16 scheduler stress host | PASS |
 | Stress iterations | 500,000 |
 
-## Stress result quan sát
+## Observed Stress Result
 
 ```text
 hairtos scheduler stress: PASS
@@ -31,11 +31,11 @@ validations=500000
 
 ## Environment limitation
 
-Host validation dùng native GCC/CMake/Ninja. Target build và hardware validation là evidence riêng, cần ARM GNU toolchain, GDB/OpenOCD và board thật trước khi được đánh dấu PASS.
+Host validation uses native GCC/CMake/Ninja. Target build and hardware validation are separate evidence and require the ARM GNU toolchain, GDB/OpenOCD, and a physical board before being marked PASS.
 
-## Ý nghĩa
+## Interpretation
 
-Host evidence cho thấy generic C policy/data structure và framework tests không phát hiện memory UB theo sanitizer trong workload hiện tại. Nó **không** chứng minh WCET, interrupt latency, electrical behavior hay fault retention qua reset thật.
+Host evidence shows that the current workload did not expose memory undefined behavior in the generic C policy/data-structure and framework tests under sanitizers. It **does not** prove WCET, interrupt latency, electrical behavior, or retained-fault behavior across a physical reset.
 
 ## Reproduce
 

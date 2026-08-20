@@ -1,6 +1,6 @@
 # Source map
 
-> Dùng file này để đi từ concept/API tới implementation/test nhanh nhất.
+> Use this file as the fastest path from a concept/API to its implementation/test.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](known-limitations.md)
 

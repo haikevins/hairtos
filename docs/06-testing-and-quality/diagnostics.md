@@ -1,12 +1,12 @@
 # Diagnostics architecture
 
-> **Scope:** Runtime statistics, health checks, stack diagnostics, panic/fault retention và hooks của v1.
+> **Scope:** v1 runtime statistics, health checks, stack diagnostics, panic/fault retention, and hooks.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [Next →](kernel-benchmark.md)
 
 ## Data model
 
-`hr_runtime_statistics_t` đếm SysTick/PendSV/task switch/yield/block/preemption/time slice/timeout wake/invariant check/stack check/panic. `hr_task_diagnostics_t` chụp state/base/effective priority/stack free-used/runtime ticks. `hr_health_report_t` aggregate kernel invariant + stack guards + ready/timeout/task counts.
+`hr_runtime_statistics_t` counts SysTick/PendSV/task switches/yields/blocks/preemptions/time slices/timeout wakes/invariant checks/stack checks/panics. `hr_task_diagnostics_t` snapshots state, base/effective priority, free/used stack, and runtime ticks. `hr_health_report_t` aggregates kernel invariants, stack guards, and ready/timeout/task counts.
 
 ## Retained fault record
 
@@ -34,19 +34,19 @@ sequenceDiagram
     N-->>B: previous fault available
 ```
 
-Linker đặt `.noinit` ngoài `.bss`, nên startup không zero record. Record chứa stacked register + exception number + SCB CFSR/HFSR/DFSR/AFSR/MMFAR/BFAR/SHCSR.
+The linker places `.noinit` outside `.bss`, so startup does not zero the retained record. The record contains stacked registers, exception number, and SCB CFSR/HFSR/DFSR/AFSR/MMFAR/BFAR/SHCSR.
 
 ## Fault enabling
 
-Khi diagnostics bật, Cortex-M port bật MemManage/BusFault/UsageFault và CCR trap unaligned/divide-by-zero. Khi diagnostics tắt, SoC fault handlers đi vào simple fault-stop loop.
+When diagnostics are enabled, the Cortex-M port enables MemManage/BusFault/UsageFault and CCR traps for unaligned access and divide-by-zero. When diagnostics are disabled, SoC fault handlers enter a simple fault-stop loop.
 
 ## Example 16
 
-Target workload phối hợp queue, semaphore, mutex, periodic timer và health-monitor task; monitor kiểm order/progress/kernel invariant/stack guard. Optional UsageFault injection dùng `udf` để kiểm retained record sau reset.
+The target workload combines queue, semaphore, mutex, periodic timer, and a health-monitor task; the monitor checks ordering, progress, kernel invariants, and stack guards. Optional UsageFault injection uses `udf` to verify retained records after reset.
 
 ## Validation
 
-Host diagnostics tests kiểm task snapshot, runtime counters, retained panic clear/read và fault-context capture. Hardware reset retention vẫn cần target.
+Host diagnostics tests verify task snapshots, runtime counters, retained-panic read/clear behavior, and fault-context capture. Hardware reset retention still requires target validation.
 
 ## Source
 

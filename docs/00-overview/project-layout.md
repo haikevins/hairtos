@@ -1,6 +1,6 @@
-# Repository layout và ownership
+# Repository Layout and Ownership
 
-> **Scope:** Mỗi directory được giải thích theo trách nhiệm runtime/build/test, không chỉ liệt kê tree.
+> **Scope:** Each directory is explained by runtime/build/test responsibility, not merely listed as a tree.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](project-analysis.md) · [Next →](roadmap.md)
 
@@ -23,9 +23,9 @@ tests/                 host/mocks/portability/stress
 tools/                 debugger/OpenOCD helpers
 ```
 
-## Ownership theo directory
+## Ownership by Directory
 
-| Directory | Sở hữu | Không nên sở hữu |
+| Directory | Owns | Should Not Own |
 | --- | --- | --- |
 | `kernel/` | scheduler/blocking/object policy | STM32 pin/register |
 | `haievent/` | event/AO/FSM/pubsub semantics | context-switch assembly |
@@ -54,7 +54,7 @@ flowchart TB
 
 ## Source discoverability
 
-Nếu muốn hiểu một public API, đi từ `kernel/include/hairtos/<x>.h` → `kernel/src/<x>.c` → `kernel/internal/<x>_internal.h` → relevant host test. Nếu behavior là CPU-specific, tiếp tục sang `arch/arm/cortex-m3`. Nếu là pin/UART/clock, đi qua board/driver/SoC.
+To understand a public API, trace `kernel/include/hairtos/<x>.h` → `kernel/src/<x>.c` → `kernel/internal/<x>_internal.h` → the relevant host test. If behavior is CPU-specific, continue into `arch/arm/cortex-m3`. For pin/UART/clock behavior, follow board → driver → SoC.
 
 ## References
 

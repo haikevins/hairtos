@@ -1,12 +1,12 @@
 # Stress testing
 
-> **Scope:** Deterministic scheduler stress hiện có và cách hiểu đúng evidence của nó.
+> **Scope:** The existing deterministic scheduler stress test and the correct interpretation of its evidence.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](release-checklist.md) · [Next →](test-matrix.md)
 
 ## Workload
 
-`tests/stress/scheduler_stress_core.c` tạo sequence insert/remove/rotate trên ready-set trong 500.000 iteration với deterministic PRNG/workload. Sau mỗi iteration, validator chạy để kiểm tra list/bitmap/count invariant.
+`tests/stress/scheduler_stress_core.c` generates insert/remove/rotate sequences on the ready set for 500,000 iterations using a deterministic PRNG/workload. After every iteration, a validator checks list/bitmap/count invariants.
 
 ```mermaid
 flowchart TB
@@ -17,17 +17,17 @@ flowchart TB
     NEXT --> STEP
 ```
 
-## Vì sao hữu ích
+## Why It Is Useful
 
-Stress test tìm các bug state-sequence mà vài unit case đơn lẻ không chạm tới: bitmap stale sau remove, node double-link, FIFO corruption sau nhiều rotate, count/list mismatch.
+The stress test finds state-sequence bugs that a few isolated unit cases may miss: stale bitmap bits after removal, double-linked nodes, FIFO corruption after repeated rotation, and count/list mismatches.
 
-## Giới hạn
+## Limitations
 
-Nó không tạo preemption thật, không chạy PendSV, không mô phỏng cache/FPU (target cũng không có FPU) hay asynchronous MCU interrupt. Đây là **data-structure/policy stress**, không phải hardware concurrency stress.
+It does not generate real preemption, execute PendSV, model cache/FPU behavior (the target also has no FPU), or inject asynchronous MCU interrupts. This is **data-structure/policy stress**, not hardware concurrency stress.
 
-## Kết quả validation
+## Validation Result
 
-500.000 iteration PASS với 500.000 validation call.
+500,000 iterations PASS with 500,000 validation calls.
 
 ## References
 

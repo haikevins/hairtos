@@ -1,38 +1,38 @@
-# `10-01-semaphore-from-isr` — Trao semaphore từ ISR
+# `10-01-semaphore-from-isr` — Giving a Semaphore from an ISR
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/10-01-semaphore-from-isr/main.c`  
-> **Trọng tâm:** ISR-to-task synchronization
+> **Focus:** ISR-to-task synchronization
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Hardware/bare-metal tick ISR give semaphore; task block chờ và `higher_priority_task_woken` quyết định PendSV.
+A hardware/bare-metal tick ISR gives a semaphore; a task blocks waiting for it, and `higher_priority_task_woken` determines whether PendSV is requested.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `semaphore`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `semaphore`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `WAITER_TASK_PRIORITY` | `1U` |
 | `TRIGGER_TASK_PRIORITY` | `3U` |
@@ -49,10 +49,10 @@ Hardware/bare-metal tick ISR give semaphore; task block chờ và `higher_priori
 
 ### CMake feature overrides
 
-- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+- The example uses the default configuration except for modules/definitions explicitly declared in `cmake/hairtos_examples.cmake`.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -65,16 +65,16 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Sử dụng API semaphore không blocking trong ISR.
-- Truyền `higher_priority_task_woken` ra khỏi kernel API.
-- Pend context switch sau ISR bằng `hr_yield_from_isr()`.
-- Phân biệt ISR context với task context.
-- Binary semaphore là counting semaphore max count 1.
-- ISR không được block hoặc dùng finite timeout.
-- Context switch không xảy ra giữa ISR handler; PendSV chạy sau exception return.
-- EXTI0 được trigger bằng SWIER nên không cần nút ngoài.
+- Use the non-blocking semaphore API from ISR context.
+- Propagate `higher_priority_task_woken` out of the kernel API.
+- Pend a context switch after ISR exit with `hr_yield_from_isr()`.
+- Distinguish ISR context from task context.
+- A binary semaphore is a counting semaphore with maximum count 1.
+- An ISR must not block or use a finite timeout.
+- Context switching does not occur in the middle of the ISR handler; PendSV runs after exception return.
+- EXTI0 is triggered through SWIER, so no external button is required.
 - `hairtos/hr_semaphore.h`
 - `hairtos/hr_context.h`
 - `stm32f1.h`
@@ -85,17 +85,17 @@ flowchart TB
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `waiter` — Priority 1, stack 192 words — Block trên binary semaphore.
-- `trigger` — Priority 3, stack 192 words — Mỗi 500 ticks ghi EXTI_SWIER.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `waiter` — Priority 1, stack 192 words — Blocks on the binary semaphore.
+- `trigger` — Priority 3, stack 192 words — Writes EXTI_SWIER every 500 ticks.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_led_toggle()`
@@ -116,23 +116,23 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_start()`
 - `hr_time_now()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- `take` tiêu thụ token nếu count > 0; nếu không có token thì có thể block theo timeout.
-- `give` với waiter đang chờ chuyển quyền tiến triển trực tiếp sang waiter; nếu không có waiter mới tăng count.
-- `give_from_isr` là ISR-safe và chỉ báo nhu cầu context switch qua output flag.
-- Semaphore không theo dõi owner và không có priority inheritance; dùng mutex nếu cần mutual exclusion có ownership.
-- Give khi count đã max và không có waiter trả `HR_ERROR_SEMAPHORE_FULL`.
+- `take` consumes a token when count > 0; if no token is available, it may block according to the timeout.
+- `give` with a waiting task transfers forward progress directly to that waiter; only when there is no waiter is the count incremented.
+- `give_from_isr` is ISR-safe and reports any required context switch through its output flag.
+- Semaphores track no owner and provide no priority inheritance; use a mutex when ownership-aware mutual exclusion is required.
+- Giving when the count is already at maximum and no waiter exists returns `HR_ERROR_SEMAPHORE_FULL`.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `ERROR: semaphore ISR handoff failed.`
 - `ERROR: trigger delay failed.`
@@ -142,20 +142,20 @@ Các check/log cứng trong source:
 - `ERROR: hr_kernel_start returned status=`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- ISR give không đánh thức task: kiểm tra ISR API, waiter selection và `higher_priority_task_woken`.
-- Count tăng khi đang có waiter: kiểm tra direct handoff semantics; token không nên bị giữ đồng thời ở count và waiter.
-- ISR path phải non-blocking và chỉ defer context switch qua PendSV.
-- Priority của task được wake phải được so với current task trước khi yêu cầu switch.
+- ISR give does not wake the task: inspect the ISR API, waiter selection, and `higher_priority_task_woken`.
+- Count increments while a waiter exists: inspect direct-handoff semantics; a token should not simultaneously exist in both the count and a waiter.
+- ISR path must remain non-blocking and defer context switching only through PendSV.
+- Compare the priority of the awakened task against the current task before requesting a switch.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=10-01-semaphore-from-isr build
@@ -164,7 +164,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=10-01-semaphore-from-isr check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/10-01-semaphore-from-isr/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -172,12 +172,12 @@ make TARGET=bluepill_f103c8 EXAMPLE=10-01-semaphore-from-isr check
 - `kernel/internal/hr_semaphore_internal.h`
 - `tests/host/test_semaphore.c`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/src/hr_semaphore.c`
 - `kernel/internal/hr_semaphore_internal.h`
 - `tests/host/test_semaphore.c`

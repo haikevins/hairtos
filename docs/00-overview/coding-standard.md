@@ -1,10 +1,10 @@
-# Coding standard của repository
+# Repository Coding Standard
 
-> **Scope:** Convention quan sát từ source + compiler policy; không thay thế MISRA/CERT và repo không tuyên bố certification.
+> **Scope:** Conventions observed in source plus compiler policy; this does not replace MISRA/CERT, and the repository does not claim certification.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](capability-matrix.md) · [Next →](configuration.md)
 
-## Mục lục
+## Table of Contents
 
 - [Compiler discipline](#compiler)
 - [Naming/layers](#naming)
@@ -17,46 +17,46 @@
 <a id="compiler"></a>
 ## Compiler discipline
 
-Target compile dùng C11, `-ffreestanding`, `-fno-common`, `-fno-builtin`, function/data sections và warning set strict: `-Wall -Wextra -Werror -Wshadow -Wundef -Wconversion -Wsign-conversion`. Host thêm `-pedantic` và ASan/UBSan.
+Target code is compiled as C11 with `-ffreestanding`, `-fno-common`, `-fno-builtin`, function/data sections, and a strict warning set: `-Wall -Wextra -Werror -Wshadow -Wundef -Wconversion -Wsign-conversion`. Host builds additionally use `-pedantic` and ASan/UBSan.
 
 <a id="naming"></a>
-## Naming và layer
+## Naming and Layering
 
 - `hr_` = hairtos kernel/public/internal symbol.
 - `he_` = haievent.
 - `board_` = board service.
 - `stm32f1_` = SoC-specific helper.
 - `HR_CFG_` / `HE_CFG_` = compile-time config.
-- public header nằm trong include tree; internal header không được “tiện tay” expose.
+- public headers live in public include trees; internal headers are not exposed merely for convenience.
 
 <a id="types"></a>
-## Types và conversion
+## Types and Conversions
 
-Code dùng `<stdint.h>`, `<stddef.h>`, `size_t`, `uintptr_t` và suffix `U/UL` nhất quán. Warning conversion/sign-conversion ép mọi narrowing/unsigned interaction phải intentional. Pointer↔integer chỉ xuất hiện ở architecture/register/binary-boundary có lý do rõ.
+Code consistently uses `<stdint.h>`, `<stddef.h>`, `size_t`, `uintptr_t`, and `U/UL` suffixes. Conversion/sign-conversion warnings require narrowing and signed/unsigned interactions to be intentional. Pointer↔integer conversions appear only at architecture/register/binary boundaries with explicit justification.
 
 <a id="concurrency"></a>
 ## Concurrency
 
-- Critical section save/restore prior PRIMASK state, không đơn giản `enable irq` vô điều kiện.
-- ISR path không gọi blocking API.
-- Shared intrusive structure mutate dưới kernel/critical contract.
-- User callback không chạy trong SysTick ISR.
-- Mutex ownership và effective priority phải thay đổi atomically với wait/ready requeue.
+- Critical sections save/restore the previous PRIMASK state rather than unconditionally re-enabling interrupts.
+- ISR paths do not call blocking APIs.
+- Shared intrusive structures are mutated under the kernel/critical-section contract.
+- User callbacks do not execute in SysTick ISR context.
+- Mutex ownership and effective-priority changes must be atomic with wait/ready requeue operations.
 
 <a id="errors"></a>
 ## Error handling
 
-Public operation trả `hr_status_t` cho recoverable contract failure. Internal invariant/fault có assert/panic/diagnostics path. Examples dùng `board_panic()` để biến violation thành dễ debug thay vì tiếp tục với state không hợp lệ.
+Public operations return `hr_status_t` for recoverable contract failures. Internal invariants/faults use assert/panic/diagnostics paths. Examples use `board_panic()` to turn violations into debuggable stops rather than continuing with invalid state.
 
 <a id="ds"></a>
 ## Data-structure discipline
 
-Intrusive node init trước insert, double insert/remove bị reject, list có validator. Magic values phân biệt initialized opaque object. `_Static_assert` bảo đảm hidden control block fit public storage.
+Intrusive nodes are initialized before insertion, double insert/remove is rejected, and lists have validators. Magic values distinguish initialized opaque objects. `_Static_assert` ensures hidden control blocks fit public storage.
 
 <a id="docs"></a>
 ## Documentation/test expectations
 
-Feature mới cần public contract, source mapping, failure mode, host/target evidence phù hợp và update capability matrix. Version 2 proposal không được coi là implemented chỉ vì có header/doc.
+A new feature requires a public contract, source mapping, documented failure modes, appropriate host/target evidence, and an updated capability matrix. A Version 2 proposal is not considered implemented merely because a header or document exists.
 
 ## References
 

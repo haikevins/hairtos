@@ -2,35 +2,35 @@
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [Next →](known-limitations.md)
 
-| Thuật ngữ | Nghĩa trong **hairtos** |
+| Term | Meaning in **hairtos** |
 | --- | --- |
 | **AO** | Active Object = dedicated hairtos task + event-pointer queue + flat state machine. |
-| **Base priority** | Priority cấu hình khi tạo task. |
-| **Effective priority** | Priority scheduler đang dùng sau priority inheritance. |
-| **Ready set** | Tập 8 FIFO intrusive queues + bitmap cho task READY. |
-| **Wait list** | Priority-ordered intrusive list của task chờ object. |
-| **Timeout list** | Hai sorted lists current/overflow cho deadline wrap-aware. |
-| **Direct handoff** | Hoàn tất data/token/ownership trực tiếp cho waiter thay vì buộc qua buffered state trung gian. |
-| **RTC** | Run-to-completion: AO xử lý xong một event trước khi lấy event kế. |
-| **FSM** | Flat state machine của haievent v1. |
-| **HSM** | Hierarchical State Machine; chưa implemented v1. |
+| **Base priority** | Priority configured when a task is created. |
+| **Effective priority** | Priority currently used by the scheduler after priority inheritance. |
+| **Ready set** | Eight FIFO intrusive queues plus a bitmap for READY tasks. |
+| **Wait list** | Priority-ordered intrusive list of tasks waiting on an object. |
+| **Timeout list** | Two sorted current/overflow lists for wrap-aware deadlines. |
+| **Direct handoff** | Completes data/token/ownership transfer directly to a waiter instead of forcing the transfer through intermediate buffered state. |
+| **RTC** | Run-to-completion: an AO completes processing one event before dequeuing the next. |
+| **FSM** | The flat state machine implemented by haievent v1. |
+| **HSM** | Hierarchical State Machine; not implemented in v1. |
 | **MSP** | Main Stack Pointer; bootstrap/handler stack. |
-| **PSP** | Process Stack Pointer; task Thread-mode stack sau SVC. |
-| **SVC** | Supervisor Call dùng để start first task. |
-| **PendSV** | Lowest-priority deferred exception dùng context switch. |
-| **PRIMASK** | Cortex-M interrupt mask dùng bởi critical section v1. |
-| **TCB** | Internal Task Control Block nằm trong opaque `hr_task_t` storage. |
+| **PSP** | Process Stack Pointer; task Thread-mode stack after SVC. |
+| **SVC** | Supervisor Call used to start the first task. |
+| **PendSV** | Lowest-priority deferred exception used for context switching. |
+| **PRIMASK** | Cortex-M interrupt mask used by v1 critical sections. |
+| **TCB** | Internal Task Control Block stored inside opaque `hr_task_t` storage. |
 | **Opaque object** | Public aligned byte storage che internal control-block layout. |
-| **Static-first** | Caller cấp storage trước; kernel không tự heap allocate object runtime. |
-| **Event pool** | Fixed-block pool cho dynamic `he_event_t`. |
-| **Reference count** | Số owner/reference active của dynamic event. |
-| **Time Event** | Adapter kernel software timer → timeout event post vào AO. |
-| **Timer-service task** | Task chạy user software-timer callback ngoài ISR. |
-| **DWT CYCCNT** | Cortex-M cycle counter dùng benchmark clock target. |
-| **Retained record** | Panic/fault record đặt `.noinit` để tồn tại qua reset phù hợp. |
-| **Target manifest** | CMake file bind architecture/SoC/board/driver/linker/debug cho target. |
-| **Host test** | Native build với mock port + ASan/UBSan cho generic logic. |
+| **Static-first** | The caller provides storage up front; the kernel does not heap-allocate runtime objects itself. |
+| **Event pool** | Fixed-block pool for dynamic `he_event_t`. |
+| **Reference count** | Number of active owners/references to a dynamic event. |
+| **Time Event** | Adapter from a kernel software timer to a timeout event posted to an AO. |
+| **Timer-service task** | Task that executes user software-timer callbacks outside ISR context. |
+| **DWT CYCCNT** | Cortex-M cycle counter used by the target benchmark clock. |
+| **Retained record** | Panic/fault record placed in `.noinit` so it survives a suitable reset. |
+| **Target manifest** | CMake file that binds architecture/SoC/board/driver/linker/debug selections for a target. |
+| **Host test** | Native build with a mock port plus ASan/UBSan for generic logic. |
 
-## Lưu ý
+## Notes
 
-Các từ như “priority”, “timer”, “event” có nghĩa cụ thể theo implementation này. Ví dụ software timer callback **không** chạy trong SysTick ISR; “dynamic event” dùng fixed-block pool chứ không đồng nghĩa general heap allocation.
+Terms such as “priority”, “timer”, and “event” have implementation-specific meanings here. For example, software-timer callbacks **do not** execute in the SysTick ISR, and a “dynamic event” comes from a fixed-block pool rather than implying general-purpose heap allocation.

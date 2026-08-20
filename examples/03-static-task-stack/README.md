@@ -1,41 +1,41 @@
-# `03-static-task-stack` — TCB tĩnh và ngăn xếp khởi tạo của tác vụ
+# `03-static-task-stack` — Static TCB and Initial Task Stack
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/03-static-task-stack/main.c`  
-> **Trọng tâm:** Static TCB và initial Cortex-M stack
+> **Focus:** Static TCB and initial Cortex-M stack
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Tạo task nhưng chưa start kernel; mục tiêu là kiểm tra object tĩnh, stack fill/guard và initial exception-compatible frame.
+Create a task without starting the kernel; the goal is to verify static object storage, stack fill/guard behavior, and the initial exception-compatible frame.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `baremetal_tick`, `task_kernel`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `baremetal_tick`, `task_kernel`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### CMake feature overrides
 
-- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+- The example uses the default configuration except for modules/definitions explicitly declared in `cmake/hairtos_examples.cmake`.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -46,18 +46,18 @@ flowchart TB
     CREATED --> LOOP["main() keeps bare-metal LED loop"]
 ```
 
-`demo_task()` chưa được scheduler chạy trong example này. Mục tiêu là kiểm tra object/stack construction trước khi sang bước SVC startup ở example 04.
+`demo_task()` is not scheduled in this example. The objective is to validate object/stack construction before the SVC startup stage introduced in example 04.
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Tạo opaque `hr_task_t` bằng API public.
-- Cấp stack tĩnh từ application.
-- Đưa task vào trạng thái CREATED và kiểm tra frame khởi tạo.
-- Phân biệt tạo task với đăng ký/start task.
+- Create an opaque `hr_task_t` through the public API.
+- Provide static stack storage from the application.
+- Place the task in CREATED state and inspect the initial frame.
+- Distinguish task creation from task registration/start.
 - TCB static-first.
-- Stack fill và stack guard.
-- Initial frame chứa R0–R3, R12, LR, PC, xPSR và vùng R4–R11.
-- Task argument được đặt vào R0 để dùng khi task bắt đầu.
+- Stack fill and stack guard.
+- The initial frame contains R0–R3, R12, LR, PC, xPSR, plus the R4–R11 save area.
+- The task argument is placed in R0 for use when the task eventually starts.
 - `board.h`
 - `hairtos/hr_task.h`
 - `hr_task_create_static()`
@@ -65,20 +65,20 @@ flowchart TB
 - `platform`
 - `baremetal_tick`
 - `task_kernel`
-- Thông báo tạo task thành công xuất hiện.
-- Main vẫn nháy LED; không có dấu hiệu `demo_task()` đã chạy.
-- Build map cho thấy TCB và stack nằm trong RAM tĩnh.
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- Task `demo` — Priority 2, stack 96 words — Nhận con trỏ `counter` nhưng không được thực thi trong bài này.
+- A successful task-creation message appears.
+- The main loop continues blinking the LED; there is no evidence that `demo_task()` has executed.
+- The build map shows the TCB and stack in static RAM.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- Task `demo` — Priority 2, stack 96 words — Receives a `counter` pointer but is not executed in this example.
 - TCB — `g_demo_task` — Opaque public storage.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_delay_ms()`
 - `board_init()`
@@ -86,41 +86,41 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `board_uart_write_line()`
 - `hr_task_create_static()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- TCB đặt `stack_pointer` ở offset 0 và có `_Static_assert` để assembly có thể load/store saved PSP mà không cần biết layout C còn lại.
-- Initial stack frame được dựng giống exception-return frame thật; top stack được align xuống 8 byte.
-- Thread mode sau SVC chạy privileged với PSP (`CONTROL.SPSEL=1`); handler mode tiếp tục dùng MSP.
-- PendSV được cấu hình priority thấp nhất để việc chọn next task không cắt ngang exception quan trọng hơn.
-- Port hiện không lưu FPU context vì `HR_CFG_USE_FPU=0` và target Cortex-M3 không có FPU.
+- The TCB places `stack_pointer` at offset 0 and uses `_Static_assert` so assembly can load/store the saved PSP without knowing the rest of the C layout.
+- The initial stack frame is constructed to match a real exception-return frame; the top of stack is aligned down to 8 bytes.
+- After SVC, Thread mode runs privileged using PSP (`CONTROL.SPSEL=1`); Handler mode continues using MSP.
+- PendSV is configured at the lowest priority so next-task selection cannot preempt more important exceptions.
+- The current port does not save FPU context because `HR_CFG_USE_FPU=0` and the Cortex-M3 reference target has no FPU.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `Task creation failed.`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- `hr_task_create_static()` fail: kiểm tra object/stack pointer, stack size và alignment contract.
-- Initial frame sai: kiểm tra `hr_port_stack_initialize()`, xPSR Thumb bit, PC/LR và argument trong R0.
-- `demo_task()` không được chạy ở stage này; nếu nó chạy thì boundary CREATED → RUNNING đã bị vi phạm.
-- LED loop trong `main()` phải tiếp tục hoạt động sau khi task object được tạo.
+- `hr_task_create_static()` fails: inspect object/stack pointers, stack size, and alignment contract.
+- Incorrect initial frame: inspect `hr_port_stack_initialize()`, the xPSR Thumb bit, PC/LR, and the argument in R0.
+- `demo_task()` must not run at this stage; if it does, the CREATED → RUNNING boundary has been violated.
+- The LED loop in `main()` must continue running after the task object is created.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=03-static-task-stack build
@@ -129,7 +129,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=03-static-task-stack check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/03-static-task-stack/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -139,12 +139,12 @@ make TARGET=bluepill_f103c8 EXAMPLE=03-static-task-stack check
 - `kernel/internal/hr_task_internal.h`
 - `tests/host/test_port_stack.c`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `arch/arm/cortex-m3/hr_portasm.S`
 - `arch/arm/cortex-m3/hr_port_stack.c`
 - `arch/arm/cortex-m3/hr_port.c`

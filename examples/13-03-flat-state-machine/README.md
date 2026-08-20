@@ -1,48 +1,48 @@
-# `13-03-flat-state-machine` — Máy trạng thái phẳng
+# `13-03-flat-state-machine` — Flat State Machine
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/13-03-flat-state-machine/main.c`  
-> **Trọng tâm:** Flat FSM semantics
+> **Focus:** Flat FSM semantics
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-ENTRY/EXIT/INIT và transition được quan sát rõ mà chưa có Active Object concurrency.
+ENTRY/EXIT/INIT processing and transitions are observable directly, before Active Object concurrency is introduced.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `context`, `queue`, `semaphore`, `timer`, `haievent`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `context`, `queue`, `semaphore`, `timer`, `haievent`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `STACK_WORDS` | `224U` |
 | `QUEUE_LENGTH` | `4U` |
 
 ### CMake feature overrides
 
-- Software timer được bật cho build này; timer-service task priority được override thành 1.
+- Software timers are enabled for this build; the timer-service task priority is overridden to 1.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -57,37 +57,37 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Viết state handler trả về HANDLED/IGNORED/TRANSITION.
-- Quan sát thứ tự EXIT → đổi current state → ENTRY.
-- Kết hợp state machine với AO queue.
-- Giữ state transition run-to-completion.
-- Flat state machine không có parent/child state.
-- Reserved signals `HE_SIG_ENTRY` và `HE_SIG_EXIT`.
-- `he_state_transition()` chỉ yêu cầu transition; framework thực hiện sequence.
-- LED state phản ánh current state.
+- Write state handlers that return HANDLED/IGNORED/TRANSITION.
+- Observe EXIT → current-state update → ENTRY ordering.
+- Combine a state machine with an AO queue.
+- Preserve run-to-completion state transitions.
+- The flat state machine has no parent/child states.
+- Reserved signals include `HE_SIG_ENTRY` and `HE_SIG_EXIT`.
+- `he_state_transition()` only requests a transition; the framework executes the sequence.
+- LED state reflects the current state.
 - `haievent/haievent.h`
 - `he_state_transition()`
 - `he_active_post()`
 - `he_event_init_static()`
 - `haievent`
-- Mỗi transition có EXIT trước ENTRY.
-- LED khớp state ON/OFF.
-- Có PASS sau sáu toggle.
-- ENTRY thiếu: framework transition sequence sai.
-- LED/state lệch: logic handler hoặc active-low board API.
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `switch-AO` — Priority 2, stack 224, queue 4 — State ban đầu OFF.
-- `toggle-controller` — Priority 3, stack 224 — Post sáu TOGGLE event mỗi 400 ticks.
+- Every transition performs EXIT before ENTRY.
+- LED behavior matches ON/OFF states.
+- PASS is reported after six toggles.
+- Missing ENTRY: the framework transition sequence is incorrect.
+- LED/state mismatch: inspect handler logic or the active-low board API.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `switch-AO` — Priority 2, stack 224, queue 4 — Initial state OFF.
+- `toggle-controller` — Priority 3, stack 224 — Posts six TOGGLE events every 400 ticks.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_led_off()`
@@ -104,41 +104,41 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_delay()`
 - `hr_task_start()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Reserved signals 1..4 dành cho ENTRY, EXIT, INIT, TIMEOUT; user signal bắt đầu từ 32.
-- State handler trả HANDLED, IGNORED hoặc TRANSITION.
-- Transition giữa state thực hiện EXIT old → current=target → ENTRY target → INIT chain.
-- INIT transition loop được bound bởi `HE_CFG_MAX_INIT_TRANSITIONS=8` để tránh cycle vô hạn.
-- Hierarchical parent propagation/history/defer chưa có trong v1.
+- Reserved signals 1..4 are ENTRY, EXIT, INIT, and TIMEOUT; user signals start at 32.
+- A state handler returns HANDLED, IGNORED, or TRANSITION.
+- A state transition performs EXIT(old) → current=target → ENTRY(target) → INIT chain.
+- The INIT transition loop is bounded by `HE_CFG_MAX_INIT_TRANSITIONS=8` to prevent an infinite cycle.
+- Hierarchical parent propagation, history, and defer are not implemented in v1.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `Flat state-machine ENTRY/EXIT transition demo: PASS`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- ENTRY/EXIT/INIT sai thứ tự: kiểm tra transition path trong `he_state_machine.c`.
-- HANDLED/IGNORED không được tự đổi current state.
-- INIT chain phải dừng trong configured bound; loop init không được chạy vô hạn.
-- FSM v1 là flat state machine, không có parent-state propagation như HSM.
+- Incorrect ENTRY/EXIT/INIT ordering: inspect the transition path in `he_state_machine.c`.
+- HANDLED/IGNORED must not change the current state implicitly.
+- The INIT chain must stop within the configured bound; an init loop must never run indefinitely.
+- The v1 FSM is flat and provides no parent-state propagation as an HSM would.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=13-03-flat-state-machine build
@@ -147,7 +147,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-03-flat-state-machine check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/13-03-flat-state-machine/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -155,10 +155,10 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-03-flat-state-machine check
 - `haievent/include/haievent/he_state_machine.h`
 - `tests/host/test_haievent.c`
 
-### Tài liệu tham khảo
+### References
 
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `haievent/src/he_state_machine.c`
 - `haievent/include/haievent/he_state_machine.h`
 - `tests/host/test_haievent.c`

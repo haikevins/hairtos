@@ -1,13 +1,13 @@
-# Kiến trúc `hairtos 1.0.0-rc1`
+# `hairtos 1.0.0-rc1` Architecture
 
-> **Phạm vi:** Kiến trúc runtime và build architecture thực sự có trong source v1; không trộn roadmap Version 2.
+> **Scope:** Runtime and build architecture that actually exists in the v1 source; Version 2 roadmap material is kept separate.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [Next →](capability-matrix.md)
 
-## Mục lục
+## Table of Contents
 
 - [Mental model](#mental)
-- [Layer và dependency direction](#layers)
+- [Layers and Dependency Direction](#layers)
 - [Kernel execution model](#kernel)
 - [`haievent`](#haievent)
 - [Platform/target model](#platform)
@@ -19,7 +19,7 @@
 <a id="mental"></a>
 ## Mental model
 
-`hairtos` có hai runtime subsystem chính nhưng chỉ một scheduler:
+`hairtos` has two primary runtime subsystems but only one scheduler:
 
 ```text
 hairtos kernel
@@ -35,10 +35,10 @@ haievent
     └── publish/subscribe
 ```
 
-`haievent` **không** có thread scheduler riêng. Một Active Object tạo một hairtos task; priority của AO vì vậy đi qua cùng ready set, preemption và PendSV như mọi task khác.
+`haievent` **does not** provide a separate thread scheduler. An Active Object creates a hairtos task, so AO priority participates in the same ready set, preemption rules, and PendSV mechanism as every other task.
 
 <a id="layers"></a>
-## Layer và dependency direction
+## Layers and Dependency Direction
 
 **Runtime dependency path**
 
@@ -66,7 +66,7 @@ flowchart TB
     MAN -.-> SOC
 ```
 
-Dependency direction được thiết kế để generic kernel không biết STM32 register, pin hay OpenOCD config. Application bình thường cũng không biết TCB layout. Chỉ architecture assembly có một contract rất hẹp với TCB: `stack_pointer` phải ở offset 0.
+Dependency direction is designed so the generic kernel knows nothing about STM32 registers, pins, or OpenOCD configuration. Normal application code also does not know TCB layout. Only architecture assembly has one narrow TCB contract: `stack_pointer` must be at offset 0.
 
 ### Public/internal boundary
 
@@ -75,19 +75,19 @@ Public:
 - `kernel/include/hairtos/`
 - `haievent/include/haievent/`
 - `drivers/include/`
-- target board public include như `board.h`
+- public target-board includes such as `board.h`
 
 Internal:
 
 - `kernel/internal/`
 - `haievent/internal/`
 
-Host tests và benchmark có thể được CMake cấp internal include để kiểm thử/đo policy, nhưng đó không biến internal header thành API compatibility surface.
+CMake may grant host tests and benchmarks access to internal includes for policy testing/measurement, but that does not make internal headers part of the API compatibility surface.
 
 <a id="kernel"></a>
 ## Kernel execution model
 
-Kernel state đi từ reset/uninitialized → initialized → running. `hr_kernel_init()` dựng scheduler, timeout list, idle task, registry và timer subsystem baseline; user task được create/start; `hr_kernel_start()` chuẩn bị current task rồi đi vào architecture port.
+Kernel state progresses from reset/uninitialized → initialized → running. `hr_kernel_init()` constructs the scheduler, timeout lists, idle task, registry, and baseline timer subsystem; user tasks are created/started; `hr_kernel_start()` selects/prepares the current task and enters the architecture port.
 
 ### Scheduling path
 
@@ -113,11 +113,11 @@ flowchart TB
 
 ### Context path
 
-Cortex-M3 hardware stack R0–R3/R12/LR/PC/xPSR. Port assembly save thêm R4–R11. First task dùng SVC; switch tiếp theo dùng PendSV. Task Thread mode dùng PSP; exception handler dùng MSP.
+Cortex-M3 hardware stacks R0–R3/R12/LR/PC/xPSR. Port assembly additionally saves R4–R11. The first task starts through SVC; subsequent switches use PendSV. Task Thread mode uses PSP; exception handlers use MSP.
 
 ### Blocking path
 
-Queue/semaphore/mutex và delay đều quy về một kernel blocking contract: current task rời ready set, gắn wait metadata, có thể gắn timeout node, rồi một wake path duy nhất cleanup và đưa task trở lại ready set. Đây là invariant trung tâm của kernel.
+Queues, semaphores, mutexes, and delays all reduce to one kernel blocking contract: the current task leaves the ready set, attaches wait metadata and optionally a timeout node, then exactly one wake path performs cleanup and returns the task to the ready set. This is a central kernel invariant.
 
 <a id="haievent"></a>
 ## `haievent`
@@ -133,7 +133,7 @@ sequenceDiagram
     A->>A: release dynamic event
 ```
 
-Dynamic event được cấp từ fixed-block pool và reference count; static event do caller sở hữu. Pub/sub snapshot subscriber list trong critical section, sau đó post ngoài critical section. Time event chỉ là adapter software timer → AO event.
+Dynamic events are allocated from a fixed-block pool and reference-counted; static events remain caller-owned. Pub/sub snapshots the subscriber list inside a critical section and posts outside it. A Time Event is simply a software-timer → AO-event adapter.
 
 <a id="platform"></a>
 ## Platform/target model
@@ -148,12 +148,12 @@ Target `bluepill_f103c8` bind:
 - DWT benchmark clock;
 - compile flags CPU/Thumb.
 
-Portability được chứng minh về **structure**, nhưng v1 mới có một target hoàn chỉnh nên chưa thể gọi là multi-target proven.
+Portability is demonstrated structurally, but v1 has only one complete target, so it is not yet proven as a multi-target implementation.
 
 <a id="build"></a>
 ## Build graph
 
-CMake là source-of-truth:
+CMake is the source of truth:
 
 ```text
 cmake/hairtos_targets.cmake   -> target registry
@@ -164,23 +164,23 @@ CMakeLists.txt                -> compose final target/host executable
 Makefile                      -> user-facing command wrapper
 ```
 
-Host và target khác nhau ở toolchain/source subset, không bằng cách duplicate toàn bộ project.
+Host and target builds differ by toolchain/source subset rather than by duplicating the entire project.
 
 <a id="invariants"></a>
 ## Cross-cutting invariants
 
-- Opaque object phải được init/create trước use; magic/internal state xác nhận validity.
-- Caller-owned storage phải sống lâu hơn object.
-- Intrusive node không được linked vào hai list.
-- ISR path không block.
-- Critical section phải bounded; Cortex-M3 v1 dùng PRIMASK.
-- Effective priority, không phải base priority, quyết định ready/wait order khi inheritance active.
-- Roadmap không được lẫn vào capability v1.
+- Opaque objects must be init/create-complete before use; magic/internal state establishes validity.
+- Caller-owned storage must outlive the object.
+- An intrusive node must not be linked into two lists.
+- ISR paths never block.
+- Critical sections must be bounded; Cortex-M3 v1 uses PRIMASK.
+- Effective priority, not base priority, controls ready/wait ordering while inheritance is active.
+- Roadmap content must not be mixed into v1 capabilities.
 
 <a id="validation"></a>
 ## Validation
 
-Host suite đã PASS dưới ASan/UBSan. Các test bao phủ data structure/policy, timeout wrap, initial stack, IPC/sync, timer, diagnostics, haievent, allocator, benchmark và scheduler stress. Target context/IRQ/timing cần cross-toolchain + hardware riêng.
+The host suite passes under ASan/UBSan. Tests cover data structures/policies, timeout wrap, initial stack construction, IPC/synchronization, timers, diagnostics, haievent, allocator, benchmark logic, and scheduler stress. Target context/IRQ/timing behavior requires a separate cross-toolchain and hardware path.
 
 <a id="references"></a>
 ## References
@@ -192,4 +192,4 @@ Host suite đã PASS dưới ASan/UBSan. Các test bao phủ data structure/poli
 - [CMake — CMAKE_TOOLCHAIN_FILE](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html)
 - [CMake — CMAKE_EXPORT_COMPILE_COMMANDS](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html)
 
-**Source chính:** `CMakeLists.txt`, `cmake/*.cmake`, `kernel/`, `haievent/`, `arch/`, `soc/`, `boards/`, `drivers/`.
+**Primary sources:** `CMakeLists.txt`, `cmake/*.cmake`, `kernel/`, `haievent/`, `arch/`, `soc/`, `boards/`, `drivers/`.

@@ -1,38 +1,38 @@
-# `16-diagnostics-stress-stabilization` — Chẩn đoán và ổn định bằng stress test
+# `16-diagnostics-stress-stabilization` — Diagnostics and Stress-Test Stabilization
 
-> **Môi trường:** Host + target  
+> **Environment:** Host + target  
 > **Source:** `examples/16-diagnostics-stress-stabilization/main.c`  
-> **Trọng tâm:** Diagnostics + sustained mixed workload
+> **Focus:** Diagnostics + sustained mixed workload
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Queue/semaphore/mutex/timer + retained faults + health check + runtime stats; host scheduler stress có 500k iterations.
+Queues/semaphores/mutexes/timers + retained faults + health checks + runtime statistics; host scheduler stress runs 500k iterations.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Host + target**.
-- Module được link cho example này: `task_kernel`, `kernel_runtime`, `kernel_time`, `context`, `queue`, `semaphore`, `mutex`, `timer`, `diagnostics`, `fault`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as **Host + target**.
+- Modules linked for this example: `task_kernel`, `kernel_runtime`, `kernel_time`, `context`, `queue`, `semaphore`, `mutex`, `timer`, `diagnostics`, `fault`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `HR_DIAGNOSTICS_INJECT_USAGE_FAULT` | `0` |
 | `MESSAGE_QUEUE_CAPACITY` | `8U` |
@@ -44,10 +44,10 @@ Queue/semaphore/mutex/timer + retained faults + health check + runtime stats; ho
 
 ### CMake feature overrides
 
-- Diagnostics + runtime stats + preemption + time slicing + software timer đều bật; timer-service priority = 1.
+- Diagnostics, runtime statistics, preemption, time slicing, and software timers are enabled; timer-service priority = 1.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 **Runtime health path**
 
@@ -68,18 +68,18 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Lưu và đọc panic/fault record qua reset bằng `.noinit`.
-- Thu runtime counters của scheduler.
-- Chạy health check định kỳ trên task/list/timeout/stack invariants.
-- Tạo workload liên tục để phát hiện race và corruption.
-- Chạy deterministic scheduler stress 500.000 vòng trên host.
-- Các fault handler mạnh.
-- Panic record được giữ lại qua reset.
-- Tác vụ giám sát sức khỏe có priority cao.
-- Queue producer/consumer, semaphore pulse, mutex-protected counters và periodic timer.
-- Fault injection qua instruction/backend phù hợp architecture; target Cortex-M3 tham chiếu dùng `udf #0`.
+- Store and read panic/fault records across reset through `.noinit`.
+- Collect scheduler runtime counters.
+- Run periodic health checks over task/list/timeout/stack invariants.
+- Run a sustained workload to expose races and corruption.
+- Run deterministic scheduler stress for 500,000 iterations on the host.
+- Strong fault handlers.
+- Panic records are retained across reset.
+- The health-monitor task has high priority.
+- Queue producer/consumer, semaphore pulses, mutex-protected counters, and a periodic timer.
+- Fault injection uses an architecture-appropriate instruction/backend; the reference Cortex-M3 target uses `udf #0`.
 - `hairtos/hairtos.h`
 - `hr_diagnostics_initialize()`
 - `hr_diagnostics_get_last_panic()`
@@ -88,17 +88,17 @@ flowchart TB
 - Queue/semaphore/mutex/timer/task APIs
 - `diagnostics`
 - `semaphore`
-- `health-monitor` — Priority 1, stack 224 — Report mỗi 1000 ticks và kiểm tra invariants.
-- `queue-consumer` — Priority 2, stack 144 — Receive sequence và kiểm tra ordering.
-- `timer-pulse` — Priority 2, stack 128 — Take counting semaphore từ timer callback.
-- `queue-producer` — Priority 3, stack 144 — Send mỗi 2 ticks với timeout 10.
-- Queue thông điệp — 8 × `uint32_t` — Stress blocking/timeout.
-- Bộ định thời chẩn đoán — Periodic 10 ticks — Give counting semaphore, coalesce khi full.
+- `health-monitor` — Priority 1, stack 224 — Reports every 1000 ticks and checks invariants.
+- `queue-consumer` — Priority 2, stack 144 — Receives sequences and verifies ordering.
+- `timer-pulse` — Priority 2, stack 128 — Takes a counting semaphore given by a timer callback.
+- `queue-producer` — Priority 3, stack 144 — Sends every 2 ticks with timeout 10.
+- Message queue — 8 × `uint32_t` — Stresses blocking/timeouts.
+- Diagnostics timer — Periodic 10 ticks — Gives a counting semaphore and coalesces when full.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_led_on()`
@@ -135,37 +135,37 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_timer_create_static()`
 - `hr_timer_start()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Panic record có signature/version/boot_count/sequence/reason/tick/task/source và fault register frame.
-- Record nằm trong `.noinit.hairtos`, nên startup/linker không zero nó cùng `.bss`.
-- Health check duyệt task, kiểm tra stack guard/high-watermark và gọi kernel invariant validation.
-- Runtime counters theo dõi SysTick, PendSV, switch, yield, block, preemption, time slice, timeout wake, invariant/stack failures, panic.
-- Hooks là weak functions để application phản ứng mà không sửa kernel core.
+- The panic record contains signature/version/boot_count/sequence/reason/tick/task/source plus the fault register frame.
+- The record lives in `.noinit.hairtos`, so startup/linker logic does not zero it with `.bss`.
+- Health checks iterate tasks, validate stack guard/high-water mark, and invoke kernel invariant validation.
+- Runtime counters track SysTick, PendSV, switches, yields, blocks, preemptions, time slices, timeout wakes, invariant/stack failures, and panics.
+- Hooks are weak functions that let applications react without modifying the kernel core.
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Health check fail: kiểm tra ready/timeout/task counts, stack guard và kernel invariant report.
-- Retained panic không xuất hiện sau reset: kiểm tra `.noinit.hairtos`, linker placement và record validation.
-- Producer/consumer/pulse progress dừng: kiểm tra queue, semaphore, mutex và periodic timer interaction.
-- Fault injection chỉ nên bật có chủ đích; sau boot kế tiếp record được đọc rồi clear theo example flow.
+- Health check fails: inspect ready/timeout/task counts, stack guards, and the kernel invariant report.
+- Retained panic does not appear after reset: inspect `.noinit.hairtos`, linker placement, and record validation.
+- Producer/consumer/pulse progress stalls: inspect queue, semaphore, mutex, and periodic-timer interactions.
+- Fault injection should be enabled deliberately; on the next boot the record is read and then cleared according to the example flow.
 
 <a id="validation"></a>
 ## Validation
 
-- Host variant (`scheduler_stress_main`) đã chạy PASS với 500.000 iteration; target diagnostics workload cần board để xác nhận retained fault/UART/stack behavior.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- Host variant (`scheduler_stress_main`) passes 500,000 iterations; the target diagnostics workload requires a board to verify retained-fault/UART/stack behavior.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run
@@ -173,7 +173,7 @@ make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-sta
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/16-diagnostics-stress-stabilization/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -183,12 +183,12 @@ make TARGET=bluepill_f103c8 ENVIRONMENT=target EXAMPLE=16-diagnostics-stress-sta
 - `arch/arm/cortex-m3/hr_faultasm.S`
 - `tests/host/test_diagnostics.c`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/src/hr_diagnostics.c`
 - `kernel/include/hairtos/hr_diagnostics.h`
 - `arch/arm/cortex-m3/hr_fault.c`

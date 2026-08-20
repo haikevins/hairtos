@@ -1,6 +1,6 @@
 # Testing guide
 
-> **Scope:** Cách kiểm chứng hairtos theo tầng: pure data structures → kernel policy → framework → stress → target/hardware.
+> **Scope:** How hairtos is validated by layer: pure data structures → kernel policy → framework → stress → target/hardware.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](test-matrix.md) · [Next →](validation-baseline.md)
 
@@ -22,9 +22,9 @@ flowchart TB
 make TARGET=bluepill_f103c8 host-tests
 ```
 
-CMake build host suite với `-O0 -g3`, strict warnings, AddressSanitizer và UndefinedBehaviorSanitizer. `ctest --output-on-failure` là canonical runner.
+CMake builds the host suite with `-O0 -g3`, strict warnings, AddressSanitizer, and UndefinedBehaviorSanitizer. `ctest --output-on-failure` is the canonical runner.
 
-### Coverage logic hiện có
+### Existing Logical Coverage
 
 - intrusive list;
 - ready queue + scheduler policy;
@@ -48,24 +48,24 @@ make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
 make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run
 ```
 
-Ba command trên thuộc validation baseline hiện có và đều PASS.
+The three commands above are part of the current validation baseline and all pass.
 
 ## Target tests
 
-Target-only examples cần cross toolchain và board. Kiểm chứng phải tách:
+Target-only examples require a cross toolchain and board. Verification must distinguish:
 
 1. build/link;
 2. flash/verify/reset;
 3. UART PASS/FAIL semantics;
-4. GDB inspection khi panic;
-5. benchmark marker/log khi đo timing;
-6. reset cycle cho retained fault record.
+4. inspect panic state with GDB;
+5. benchmark marker/log behavior during timing measurements;
+6. perform a reset cycle to verify the retained fault record.
 
-Host PASS không chứng minh SVC/PendSV hardware behavior, interrupt priority, PLL clock hay peripheral pins.
+Host PASS does not prove real SVC/PendSV hardware behavior, interrupt priorities, PLL clocking, or peripheral pin bindings.
 
 ## Regression rule
 
-Bug fix phải thêm test ở tầng thấp nhất có thể tái tạo bug. Race chỉ xuất hiện target nên thêm target example/check nhưng vẫn cố tách pure policy để host-test nếu có thể.
+A bug fix should add a test at the lowest layer that can reproduce the defect. If a race exists only on target hardware, add a target example/check while still extracting pure policy into host-testable code whenever possible.
 
 ## References
 

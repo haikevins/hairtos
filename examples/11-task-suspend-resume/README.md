@@ -1,38 +1,38 @@
-# `11-task-suspend-resume` — Tạm dừng và tiếp tục tác vụ
+# `11-task-suspend-resume` — Task Suspend and Resume
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/11-task-suspend-resume/main.c`  
-> **Trọng tâm:** Administrative suspend/resume
+> **Focus:** Administrative suspend/resume
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Chứng minh suspend task READY/RUNNING/BLOCKED và preserve wake semantics khi event/timeout xảy ra trong lúc suspended.
+Demonstrates suspension of READY/RUNNING/BLOCKED tasks while preserving wake semantics when an event/timeout occurs during suspension.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `WORKER_TASK_PRIORITY` | `1U` |
 | `SUPERVISOR_TASK_PRIORITY` | `2U` |
@@ -41,10 +41,10 @@ Chứng minh suspend task READY/RUNNING/BLOCKED và preserve wake semantics khi 
 
 ### CMake feature overrides
 
-- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+- The example uses the default configuration except for modules/definitions explicitly declared in `cmake/hairtos_examples.cmake`.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 **Scheduling and blocking states**
 
@@ -68,16 +68,16 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Suspend một task đang BLOCKED bởi delay.
-- Cho timeout hoàn tất nhưng không đưa task suspended vào ready queue.
-- Resume high task và quan sát preemption tức thời.
-- Self-suspend rồi resume từ supervisor.
-- Administrative suspension tách biệt với wait reason.
-- SUSPENDED(BLOCKED) và SUSPENDED(READY).
-- Resume phục hồi BLOCKED nếu event chưa hoàn tất, hoặc READY nếu đã hoàn tất.
-- Không cho suspend idle task.
+- Suspend a task that is BLOCKED on delay.
+- Allow the timeout to complete without placing the suspended task in the ready queue.
+- Resume the high-priority task and observe immediate preemption.
+- Self-suspend and resume from a supervisor task.
+- Administrative suspension is separate from the task's wait reason.
+- SUSPENDED(BLOCKED) and SUSPENDED(READY) are distinct conditions.
+- Resume restores BLOCKED if the event has not completed, or READY if it has completed.
+- The idle task cannot be suspended.
 - `hairtos/hr_task.h`
 - `hairtos/hr_time.h`
 - `hr_task_suspend()`
@@ -87,18 +87,18 @@ flowchart TB
 - `task_kernel`
 - `kernel_runtime`
 - `kernel_time`
-- Timeout không tự làm worker READY khi đang suspended.
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `worker` — Priority 1, stack 224 words — Delay 100, bị suspend, sau đó self-suspend.
-- `supervisor` — Priority 2, stack 224 words — Điều khiển suspend/resume.
+- Timeout must not make the worker READY while it is suspended.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `worker` — Priority 1, stack 224 words — Delays 100 ticks, is suspended, then later self-suspends.
+- `supervisor` — Priority 2, stack 224 words — Controls suspend/resume.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_led_toggle()`
@@ -118,23 +118,23 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_suspend()`
 - `hr_time_now()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Task được tạo tĩnh bằng caller-owned `hr_task_t` và stack array; kernel không `malloc()` TCB hay stack.
-- State machine công khai gồm INVALID → CREATED → READY/RUNNING ↔ BLOCKED và SUSPENDED.
-- Base priority là cấu hình gốc; effective priority có thể bị boost bởi mutex priority inheritance.
-- Stack được fill bằng `0xA5`; guard word `0xDEADBEEF` dùng cho stack integrity; high-watermark suy ra lượng stack chưa bị chạm.
-- Task entry không được return bình thường; initial LR trỏ tới `hr_task_exit_error()` để biến task return thành lỗi kiểm soát.
+- Tasks are created statically from caller-owned `hr_task_t` objects and stack arrays; the kernel does not `malloc()` TCBs or stacks.
+- The public task-state model is INVALID → CREATED → READY/RUNNING ↔ BLOCKED, plus SUSPENDED.
+- Base priority is the configured priority; effective priority may be boosted by mutex priority inheritance.
+- Stacks are filled with `0xA5`; guard word `0xDEADBEEF` supports stack-integrity checks, and high-water-mark analysis estimates untouched stack space.
+- A task entry function must not return normally; the initial LR points to `hr_task_exit_error()` so a returned task becomes a controlled error.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `ERROR: invalid suspend/resume task context.`
 - `worker: self-resume PASS at tick=`
@@ -143,20 +143,20 @@ Các check/log cứng trong source:
 - `Suspend/resume task setup failed.`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- Task đã suspend vẫn được scheduler chọn: kiểm tra removal khỏi ready/wait structures và state transition.
-- Resume sai state: kiểm tra `suspended_resume_state` và deferred wake semantics.
-- Wake xảy ra khi task đang SUSPENDED: event phải được ghi nhận theo contract thay vì đưa task chạy ngay.
-- Suspend current task phải dẫn tới reschedule hợp lệ.
+- A suspended task is still selected by the scheduler: inspect removal from ready/wait structures and state transitions.
+- Incorrect resume state: inspect `suspended_resume_state` and deferred-wakeup semantics.
+- Wake occurs while the task is SUSPENDED: the event must be recorded according to the contract rather than making the task run immediately.
+- Suspending the current task must lead to a valid reschedule.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=11-task-suspend-resume build
@@ -165,7 +165,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=11-task-suspend-resume check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/11-task-suspend-resume/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -174,12 +174,12 @@ make TARGET=bluepill_f103c8 EXAMPLE=11-task-suspend-resume check
 - `kernel/src/hr_kernel.c`
 - `tests/host/test_task.c`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/src/hr_task.c`
 - `kernel/internal/hr_task_internal.h`
 - `kernel/src/hr_kernel.c`

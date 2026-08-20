@@ -1,28 +1,28 @@
 # Semaphore API
 
-> **Phạm vi:** Public API contract của `hairtos 1.0.0-rc1`; internal helper không phải compatibility surface.
+> **Scope:** Public API contracts for `hairtos 1.0.0-rc1`; internal helpers are not part of the compatibility surface.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](queue-api.md) · [Next →](status-and-types.md)
 
-## Mục lục
+## Table of Contents
 
-- [Nguyên tắc API](#principles)
+- [API Principles](#principles)
 - [Function surface](#functions)
 - [Context / blocking contract](#context)
-- [Ownership và lifetime](#ownership)
+- [Ownership and Lifetime](#ownership)
 - [Error semantics](#errors)
 - [Source map](#source-map)
 - [References](#references)
 
 <a id="principles"></a>
-## Nguyên tắc API
+## API Principles
 
-Semaphore là synchronization counter không có ownership. Counting semaphore giữ `count/max_count`; binary semaphore chỉ là cấu hình max=1. `give` ưu tiên đánh thức waiter thay vì tăng count khi có task đang chờ.
+A semaphore is a synchronization counter with no ownership. A counting semaphore stores `count/max_count`; a binary semaphore is simply configured with max=1. `give` prefers waking an existing waiter rather than incrementing the count when a task is waiting.
 
-- Public handles là opaque storage; không cast sang internal TCB/control block trong application.
-- Function trả `hr_status_t` khi operation có thể fail; query bool/size/metadata dùng giá trị neutral nếu object invalid theo implementation hiện tại.
-- API blocking chỉ dành cho task context khi kernel RUNNING; ISR variant được đặt tên `_from_isr` và không block.
-- Caller giữ ownership của backing storage tĩnh; create/init không copy whole storage sang kernel heap.
+- Public handles are opaque storage; application code must not cast them to internal TCB/control-block types.
+- Functions return `hr_status_t` when an operation can fail; boolean/size/metadata queries return neutral values for invalid objects according to the current implementation.
+- Blocking APIs are for task context only while the kernel is RUNNING; ISR variants are named `_from_isr` and never block.
+- The caller retains ownership of static backing storage; create/init does not copy the entire object into a kernel heap.
 
 <a id="functions"></a>
 ## Function surface
@@ -44,26 +44,26 @@ hr_status_t hr_semaphore_give_from_isr(hr_semaphore_t *semaphore, bool *higher_p
 <a id="context"></a>
 ## Context / blocking contract
 
-| Nhóm | Task context | ISR context | Có thể block |
+| Group | Task context | ISR context | May block |
 | --- | --- | --- | --- |
-| Query/getter | Có | Chỉ khi implementation không cần blocking/lock dài | Không |
-| API thường `send/take/lock/delay` | Có | Không | Có nếu timeout khác `HR_NO_WAIT` |
-| API `_from_isr` | Không phải mục tiêu chính | Có | Không |
-| `hr_critical_enter/exit` | Có | Có nhưng phải giữ cực ngắn | Không |
+| Query/getter | Yes | Only when the implementation requires no blocking or long lock | No |
+| Regular `send/take/lock/delay` APIs | Yes | No | Yes when timeout is not `HR_NO_WAIT` |
+| `_from_isr` APIs | Not the primary use case | Yes | No |
+| `hr_critical_enter/exit` | Yes | Yes, but must remain extremely short | No |
 
 <a id="ownership"></a>
-## Ownership và lifetime
+## Ownership and Lifetime
 
-- `hr_task_t` + task stack: caller-owned trong suốt lifetime task.
+- `hr_task_t` + task stack: caller-owned for the entire task lifetime.
 - Queue: caller-owned queue object + item storage.
 - Semaphore/mutex/timer: caller-owned opaque object storage.
-- haievent Active Object: caller-owned active storage + stack + event-pointer queue; dynamic event có reference count riêng.
-- Không được move/free/reuse backing storage khi object còn valid/registered.
+- haievent Active Object: caller-owned AO storage + stack + event-pointer queue; dynamic events have independent reference counts.
+- Backing storage must not be moved, freed, or reused while the object remains valid/registered.
 
 <a id="errors"></a>
 ## Error semantics
 
-Các status public hiện có:
+The currently defined public status values are:
 
 ```text
 HR_OK
@@ -81,7 +81,7 @@ HR_ERROR_MUTEX_BUSY
 HR_ERROR_OVERFLOW
 ```
 
-Status là một phần của contract. Không nên đổi một timeout thành panic hoặc một invalid-context thành silent success nếu chưa có migration policy.
+Status values are part of the contract. A timeout should not be changed into a panic, nor invalid context into silent success, without an explicit migration policy.
 
 <a id="source-map"></a>
 ## Source map
@@ -97,7 +97,7 @@ Status là một phần của contract. Không nên đổi một timeout thành 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `kernel/include/hairtos/hr_semaphore.h`
 - `kernel/src/hr_semaphore.c`
 - `kernel/internal/hr_semaphore_internal.h`

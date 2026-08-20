@@ -1,10 +1,10 @@
-# Phân tích toàn bộ project `hairtos 1.0.0-rc1`
+# Full Project Analysis — `hairtos 1.0.0-rc1`
 
-> **Mục đích:** Phân tích source-driven về runtime modules, ownership/concurrency boundary, build graph, evidence và limitation.
+> **Purpose:** Source-driven analysis of runtime modules, ownership/concurrency boundaries, build graph, evidence, and limitations.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](design-principles.md) · [Next →](project-layout.md)
 
-## Mục lục
+## Table of Contents
 
 - [Mental model](#mental)
 - [Runtime layers](#layers)
@@ -20,7 +20,7 @@
 <a id="mental"></a>
 ## Mental model
 
-`hairtos` không phải wrapper mỏng quanh một RTOS khác. Scheduler, TCB, wait/timeout lists, queue/semaphore/mutex/timer và Cortex-M3 context switch đều được implement trong repo. Đồng thời project cố ý giữ kernel nhỏ bằng ba nguyên tắc: **static-first**, **opaque public storage**, **target logic outside generic core**.
+`hairtos` is not a thin wrapper around another RTOS. The scheduler, TCB, wait/timeout lists, queue/semaphore/mutex/timer primitives, and Cortex-M3 context switch are implemented in this repository. The project intentionally keeps the kernel small through three principles: **static-first**, **opaque public storage**, and **target logic outside the generic core**.
 
 **Runtime core**
 
@@ -49,7 +49,7 @@ flowchart TB
 
 ### Public kernel
 
-`kernel/include/hairtos/` export task/kernel/time/context/queue/semaphore/mutex/timer/diagnostics/hooks/status/types. `hairtos.h` là umbrella include.
+`kernel/include/hairtos/` exports task/kernel/time/context/queue/semaphore/mutex/timer/diagnostics/hooks/status/types. `hairtos.h` is the umbrella include.
 
 ### Internal kernel
 
@@ -64,12 +64,12 @@ flowchart TB
 
 ### Framework
 
-`haievent` nằm trên kernel primitives; nó không thay scheduler. AO tạo một hairtos task và queue riêng, sau đó dispatch event vào flat FSM.
+`haievent` sits above kernel primitives; it does not replace the scheduler. An AO creates a hairtos task and its own queue, then dispatches events into a flat FSM.
 
 <a id="kernel"></a>
 ## Kernel data model
 
-Public object là fixed-size opaque union. Internal TCB hiện chứa:
+A public object is a fixed-size opaque union. The internal TCB currently contains:
 
 ```text
 saved SP / stack low-high
@@ -86,14 +86,14 @@ owned mutex list + count
 stack words / critical nesting / runtime counter / magic
 ```
 
-Saved stack pointer ở field đầu tiên được compile-time assert vì SVC/PendSV assembly load/store offset 0 trực tiếp.
+The saved stack pointer is compile-time-asserted as the first field because SVC/PendSV assembly directly loads/stores offset 0.
 
-Ready set có 8 FIFO lists + bitmap. Wait list sort theo effective priority. Timeout set tách `current/overflow` để xử lý tick `uint32_t` wrap.
+The ready set contains 8 FIFO lists plus a bitmap. Wait lists are sorted by effective priority. The timeout set uses separate `current/overflow` lists to handle `uint32_t` tick wrap.
 
 <a id="blocking"></a>
 ## Blocking and wake protocol
 
-Mọi primitive blocking cuối cùng quy về kernel wait contract:
+Every blocking primitive ultimately reduces to the kernel wait contract:
 
 **Blocking entry**
 
@@ -117,25 +117,25 @@ flowchart TB
     READY --> PEND["PendSV if required"]
 ```
 
-Điểm khó không phải insert list mà là **single-winner wake**: object path và timeout path có thể gần như đồng thời; cleanup phải remove node còn lại và chỉ publish một result.
+The difficult part is not list insertion but **single-winner wakeup**: object and timeout paths may occur nearly simultaneously; cleanup must remove the remaining node and publish exactly one result.
 
 <a id="cm3"></a>
 ## Cortex-M3 execution model
 
-- `main()` và exceptions dùng MSP trước khi kernel start.
-- SVC lấy saved stack pointer từ TCB, restore R4–R11, set PSP và `CONTROL=2`, rồi exception-return với `0xFFFFFFFD`.
-- Hardware tự unstack R0–R3/R12/LR/PC/xPSR để vào task.
-- PendSV hardware-stack current frame, software save R4–R11, gọi C selector trên MSP, rồi restore next.
-- SVC priority cao nhất, PendSV thấp nhất, SysTick mức giữa trong SHP config hiện tại.
-- Critical section dùng PRIMASK; diagnostics có thể enable Usage/Bus/Mem faults và trap divide-by-zero/unaligned.
+- `main()` and exceptions use MSP before the kernel starts.
+- SVC loads the saved stack pointer from the TCB, restores R4–R11, sets PSP and `CONTROL=2`, then exception-returns using `0xFFFFFFFD`.
+- Hardware automatically unstacks R0–R3/R12/LR/PC/xPSR to enter the task.
+- PendSV hardware-stacks the current frame, software-saves R4–R11, calls the C selector on MSP, then restores the next task.
+- SVC has the highest priority, PendSV the lowest, and SysTick an intermediate level in the current SHP configuration.
+- Critical sections use PRIMASK; diagnostics can enable Usage/Bus/Mem faults and trap divide-by-zero/unaligned accesses.
 
 <a id="event"></a>
 ## `haievent`
 
-Dynamic events từ fixed block pool có reference count. AO post retain event; AO dispatch xong release. Pub/sub snapshot subscriber list trong critical section, post ngoài critical section và consume publisher reference của dynamic event. Time event dùng software timer callback để post timeout signal vào AO. Flat FSM có ENTRY/EXIT/INIT và bound init-transition count = 8.
+Dynamic events from the fixed-block pool are reference-counted. AO post retains the event; AO release occurs after dispatch. Pub/sub snapshots the subscriber list inside a critical section, posts outside the critical section, and consumes the publisher's dynamic-event reference. Time Events use software-timer callbacks to post timeout signals to AOs. The flat FSM supports ENTRY/EXIT/INIT with a bounded initial-transition count of 8.
 
 <a id="platform"></a>
-## Platform và build graph
+## Platform and Build Graph
 
 CMake data model:
 
@@ -145,14 +145,14 @@ example -> module set + compile definitions + environment
 module  -> exact C/ASM source list + visibility kind
 ```
 
-Makefile chỉ wrap configure/build/run/check. Host build bật ASan/UBSan; target build dùng cross toolchain file + `-ffreestanding`, `-Wall -Wextra -Werror -Wshadow -Wundef -Wconversion -Wsign-conversion`.
+Makefile only wraps configure/build/run/check operations. Host builds enable ASan/UBSan; target builds use a cross-toolchain file plus `-ffreestanding`, `-Wall -Wextra -Werror -Wshadow -Wundef -Wconversion -Wsign-conversion`.
 
 <a id="tests"></a>
-## Tests và evidence
+## Tests and Evidence
 
-Host suite có 64 test function bao phủ list, ready set, scheduler policy, wait list, timeout wrap, task/stack, port initial frame, queue, semaphore, mutex, timer, diagnostics, haievent, benchmark, allocator và deterministic scheduler stress.
+The host suite contains 64 test functions covering lists, ready sets, scheduler policy, wait lists, timeout wrap, tasks/stacks, port initial frames, queues, semaphores, mutexes, timers, diagnostics, haievent, benchmarks, allocator behavior, and deterministic scheduler stress.
 
-Validation baseline gồm:
+The validation baseline includes:
 
 ```text
 hairtos_host_tests: PASS
@@ -162,19 +162,19 @@ hairtos_host_tests: PASS
 iterations = 500000
 ```
 
-Target assembly/hardware không được host test thay thế; cần cross-build + Blue Pill để xác nhận exception entry, IRQ priority, clock/UART/LED và benchmark DWT.
+Host tests do not replace target assembly/hardware validation; cross-build plus Blue Pill execution is required to confirm exception entry, IRQ priorities, clock/UART/LED behavior, and DWT benchmarking.
 
 <a id="limits"></a>
 ## Limitations
 
-- 1 target hoàn chỉnh;
-- PRIMASK critical sections, chưa BASEPRI ceiling;
+- 1 complete target;
+- PRIMASK critical sections, no BASEPRI ceiling yet;
 - no tickless;
 - no FPU/MPU/SMP;
 - no general dynamic kernel heap;
 - flat FSM only;
 - one-task-per-AO only;
-- target benchmark không phải certification/hard deadline proof.
+- target benchmarks are not certification or hard-deadline proof.
 
 <a id="source-map"></a>
 ## Source map
@@ -215,7 +215,7 @@ Target assembly/hardware không được host test thay thế; cần cross-build
 - [CMake — CMAKE_TOOLCHAIN_FILE](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html)
 - [CMake — CMAKE_EXPORT_COMPILE_COMMANDS](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `config/hairtos_config.h`
 - `kernel/src/hr_kernel.c`
 - `kernel/src/hr_task.c`

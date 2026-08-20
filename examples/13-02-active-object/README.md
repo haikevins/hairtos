@@ -1,48 +1,48 @@
 # `13-02-active-object` — Active Object Ping–Pong
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/13-02-active-object/main.c`  
-> **Trọng tâm:** Active Object ping-pong
+> **Focus:** Active Object ping-pong
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Hai AO độc lập, mỗi AO là task + queue + state machine; event ownership đi qua post/dispatch/release.
+Two independent AOs, each composed of a task + queue + state machine; event ownership flows through post/dispatch/release.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `context`, `queue`, `semaphore`, `timer`, `haievent`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `task_kernel`, `kernel_runtime`, `kernel_time`, `context`, `queue`, `semaphore`, `timer`, `haievent`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `STACK_WORDS` | `224U` |
 | `QUEUE_LENGTH` | `4U` |
 
 ### CMake feature overrides
 
-- Software timer được bật cho build này; timer-service task priority được override thành 1.
+- Software timers are enabled for this build; the timer-service task priority is overridden to 1.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -55,37 +55,37 @@ flowchart TB
 ```
 
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Hiểu encapsulation của Active Object.
-- Dùng state-machine context riêng cho mỗi actor.
-- Post event giữa hai AO mà không chia sẻ control flow.
-- Quan sát run-to-completion và queue-driven scheduling.
-- Mỗi AO có task, stack, queue và state machine.
-- Static event PING/PONG được dùng lại.
-- Context chứa peer, reply event và counter.
-- Starter task chỉ kick-off chuỗi event.
+- Understand Active Object encapsulation.
+- Use a separate state-machine context for each actor.
+- Post events between two AOs without sharing control flow.
+- Observe run-to-completion and queue-driven scheduling.
+- Each AO has a task, stack, queue, and state machine.
+- Static PING/PONG events are reused.
+- Context stores the peer, reply event, and counter.
+- The starter task only kicks off the event chain.
 - `haievent/haievent.h`
 - `he_active_create_static()`
 - `he_active_post()`
 - `he_state_machine_context()`
 - `haievent`
-- Hai AO đều nhận ENTRY.
-- Counters của ping và pong tăng luân phiên.
-- Không có queue post failure.
-- Chỉ một AO chạy: kiểm tra peer pointer hoặc reply event.
-- Queue đầy nhanh: UART quá chậm hoặc producer loop không bị scheduling điều tiết.
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- `ping-AO` — Priority 2, stack 224, queue 4 — Handle PING rồi post PONG.
-- `pong-AO` — Priority 3, stack 224, queue 4 — Handle PONG rồi post PING.
+- Both AOs receive ENTRY.
+- Ping and pong counters increase alternately.
+- No queue-post failure occurs.
+- Only one AO runs: inspect the peer pointer or reply event.
+- Queue fills too quickly: UART is too slow or the producer loop is not being regulated by scheduling.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- `ping-AO` — Priority 2, stack 224, queue 4 — Handles PING, then posts PONG.
+- `pong-AO` — Priority 3, stack 224, queue 4 — Handles PONG, then posts PING.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_init()`
 - `board_panic()`
@@ -102,37 +102,37 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_delay()`
 - `hr_task_start()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Một AO chạy run-to-completion: lấy một event, dispatch hoàn tất state handler/transition rồi mới nhận event tiếp theo.
-- Queue của AO dùng kernel queue và do caller cấp mảng pointer storage.
-- AO task start cùng lúc với create; state machine được start trước vòng nhận event.
-- Dynamic event được release sau mỗi dispatch; static event vẫn do caller sở hữu.
-- v1 dùng one-task-per-AO, không có shared executor.
+- An AO runs run-to-completion: it dequeues one event, completes state-handler dispatch/transition processing, then receives the next event.
+- The AO queue uses a kernel queue backed by a caller-supplied array of event pointers.
+- The AO task starts during creation; the state machine is initialized before entering the event-receive loop.
+- Dynamic events are released after each dispatch; static events remain caller-owned.
+- v1 uses one task per AO and provides no shared executor.
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- AO không dispatch: kiểm tra dedicated hairtos task, AO queue và start order.
-- Ping-pong dừng: kiểm tra post status, queue capacity và RTC handler return.
-- Dynamic event ownership phải được release sau dispatch; static event vẫn caller-owned.
-- Priority của AO đi qua scheduler hairtos như task bình thường.
+- AO does not dispatch: inspect the dedicated hairtos task, AO queue, and startup order.
+- Ping-pong stops: inspect post status, queue capacity, and RTC handler return values.
+- Dynamic-event ownership must be released after dispatch; static events remain caller-owned.
+- AO priority is scheduled by hairtos exactly like a normal task priority.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=13-02-active-object build
@@ -141,7 +141,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-02-active-object check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/13-02-active-object/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -150,10 +150,10 @@ make TARGET=bluepill_f103c8 EXAMPLE=13-02-active-object check
 - `haievent/src/he_state_machine.c`
 - `kernel/src/hr_queue.c`
 
-### Tài liệu tham khảo
+### References
 
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `haievent/src/he_active.c`
 - `haievent/internal/he_internal.h`
 - `haievent/src/he_state_machine.c`

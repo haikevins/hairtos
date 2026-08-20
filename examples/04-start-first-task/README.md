@@ -1,47 +1,47 @@
-# `04-start-first-task` — Khởi chạy tác vụ đầu tiên bằng SVC
+# `04-start-first-task` — Starting the First Task with SVC
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/04-start-first-task/main.c`  
-> **Trọng tâm:** SVC startup và PSP
+> **Focus:** SVC startup and PSP
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Kernel tạo idle + first task, SVC chuyển từ main/MSP sang Thread mode/PSP và kiểm tra argument R0 được phục hồi.
+The kernel creates idle + first task, SVC transitions from main/MSP to Thread mode/PSP, and the example verifies that argument R0 is restored.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `baremetal_tick`, `task_kernel`, `kernel_runtime`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `baremetal_tick`, `task_kernel`, `kernel_runtime`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### Compile-time / source constants
 
-| Symbol | Giá trị trong `main.c` |
+| Symbol | Value in `main.c` |
 | --- | --- |
 | `FIRST_TASK_ARGUMENT_MAGIC` | `0x50483421UL` |
 
 ### CMake feature overrides
 
-- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+- The example uses the default configuration except for modules/definitions explicitly declared in `cmake/hairtos_examples.cmake`.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -53,18 +53,18 @@ flowchart TB
     RESTORE --> TASK["first_task()"]
 ```
 
-SVC là boundary chuyển từ startup context dùng MSP sang Thread mode dùng PSP. Nếu startup thành công, `hr_kernel_start()` không quay lại `main()`.
+SVC is the boundary that transitions from startup context using MSP to Thread mode using PSP. If startup succeeds, `hr_kernel_start()` never returns to `main()`.
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Khởi tạo kernel và idle task.
-- Đăng ký một application task vào ready set.
-- Khởi chạy scheduler bằng `hr_kernel_start()`.
-- Xác nhận argument được restore qua R0 và Thread mode dùng PSP.
-- SVC là exception chuyển quyền từ startup code sang kernel port.
-- MSP dùng cho exception/handler; PSP dùng cho task Thread mode.
-- Exception return `0xFFFFFFFD` khôi phục hardware frame từ PSP.
-- `main()` không được quay lại sau khi kernel start thành công.
+- Initialize the kernel and idle task.
+- Register one application task in the ready set.
+- Start the scheduler with `hr_kernel_start()`.
+- Verify that the argument is restored through R0 and Thread mode uses PSP.
+- SVC is the exception that transfers control from startup code to the kernel port.
+- MSP is used by exceptions/handlers; PSP is used by task Thread mode.
+- Exception return value `0xFFFFFFFD` restores the hardware frame from PSP.
+- `main()` must not resume after a successful kernel start.
 - `hairtos/hr_kernel.h`
 - `hairtos/hr_task.h`
 - `hr_port.h`
@@ -75,17 +75,17 @@ SVC là boundary chuyển từ startup context dùng MSP sang Thread mode dùng 
 - `hr_task_current()`
 - `hr_task_get_name()`
 - `task_kernel`
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- Task `first-task` — Priority 2, stack 128 words — Task application đầu tiên.
-- Idle task — Priority thấp nhất, tạo nội bộ — Fallback khi không có task application READY.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- Task `first-task` — Priority 2, stack 128 words — First application task.
+- Idle task — Lowest priority, created internally — Fallback when no application task is READY.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_delay_ms()`
 - `board_init()`
@@ -102,23 +102,23 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `hr_task_get_name()`
 - `hr_task_start()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- TCB đặt `stack_pointer` ở offset 0 và có `_Static_assert` để assembly có thể load/store saved PSP mà không cần biết layout C còn lại.
-- Initial stack frame được dựng giống exception-return frame thật; top stack được align xuống 8 byte.
-- Thread mode sau SVC chạy privileged với PSP (`CONTROL.SPSEL=1`); handler mode tiếp tục dùng MSP.
-- PendSV được cấu hình priority thấp nhất để việc chọn next task không cắt ngang exception quan trọng hơn.
-- Port hiện không lưu FPU context vì `HR_CFG_USE_FPU=0` và target Cortex-M3 không có FPU.
+- The TCB places `stack_pointer` at offset 0 and uses `_Static_assert` so assembly can load/store the saved PSP without knowing the rest of the C layout.
+- The initial stack frame is constructed to match a real exception-return frame; the top of stack is aligned down to 8 bytes.
+- After SVC, Thread mode runs privileged using PSP (`CONTROL.SPSEL=1`); Handler mode continues using MSP.
+- PendSV is configured at the lowest priority so next-task selection cannot preempt more important exceptions.
+- The current port does not save FPU context because `HR_CFG_USE_FPU=0` and the Cortex-M3 reference target has no FPU.
 
-Các check/log cứng trong source:
+Hard-coded checks/logs in the source:
 
 - `ERROR: Thread mode is not using PSP.`
 - `ERROR: task argument was not restored in R0.`
@@ -129,20 +129,20 @@ Các check/log cứng trong source:
 - `ERROR: hr_kernel_start returned status=`
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- `hr_kernel_start()` trả về là failure path; startup thành công phải chuyển hẳn vào first task.
-- Fault khi vào SVC: kiểm tra vector table, SVC handler và initial task frame.
-- `hr_port_thread_uses_psp()` false: kiểm tra CONTROL/PSP và exception-return value.
-- Task argument sai: kiểm tra R0 trong initial hardware frame được tạo ở task creation.
+- `hr_kernel_start()` returning is a failure path; successful startup must transfer permanently into the first task.
+- Fault on SVC entry: inspect the vector table, SVC handler, and initial task frame.
+- `hr_port_thread_uses_psp()` is false: inspect CONTROL/PSP setup and the exception-return value.
+- Incorrect task argument: inspect R0 in the initial hardware frame created during task creation.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=04-start-first-task build
@@ -151,7 +151,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=04-start-first-task check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/04-start-first-task/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -161,12 +161,12 @@ make TARGET=bluepill_f103c8 EXAMPLE=04-start-first-task check
 - `kernel/internal/hr_task_internal.h`
 - `tests/host/test_port_stack.c`
 
-### Tài liệu tham khảo
+### References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `arch/arm/cortex-m3/hr_portasm.S`
 - `arch/arm/cortex-m3/hr_port_stack.c`
 - `arch/arm/cortex-m3/hr_port.c`

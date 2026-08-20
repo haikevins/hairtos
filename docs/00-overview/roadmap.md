@@ -1,6 +1,6 @@
-# Roadmap của nhánh v1
+# v1 Branch Roadmap
 
-> **Scope:** Cách sequence hiện tại 01–16 xây RTOS từ dưới lên. Roadmap Version 2 riêng nằm trong `docs/09-version2/`.
+> **Scope:** How the current 01–16 sequence builds the RTOS bottom-up. The separate Version 2 roadmap lives under `docs/09-version2/`.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](project-layout.md)
 
@@ -16,18 +16,18 @@ flowchart TB
     E6 --> E7["14–16 · Validation and diagnostics"]
 ```
 
-## Vì sao thứ tự này quan trọng
+## Why This Order Matters
 
-- Context switch chỉ có ý nghĩa sau khi initial stack/TCB đúng.
-- Blocking IPC cần scheduler + timeout trước.
-- Priority inheritance cần base/effective priority và requeue logic đúng.
-- Software timer cần kernel time + service task.
-- Active Object dựa trên task + queue + timer; framework event-driven được đưa vào sau khi primitives đủ ổn định.
-- Benchmark/diagnostics ở cuối vì chúng đo/quan sát hệ thống đã có nhiều cơ chế tương tác.
+- Context switching is meaningful only after the initial stack/TCB is correct.
+- Blocking IPC requires scheduler and timeout support first.
+- Priority inheritance requires correct base/effective priority and requeue logic.
+- Software timers require kernel time plus a service task.
+- Active Objects depend on tasks + queues + timers; the event-driven framework appears only after these primitives are sufficiently stable.
+- Benchmarks/diagnostics come last because they measure and observe a system with many interacting mechanisms.
 
 ## Completion baseline
 
-`1.0.0-rc1` hiện có source cho toàn chuỗi trên và host tests tương ứng. V1 chưa được coi là portability-complete vì mới một hardware target. Các mục HSM/tickless/trace/second target chuyển sang Version 2 roadmap.
+`1.0.0-rc1` currently contains source for the complete sequence above plus corresponding host tests. v1 is not considered portability-complete because it has only one hardware target. HSM/tickless/trace/second-target work moves to the Version 2 roadmap.
 
 ## References
 

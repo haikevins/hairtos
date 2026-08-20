@@ -1,41 +1,41 @@
-# `01-baremetal-foundation` — Nền tảng bare-metal
+# `01-baremetal-foundation` — Bare-Metal Foundation
 
-> **Môi trường:** Target  
+> **Environment:** Target  
 > **Source:** `examples/01-baremetal-foundation/main.c`  
-> **Trọng tâm:** Bare-metal baseline trước kernel
+> **Focus:** Bare-metal baseline before the kernel
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Mục tiêu và bản chất](#muc-tieu)
-- [Build graph và cấu hình](#build-graph)
-- [Luồng thực thi](#runtime)
-- [API và ownership](#api)
+- [Objective and Core Concept](#objective)
+- [Build Graph and Configuration](#build-graph)
+- [Runtime Flow](#runtime)
+- [API and Ownership](#api)
 - [Invariant / PASS criteria](#pass)
-- [Debug và failure modes](#debug)
+- [Debugging and Failure Modes](#debug)
 - [Validation](#validation)
-- [Source map và references](#source-map)
+- [Source Map and References](#source-map)
 
-<a id="muc-tieu"></a>
-## Mục tiêu và bản chất
+<a id="objective"></a>
+## Objective and Core Concept
 
-Không có task/scheduler; board init, UART, LED, millisecond timer và busy delay tạo baseline để so sánh với RTOS.
+There are no tasks or scheduler; board initialization, UART, LED control, a millisecond timer, and busy delays establish the baseline for comparison with the RTOS.
 
 
 <a id="build-graph"></a>
-## Build graph và cấu hình
+## Build Graph and Configuration
 
-- Environment được CMake khai báo: **Target**.
-- Module được link cho example này: `platform`, `baremetal_tick`.
-- Target tham chiếu: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / 72 MHz nominal / USART1 115200 / LED PC13 active-low.
+- CMake declares this example as a **Target** environment.
+- Modules linked for this example: `platform`, `baremetal_tick`.
+- Reference target: `bluepill_f103c8` — STM32F103C8T6 / Cortex-M3 / nominal 72 MHz / USART1 115200 / active-low PC13 LED.
 
 ### CMake feature overrides
 
-- Example dùng default config trừ những module/definition được khai báo trong `cmake/hairtos_examples.cmake`.
+- The example uses the default configuration except for modules/definitions explicitly declared in `cmake/hairtos_examples.cmake`.
 
 <a id="runtime"></a>
-## Luồng thực thi
+## Runtime Flow
 
 ```mermaid
 flowchart TB
@@ -48,18 +48,18 @@ flowchart TB
     DELAY --> LOOP
 ```
 
-Example này không khởi tạo kernel, không tạo TCB và không đi qua SVC/PendSV. Runtime chỉ dùng board services và bare-metal millisecond timebase.
+This example does not initialize the kernel, create a TCB, or enter SVC/PendSV paths. Runtime uses only board services and the bare-metal millisecond timebase.
 
-### Các chi tiết quan sát trực tiếp từ example
+### Details Observed Directly in the Example
 
-- Khởi tạo Blue Pill và xác nhận clock hệ thống hoạt động.
-- Điều khiển LED PC13 bằng API board.
-- Gửi log qua USART1 và theo dõi thời gian bằng bộ đếm millisecond bare-metal.
-- Hiểu vòng lặp super-loop và giới hạn của blocking delay trước khi có scheduler.
-- Startup STM32F103, sao chép `.data` và xóa `.bss`.
-- HSE 8 MHz → PLL x9 → 72 MHz; có cơ chế fallback về HSI trong platform.
-- GPIO output active-low, UART polling và SysTick bare-metal.
-- Không có TCB, scheduler, PSP, SVC hoặc PendSV.
+- Initialize the Blue Pill and verify that the system clock is running.
+- Control the active-low PC13 LED through the board API.
+- Emit logs over USART1 and track time using the bare-metal millisecond counter.
+- Understand the super-loop model and limitations of blocking delays before a scheduler exists.
+- STM32F103 startup copies `.data` and zeros `.bss`.
+- HSE 8 MHz → PLL ×9 → 72 MHz, with an HSI fallback path in the platform.
+- Active-low GPIO output, polling UART, and bare-metal SysTick.
+- No TCB, scheduler, PSP, SVC, or PendSV.
 - `board.h`
 - `board_init()`
 - `board_led_toggle()`
@@ -68,19 +68,19 @@ Example này không khởi tạo kernel, không tạo TCB và không đi qua SVC
 - `board_delay_ms()`
 - `platform`
 - `baremetal_tick`
-- LED PC13 đổi trạng thái xấp xỉ mỗi 500 ms.
-- `heartbeat` tăng liên tục và `uptime_ms` không giảm.
-- Phần cứng — STM32F103C8T6 Blue Pill — Chạy firmware target.
-- Nạp/debug — ST-Link V2 qua SWD — Dùng OpenOCD để flash, verify và reset.
-- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Theo dõi log và trạng thái PASS/FAIL.
-- LED — PC13, active-low — Hiển thị heartbeat hoặc trạng thái quan sát.
-- Main loop — `heartbeat` và `board_millis()` — Toggle LED, tăng bộ đếm và delay 500 ms.
-- Tick source — `arch/arm/cortex-m3/hr_baremetal_tick_irq.c` — Cung cấp millisecond counter trước khi tick IRQ adapter thuộc architecture port.
+- PC13 LED changes state approximately every 500 ms.
+- `heartbeat` increases continuously and `uptime_ms` never decreases.
+- Hardware — STM32F103C8T6 Blue Pill — Runs the target firmware.
+- Flash/debug — ST-Link V2 over SWD — OpenOCD is used to flash, verify, and reset the target.
+- UART — USART1, PA9 TX / PA10 RX, 115200 8-N-1 — Observes logs and PASS/FAIL status.
+- LED — PC13, active-low — Displays heartbeat or observable status.
+- Main loop — `heartbeat` and `board_millis()` — Toggles LED, increments the counter, and delays 500 ms.
+- Tick source — `arch/arm/cortex-m3/hr_baremetal_tick_irq.c` — Provides the millisecond counter before the architecture-port kernel-tick IRQ adapter is introduced.
 
 <a id="api"></a>
-## API và ownership
+## API and Ownership
 
-API được gọi trực tiếp trong `main.c` (đã trích từ source):
+APIs called directly from `main.c` (extracted from source):
 
 - `board_delay_ms()`
 - `board_init()`
@@ -90,37 +90,37 @@ API được gọi trực tiếp trong `main.c` (đã trích từ source):
 - `board_uart_write_string()`
 - `board_uart_write_u32()`
 
-Ownership cần nhớ:
+Ownership rules to keep in mind:
 
-- `hr_task_t`, stack, queue/semaphore/mutex/timer object và haievent storage trong examples đều là static/caller-owned.
-- API kernel giữ pointer tới storage này sau create, vì vậy lifetime phải kéo dài toàn bộ thời gian object còn active.
-- ISR path không được gọi blocking API. API `_from_isr` chỉ làm bounded work và trả `higher_priority_task_woken` để PendSV xử lý switch sau ISR.
-- Dynamic haievent event từ pool dùng retain/release; static event không được framework tự free.
+- `hr_task_t`, stacks, queue/semaphore/mutex/timer objects, and haievent storage in the examples are all static/caller-owned.
+- Kernel APIs retain pointers to this storage after creation, so the storage lifetime must cover the entire period in which the object remains active.
+- ISR paths must not call blocking APIs. `_from_isr` APIs perform bounded work and return `higher_priority_task_woken` so PendSV can perform any required switch after ISR exit.
+- Dynamic haievent events allocated from a pool use retain/release semantics; static events are not freed automatically by the framework.
 
 <a id="pass"></a>
-## Invariant và PASS criteria
+## Invariants and PASS Criteria
 
-- Architecture port sở hữu critical section, ISR-context query, initial stack, first task và context switch.
-- SoC sở hữu startup, register definitions, clock tree và IRQ/fault backends mang tính chip-family.
-- Board sở hữu pin binding, UART/LED/benchmark marker và human-readable identity.
-- Driver public API dùng opaque target-defined identifiers; STM32F1 backend thực hiện register access.
-- CMake target manifest là single source of truth để chọn architecture/SoC/board/driver/linker/debug config.
+- The architecture port owns critical sections, ISR-context queries, initial stack construction, first-task startup, and context switching.
+- The SoC layer owns startup, register definitions, clock tree, and chip-family-specific IRQ/fault backends.
+- The board layer owns pin bindings, UART/LED/benchmark markers, and human-readable target identity.
+- Public driver APIs use opaque target-defined identifiers; the STM32F1 backend performs register access.
+- The CMake target manifest is the single source of truth for architecture/SoC/board/driver/linker/debug configuration selection.
 
 <a id="debug"></a>
-## Debug và failure modes
+## Debugging and Failure Modes
 
-- UART không có log: kiểm tra `board_init()`, USART1 clock/pin PA9/PA10 và baud 115200.
-- LED không đổi trạng thái: kiểm tra PC13 active-low và `board_led_toggle()`.
-- `uptime_ms` không tăng hoặc delay sai: kiểm tra bare-metal millisecond timebase và `board_delay_ms()`.
-- Example này không có TCB, ready set, SVC hoặc PendSV; debug không nên bắt đầu từ kernel state.
+- No UART log: inspect `board_init()`, USART1 clock/pins PA9/PA10, and 115200 baud setup.
+- LED does not change state: inspect active-low PC13 behavior and `board_led_toggle()`.
+- `uptime_ms` does not advance or delay is incorrect: inspect the bare-metal millisecond timebase and `board_delay_ms()`.
+- This example has no TCB, ready set, SVC, or PendSV; debugging should not start from kernel state.
 
 <a id="validation"></a>
 ## Validation
 
-- Example là target-only trong CMake; host evidence không thay thế ARM cross-build, OpenOCD và hardware validation.
-- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS toàn bộ suite.
+- This example is target-only in CMake; host evidence does not replace ARM cross-build, OpenOCD, and hardware validation.
+- Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` passes the entire suite.
 
-### Lệnh chuẩn
+### Standard Commands
 
 ```bash
 make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation build
@@ -129,7 +129,7 @@ make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation check
 ```
 
 <a id="source-map"></a>
-## Source map và references
+## Source Map and References
 
 - `examples/01-baremetal-foundation/main.c`
 - `cmake/hairtos_examples.cmake`
@@ -149,13 +149,13 @@ make TARGET=bluepill_f103c8 EXAMPLE=01-baremetal-foundation check
 - `cmake/hairtos_modules.cmake`
 - `cmake/targets/<target>.cmake`
 
-### Tài liệu tham khảo
+### References
 
 - [ST RM0008 — STM32F10x Reference Manual](https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf)
 - [ST PM0056 — STM32F10xxx Cortex-M3 Programming Manual](https://www.st.com/resource/en/programming_manual/cd00228163-stm32f10xxx20xxx21xxxl1xxxx-cortexm3-programming-manual-stmicroelectronics.pdf)
 - [STM32F103 documentation portal](https://www.st.com/en/microcontrollers-microprocessors/stm32f103/documentation.html)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `arch/arm/cortex-m3/hr_port.c`
 - `arch/arm/cortex-m3/hr_port_stack.c`
 - `arch/arm/cortex-m3/hr_portasm.S`

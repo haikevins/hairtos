@@ -1,51 +1,51 @@
 # ARM Cortex-M3 port
 
-> **Phạm vi:** Implementation `hairtos 1.0.0-rc1`, bao gồm source, config, build graph và host-test evidence hiện có.
+> **Scope:** `hairtos 1.0.0-rc1` implementation, including the current source, configuration, build graph, and host-test evidence.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [Next →](drivers.md)
 
-## Mục lục
+## Table of Contents
 
-- [Tổng quan và bản chất](#tong-quan)
-- [Implementation trong repository](#implementation)
-- [Mô hình và luồng thực thi](#mo-hinh)
-- [Ownership, concurrency và invariants](#invariants)
-- [Failure modes và giới hạn](#failure)
-- [Validation và cách kiểm chứng](#validation)
+- [Overview and Core Concepts](#overview)
+- [Implementation in the Repository](#implementation)
+- [Execution Model and Runtime Flow](#runtime-model)
+- [Ownership, Concurrency, and Invariants](#invariants)
+- [Failure Modes and Limitations](#failure)
+- [Validation and Verification](#validation)
 - [Source map](#source-map)
-- [Tài liệu tham khảo](#references)
+- [References](#references)
 
-<a id="tong-quan"></a>
-## Tổng quan và bản chất
+<a id="overview"></a>
+## Overview and Core Concepts
 
-Cortex-M3 port tận dụng exception stacking của CPU: hardware tự lưu R0–R3, R12, LR, PC, xPSR lên PSP; PendSV chỉ phải lưu/khôi phục R4–R11. SVC được dùng để đi từ `main()`/MSP sang task đầu tiên/PSP, còn PendSV là đường context-switch sau đó.
+The Cortex-M3 port uses CPU exception stacking: hardware automatically saves R0–R3, R12, LR, PC, and xPSR on the PSP; PendSV only needs to save/restore R4–R11. SVC transitions from `main()`/MSP to the first task/PSP, while PendSV handles subsequent context switches.
 
 
 <a id="implementation"></a>
-## Implementation trong repository
+## Implementation in the Repository
 
-Implementation hiện tại gồm:
+The current implementation includes:
 
-- TCB đặt `stack_pointer` ở offset 0 và có `_Static_assert` để assembly có thể load/store saved PSP mà không cần biết layout C còn lại.
-- Initial stack frame được dựng giống exception-return frame thật; top stack được align xuống 8 byte.
-- Thread mode sau SVC chạy privileged với PSP (`CONTROL.SPSEL=1`); handler mode tiếp tục dùng MSP.
-- PendSV được cấu hình priority thấp nhất để việc chọn next task không cắt ngang exception quan trọng hơn.
-- Port hiện không lưu FPU context vì `HR_CFG_USE_FPU=0` và target Cortex-M3 không có FPU.
+- The TCB places `stack_pointer` at offset 0 and uses `_Static_assert` so assembly can load/store the saved PSP without knowing the rest of the C layout.
+- The initial stack frame is constructed to match a real exception-return frame; the top of stack is aligned down to 8 bytes.
+- After SVC, Thread mode runs privileged using PSP (`CONTROL.SPSEL=1`); Handler mode continues using MSP.
+- PendSV is configured at the lowest priority so next-task selection cannot preempt more important exceptions.
+- The current port does not save FPU context because `HR_CFG_USE_FPU=0` and the Cortex-M3 reference target has no FPU.
 - restore software frame;
 - set PSP;
 - select PSP in Thread mode;
 - exception return.
 - BASEPRI critical ceiling;
-- Cortex-M4F variant với optional FP context;
+- Cortex-M4F variant with optional FP context;
 - interrupt priority validation;
 
-Các chi tiết implementation quan trọng:
+Key implementation details:
 
 - actual second target.
 
 
-<a id="mo-hinh"></a>
-## Mô hình và luồng thực thi
+<a id="runtime-model"></a>
+## Execution Model and Runtime Flow
 
 **Exception entry and software save**
 
@@ -72,36 +72,36 @@ sequenceDiagram
     P-->>N: exception return
 ```
 
-Các function và source file tương ứng được liệt kê trong phần Source map.
+The corresponding functions and source files are listed in the Source Map section.
 
 <a id="invariants"></a>
-## Ownership, concurrency và invariants
+## Ownership, Concurrency, and Invariants
 
-Các invariant nền áp dụng cho chủ đề này:
+The following baseline invariants apply to this topic:
 
-- Opaque object public chỉ hợp lệ sau create/init thành công và magic/internal state khớp contract.
-- Intrusive node chỉ được linked vào đúng một list tại một thời điểm; remove/timeout/wake phải để node về trạng thái unlinked nhất quán.
-- Thread API có thể block chỉ khi kernel RUNNING và không ở ISR; ISR API phải non-blocking và sử dụng `higher_priority_task_woken` khi cần defer switch sang PendSV.
-- Critical section hiện dùng PRIMASK trên Cortex-M3, nghĩa là mask interrupt toàn cục trong đoạn ngắn; vì vậy code trong critical section phải bounded và không được gọi operation có thể block.
-- Priority dùng **effective priority** ở ready/wait policy khi mutex inheritance đang active; base priority chỉ là cấu hình gốc.
-- Static-first không có nghĩa “không có lifetime”: caller-owned TCB/stack/queue storage/event pool vẫn phải sống lâu hơn mọi object đang tham chiếu tới chúng.
+- A public opaque object is valid only after a successful create/init operation and when its magic/internal state matches the contract.
+- An intrusive node may be linked into exactly one list at a time; remove/timeout/wake paths must leave the node in a consistent unlinked state.
+- A thread API may block only while the kernel is RUNNING and the caller is not in ISR context; ISR APIs must be non-blocking and use `higher_priority_task_woken` when a switch should be deferred to PendSV.
+- Critical sections currently use PRIMASK on Cortex-M3, globally masking interrupts for a short bounded interval; therefore critical-section code must remain bounded and must not invoke operations that can block.
+- Ready/wait policy uses **effective priority** while mutex priority inheritance is active; base priority remains the task's configured priority.
+- Static-first does not mean “no lifetime”: caller-owned TCB, stack, queue storage, and event-pool storage must outlive every object that still references them.
 
 <a id="failure"></a>
-## Failure modes và giới hạn
+## Failure Modes and Limitations
 
-- `hairtos 1.0.0-rc1` là single-core, không có SMP, FPU context, MPU isolation hay general dynamic kernel heap.
-- Interrupt masking model hiện là PRIMASK; repository chưa có BASEPRI ceiling contract cho application ISR priority phức tạp.
-- Tickless idle chưa có; time model hiện dựa trên tick 1 kHz ở target tham chiếu.
-- `haievent` v1 là flat state machine và one-task-per-AO; HSM/deferred event/shared executor nằm ở roadmap Version 2.
-- Build/link PASS không tự chứng minh real-time timing hoặc race-free behavior trên hardware; target tests và measurement vẫn cần thiết.
+- `hairtos 1.0.0-rc1` is single-core and provides no SMP, FPU context management, MPU isolation, or general-purpose dynamic kernel heap.
+- The current interrupt-masking model uses PRIMASK; the repository does not yet define a BASEPRI ceiling contract for applications with complex ISR-priority schemes.
+- Tickless idle is not implemented; the current time model uses a 1 kHz tick on the reference target.
+- `haievent` v1 provides a flat state machine and one task per AO; HSMs, deferred events, and a shared executor are Version 2 roadmap items.
+- A successful build/link does not by itself prove real-time timing or race-free behavior on hardware; target tests and measurements remain necessary.
 
 <a id="validation"></a>
-## Validation và cách kiểm chứng
+## Validation and Verification
 
-- Host suite của repository được build bằng GCC với AddressSanitizer + UndefinedBehaviorSanitizer và `ctest`.
+- The repository's host suite is built with GCC, AddressSanitizer, UndefinedBehaviorSanitizer, and `ctest`.
 - Host validation baseline: `make TARGET=bluepill_f103c8 host-tests` PASS.
-- Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS; stress scheduler report 500.000 iteration.
-- Không suy ra target runtime PASS từ host test. Cortex-M3 assembly, timing, exception priority, UART/LED và hardware clock vẫn cần cross-build + board validation.
+- Host examples `02-kernel-data-structures-host`, `14-memory-allocator-lab`, and `16-diagnostics-stress-stabilization` pass; the scheduler stress test reports 500,000 iterations.
+- Do not infer target-runtime PASS from host tests. Cortex-M3 assembly, timing, exception priorities, UART/LED behavior, and hardware clocks still require cross-build and board validation.
 
 
 <a id="source-map"></a>
@@ -115,7 +115,7 @@ Các invariant nền áp dụng cho chủ đề này:
 
 
 <a id="references"></a>
-## Tài liệu tham khảo
+## References
 
 - [Arm Cortex-M3 Technical Reference Manual](https://developer.arm.com/documentation/100165/latest/)
 - [Arm Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
@@ -123,7 +123,7 @@ Các invariant nền áp dụng cho chủ đề này:
 - [ST PM0056 — STM32F10xxx Cortex-M3 Programming Manual](https://www.st.com/resource/en/programming_manual/cd00228163-stm32f10xxx20xxx21xxxl1xxxx-cortexm3-programming-manual-stmicroelectronics.pdf)
 - [STM32F103 documentation portal](https://www.st.com/en/microcontrollers-microprocessors/stm32f103/documentation.html)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `arch/arm/cortex-m3/hr_portasm.S`
 - `arch/arm/cortex-m3/hr_port_stack.c`
 - `arch/arm/cortex-m3/hr_port.c`

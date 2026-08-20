@@ -1,19 +1,19 @@
-# 04 — Platform, architecture port và target
+# 04 — Platform, Architecture Port, and Targets
 
-> **Vai trò:** Trang này là index của một cụm tài liệu. Mỗi chapter đi từ bản chất → mapping source → invariant → failure mode → validation để người đọc có thể đối chiếu trực tiếp với implementation.
+> **Role:** This page is an index for a documentation group. Each chapter moves from core concept → source mapping → invariant → failure mode → validation so readers can compare the documentation directly with the implementation.
 
 [← Root README](../../README.md)
 
-## Mục lục
+## Table of Contents
 
-- [Bản đồ nội dung](#ban-do)
-- [Cách đọc](#cach-doc)
-- [Các tài liệu](#tai-lieu)
+- [Content Map](#content-map)
+- [How to Read This Section](#reading-guide)
+- [Documents](#documents)
 - [Validation baseline](#validation)
-- [Tài liệu tham khảo](#references)
+- [References](#references)
 
-<a id="ban-do"></a>
-## Bản đồ nội dung
+<a id="content-map"></a>
+## Content Map
 
 ```mermaid
 flowchart LR
@@ -22,25 +22,25 @@ flowchart LR
     SOURCE --> TEST["Validation / evidence"]
 ```
 
-<a id="cach-doc"></a>
-## Cách đọc
+<a id="reading-guide"></a>
+## How to Read This Section
 
-1. Bắt đầu từ README của section để biết scope và thứ tự học.
-2. Khi gặp API, quay lại `docs/05-api-reference/` để xem context/return contract; khi gặp behavior kernel, ưu tiên `docs/01`–`03`.
-3. Đối chiếu mọi statement timing/ownership với source map ở cuối chapter.
-4. Phân biệt rõ **host evidence**, **target evidence** và **future proposal**.
+1. Start with the section README to understand the scope and recommended learning order.
+2. When an API appears, refer to `docs/05-api-reference/` for context and return-value contracts; for kernel behavior, prioritize `docs/01`–`03`.
+3. Cross-check every timing and ownership statement against the source map at the end of the chapter.
+4. Clearly distinguish **host evidence**, **target evidence**, and **future proposals**.
 
-<a id="tai-lieu"></a>
-## Các tài liệu
+<a id="documents"></a>
+## Documents
 
-| Tài liệu | Vai trò |
+| Document | Role |
 | --- | --- |
 | [`cortex-m3-port.md`](cortex-m3-port.md) | ARM Cortex-M3 port |
 | [`drivers.md`](drivers.md) | Driver abstraction |
 | [`port-contract.md`](port-contract.md) | Architecture port contract |
-| [`porting-guide.md`](porting-guide.md) | Porting guide — tư duy |
-| [`porting-new-target.md`](porting-new-target.md) | Port một target MCU mới |
-| [`startup-and-linker.md`](startup-and-linker.md) | Startup và linker contract |
+| [`porting-guide.md`](porting-guide.md) | Porting Guide — Design Approach |
+| [`porting-new-target.md`](porting-new-target.md) | Porting a New MCU Target |
+| [`startup-and-linker.md`](startup-and-linker.md) | Startup and Linker Contract |
 | [`stm32f103-platform.md`](stm32f103-platform.md) | STM32F103 / Blue Pill target |
 | [`target-manifest.md`](target-manifest.md) | Target manifest |
 
@@ -48,18 +48,18 @@ flowchart LR
 ## Validation baseline
 
 - `VERSION`: `1.0.0-rc1`.
-- Host validation baseline: 64 test function trong suite hiện có đều PASS.
-- `02-kernel-data-structures-host`, `14-memory-allocator-lab`, `16-diagnostics-stress-stabilization` chạy PASS trên host.
-- Target tham chiếu là `bluepill_f103c8`; host evidence không thay thế cross-build, OpenOCD và hardware validation trên board.
+- Host validation baseline: all 64 test functions in the current suite pass.
+- `02-kernel-data-structures-host`, `14-memory-allocator-lab`, and `16-diagnostics-stress-stabilization` pass on the host.
+- The reference target is `bluepill_f103c8`; host evidence does not replace cross-build, OpenOCD, and on-board hardware validation.
 
 <a id="references"></a>
-## Tài liệu tham khảo
+## References
 
 - [ST RM0008 — STM32F10x Reference Manual](https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf)
 - [ST PM0056 — STM32F10xxx Cortex-M3 Programming Manual](https://www.st.com/resource/en/programming_manual/cd00228163-stm32f10xxx20xxx21xxxl1xxxx-cortexm3-programming-manual-stmicroelectronics.pdf)
 - [STM32F103 documentation portal](https://www.st.com/en/microcontrollers-microprocessors/stm32f103/documentation.html)
 
-**Nguồn implementation trong repository:**
+**Implementation sources in the repository:**
 - `README.md`
 - `CMakeLists.txt`
 - `cmake/hairtos_examples.cmake`

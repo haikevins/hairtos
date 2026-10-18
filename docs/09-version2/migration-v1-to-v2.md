@@ -1,6 +1,6 @@
 # Migration v1 → v2
 
-> **Status: FUTURE DESIGN.** This content is not a capability of `hairtos 1.0.0-rc1`.
+> **Status: FUTURE DESIGN.** This content is not a capability of `hairtos 1.0.0-rc2`.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](kernel-roadmap.md) · [Next →](portability-roadmap.md)
 

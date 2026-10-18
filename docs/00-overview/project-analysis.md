@@ -1,4 +1,4 @@
-# Full Project Analysis — `hairtos 1.0.0-rc1`
+# Full Project Analysis — `hairtos 1.0.0-rc2`
 
 > **Purpose:** Source-driven analysis of runtime modules, ownership/concurrency boundaries, build graph, evidence, and limitations.
 

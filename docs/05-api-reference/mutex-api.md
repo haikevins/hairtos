@@ -1,6 +1,6 @@
 # Mutex API
 
-> **Scope:** Public API contracts for `hairtos 1.0.0-rc1`; internal helpers are not part of the compatibility surface.
+> **Scope:** Public API contracts for `hairtos 1.0.0-rc2`; internal helpers are not part of the compatibility surface.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](kernel-and-task-api.md) · [Next →](public-api-policy.md)
 

@@ -1,4 +1,4 @@
-# `hairtos 1.0.0-rc2` Architecture
+# `hairtos 1.0.0` Architecture
 
 > **Scope:** Runtime and build architecture that actually exists in the v1 source; Version 2 roadmap material is kept separate.
 

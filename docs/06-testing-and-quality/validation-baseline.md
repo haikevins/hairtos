@@ -1,6 +1,6 @@
 # Validation baseline
 
-> **Source baseline:** `1.0.0-rc2`.
+> **Source baseline:** `1.0.0`.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](testing-guide.md)
 

@@ -1,6 +1,6 @@
 # Release checklist
 
-> This checklist is for project release candidates; it is not a safety certification.
+> This checklist is for project releases; it is not a safety certification.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](kernel-benchmark.md) · [Next →](stress-testing.md)
 

@@ -1,6 +1,6 @@
 # Public API policy
 
-> **Scope:** Defines which boundaries application code may depend on in `hairtos 1.0.0-rc1`.
+> **Scope:** Defines which boundaries application code may depend on in `hairtos 1.0.0-rc2`.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](mutex-api.md) · [Next →](queue-api.md)
 

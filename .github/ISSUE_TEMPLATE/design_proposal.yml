@@ -1,0 +1,62 @@
+name: Design / enhancement proposal
+description: Propose a focused improvement to the RTOS, framework, tooling, or documentation
+title: "proposal: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for focused improvements. Large future-only architecture ideas may belong in `docs/09-version2/` instead of the current v1 runtime.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or motivation
+      description: What concrete limitation, workflow problem, or design gap are you trying to address?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the smallest coherent change that addresses the problem.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Primary scope
+      options:
+        - Current v1 runtime
+        - haievent framework
+        - Cortex-M / platform support
+        - Build / CI / tooling
+        - Testing / benchmark / diagnostics
+        - Documentation
+        - Version 2 roadmap / future design
+    validations:
+      required: true
+
+  - type: textarea
+    id: tradeoffs
+    attributes:
+      label: Tradeoffs and compatibility
+      description: Note memory, timing, API, ownership, target-support, or migration impact where relevant.
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation approach
+      description: Explain how the change could be tested on host, target, or hardware without overstating evidence.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Scope checks
+      options:
+        - label: I checked the existing documentation and examples for related behavior.
+          required: true
+        - label: I have identified whether this belongs to current v1 behavior or future Version 2 design.
+          required: true

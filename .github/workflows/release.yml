@@ -1,0 +1,98 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Validate and publish release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ninja-build
+
+      - name: Validate tag, version, and release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="$(tr -d '[:space:]' < VERSION)"
+          tag="${GITHUB_REF_NAME}"
+          expected_tag="v${version}"
+          notes="docs/06-testing-and-quality/releases/${expected_tag}.md"
+
+          test "${tag}" = "${expected_tag}" || {
+            echo "Tag/version mismatch: tag=${tag}, VERSION=${version}" >&2
+            exit 1
+          }
+
+          test -f "${notes}" || {
+            echo "Missing release notes: ${notes}" >&2
+            exit 1
+          }
+
+      - name: Run release host gate
+        run: |
+          make list-targets
+          make list-examples
+          make TARGET=bluepill_f103c8 host-tests
+          make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=02-kernel-data-structures-host run
+          make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=14-memory-allocator-lab run
+          make TARGET=bluepill_f103c8 ENVIRONMENT=host EXAMPLE=16-diagnostics-stress-stabilization run
+
+      - name: Package source release
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="$(tr -d '[:space:]' < VERSION)"
+          archive="hairtos-${version}.tar.gz"
+
+          mkdir -p dist
+          git archive \
+            --format=tar \
+            --prefix="hairtos-${version}/" \
+            "${GITHUB_SHA}" \
+            | gzip -9 > "dist/${archive}"
+
+          (
+            cd dist
+            sha256sum "${archive}" > SHA256SUMS
+            sha256sum --check SHA256SUMS
+          )
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="$(tr -d '[:space:]' < VERSION)"
+          notes="docs/06-testing-and-quality/releases/v${version}.md"
+          prerelease=()
+
+          if [[ "${version}" == *-* ]]; then
+            prerelease=(--prerelease)
+          fi
+
+          gh release create "v${version}" \
+            dist/hairtos-${version}.tar.gz \
+            dist/SHA256SUMS \
+            --title "hairtos ${version}" \
+            --notes-file "${notes}" \
+            "${prerelease[@]}"

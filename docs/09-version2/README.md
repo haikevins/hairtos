@@ -1,6 +1,6 @@
 # Version 2 — Future Roadmap
 
-> **Role:** This group contains Version 2 proposals. The comparison baseline is always `1.0.0-rc1`; no feature here is considered implemented unless corresponding source/test evidence exists.
+> **Role:** This group contains Version 2 proposals. The comparison baseline is always `1.0.0-rc2`; no feature here is considered implemented unless corresponding source/test evidence exists.
 
 [← Root README](../../README.md)
 
@@ -50,7 +50,7 @@ flowchart LR
 <a id="validation"></a>
 ## Validation baseline
 
-- `VERSION`: `1.0.0-rc1`.
+- `VERSION`: `1.0.0-rc2`.
 - Host validation baseline: all 64 test functions in the current suite pass.
 - `02-kernel-data-structures-host`, `14-memory-allocator-lab`, and `16-diagnostics-stress-stabilization` pass on the host.
 - The reference target is `bluepill_f103c8`; host evidence does not replace cross-build, OpenOCD, and on-board hardware validation.

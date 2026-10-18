@@ -1,17 +1,41 @@
 # Changelog
 
-> Change history for `hairtos`. Current source version: `1.0.0-rc1`.
+> Change history for `hairtos`. Current source version: `1.0.0-rc2`.
 
 The format follows the spirit of *Keep a Changelog* and Semantic Versioning. `Unreleased` describes changes not yet associated with a tag; `docs/09-version2` is a roadmap and does not change the current runtime version.
 
 ## [Unreleased]
 
-### Documentation
+No unreleased changes are recorded after `1.0.0-rc2` at this time.
 
-- Re-audited the kernel, `haievent`, Cortex-M3 port, STM32F1 platform, drivers, CMake/Make, examples, tests, diagnostics, benchmark, and allocator lab.
-- Rewrote all first-party Markdown around the structure: scope → contract → source mapping → invariant → failure semantics → validation → references.
+## [1.0.0-rc2] - 2026-10-18
+
+### Added
+
+- GitHub Actions host validation for the target/example registry, sanitizer-backed host tests, representative examples, and the 500,000-iteration scheduler stress workload.
+- Contribution, security, pull-request, bug-report, and design-proposal repository policies.
+- Tag-driven release automation that validates the version/tag relationship, reruns the host release gate, produces a source archive, generates `SHA256SUMS`, and publishes GitHub Release assets.
+- Curated release notes for `v1.0.0-rc2`.
+
+### Changed
+
+- Redesigned the root README as a portfolio-oriented landing page with a concise architecture view, capability summary, reproducible build commands, and explicit verification boundaries.
+- Re-audited the kernel, `haievent`, Cortex-M3 port, STM32F1 platform, drivers, CMake/Make, examples, tests, diagnostics, benchmark, and allocator lab documentation.
+- Rewrote first-party Markdown around the structure: scope → contract → source mapping → invariant → failure semantics → validation → references.
 - Clearly separated the v1 implementation (`docs/00`–`08`) from the Version 2 proposal (`docs/09-version2`).
-- Added navigation/TOC/Mermaid using appropriate semantics and established a validation baseline from the host test suite.
+
+### Verification
+
+- Host CI: PASS.
+- GCC host build with AddressSanitizer and UndefinedBehaviorSanitizer: PASS.
+- `ctest`: PASS, 1/1 host test target (64 test functions in the current suite).
+- Host examples 02 and 14: PASS.
+- Scheduler stress example 16: PASS at 500,000 iterations.
+- ARM cross-build and physical-board execution remain separate release evidence and are not implied by these host results.
+
+### Runtime scope
+
+- No kernel, architecture-port, board, driver, SoC, `haievent`, test, or example runtime behavior is intentionally changed by this release-preparation series.
 
 ## [1.0.0-rc1] - 2026-07-27
 

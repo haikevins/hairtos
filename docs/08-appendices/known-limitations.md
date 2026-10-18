@@ -1,6 +1,6 @@
 # Known limitations — v1
 
-> These are actual limitations of `1.0.0-rc2`, not a hypothetical bug list.
+> These are actual limitations of `1.0.0`, not a hypothetical bug list.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](glossary.md) · [Next →](source-map.md)
 

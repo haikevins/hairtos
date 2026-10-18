@@ -42,7 +42,7 @@ flowchart LR
 <a id="validation"></a>
 ## Validation baseline
 
-- `VERSION`: `1.0.0-rc2`.
+- `VERSION`: `1.0.0`.
 - Host validation baseline: all 64 test functions in the current suite pass.
 - `02-kernel-data-structures-host`, `14-memory-allocator-lab`, and `16-diagnostics-stress-stabilization` pass on the host.
 - The reference target is `bluepill_f103c8`; host evidence does not replace cross-build, OpenOCD, and on-board hardware validation.

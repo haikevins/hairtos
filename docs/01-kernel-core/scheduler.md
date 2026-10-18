@@ -1,6 +1,6 @@
 # Scheduler
 
-> **Scope:** `hairtos 1.0.0-rc2` implementation, including the current source, configuration, build graph, and host-test evidence.
+> **Scope:** `hairtos 1.0.0` implementation, including the current source, configuration, build graph, and host-test evidence.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](memory-model.md) · [Next →](task-model.md)
 
@@ -82,7 +82,7 @@ The following baseline invariants apply to this topic:
 <a id="failure"></a>
 ## Failure Modes and Limitations
 
-- `hairtos 1.0.0-rc2` is single-core and provides no SMP, FPU context management, MPU isolation, or general-purpose dynamic kernel heap.
+- `hairtos 1.0.0` is single-core and provides no SMP, FPU context management, MPU isolation, or general-purpose dynamic kernel heap.
 - The current interrupt-masking model uses PRIMASK; the repository does not yet define a BASEPRI ceiling contract for applications with complex ISR-priority schemes.
 - Tickless idle is not implemented; the current time model uses a 1 kHz tick on the reference target.
 - `haievent` v1 provides a flat state machine and one task per AO; HSMs, deferred events, and a shared executor are Version 2 roadmap items.

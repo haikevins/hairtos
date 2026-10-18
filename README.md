@@ -3,7 +3,7 @@
 **A static-first, preemptive RTOS for ARM Cortex-M with an event-driven framework built on top of the kernel.**
 
 [![CI](https://github.com/haikevins/hairtos/actions/workflows/ci.yml/badge.svg)](https://github.com/haikevins/hairtos/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.0.0--rc2-orange.svg)](VERSION)
+[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](VERSION)
 [![C11](https://img.shields.io/badge/C-11-blue.svg)](CMakeLists.txt)
 [![Target](https://img.shields.io/badge/target-ARM%20Cortex--M3-0091BD.svg)](docs/04-platform/cortex-m3-port.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
@@ -12,7 +12,7 @@
 
 The repository is organized like a real embedded systems codebase rather than a collection of isolated demos: public/internal boundaries are explicit, kernel objects use caller-owned static storage, target selection is manifest-driven, host validation runs under sanitizers, and architecture/platform code is separated from generic kernel policy.
 
-> **Current source version:** `1.0.0-rc2`
+> **Current source version:** `1.0.0`
 >
 > **Current implementation:** source + `docs/00`–`08`
 >
@@ -284,7 +284,7 @@ Start with [`docs/README.md`](docs/README.md), then follow the area relevant to 
 
 ## Project Status
 
-`hairtos` is currently an **RC-stage educational/experimental RTOS**, not a safety-certified or production-qualified kernel. The project intentionally keeps roadmap material separate from implemented behavior so that documentation does not overstate runtime capability.
+`hairtos` is currently an **educational/experimental RTOS**, not a safety-certified or production-qualified kernel. The project intentionally keeps roadmap material separate from implemented behavior so that documentation does not overstate runtime capability.
 
 Release history is tracked in [`CHANGELOG.md`](CHANGELOG.md).
 

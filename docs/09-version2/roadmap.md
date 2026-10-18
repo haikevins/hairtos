@@ -1,6 +1,6 @@
 # Roadmap Version 2
 
-> **Status: FUTURE DESIGN.** This content is not a capability of `hairtos 1.0.0-rc2`.
+> **Status: FUTURE DESIGN.** This content is not a capability of `hairtos 1.0.0`.
 
 [← Root README](../../README.md) · [↑ Back to section](README.md) · [← Previous](risk-register.md) · [Next →](testing-and-release.md)
 

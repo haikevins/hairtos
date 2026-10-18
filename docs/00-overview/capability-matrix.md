@@ -1,4 +1,4 @@
-# Capability matrix — `hairtos 1.0.0-rc2`
+# Capability matrix — `hairtos 1.0.0`
 
 > **Convention:** **Yes** = source + test/example/evidence exists; **Partial** = foundation exists but portability/coverage is incomplete; **Not yet** = not implemented; **Intentionally out of scope** = outside the v1 baseline.
 

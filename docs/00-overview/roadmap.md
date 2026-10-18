@@ -27,7 +27,7 @@ flowchart TB
 
 ## Completion baseline
 
-`1.0.0-rc2` currently contains source for the complete sequence above plus corresponding host tests. v1 is not considered portability-complete because it has only one hardware target. HSM/tickless/trace/second-target work moves to the Version 2 roadmap.
+`1.0.0` currently contains source for the complete sequence above plus corresponding host tests. v1 is not considered portability-complete because it has only one hardware target. HSM/tickless/trace/second-target work moves to the Version 2 roadmap.
 
 ## References
 

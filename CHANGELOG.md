@@ -1,12 +1,34 @@
 # Changelog
 
-> Change history for `hairtos`. Current source version: `1.0.0-rc2`.
+> Change history for `hairtos`. Current source version: `1.0.0`.
 
 The format follows the spirit of *Keep a Changelog* and Semantic Versioning. `Unreleased` describes changes not yet associated with a tag; `docs/09-version2` is a roadmap and does not change the current runtime version.
 
 ## [Unreleased]
 
-No unreleased changes are recorded after `1.0.0-rc2` at this time.
+No unreleased changes are recorded after `1.0.0` at this time.
+
+## [1.0.0] - 2026-10-18
+
+### Changed
+
+- Promoted the validated `v1.0.0-rc2` baseline to the first stable `hairtos` release.
+- Updated project version, current documentation baseline, and stable release notes.
+- Kept the existing tag-driven release packaging and checksum workflow.
+
+### Verification
+
+- GitHub Actions host validation: PASS.
+- GCC host build with AddressSanitizer and UndefinedBehaviorSanitizer: PASS.
+- `ctest`: PASS, 1/1 host test target with 64 test functions in the current suite.
+- Host examples 02 and 14: PASS.
+- Scheduler stress example 16: PASS at 500,000 iterations.
+- Project owner confirmed successful execution on the STM32F103C8T6 Blue Pill reference hardware.
+
+### Runtime scope
+
+- No kernel, architecture-port, board, driver, SoC, `haievent`, test, or example runtime source is changed by the stable-release promotion.
+- Runtime behavior remains the validated `v1.0.0-rc2` baseline.
 
 ## [1.0.0-rc2] - 2026-10-18
 

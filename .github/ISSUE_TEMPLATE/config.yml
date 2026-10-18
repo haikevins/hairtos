@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: hairtos documentation
+    url: https://github.com/haikevins/hairtos/tree/main/docs
+    about: Read the architecture, platform, testing, API, and limitation documentation before opening an issue.
+  - name: Security policy
+    url: https://github.com/haikevins/hairtos/security/policy
+    about: Use the security policy for suspected vulnerabilities instead of a public bug report.

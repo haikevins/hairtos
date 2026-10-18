@@ -1,0 +1,89 @@
+name: Bug report
+description: Report a reproducible defect in the current hairtos implementation
+title: "bug: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please distinguish host behavior from ARM target or physical-board behavior, and do not include sensitive security details here.
+
+  - type: input
+    id: revision
+    attributes:
+      label: Revision
+      description: Commit SHA, branch, tag, or release candidate where the problem occurs.
+      placeholder: e.g. main @ 0123456 or v1.0.0-rc2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Host build / tests
+        - ARM cross-build only
+        - Physical STM32F103C8T6 Blue Pill
+        - Other target or board
+        - Documentation / tooling
+    validations:
+      required: true
+
+  - type: input
+    id: target
+    attributes:
+      label: Target / toolchain
+      description: Include HAIRTOS target, compiler/toolchain, and relevant versions when known.
+      placeholder: bluepill_f103c8; arm-none-eabi-gcc ...
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Provide the smallest deterministic sequence of commands or hardware steps that reproduces the problem.
+      placeholder: |
+        1. make ...
+        2. flash ...
+        3. observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs / debugger / sanitizer / fault evidence
+      description: Paste concise relevant output. Remove secrets, credentials, and unrelated data.
+      render: text
+
+  - type: textarea
+    id: hardware
+    attributes:
+      label: Hardware details
+      description: If physical hardware is involved, include board revision, probe, clock/power details, and peripherals relevant to the failure.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission checks
+      options:
+        - label: I checked that this behavior is not documented as a current v1 limitation.
+          required: true
+        - label: I am not treating host CI as proof of target or hardware behavior.
+          required: true
+        - label: This report does not disclose a security vulnerability; security issues should follow SECURITY.md.
+          required: true
